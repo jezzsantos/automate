@@ -1,0 +1,101 @@
+﻿define DomainSlice
+    has a property called Name
+        gets its value from user input, validated with ModelIdentifierValidator 
+    end property
+    has a property called InfrastructureLayer
+    end property
+
+    has a property called ApplicationLayer
+        has a property called Application as Component
+            has a property called Name
+                gets its value from user input, validated with ModelIdentifierValidator 
+            end property
+            has a property called Operations
+                has many components called ApplicationOperation as Operation
+            end property
+        end property
+    end property
+
+    has a property called DomainLayer
+        has a property called RootAggregate as Component
+        end property
+    end property
+end definition
+
+define ApplicationOperation as Component
+    has a property called Name
+    has many components called InputParameter
+    has a component called ReturnValue
+    uses snippet template X4567
+        with property Name
+        with components InputParameter as Inputs
+        with component ReturnValue as Return
+        in file called ${parent.parent.Name}.cs, in the folder src/${parent.parent.parent.Name}
+    end using
+end definition
+
+
+define InputParameter as Component
+    has a property called Name
+        gets its value from user input, validated with InputParameterNameValidator 
+    end property
+    has a readonly property called NameIdentifier
+        gets it value from using function Lowercase
+            with property Name as Value
+        end using
+    end property
+    has a property called DataType
+        gets its value from this list
+            string
+            int
+            bool
+            long
+            decimal
+            DateTime
+        end list
+        or gets its value from user input, validated with InputParameterDataTypeValidator
+    end property
+end definition
+
+define ReturnValue as InputParameter
+
+define ModelIdentifierValidator as ValueValidator
+    value must not be empty
+    and value must be at least 1
+    and value must not be more than 50
+    and value must match ^[a-zA-Z0-9]{1,50}$
+end validator
+
+define InputParameterNameValidator as ValueValidator
+    value must not be empty
+    and value must be at least 1
+    and value must not be more than 50
+    and value must match ^[a-zA-Z0-9]{1,50}$
+end validator
+
+define InputParameterDataTypeValidator as ValueValidator
+    value must not be empty
+    and value must be at least 1
+    and value must not be more than 50
+    and value must match ^[a-zA-Z0-9]{1,50}$
+    or value must match InputParameterDataTypeValueProvider
+end validator
+
+define InputParameterDataTypeValueProvider as ValueProvider
+
+end provider
+
+define X4567 as SnippetTemplate
+    content 
+        public <#=ReturnValue#> <#=Name>(<#foreach (Input in Inputs){#><#=Input.DataType> <#=Input.NameIdentifier><#}#>)
+        {
+            <#foreach (Input in Inputs){#><#=Input.NameIdentifier>.GuardAgainstNull(nameof(<#=Input.NameIdentifier>));<#}#>
+        }
+    end content
+end template
+
+define Lowercase as Function
+    code
+        <#=Value.ToLower()#>
+    end code
+end function
