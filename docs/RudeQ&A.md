@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿# Rule Q & A
+﻿﻿﻿﻿﻿﻿﻿# Rule Q & A
 
 ## Why this technology?
 
@@ -51,6 +51,9 @@ It's not a full time commitment at this point, and could not sustain a living ye
 
 Perhaps, one channel to market could be to ship and support toolkits for popular technologies, as a way to demonstrate its capabilities.
 
+## Why are you the best person to start this?
+I'I should be one of the Founders of this business because this capability has been part of my life for decades and I've explored it in more than one way or another more than almost any other person. I'm not the best person to front this business, I'm not a CEO, nor want to do what good CEO's do , but contributing to the product vision and strategy and execution is where I should bring my skills to bare.
+
 ## Who would use this capability and what for?
 
 There is no doubt that this is NOT a general purpose tool for all programmers all of the time.
@@ -61,14 +64,14 @@ There are many kinds of programming (as well as many platforms) and individual p
 
 * Specifically, in codebases where there are well-defined technical patterns already agreed to, that should be followed to get things established.
 
-# What is it all about?
+## What is it all about?
 
 * Applying Coding Patterns
-
 * Automating Recipes
 * Constructing things fast
 * Configuring things with different options
 * Speeding up the dull and boring
 * Being and staying consistent
 * Evolving consistently
+* Recording what you've learn't over the years
 
