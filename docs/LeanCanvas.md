@@ -1,38 +1,44 @@
 # Lean Canvas - autōmate
 
-## Problem
-> List your top 1-5 problems.
+## Business Problem
+> What problem does the business have that you are trying to solve? (Hint: Consider your current offerings and how they deliver value, changes in the market, delivery channels, competitive threats and customer behavior.)
 
-1. A software team usually starts from first principles with only rudimentary sample coding templates, and they build a codebase from scratch for every piece of software they create. Coding patterns and architectures specific to this codebase may emerge and may persist across software archetypes (e.g Web API, EDA, etc). If they do, they will be honed (over time) with each use (by the same people). However, they are still quite difficult to tease out of any specific codebase to be reused on the next codebase. (opportunity here for: sharing knowledge, without violating IP constraints).
-2. Any developer finds it very hard to provide or prescribe known/pre-defined coding patterns to less experienced team members in a form that is easy to re-apply (where and when they need them), in order to maintain consistency across a codebase. (opportunity here to: capture important patterns in a canonical form for sharing).
-3. Less experienced developers (in a specific codebase) find it hard to know where to put their point-solutions in a codebase, as they are more focused on getting the task done rather then how, or where and how it should fit in an architecture. (opportunity here for: contextualising the patterns)
-4. Documenting accurately (over time, as things change), and then carbon copying coding patterns (verbatim) is very tedious and error prone for developers to re-use them correctly. (opportunity here for: automating rote tasks, and versioning auto-migration of patterns).
-5. Enforcing the correct application of [agreed to] coding patterns is very challenging for teams since the development tools in common use today are too general-purpose to be specific enough to understand specific patterns. The DSL argument. Development tools (IDE's specifically) are very good today at making it easy and seamless to manipulate code structure and coding patterns in any way the developer wishes. The tools that most IDE's provide to enforce coding patterns (eg. Rosyln Analysers) are still too difficult to program, configure, maintain, version and deploy to a specific team (for team members to maintain effectively alongside their code as it changes). 
+1. Most software teams start new projects/products from first principles with only rudimentary and sample starter code templates. Then they build up a basic codebase structure from scratch for every piece of software they create. Code implementation patterns and code structure patterns specific to this codebase may emerge. Depending on the type of pattern, they may persist across software archetypes (eg. Web API, Website, Mobile, EDA, etc) but only if the developers build more than one instance of that archetype. If they do, they will likely extract coding patterns from successive instances and hone those patterns (over time). However, structural patterns and implementation patterns are still quite difficult to tease out of any specific codebase to be reused on the next codebase, unless the developer has extensive experience across many similar projects (unlikely for products as they have longer lifecycles). (opportunity here for: sharing knowledge, without violating IP constraints).
+2. Tech Leads/Lead Developers/Architects/Tech Consultants find it very difficult to provide or prescribe known/pre-defined coding patterns to less experienced team members in a form that is easy to re-apply (where and when they need them), in order to maintain consistency across a codebase. Generally, to do that they have to write extensive guidance and documentation, and ensure that it is followed, and keep it up to date with changes. (opportunity here to: capture important patterns in a canonical form for easily sharing).
+3. Less experienced developers (in a specific codebase) find it hard to know where to put their point-solutions in a codebase, as they are more focused on getting the task done rather then how, or where and how it should fit in an architecture. (opportunity here for: contextualising the patterns, and the patterns knowing where to put code)
+4. Applying coding patterns (verbatim) into a codebase is very tedious and error prone for codebase contributors to re-use them correctly. (opportunity here for: automating rote tasks, and versioning auto-migration of patterns).
+5. Enforcing the correct application of coding patterns is very challenging for coding teams since the development tools in common use today are too general-purpose to be specific enough to understand the constraints of specific coding patterns in a specific codebase. The DSL argument. Development tools (IDE's specifically) are very good today at making it trivially easy and seamless to manipulate code structure and code/configuration in any way the developer wishes (highly flexible) and this easily compromises any established structural coding patterns. Forcing Tech Leads to use other tools (like unit tests, architectural validation tools) to ensure that coding patterns are not compromised.  
+5. The tools and technologies that most IDE's provide to enforce coding patterns (eg. Rosyln Analysers, Code-Completion technologies) are still far too difficult to program, configure, maintain, version and deploy to a specific team (for team members to maintain effectively alongside their code as it changes). 
 
 ### Existing Alternatives
 > List how these problems are solved today.
 
-1. No re-use, no patterns - Building software without  pre-defined architectures, and with no patterns of reuse (that were learned from previous codebase experiences). The wild west. Often lacking technical leadership, developers are starting from first principles each time, supplemented with using plethora of 3rd party OSS libraries. Falling into common traps that are mitigated by having codified constraints -> evolving quickly into big balls of mud.
-2. Tech Leads (lead developers) are having to work very hard to harvest and lay down patterns manually and consistently, and then pair with every team member to demonstrate and teach them how to reproduce those patterns and how to extend them in legitimate ways, to keep them from working around them. There are some rudimentary templating tools in most IDE's to help with applying simple templated files (eg Live Templates in Jetbrains IDE, Visual Studio Snippets) , but none are integrated well enough to apply patterns that span across multiple projects/folders/files, nor that use information harvested from the existing code. None (explored) manage the versioning of the patterns and migrating from one version to another, nor refactoring code generated from previous versions of the pattern, as the patterns change.
-3. To enforce that patterns are used correctly, Tech Leads are having to resort to write automated tests (or Roslyn Analyzers) to ensure that these patterns are adhered to correctly, and architectural constraints are not accidentally violated. Since the development tools are so general purpose and must allow the developer full freedom to do whatever they want, even if that violates the intended architecture of the codebase.
-4. Code completion tools (with Machine Learning assistance) such as eg. Github CoPilot and TabNine are second guessing exact code matches (as developers type code), but these tools are not yet learning the variability of the larger patterns in the code. At best, they are only learning what has been typed before in that codebase.
+1. **Worked around**: No re-use, no coding patterns (aka the Wild West) - Building software without  pre-defined architectures, structural patterns, separation of concerns, etc, and with no patterns of reuse (that were learned from previous codebase experiences). Often lacking technical leadership in these codebases, each codebase contributor is starting from first principles each time, doing as they please, limited by their own experience, often supplemented with plethora of their familiar and favourite 3rd party OSS libraries. Creating massive amounts of technical debt, cruft, and accidental complexity. Evolving quickly into big-balls-of-mud.
+2. **Manual Application and Enforcement**: Tech Leads/Lead Developers/Architects/Tech Consultants are having to work very hard to manually harvest, tailor, and prepare suitable patterns manually and consistently across a codebase. Then meet/pair with every team member to demonstrate and teach them how to reproduce those patterns and how to extend them in legitimate ways. Code reviews and frequent manual inspections are employed to prevent codebase contributors from working around those patterns, and the necessary constraints they provide to the codebase. 
+2. **Automated Application**: There are some rudimentary templating tools in most IDE's to help with applying simple templated files (eg Live Templates in Jetbrains IDE, Visual Studio Snippets) , most are either at the  snippet level, or at the file level, but none are integrated well enough to apply patterns that span across multiple projects/folders/files, nor that extract information harvested from the existing code. None (explored) manage the versioning of the patterns and migrating from one version to another, nor refactoring code generated from previous versions of the pattern, as the patterns change.
+4. **Automated Enforcement** solutions: To enforce that patterns are used, and used correctly, Tech Leads/Lead Developers/Architects/Tech Consultants are having to resort to:
+   1. Write Automated unit Tests or create Roslyn Analyzers plugins to ensure that these patterns are adhered to correctly, and architectural/structural/semantic constraints are not incidentally nor accidentally violated when code is changed.
+   2. Code completion tools (with Machine Learning assistance) such as eg. Github CoPilot and TabNine are second guessing and suggesting exact code matches (as developers type their code), but these tools are not yet learning the variability of the larger component patterns in the code. At best, they are only learning what has been typed before in that codebase. (more investigation into their capabilities is needed as these technologies emerge).
+   3. The NuPattern project (https://github.com/nupattern) open source, already provides the first version of this capability, and has addressed many of the challenges of this kind of tooling, and how to integrate it into an IDE. However, it is only targeted at .NET stacks, works in Visual Studio 2013, and has not been updated to work with any other IDE, and is no longer maintained.
+
 
 ## Customer Segments
 > List your target customer and users.
 
-1. Producers of tooling: Tech Leads/Lead Developers of software teams, Independent Technical Consultants,  that want to provide their team/customers with specific coding patterns in their software. Especially software teams that create similar products or solutions of specific types or technical domains (eg. WebAPI, Mobile App, IoT Sensing Device, etc).
-1. Consumers of tooling: Any programmer that wants to re-use existing patterns (reuse knowledge of experts). Any programmer on a team where these tools are mandated.
+1. Producers of developer tooling: Tech Leads/Lead Developers/Architects/Tech Consultants working with software teams, that desire to provide their software teams (Code Contributors) with specific coding patterns in their software. Especially software teams that create similar products or solutions of specific types or technical domains (eg. WebAPIs, Mobile Apps, IoT Sensing Devices, etc).
+1. Consumers of tooling: Code contributors that want to re-use existing patterns (re-use the knowledge of their experts). Code contributors on a team where these tools are mandated by Tech Leads/Lead Developers/Architects/Tech Consultants.
+1. Technology Evangelists/Tech Domain Experts/Community Leads who want to share their best/recommended practices and guidance in an easy to apply format, for others in their communities.
 
 ### Early Adopters
 > List the characteristics of your ideal customer.
 
-They are an experienced software company/team that sees value in establishing and maintaining consistency across a codebase, that must evolve.
+They are an experienced software company/team that sees value in establishing and maintaining consistency across a codebase, that must evolve and evolve over a reasonable period of time.
 
 They have several wishes to accelerate their creation of quality software:
 
-1. To accelerate the onboarding of less experienced developers onto the codebase (and teach them existing coding patterns and the shape of new code and where it fits).
-2. To re-use learned patterns between software codebases that are similar in archetype (eg. web API patterns, IoT device patterns).
-3. Are willing to invest in developer tooling that captures and evolving these patterns over the years (as tech platforms change).
+1. To accelerate the onboarding of less experienced contributors onto the codebase (and teach them existing coding patterns and the shape of new code and how things are shaped and where they fit).
+2. To re-use learned patterns between software codebases that are similar in archetype (eg. WebAPIs, Websites, Mobile Apps, IoT devices, etc).
+3. Are willing to invest in developer tooling that captures and evolving these patterns over the years (as tech platforms change, and as the experts learn more).
 
 
 ## Unique Value Proposition
@@ -49,26 +55,26 @@ autōmate has an opportunity to inform and improve existing Code-completion tech
 ### High-level Concept
 > List your X for Y analogy e.g. Youtube = Flickr for videos
 
-autōmate = Y for coding patterns
+autōmate = Y for coding patterns (TBA)
 
 
 ## Solution
 > Outline a possible solution for each problem.
 
-Build a set of (paid for, open source) tooling that allows Tech Leads/Lead Devs to capture their personal/company coding patterns, and provide tools that other developers can use to apply those patterns in their own codebases.  
+Build a set of (paid for, open source) tooling that allows Tech Leads/Lead Developers/Architects/Tech Consultants to capture their personal/community/company coding patterns, and provide tooling that other code contributors can use to apply those patterns in their own codebases.  
 
-1. **Harvesting/Capturing Coding Patterns in a model** - Ability to create a high level (and composable) meta-model of components in the architecture of the software that describes parts of the codebase. Notionally, lasso files/classes/functions are a specific component. Then draw the arrangement and relationships of the components to one another. For example: describing the Layers of the architecture and the components within them, and what their concerns are (data to describes how to configure them). Be able to define a logical model for each component, that defines it variability and how it manifests as code and configuration in files. Be able to mark up version of the components in that model.
-2. **Distribute tools that generate files from the model** - Ability to create plugins (for an IDE), that display and compose and manage versions of the models, and that can be used by a developer to create new components in their codebase. These tools then track what was created and where in the codebase it was created, also tracking where things are moved and renamed, as they are refactored (modified or deleted).
-3. **Evolving, Versioning and Migration** - code changes and patterns evolve. Provide tools to identify changes in the generated existing patterns and notify the developer to submitting a change request to the author of the pattern.  
+1. **Harvesting/Capturing Coding Patterns into an Abstract Model** - Ability to create a high level (and composable) meta-model of components of the software that describes parts of the codebase. Notionally, "lasso" coding patterns across files/classes/functions as a specific component of the overall codebase. That can then be replicated by configuring a set of custom attributes that this notional component has. Then, optionally, at a higher-level abstraction of the system, compose another model that arranges these components and their relationships. For example: describing what the Horizontal Layers and Vertical Slices of a specific codebase are, with components defined in each cell of that matrix. The larger model defining its concerns with data that describes how the individual components are related when assembled together. For each component, define a "logical" model for it that defines its attributes: what data it requires to be created/configured, and where to get that data from in the rest of the codebase. Then how the component and its component parts manifest themselves as code and configuration in projects/folders/files of the software solution. Be able to version each components in that model, and mange version compatibility and migration.
+2. **Distribute tools that generate files from the model** - Ability to create versioned shippable toolkits/plugins (that install into a specific IDE), that provide a visual representation of the abstract model, and allow the consumer to compose together larger models with other plugins. This representation can then be used to invoke the models to directly affect their codebase (generate, manipulate code and configuration files). These tools also track what was created and where in the codebase it was created, also tracking where users manually moved/renamed/refactored/changed/deleted the files/folders that the toolkit has an vested interest in.
+3. **Evolving, Versioning and Migration** - code changes over time and patterns evolve over time. Provide tools to identify changes in the generated existing patterns and notify the developer to submitting a change request to the author of the toolkit.  
 4. **Validation and Checking of existing code** - code changes and violates the patterns. Provide tools to identify changes in the generated existing patterns and notify the developer that they are violating the pattern, and should conform.
 
-Provide a central online service to store these coding patterns, for a company team, or for an individual (i.e. tech consultant).
+Provide a central online service to store these coding patterns, for an individual (i.e. company employee, or tech consultant). Where that person makes choices about the rights to the toolkits/patterns, and who has access to them [this will be a complex model since there are IP and ownership issues to mitigate].
 
-Provide integrations with popular IDE's to integrate these tools (i.e. Visual Studio, Jetbrains IDE, VsCode, etc)
+Provide integrations with popular IDE's to integrate all these tools (i.e. Visual Studio, Jetbrains IDE, VS Code, etc) so that these tools are more easily integrated into the consumers everyday processes. 
 
-Provide simple standalone command line tools to provide similar rudimentary capabilities.
+Provide (cross-platform) standalone command-line interface (CLI) to provide similar rudimentary capabilities. So that these tools can be used in any environment.
 
-Provide an online editor.
+Provide a simple online editor, with most of the capabilities of the other tools, but clearly a limited set of functionality, so that Authors can make simple updates and changes to their patterns without requiring computers, IDE's etc. 
 
 
 ## Channels
@@ -107,3 +113,7 @@ Provide an online editor.
 > Something that cannot easily be bought or copied.
 
 The authors have worked in this space across the globe for many years. The authors have created a sponsored developer program and a product (at  Microsoft corp, circa 2005-2012) that created the first generation of this kind of tooling in Visual Studio, deploying it to a large software partner (Raytheon), and then going on to open source it. Albeit underfunded, and unsupported by Microsoft and its eco-system. The authors have built and operated their own tech SaaS start-up previously, and mentors other tech start-up founders.
+
+
+
+> 
