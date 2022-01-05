@@ -4,9 +4,9 @@
 
 > What problem does the business have that you are trying to solve? 
 >
-> (Hint: Consider your current offerings and how they deliver value, changes in the market, delivery channels, competitive threats and customer behavior.)
+> (Hint: Consider your current offerings and how they deliver value, changes in the market, delivery channels, competitive threats and customer behaviour.)
 
-[same as](LeanCanvas.md#Business Problem)
+[same as: Business Problem](LeanCanvas.md#Business Problem)
 
 ## Business Outcomes (2)
 
@@ -14,7 +14,7 @@
 >
 > (Hint: What will people/users be doing differently if your solutions work? Consider metrics that indicate customer success like average order value, time on site, and retention rate.) 
 
-They will be creating *toolkits* from which coding patterns are configured and then change codebases. We will measure the number of unique toolkits being created, and the number of times each is used to *touch* a codebase. The first metric demonstrating adoption of this practice, and the second metric indicating the stickiness of their toolkits, as aproxy for the stickiness of this tech.
+They will be creating *toolkits* from which coding patterns are configured and then change codebases. We will measure the number of unique toolkits being created, and the number of times each is used to *touch* a codebase. The first metric demonstrating adoption of this practice, and the second metric indicating the stickiness of their toolkits, as a proxy for the stickiness of this tech.
 
 ## Users (3)
 
@@ -27,22 +27,22 @@ There are essentially to sets of users:
 1. The Authors (thought to be Tech Leads/Tech Consultants) will define the toolkits/models and possibly also the initial coding patterns to go with them for a specific codebase. This group will be attributed for the toolkit, and will maintain the toolkit and coding patterns within it for the long term, sharing them with their employers, open source projects, personal projects, communities, etc. The toolkits will be a rpoxy for their technical prowess in their communities.
 2. The Developers (thought to be developers on a codebase) will apply the toolkits, configure them and generate the code from the models, using that code.
 
-It will be the Authors that will pay for the capability to create these toolkits. These Authors could be employees of a company assigned to one or more team, or could be independent tech consultants who work (temporarily) with a company on one or more teams, or who contriubute to one or more open source projects, or who evangelise developer tooling.
+It will be the Authors that will pay for the capability to create these toolkits. These Authors could be employees of a company assigned to one or more team, or could be independent tech consultants who work (temporarily) with a company on one or more teams, or who contribute to one or more open source projects, or who evangelise developer tooling.
 
 ## User Outcomes & Benefits (4)
 
-> Why would your users seek out your product or service? What benefit would they gain from using it? What behavior change can we observe that tells us they've achieved their goal?
+> Why would your users seek out your product or service? What benefit would they gain from using it? What behaviour change can we observe that tells us they've achieved their goal?
 > (Hint: Save money, get a promotion, spend more time with family)
 
 For Authors, they will have a single place (online repository) of toolkits/patterns that they have built up over the years representing the implmentation of their "best/recommended practices" (for certain tech stacks). These can and will evolve for each company/project they work in (depending on IP constraints). We may see that they maintain variants of the same kinds of toolkits/patterns for different companies/projects (to manage IP constraints). They can choose to expose these toolkits/patterns to a limited private audience, or expose them out to the public, and advertise them across public communities. They would do this as way to advertise their prowess in these communities.
 
-Consumers would not necessarily seek out this capability. It is more likely mandated to them on a codebase by an Author, at which point they will benefit from the coding patterns in their daily work. At least initially, until some Consumers get used to using this capability, after which they may become Authors themselves (by extracting patterns from existings codebase they are work on form that point forward).
+Consumers would not necessarily seek out this capability. It is more likely mandated to them on a codebase by an Author, at which point they will benefit from the coding patterns in their daily work. At least initially, until some Consumers get used to using this capability, after which they may become Authors themselves (by extracting patterns from existing codebases they are working on, from that point forward).
 
 ## Solutions (5)
 
 > What can we make that will solve our business problem and meet the needs of our customers at the same time? List product, feature, or enhancement ideas here. 
 
-[same as](LeanCanvas.md#Solution)
+[same as: Solution](LeanCanvas.md#Solution)
 
 ## Hypotheses (6)
 
@@ -62,7 +62,7 @@ Consumers would not necessarily seek out this capability. It is more likely mand
 Risky Assumptions:
 
 - **Riskiest: Pre-defined coding patterns in a codebase are valuable to all those working on a codebase.** 
-- Coding patterns are just as applicable and important to both tech product development (new, rapidly evolving, experiemental domains), and to Enterprise project development (predefined, business automation, existing business domains, components of a enterprise architecture).
+- Coding patterns are just as applicable and important to both tech product development (new, rapidly evolving, experimental domains), and to Enterprise project development (predefined, business automation, existing business domains, components of a enterprise architecture).
 - It is a Tech Lead/Lead Dev/Architect/Tech Consultant etc that sets the coding patterns for a codebase. That duty is not left to team members who only contribute to the codebase.
 - Coding patterns are set at the start/early of a new software product/project, and they evolve as the team progresses on the project/product. The speed at which they evolve can vary.
 - A Tech Lead/Lead Dev/Architect/Tech Consultant has (available to them, or can create) coding patterns to share with a team on a codebase.
@@ -78,9 +78,9 @@ Risky Assumptions:
 
 > Design experiments to learn as fast as you can whether your riskiest assumption is true or false. 
 
-This is a radical/disruptive innovation, that introduces a new practice that may not be known about today. i.e. provide tooling to help apply coding patterns. However, applying coding patterns is nothing new in softwre product/projects, and we assume has been going on for decades.
+This is a radical/disruptive innovation, that introduces a new practice that may not be known about today. i.e. provide tooling to help apply coding patterns. However, applying coding patterns is nothing new in software product/projects, and we assume has been going on for decades.
 
-Therfore: 
+Therefore: 
 
 * The first thing to do is prove is that coding patterns are indeed used in codebases, and learn about what kinds of codebases they are used in, and what kinds they are not used in.
 * Then find out who created those coding patterns, and why.

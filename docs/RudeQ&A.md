@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿# Rule Q & A
+﻿﻿﻿﻿﻿﻿﻿﻿﻿# Rule Q & A
 
 ## Why this technology?
 
@@ -28,7 +28,7 @@ I've (and others) have had the experience of bringing this capability to market 
 
 ## Why did it fail last time around?
 
-I'm not so certain about these conclusions about last time around.
+(I'm not so certain about these conclusions about last time around.)
 
 We failed to get more traction in the wider industry because:
 
@@ -38,10 +38,13 @@ We failed to get more traction in the wider industry because:
 3. Visual Studio performance was a major usability constraint (when enumerating and analysing medium/large solutions/projections/folders and files).
 4. There was only 1, sometimes 2 contributors maintaining this project.
 5. The niche target audience was never really identified. It was never meant to be general purpose for all programmers in all contexts. There was no obvious channel to market, or specific go to market strategy.
+5. I have found from many (audible/textual) interactions with technical people (tech consultants, program managers etc, even those in the developers tools space, and those who are highly experienced too) that when trying to explain the objectives and techniques of this approach often fails to hit the mark, and resonate with them. First, there seems to be a barrier in terms of language that makes it very hard to describe exactly how the benefits are experienced. Then there seems to be a deep scepticism that that seems more based upon lack of actual experience at the coalface programming, and empathy for real world developers. Whatever the reason, in conclusion, without demonstrating concrete examples that are meaningful to the present audience), the value proposition is very hard to communicate to any audience. This would explain why this kind of tech is hard to understand just from a simple conversation, and may only be realised by using this technique. This is a significant barrier.
 
 ## What makes you think it will succeed now?
 
-I will need more evidence that it is desirable first. Then I'll need to believe in a model that is financially viable.
+I will need a lot more evidence that it is desirable first. Then I'll need to believe in a model that could be financially viable in the long run.
+
+Then we will have to find a way to overcome the various challenges above, for this to result in an outcome that is different than what we experienced prior.
 
 ## What makes you think you can make it succeed now?
 
@@ -66,12 +69,15 @@ There are many kinds of programming (as well as many platforms) and individual p
 
 ## What is it all about?
 
+* 
+* Reusing knowledge
 * Applying Coding Patterns
 * Automating Recipes
 * Constructing things fast
 * Configuring things with different options
-* Speeding up the dull and boring
-* Being and staying consistent
+* Recording what you've learnt over the years
+* Speeding up the dull and boring parts of working in a codebase
+* Being and staying consistent.
 * Evolving consistently
-* Recording what you've learn't over the years
+* 
 
