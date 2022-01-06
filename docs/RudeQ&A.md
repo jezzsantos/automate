@@ -1,8 +1,10 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿# Rule Q & A
+﻿# Rude Q & A
 
 ## Why this technology?
 
-I started investigating the automation of code patterns back in the early 2000's at Microsoft as a channel to teach and disseminate architectural/technical guidance to developers as a technical consultant in the APAC region. Adopting and Learning .NET best practices, and technical leadership, was a common demand from enterprise customers to Microsoft Consulting Services. My journey into developer tooling started out with attempting to teach developers (in the field) how to use specific (recommended) libraries and frameworks as intended (eg. Enterprise Library and others). That led into the development of architectural frameworks (eg. Enterprise Framework) that implemented the best practice guidance coming out of the Microsoft patterns & practices team in code assets that our enterprise customers adopted. Clearly, raising challenges around versioning and support. 
+The value proposition is still immediately obvious to me, it is still relevant to tech today, the tech already exists (in a form).
+
+I started investigating the automation of code patterns back in the early 2000's at Microsoft as a channel to teach and disseminate architectural/technical guidance to developers as a technical consultant in the APAC/EMEA region. Adopting and learning .NET best practices and architectural patterns, and technical leadership, was a common demand from enterprise customers to Microsoft Consulting Services. My journey into developer tooling started out with attempting to teach enterprise developers how to use specific (recommended) libraries and frameworks as intended (eg. Enterprise Library and others). That led into the development of architectural frameworks (eg. Enterprise Framework) that implemented the best practice guidance coming out of the Microsoft patterns & practices team in code assets that our enterprise customers adopted. Clearly, raising challenges around versioning and support once adopted. 
 
 At the same time, the MS patterns & practices team was looking at moving from delivering just written guidance to delivering "actionable guidance" and investigating open source, binary and tooling approaches for doing that. We saw the emergence of the first automation tooling from Microsoft in the "Guidance Automation Toolkit" that wrote the code configuration for various fixed architectural patterns.  At the same time deep investments (in talent acquisition from industry and money) were being made into DSM and DSL tooling in the Visual Studio teams, and the MS Software Factories movement started from the new thought leadership around this kind of approach. After establishing the movement, the Visual Studio team were creating product plans for a new software factory tooling platform, and it was discovered that I had already created a working software factory independently in the field, and was already selling it to our enterprise customers. Everything was aligning in that space at Microsoft for a new set of DSM tools.
 
@@ -69,15 +71,12 @@ There are many kinds of programming (as well as many platforms) and individual p
 
 ## What is it all about?
 
-* 
 * Reusing knowledge
-* Applying Coding Patterns
-* Automating Recipes
-* Constructing things fast
-* Configuring things with different options
+* Applying custom Coding Patterns reliably and consistently
+* Automating Recipes for quickly building code
+* Configuring things with different options, to adapt to different use cases.
 * Recording what you've learnt over the years
 * Speeding up the dull and boring parts of working in a codebase
 * Being and staying consistent.
 * Evolving consistently
-* 
 
