@@ -1,4 +1,12 @@
-﻿define DomainSlice
+﻿# This architecture is composed of de-coupled "domain slices", each which have a layers ports-adapters/onion/clean architecture, each of which uses DDD patterns in its "Domain" layer.
+# note: ServiceClients and Repositories are modelled in the "Infrastructure" layer.
+# "Application" layer is invoked by the API endpoints, or queue workers, etc all in the "Infrastructure" layer.
+# All dependencies are in the direction of the "Domain" layer.
+# No binary coupling between "domain slices", all cross-domain calls through adapters.
+# In-process calls through adapters from "Application" layer to "Application" layer of each slice. Out of process calls through adapters and service clients from "Application" layer to "Application" layer. 
+
+
+define DomainSlice
     has a property called Name
         gets its value from user input, validated with ModelIdentifierValidator 
     end property

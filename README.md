@@ -74,3 +74,6 @@ If this sounds like your situation then maybe we can help you define (and enforc
 
 1. Share the toolkit with your team/community to use.
 
+# Learn more
+
+At present we are in a validation stage. Validation, viability and research work is captured in the `docs` folder.
