@@ -1,313 +1,318 @@
 # CLI Syntax Example
 
-## Context
+This is a paper prototype of a CLI that could be used to deliver the core capabilities of autōmate.
 
-The steps for the Tech Lead, with the CLI, could look like this.
+## The Use Case
 
-A software team is about to embark on building a new API product/service for their company `Acme`. The new product/service is called `banana`.
+A software team is about to embark on building a new SaaS API product/service for their company `Acme`. 
 
-They have prior experience building such APIs, and have access to codebases where they have done his before.
+The new product/service is called `RoadRunner`.
 
-> We assume for now that: those codebases are either existing in their company already from prior APIs products/services that were built by this tech lead, or from open source projects the tech lead might be familiar with). Either way, they have access to these codebases, that they are familiar with.
+They have prior experience building such APIs, and have access to a number of codebases where they have done kind of work before.
 
-The Tech Lead knows that the code in those existing codebases is largely what they want to replicate in this new `banana` API, and the tech lead desires NOT to re-invent the wheel, and at the same time, that this new `banana` API will be based upon patterns that are slightly different than the existing APIs for a couple of reasons:
+> We assume for now that: those codebases are either existing in their company already (from prior APIs products/services) and that were built by this tech lead, or from open source projects the tech lead might be familiar with. Either way, the tech lead has access to these existing codebases, they are familiar with them, and they contain patterns that the tech lead wishes to use in the new product codebase.
 
-1. This new `banana` API does NOT need some of the things/aspects/interfaces/abstractions that the existing API codebases have, because the `banana` team wants to get started faster, and not have to deal with those kinds of technical problems/constraints just yet. Some of which are assumed will be more important later on the development of the API, but NOT now. This implies some extra work untangling some patterns of the existing codebases, which will lead to some extra experimentation by the tech lead.
-2. This new API is going to improve on the old API patterns (in the existing codebases) to deal with some of the accumulated technical debt that existed in the previous codebases. Now seems like a good time and opportunity to address them. This implies some extra experimentation and iteration to improve on those old patterns/capabilities by the tech lead.
-3. Existing patterns in existing codebases are solid enough and well-proven in production, and the tech lead wants to reuse them on this new `banana` API, as the `banana` team is slightly different and contains contributors that are not so familiar with these patterns as the tech lead.
+The Tech Lead knows that the code in those existing codebases is largely what they want to replicate in this new `RoadRunner` API, and the tech lead desires NOT to have the wheel re-invented by other contributors on their team. At the same time, this new `RoadRunner` API will be based upon patterns that are very slightly different than the existing APIs for a couple of reasons:
+
+1. This new `RoadRunner` API does NOT need some of the things/aspects/interfaces/abstractions that the existing API codebases have, because the `RoadRunner` team wants to get started faster, and not have to deal with those kinds of technical problems/constraints just yet. They will evolve. Some of which are assumed will be more important later on the development of the this API, but NOT now. This implies some extra work untangling some of the coding patterns of the existing codebases, which will lead to some extra experimentation by the tech lead.
+2. This new API is going to improve on the old API patterns (in the existing codebases) to deal with some of the accumulated technical debt that existed in the previous codebases. Now, seems like a good time and opportunity to address them. This implies some extra experimentation and iteration to improve on those old patterns/capabilities by the tech lead.
+3. Existing patterns in existing codebases are solid enough and well-proven in production already, and the tech lead wants to reuse them on this new `RoadRunner` API. Furthermore, the `RoadRunner` team is slightly different and contains contributors that are not so familiar with these patterns as the tech lead.
+
+### Problem Statement
+
+How can the tech lead *quickly and easily* capture the coding patterns they think should be re-used in the new codebase, and *make it easy* for the contributors in their new team to use them reliably and consistently. So that they all (tech lead and contributors) *can focus on* where the real learning needs to be in the new `RoadRunner` product/service?
+
+>  We will use the word *Conceptual* to describe the idea in your mind.
+
+>  We will use the word *Logical* to describe the realised model of the idea (in practice, with practical constraints considered). 
 
 ## The New Process
 
-This is how that tech lead (on the `banana` team) would go about using the **autōmate** (prototypical CLI) to get the job done.
+This is how that tech lead (on the `RoadRunner` team) could go about using the **autōmate** to get the job done.
 
-The job being to:
+> It is not important at this stage what programming language we are using to demonstrate this example. It could be in C# building a .Net5 ASP/NET app, or it could be JavaScript building a NodeJS app, or Java files building a Spring app. By necessity we need to give examples in code, so for now, we will be demonstrating this in C# ASP.NET MVC in .Net5. The CLI itself is technology agnostic, and can perform the same tasks no matter what programming language is ultimately used.
 
-        **Give their new `banana` team some tools to accelerate the build out the new API codebase, based upon patterns that they harvested from existing API codebases.**
+Assumptions about `Acme` APIs:
 
-> It is not important at this stage what programming language we are building these API's in. It could be in C# building a .Net5 ASP/NET app, or it could be JavaScript building a NodeJS app, or Java files building a Spring app. By necessity we need to give examples in code, so for this example, we will be demonstrating this in C# ASP.NET MVC in .Net5.
+* An API at `Acme` is implemented with common conventions and patterns developed that have already been evolving at `Acme`. 
+* The spoken/written language that describes how API's are designed/constructed, is common (enough) across the engineering teams building them.
+* At `Acme` API products/services are usually built with patterns that loosely follow a ports and adapters architecture (Hexagonal/Onion/Clean architecture), uses CQRS-like patterns, and uses some domain driven design at its core.
 
-Logically, an API is implemented with common conventions and patterns developed and adopted at `Acme`. These patterns loosely follow a ports and adapters architecture (Hexagonal/Onion/Clean architecture), uses CQRS-like patterns and uses some domain driven design.
+When a new API product/service is built at `Acme`, it involves building these concepts/terms in code (in bold), and is logically put together like this:
 
-When a new API is created at `Acme`, it involves building these concepts in code (in bold), and is logically put together like this:
-
-* An API is defined in the **Infrastructure Layer**.
-* An API is defined as containing multiple **Resources** (as in, as REST resource)
-* Each Resource having one or more **Service Operations**
-* Each service operation has a **Request DTO**, and a **Response DTO**. Each of these DTO's has one or more fields. These fields are a simple dictionary for requests, and can be more complex nested dictionaries for responses. All request/response DTO are serializable and can be serialised to JSON (and other common formats: CSV, XML, etc).
+* The code defining a web API interface is defined in the **Infrastructure Layer**.
+* An API is segregated by a logical **Resource** (as in, a REST resource)
+* Each Resource having one or more **Service Operations** (i.e. endpoints)
+* Each service operation has a **Request DTO**, and a **Response DTO**. Each of these DTO's has one or more **Fields**. These fields make up a simple dictionary for requests, and can be more complex nested dictionaries for responses. All request/response DTO's are serializable and can be serialised to JSON on the wire (and other common formats: CSV, XML, etc).
 * Each service operation has a **Route** (can define multiple).
 * Each service operation may be **Authorized** with a token or not authorized at all (anonymous).
 * Optionally, each service operation may cache its response.
 * Optionally, each service operation may apply a rate limiting policy (eg. per user, per timeframe, etc).
-* Each service operation corresponds to a method call to an **Application Interface** in the **Application Layer**. The call from service operation to application interface, converts all request DTO data into shared DTOs, and extracts the user's identifier from the token, passes through all of that to the application interface. On the way back, exceptions are converted to appropriate HTTP status codes and descriptions, and all data is converted to response DTOs. The only data in and out of the application interface are DTOs that are declared by the Application Layer.
-* The Application Layer is defined by bounded contexts. One Application Interface per bounded context.
-* The Application interface retrieves the Root Aggregate (for this bounded context) from persistence, and operates on that aggregate (for Commands. The Application interface retrieves data directly from persistence via Read Models (for Queries). The code for each of these kinds of operations has some *loose* patterns, but none of those patterns can be predicted well-enough, and must be hand crafted by a contributor.
-* The Application Layer also contains adapters to persistence stores via **Repositories**, **Read Models** and contains other **Service Client** adapters to external HTTP services that are necessarily hand crafted.
+* Each service operation corresponds to a method call to an **Application Interface** in the **Application Layer**. The call from service operation to application interface, converts all request/response DTO data into shared application level DTOs, and extracts the user's identifier from the Authorization token, and passes through all of that data to the application interface. On the way back, exceptions are converted to appropriate HTTP status codes (and descriptions), and all data is converted into response DTOs. The only data in and out of the application interface are DTOs that are declared by the Application Layer.
+* The Application Layer is defined by **bounded contexts**. One Application Interface per bounded context. (these may or may not reflect directly the REST resources)
+* The Application Interface retrieves a Root Aggregate (for this bounded context) from a persistence store, and operates on that aggregate (for Command operations). The Application Interface retrieves data directly from persistence via Read Models (for Query operations). The code for each of these kinds of operations has some *loose* patterns, but none of those patterns can be predicted well-enough, and must be hand crafted by a contributor on the team.
+* The Infrastructure Layer also contains adapters to persistence stores via **Repositories**, **Read Models** and other **Service Client** adapters to external HTTP services that are also necessarily hand crafted.
 * The **Domain Layer** necessarily contains hand crafted **Aggregates**, **Value Objects**, **Domain Services** etc.
 
-> Note: all the terms in bold above, are terms that all contributors on API codebases at `Acme` understand in their mental model of building an API. These terms are often encoded into the names and into the structure of codebases built at Acme. They are part of the language of building API's at `Acme`, and used in all design communication.
+> Note: all the terms in bold above, are terms that all contributors on API codebases at `Acme` understand in their mental model of building an API. These terms are often encoded into the names and into the structure of codebases built at Acme. They are part of the language of building API's at `Acme`, and used in all communicating the design of API products/services.
 
 ### Step 1 - Capture a basic pattern
 
 The tech lead now intends to provide some custom tooling to their team to help build out new API's at `Acme`, using the logical programming model described earlier.
 
-On the command line, navigate to the source code directory of the new product called `banana`. eg. `cd C:/projects/acme/banana/src`
+On the command line, navigate to the source code directory of the new product called `RoadRunner`. eg. `cd C:/projects/acme/roadrunner/src`
 
-`automate new pattern AcmeAPI`
+`automate add --pattern "AcmeAPI"`
 
-> This command registers a new pattern called `AcmeAPI` in the current directory. It saves a bunch of files defining the pattern, which could be added to source control.
+> This command registers a new pattern called `AcmeAPI` in the current directory. It saves a bunch of files defining the pattern, which could be added to source control in the `C:/projects/acme/roadrunner/src/automate` directory.
 
-Now, the tech lead will want to extract a coding pattern that exists in the existing codebases. For example, the last one, which is rooted at: `C:/projects/acme/apple/src/`. These patterns may exist in one file, or they may exist across several files in multiple directories. We assume here that the pattern is spread across multiple files, in different directories.
+Now, the tech lead will want to extract coding patterns that exists in the existing codebases. For example, the last codebase they worked on, which is rooted at: `C:/projects/acme/coyote/src/`. 
 
-The tech lead identifies all these files that each contain a fragment of the pattern. At this stage, the tech lead has an idea of the complete pattern in their head, and uses their editing tools to view it. All they need to know at this point, is which files it exists in.
+These patterns may exist in one file, or they may exist across several files in multiple directories. We will assume here that the pattern is spread across multiple files, in different directories.
 
-Lets assume for this example, that the fragments of this pattern exist in all these files of a current codebase:
+The tech lead identifies all the files (that each contain a fragment of the pattern). At this stage, the tech lead has an idea of the complete pattern in their head, and uses their editing tools to view it as a whole. 
+
+All they need to know at this point, is which set of files the pattern exists within.
+
+Lets assume for this example, that the fragments of this pattern exist in all these files of the `Coyote` codebase:
 
 ```
-- src
-	- backend
-		- controllers
-			- BookingController.cs
-		- services
-			- BookingService.cs
-			- IBookingService.cs
+- coyote
+	- src
+		- backend
+			- controllers
+				- BookingController.cs
+			- services
+				- BookingService.cs
+				- IBookingService.cs
+            - data
+                - Bookings.cs
 ```
 
 For each file that contains a fragment of the pattern, they execute this command:
 
-`automate add template <file-path>`
+`automate add --codetemplate "<file-path>"`
 
-> This command registers a CodeTemplate on the `AcmeAPI` pattern, called `Template1`, which contains all the code from the file at `<file-path>`.
+> This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically name like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`
 
-For this codebase, this will be 3 commands:
+For this codebase, this will be four similar commands:
 
-* `automate add template backend/controllers/BookingController.cs`
+* `automate add --codetemplate "backend/controllers/BookingController.cs"`
+* `automate add --codetemplate "backend/services/BookingService.cs"`
+* `automate add --codetemplate "backend/controllers/IBookingService.cs"`
+* `automate add --codetemplate "backend/data/Bookings.cs"`
 
-* `automate add template backend/services/BookingService.cs`
+> This means now that conceptually, the pattern called `AcmeAPI` has a root element (called `AcmeAPI`) with four code templates called `CodeTemplate1` `CodeTemplate2`, `CodeTemplate3` and `CodeTemplate4`.
 
-* `automate add template backend/controllers/IBookingService.cs`
+So far, we don't have much, just a new pattern called `AcmeAPI`, and four code templates. 
 
-> This means now that conceptually, the pattern called `AcmeAPI` has three templates called `Template1` `Template2` and `Template3`.
-
-So far, we don't have much, just a new pattern called `AcmeAPI`, and that has 3 templates. Conceptually, it looks like this.
+Conceptually, it would look like this, if we drew it as a logical structure.
 
 ```
-- AcmeAPI (pattern element, attached with 3 templates)
+- AcmeAPI (root element, attached with 4 code templates)
 ```
 
 ### Step 2 - Define some attributes of the pattern
 
-Now that the tech lead has a *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor on their team customize this specific API to be useful in a new product called `banana`. Obviously, a developer (on the `banana` team) is going to need to define their own API's for the `banana` product, and they are not going to want to copy and paste the `Booking` API, that was extracted from the existing codebase, and now lives in the 3 code templates.
+Now that the tech lead has defined a new *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor on their team customize this specific API to be useful in a new product like the `RoadRunner` API their team will be building. 
 
-The tech lead now has to identify, **what will be different** between the `Booking` API of the existing codebase, and any new API being built in the next codebase.
+Obviously, a contributor (on the `RoadRunner` team) is going to need to define their own API's for the `RoadRunner` product, and they are not going to want to copy and paste the `Booking` API that was extracted from the `Coyote` codebase, and now lives in the 3 code templates. These code templates are not yet reusable.
 
-> Clearly, a bunch of things will need to be different. (1) The names of the files (and possibly directories) produced from this pattern will need to be different, and (2) so will the actual code in those files. Including the names of code constructs like classes and methods in those files.
+The tech lead now has to identify, **what will be different** between the `Booking` API of the `Coyote` codebase, and any new API being built in the next codebases.
 
-The tech lead decides that the developer will have to at least name the new API, because that name influences the file names of the logical `Controller`, `Service Interface` and `Service Implementation` which are all classes that need to be created to contain the code specific to this new API.
+> Clearly, a bunch of things will need to be different. 
+>
+> * (1) The names of the files (and possibly directories) produced from this pattern will need to be different, and 
+> * (2) so will the actual code in those files. Including the names of code constructs like classes and methods in those files. 
+> * But also (3) there are also a whole bunch of technical details that can very between API's.
+
+The tech lead decides that the contributor will have to at least name the new API, (equivalent to `Bookings` from the `Coyote` API) because that name influences the file names of the logical `Controller`, `Service Interface` and `Service Implementation` files which are also classes that need to be created to contain the code specific to this new API. They also decide that they need a singular name for the resource of the API (e.g. `Booking` from the `Coyote` API) 
 
 So the tech lead defines an attribute on the pattern called `Name`
 
-`automate add attribute "Name" isrequired`
+`automate add --attribute "Name" --isrequired`
 
-Now, the tech lead knows that every new API contains multiple Service Operations (according to existing coding patterns).
+and then the `ResourceName` attribute:
 
-They now need to add a collection to the pattern to allow their contributors to add multiple Service Operations.
+`automate add --attribute "ResourceName" --isrequired`
 
-`automate add collection "Operations" describedas "The service operations of the API" `
+Now, the tech lead knows that every new API contains multiple "Service Operations" (according to existing coding patterns).
 
-> Notice here that the tech lead decided to name this collection `Operations` and give it a meaningful description, rather than name it `Service Operations`. This is for brevity.
+They now need to add a collection to the pattern to allow their contributors to define multiple operations.
 
-Now, the tech lead needs to add a new Element to the collection representing each `Service Operation`, and on this element, define some attributes that describe each operation (as per pattern defined above).
+`automate add --collection "Operations" --describedas "The service operations of the web API" `
 
-`automate add element "ServiceOperation" aschildof {AcmeAPI.Operations}`
+> Notice here that the tech lead decided to name this collection `Operations` and give it a meaningful description, rather than name it `Service Operations`, since we are implicitly in the context of a notional service.
 
-And then the necessary attributes:
+Now, the tech lead needs to add a new "Element" to the collection representing each `Service Operation`, and on this element, define some attributes that describe each operation (as per the pattern defined above).
 
-`automate add attribute "Name" isrequired aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add --element "ServiceOperation" --aschildof {AcmeAPI.Operations}`
 
-`automate add attribute "Verb" isrequired isoneof "POST;PUT;GET;PATCH;DELETE" aschildof {AcmeAPI.Operations.ServiceOperation}`
+> Notice that the name of the element cannot contain spaces, since it is an identifier.
 
-`automate add attribute "Route" isrequired aschildof {AcmeAPI.Operations.ServiceOperation}`
+And then the necessary attributes of an operation:
 
-`automate add attribute "IsAuthorized" isrequired typeis "bool" defaultvalueis "true" aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add --attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation}`
 
-> Note: the optional properties of a `Service Operation`, such as response caching and rate limiting are deliberately omitted here for simplicity. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `banana` product matures.
+`automate add --attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.Operations.ServiceOperation}`
 
-A `ServiceOperation` is required to have a Request DTO and a response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `Service Operation` as a collection of `Field` elements with various useful attributes.
+`automate add --attribute "Route" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation}`
+
+`automate add --attribute "IsAuthorized" --isrequired --typeis "bool" --defaultvalueis "true" --aschildof {AcmeAPI.Operations.ServiceOperation}`
+
+> Note: the tech lead has deliberately ignored the optional properties of a `ServiceOperation`, such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `RoadRunner` product matures.
+
+Now, a `ServiceOperation` is required to have a Request DTO and a response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various useful attributes.
 
 First the request DTO:
 
-`automate add collection "Request" aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add --collection "Request" --aschildof {AcmeAPI.Operations.ServiceOperation}`
 
-`automate add element "Field" aschildof {AcmeAPI.Operations.ServiceOperation.Request}`
+`automate add --element "Field" --aschildof {AcmeAPI.Operations.ServiceOperation.Request}`
 
-`automate add attribute "Name" isrequired aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add --attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
 
-`automate add attribute "Type" isrequired isoneof "string;int;bool;DateTime" defaultvalueis "string" aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add --attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
 
-`automate add attribute "IsOptional" isrequired typeis "bool" defaultvalueis "false" aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add --attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
 
 and similarly, for the Response DTO:
 
-`automate add collection "Response" aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add --collection "Response" --aschildof {AcmeAPI.Operations.ServiceOperation}`
 
-`automate add element "Field" aschildof {AcmeAPI.Operations.ServiceOperation.Response}`
+`automate add --element "Field" --aschildof {AcmeAPI.Operations.ServiceOperation.Response}`
 
-`automate add attribute "Name" isrequired aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
+`automate add --attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
 
-`automate add attribute "Type" isrequired isoneof "string;int;bool;DateTime" defaultvalueis "string" aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
+`automate add --attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
 
 So far, we are starting to build up our conceptual model. It now looks like this:
 
 ```
-- AcmeAPI (pattern element, attached with 3 templates)
-	- (attributes):
-		- Name (string, required)
+- AcmeAPI (root element) (attached with 4 code templates)
+	- Name (attribute) (string, required)
+	- ResourceName (attribute) (string, required)
 	- Operations (collection)
 		- ServiceOperation (element)
-			- (attributes):
-				- Name (string, required)
-				- Verb (required, oneof: "POST;PUT;GET;PATCH;DELETE")
-				- Route (string, required)
-				- IsAuthorized (boolean, default: true)
+            - Name (attribute) (string, required)
+            - Verb (attribute) (required, oneof: "POST;PUT;GET;PATCH;DELETE")
+            - Route (attribute) (string, required)
+            - IsAuthorized (attribute) (boolean, default: true)
 			- Request (collection)
 				- Field (element)
-					- (attributes):
-						- Name (string, required)
-						- Type (required, oneof "string;int;bool;DateTime")
-						- IsOptional (boolean, default: false)
+                    - Name (attribute) (string, required)
+                    - Type (attribute) (required, oneof "string;int;bool;DateTime")
+                    - IsOptional (attribute) (boolean, default: false)
 			- Response (collection)
 				- Field (element)
-					- (attributes):
-						- Name (string, required)
-						- Type (required, oneof "string;int;bool;DateTime")
+                    - Name (attribute) (string, required)
+                    - Type (attribute) (required, oneof "string;int;bool;DateTime")
 ```
 
-So, with this conceptual meta-model, a contributor on the `banana` product can now define any API in the `banana` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
+So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
 
-The code that needs to be written into the codebase (C# classes, enums, interfaces, etc) that are needed to contain the Controller, Service Interface, and Service Implementation can now be derived from this meta-model, and the file names, and directory structure for those classes can be derived from this meta-model too, with naming and structural conventions the tech lead can define.
+The code that needs to be written into the codebase (C# classes, enums, interfaces, etc) that are needed to contain the Controller, Service Interface, Service Implementation and DTOs can now be derived from this meta-model, and the file names, and directory structure for those classes can be derived from this meta-model too, with naming and structural conventions the tech lead can define.
 
 ### Step 3 - Templatize the Code
 
-The next challenge is to modify the code templates of existing code to read the meta-model above, and produce the appropriate code in the right places in the codebase.
+The next challenge is to modify the code templates of the existing code templates to read the meta-model above, and produce the appropriate code in the right places in the codebase.
 
 For this, the tech lead will need to update the code templates that they have already captured (on the pattern element), which will now need to navigate the meta-model and combine the data from the meta-model with established coding patterns into generated code.
 
-> Note: Each file that is generated from each of the code templates will eventually need to be named, and placed into the `banana` codebase in the appropriate directory, with the appropriate name. That process will happen in the next step.
+> Note: Each file that is generated from each of the code templates will eventually need to be named, and placed into the `RoadRunner` codebase in an appropriate directory, with an appropriate file name. That process will happen in the next step.
 
-The tech lead, now needs to fire up their favourite text editor and modify the 3 code templates they harvested already.
+The tech lead, now needs to fire up their favourite text editor and modify all the code templates they harvested already.
 
-The code template files have been renamed with the extension `.tt` and can be found in the following location:
+The code template files have been renamed and can be found in the following location:
 
-`C:/projects/acme/banana/src/automate/codetemplates`
+`C:/projects/acme/roadrunner/src/automate/codetemplates`
 
-There are 3 templates, each with a unique name that was assigned to it when the `automate add template` command was run.
+Each code template has a unique name that was assigned to it when the `automate add --codetemplate "<filepath>"` command was run.
 
 Either look at the CLI output to find out the name of the template that was created. Or you can run this command to list them:
 
-`automate list codetemplates`
+`automate list --codetemplates`
 
-Open each of the `*.tt` files in a text editor.
+Open each of the template files in a text editor.
 
-Make the following changes:
+Make the following changes to them:
 
 #### Template1 - Controller
 
 ```
-<#@ Pattern processor="PatternModelDirectiveProcessor" requires="fileName='automate\Model\Pattern.metamodel'"#>
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Acme.<#=Pattern.Name #>.Controllers
+namespace Acme.RoadRunner.Controllers
 {
-// Generate the ASP.NET Controller class
+{{~#Generate the Controller class~}}
 	[ApiController]
-	public partial class <#=this.AcmeAPI.Name #>Controller : Controller
+	public class {{model.name}}Controller : Controller
 	{
-<#
-foreach (var operation in this.AcmeAPI.Operations.Items)
-{
-#>
-<#
-if (operation.IsAuthorized)
-{
-#>
-			[Authorize]
-<#
-}
-else
-{
-#>
-			[AllowAnonymous]
-<#
-}
-#>
-			[Http<#=operation.Verb #>]
-			[Route( "<#=operation.Route #>" )]
-			public IActionResult <#=operation.Name #>(<#=operation.Name#>Request request)
-			{
-				var response = this.application.<#=operation.Name #>(request.ToDto());
-				return OK(response.ToResponse());
-			}
-<#
-}
-#>
+{{~for operation in model.operations.items~}}
+{{~if operation.is_authorized~}}
+		[Authorize]
+{{~else~}}
+		[AllowAnonymous]
+{{~end~}}
+		[Http{{operation.verb}}]
+		[Route( "{{operation.route}}" )]
+		public IActionResult {{operation.name}}({{operation.name}}Request request)
+		{
+			var resource = this.application.{{operation.name}}(request.ToDto());
+			return OK(resource.ToResponse());
+		}
+{{~end~}}
 	}
     
-// Generate the Request class
-<#
-foreach (var operation in this.AcmeAPI.Operations.Items)
-{
-#>
-	public class <#=operation.Name #>Request
+{{~#Generate the Request & Response classes~}}
+{{~for operation in model.operations.items~}}
+	public class {{operation.name}}Request
 	{
-<#
-foreach (var field in operation.Request.Items)
-{
-#>
-		public <#=field.Type #><#=field.IsOptional ? "?" : "" #> <#=field.Name #> { get; set; }
-<#
-}
-#>
+{{~for field in operation.request.items~}}
+		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+{{~end~}}
 	}
 
-// Generate the Response class
-	public class <#=operation.Name #>Response
+	public class {{operation.name}}Response
 	{
-<#
-foreach (var field in operation.Response.Items)
-{
-#>
-		public <#=field.Type #> <#=field.Name #> { get; set; }
-<#
-}
-#>
+{{~for field in operation.response.items~}}
+		public {{field.type}} {{field.name}} { get; set; }
+{{~end~}}
 	}
-<#
-}
-#>
+{{~end~}}
 
-// Generate converters (using AutomMapper)
-	internal static class <#=this.AcmeAPI.Name #>ConversionExtensions
+{{~#Generate the Application DTO classes~}}
+{{~for operation in model.operations.items~}}
+	public class {{operation.name}}
 	{
-<#
-foreach (var operation in this.AcmeAPI.Operations.Items)
-{
-#>
-			public static <#=operation.Name #>Dto ToDto(this <#=operation.Name#>Request request)
+{{~for field in operation.request.items~}}
+		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+{{~end~}}
+	}
+
+	public class {{model.resource_name}}
+	{
+{{~for field in operation.response.items~}}
+		public {{field.type}} {{field.name}} { get; set; }
+{{~end~}}
+	}
+{{~end~}}
+
+{{~#Generate DTO converters (using AutoMapper)~}}
+	internal static class {{model.name}}ConversionExtensions
+	{
+{{~for operation in model.operations.items~}}
+			public static {{operation.name}} ToDto(this {{operation.name}}Request request)
 			{
-				var dto = request.ConvertTo<<#=operation.Name #>Dto>();
-				return dto;
+				return request.ConvertTo<{{operation.name}}>();
 			}
 
-			public static <#=operation.Name #>Response ToResponse(this <#=operation.Name#>Dto dto)
+			public static {{operation.name}}Response ToResponse(this {{model.resource_name}} dto)
 			{
-				var response = dto.ConvertTo<<#=operation.Name #>Response>();
-				return response;
+				return dto.ConvertTo<{{operation.name}}Response>();
 			}
-<#
-}
-#>
+{{~end~}}
 	}
 }
 ```
@@ -315,160 +320,235 @@ foreach (var operation in this.AcmeAPI.Operations.Items)
 #### Template2 - Service Implementation
 
 ```
-<#@ Pattern processor="PatternModelDirectiveProcessor" requires="fileName='automate\Model\Pattern.metamodel'"#>
 using System;
 
-namespace Acme.<#=Pattern.Name #>.Services
+namespace Acme.RoadRunner.Services
 {
-	public class <#=this.AcmeAPI.Name #>Service : I<#=this.AcmeAPI.Name #>Service
+	public class {{model.name}}Service : I{{model.name}}Service
 	{
-<#
-foreach (var operation in this.AcmeAPI.Operations.Items)
-{
-#>
-		public <#=operation.Name#>Dto <#=operation.Name #>(<#=operation.Name#>Request dto)
+{{for operation in model.operations.items}}
+		public {{operation.name}}Dto {{operation.name}}({{operation.name}}Request dto)
 		{
 			// Put your custom here and populate the return object
 			return null;
 		}
-<#
-}
-#>
+{{end}}
 	}
 }
 ```
 
-#### Template 3 - Service Interface
+#### Template3 - Service Interface
 
 ```
-<#@ Pattern processor="PatternModelDirectiveProcessor" requires="fileName='automate\Model\Pattern.metamodel'"#>
 using System;
 
-namespace Acme.<#=Pattern.Name #>.Services
+namespace Acme.RoadRunner.Services
 {
-	public interface <#=this.AcmeAPI.Name #>Service
+	public interface {{model.name}}Service
 	{
-<#
-foreach (var operation in this.AcmeAPI.Operations.Items)
-{
-#>
-		<#=operation.Name#>Dto <#=operation.Name #>(<#=operation.Name#>Request dto);
-<#
-}
-#>
+{{for operation in model.operations.items}}
+		{{operation.name}}Dto {{operation.name}}({{operation.name}}Request dto);
+{{end}}
 	}
 }
 ```
 
-> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language. Microsoft T4 text templating is the example here.
+#### Template4 - Application DTOs
+
+```
+using System;
+
+namespace Acme.RoadRunner.DTOs
+{
+{{~#Generate the Application DTO classes~}}
+{{~for operation in model.operations.items~}}
+	public class {{operation.name}}
+	{
+{{~for field in operation.request.items~}}
+		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+{{~end~}}
+	}
+
+	public class {{model.resource_name}}
+	{
+{{~for field in operation.response.items~}}
+		public {{field.type}} {{field.name}} { get; set; }
+{{~end~}}
+	}
+{{~end~}}
+}
+```
+
+> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language. 
+>
+> Here, we are using a text templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax.
 
 ### Step 4 - Generate the Code
 
-Now that the tech lead has the three code templates modified, the last step is to define *when* the code templates are rendered, and *where* the generated code is placed in the codebase of the new `banana` product.
+Now that the tech lead has the all the code templates modified, the last step is to define *when* the code templates are rendered, and *where* the generated code is placed in the codebase of the new `RoadRunner` product.
 
-The tech lead decides that they will use the same directory structure and naming convention as used in the previous product `apple`.
+The tech lead decides that they will use the same directory structure and naming convention as used in the previous product `Coyote`.
 
-However, the tech lead also knows that the `Service Implementation` class is likely to be written by hand by one of the contributors on the team. Whereas, the `Controller` class and the `Service Interface` can likely be generated.
+However, the tech lead also knows that the `Service Implementation` class is likely to be written by hand by one of the contributors on the team. Whereas, the `Controller` class,  the `Service Interface` and the `DTO` classes can be generated in full.
 
-Therefore the `Service Implementation` class will only be generated if the file does not already exist, and once it is generated never generate again. Whereas the `Service Interface` and `Controller` files will always be generated and kept up to date as things change.
+Therefore the `Service Implementation` class will only be generated if the file does not already exist, and once it is generated never generate again. Whereas the `Service Interface`, `Controller` and `DTO` files will always be generated and kept up to date as the pattern changes.
 
 The next thing to figure out, is how to generate the files.
 
-This can be done whenever new `Service Operations` are added (or changed) as an *Event* or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options). In either case, a *Launch Point* needs to be defined and added to the pattern to do this code rendering. These commands will decide **where** to render the files.
+This can be done whenever some event on the meta-model is raised. For example, when new `Service Operations` are added (or changed) or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options). In either case, a *Launch Point* needs to be defined and added to the pattern to execute the code template rendering. 
 
-`automate add codetemplatecommand "Template1" aschildof {AcmeAPI} withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
+These commands will decide **where** to render the files, and what filenames to use.
 
-`automate add codetemplatecommand "Template2" astearoff aschildof {AcmeAPI} withpath "~/backend/Services/{{Name}}Service.cs"`
+`automate add --codetemplatecommand "CodeTemplate1" --aschildof {AcmeAPI} --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
 
-`automate add codetemplatecommand "Template3" aschildof {AcmeAPI} withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
+`automate add --codetemplatecommand "CodeTemplate2" --astearoff --aschildof {AcmeAPI} --withpath "~/backend/Services/{{Name}}Service.cs"`
 
-> These commands adds new commands for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
+`automate add --codetemplatecommand "CodeTemplate3" --aschildof {AcmeAPI} --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
+
+`automate add --codetemplatecommand "CodeTemplate4" --aschildof {AcmeAPI} --withpath "~/backend/Data/{{Name}}.gen.cs"`
+
+> These commands adds new "Commands" for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
 >
-> Notice that for "Template2" we use the keyword `astearoff`  (and a slight variation on the file extension in the `withpath` attribute) to indicate that this file will only be generated once, and only if, the specified file does not exist at the specified location with the specified name.
+> Notice that the filename for each uses an expression that includes the `Name` attribute of the pattern.
 >
-> The `withpath` attribute starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern.
+> Notice that for `CodeTemplate2` we use the option `--astearoff`  (and a slight variation on the file extension in the `--withpath` option) to indicate that this file will only be generated once, and only if the specified file does not exist at the specified location with the specified name.
+>
+> The `--withpath` option starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern. Which for this case is the current directory.
 
-Now, that we have three explicit commands to execute, we define a single launch point that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
+Now, that we have the four explicit commands to execute, we can define a single "Launch Point" that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
 
-`automate add commandlaunchpoint "<CMDID1>;<CMDID2>;<CMDID3>" as "Generate" aschildof {AcmeAPI}`
+`automate add --commandlaunchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --as "Generate" --aschildof {AcmeAPI}`
 
-> This command adds a launch Point called "Generate" that can now be executed on the `AcmeAPI` element.
+> This command adds a "Launch Point" called `Generate` that can now be executed on the `AcmeAPI` element.
 
 ### Step 5 - Build the Toolkit, and Ship It
 
-Now the tech lead has a functioning pattern it time to ship it to their team.
+Now the tech lead has a functioning pattern, it time to ship it to their team.
 
-`automate build "AcmeAPI"`
+`automate build --name "AcmeAPI" --version "auto"`
 
-> This command creates a standalone (cross-platform) application that will automatically be versioned and can now be installed by contributors at Acme.
+> This command creates a standalone (cross-platform) package (`AcmeAPI.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
 
 ### Step 6 - Apply the Pattern
 
-Navigate to the new `banana` codebase: `cd C:/projects/acme/banana/src`
+Navigate to the new `RoadRunner` codebase: `cd C:/projects/acme/roadrunner/src`
 
-Install the downloaded toolkit:
+Download and install the new toolkit:
 
-`automate install "C:/Downloads/AcmeAPI.toolkit"`
+`automate install --file "C:/Downloads/AcmeAPI.toolkit"`
 
-> This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/banana/src/automate/toolkits/AcmeAPI/v1.0.0.0`
+> This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/roadrunner/src/automate/toolkits/AcmeAPI/v1.0.0.0`
 
-Now, a project contributor can define a new API with this toolkit.
+Now, a project contributor can define their own API with this toolkit.
 
-#### The New API
+#### Creating the New API
 
-For this example, lets call the new API the `Orders` API.
+For this example, lets call the new API the `Orders` API, in the `RoadRunner` product/service.
 
-This API has one authorized POST operation called `CreateOrder` at `/orders`.
-
-This HTTP request takes a `ProductId` as the only request parameter, and returns a completed Order with an `Id` property in the response.
+* The new API will have one authorized POST operation called `CreateOrder` at `/orders`.
+* This HTTP request takes a `ProductId` as the only request parameter
+* It returns a completed `Order` with an `Id` property in the response.
 
 To get started:
 
-`automate with "AcmeAPI" add "AcmeAPI" with "Name=Orders"`
+`automate --toolkit "AcmeAPI" --new -with "Name=Orders"`
 
-> This command creates a new `AcmeAPI`, and returns its unique ID.
+> This command creates a new `AcmeAPI`, and returns its unique PATTERNID.
 
-`automate with "AcmeAPI" add "ServiceOperation" to "<PATTERNID>.Operations" with "Name=CreateOrder" with "Verb=Post" with "Route=/orders" with "IsAuthorized=true"`
+`automate --pattern "<PATTERNID>" --set "ResourceName=Order"`
 
-> This command creates a new `ServiceOperation` to the "Operations" collection, and returns its unique ID.
+> This command defines the `ResourceName` attribute of the pattern
+
+`automate --pattern "<PATTERNID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
+
+> This command creates a new `ServiceOperation` instance to the "Operations" collection, and returns its unique OPERATIONID.
 >
-> Notice we `add` `to` an expression that navigates the graph of object instances here, starting from the referenced ID, which is a convenience.
 
-`automate with "AcmeAPI" add "Field" to "<OPERATIONID>.Request" with "Name=ProductId" with "Type=string" with "IsOptional=false"`
+`automate --pattern "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
 
 > This command creates a new field in the Request DTO called `ProductId`
 
-`automate with "AcmeAPI" add "Field" to "<OPERATIONID>.Response" with "Name=Id" with "Type=string"`
+`automate --pattern "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
 
 > This command creates a new field in the Response DTO called `Id`
 
-Now that the new Acme API called `Orders` is completely configured, a codebase contributor can now get the toolkit to write the code for them!
 
-`automate with "AcmeAPI" execute "Generate"`
 
-> This command runs the `Generate` launch point (on the root pattern element), which runs the configured commands, that generates the code files from the three code templates. The code is written into the codebase at the relevant locations.
+After this set of commands, the pattern is fully configured.
+
+Behind the scenes, the pattern meta-model has been populated with data that looks like this.
+
+```
+{
+    "name": "Orders",
+	"resource_name": "Order",
+    "operations": {
+        "description": "",
+        "items": [{
+                "name": "CreateOrder",
+                "verb": "Post",
+                "route": "/orders",
+                "is_authorized": true,
+                "request": {
+                    "description": "",
+                    "items": [{
+                            "name": "ProductId",
+                            "type": "string",
+                            "is_optional": false
+                        }
+                    ]
+                },
+                "response": {
+                    "description": "",
+                    "items": [{
+                            "name": "Id",
+                            "type": "string",
+                        }
+                    ]
+                },
+            }
+        ]
+    }
+}
+```
+
+> Notice, that the names of elements in the meta-model have been changed to snake-case.
+>
+> Notice, that the collections in the meta model have `items` containing the sub-elements.
+
+
+
+A codebase contributor can now ask the toolkit to write the new code for them!
+
+`automate --pattern "<PATTERNID>" --executecommand "Generate"`
+
+> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase at the relevant locations.
 
 > If any of the required properties are not set, an error will be displayed. If all goes well, a list of commands will be displayed.
 
-The `banana` codebase should now look like this:
+The `RoadRunner` codebase should now look like this:
 
 ```
 - projects
 	- acme
-		- banana
+		- RoadRunner
 			- src
 				- automate
 					- (various directories and files)
 				- backend
-					- Controllers
+					- controllers
 						- OrdersController.gen.cs
-					- Services
+					- services
 						- IOrdersService.gen.cs
 						- OrdersService.cs
+					- data
+						- Orders.gen.cs
 ```
 
-The codebase contributor is now able to change the new Orders API in whatever way they like, or they can add more APIs.
+A codebase contributor will need to manually complete write the missing code in the `OrdersService.cs` class, as this toolkit (as it is now) is not able to take that code any further.
 
-The codebase contributor will need to manually complete write the missing code in the `ordersService.cs` class, as this toolkit (as it is now) is not able to take it further.
+The codebase contributor could change the configuration of the Orders API in whatever way they like, and execute the command to update the code. Or they can add more service operations.
 
-The tech lead is free to modify or extend their pattern, add/remove/change anything they like, and then ship another version of the toolkit to their team. Where the toolkit will be updated.
+They can also use this toolkit to create another API, like `Customers` API.
+
+The tech lead is free to modify or extend the pattern, add/remove/change anything they like, and then ship another version of the toolkit to their team. Where the toolkit will be updated, and code fixes can be applied.
