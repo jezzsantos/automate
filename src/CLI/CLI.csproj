@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>automate</AssemblyName>
+        <RootNamespace>automate</RootNamespace>
+        <PackageId>automate</PackageId>
+        <Authors>jezzsantos</Authors>
+        <Description>Templatise patterns from your own codebase, make them programmable, then share them with your team</Description>
+        <PackageProjectUrl>https://github.com/jezzsantos/automate</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/jezzsantos/automate/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <Company>jezzsantos</Company>
+        <Product>automate</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" Version="2.0.0-beta2.21617.1"/>
+        <PackageReference Include="System.CommandLine.DragonFruit" Version="0.4.0-alpha.21617.1"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>CLI.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>CLI.IntegrationTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="ExceptionMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="OutputMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>OutputMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="ExceptionMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ExceptionMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="OutputMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>OutputMessages.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+</Project>
