@@ -45,25 +45,31 @@
     <data name="MemoryRepository_NotFound" xml:space="preserve">
         <value>The pattern meta-model could not be found for {0}</value>
     </data>
-    <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
-        <value>There are no code templates</value>
+    <data name="PatternApplication_AttributeByNameExists" xml:space="preserve">
+        <value>An attribute with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
-        <value>No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern</value>
+    <data name="PatternApplication_AttributeDefaultValueIsNotAChoice" xml:space="preserve">
+        <value>The given 'defaultvalue' must be one of the choices given in the 'isoneof'.</value>
     </data>
-    <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
-        <value>Pattern: {0} ({1}) is in use</value>
+    <data name="PatternApplication_NodeExpressionNotFound" xml:space="preserve">
+        <value>The expression: '{0}' does not resolve to an element in this pattern</value>
     </data>
-    <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
-        <value>Pattern: {0} was created with ID: {1}</value>
+    <data name="PatternApplication_ElementByNameExists" xml:space="preserve">
+        <value>An element with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
-        <value>Pattern: {0} is the default with ID: {1}</value>
+    <data name="PatternApplication_CollectionByNameExists" xml:space="preserve">
+        <value>A collection with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added code template {0} from: {1}</value>
+    <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
+        <value>The expression {0} is not a valid pattern expression</value>
     </data>
-    <data name="CommandLine_Output_NoCodeTemplatesListed" xml:space="preserve">
-        <value>There are {0} templates, called:</value>
+    <data name="Validations_InvalidIdentifier" xml:space="preserve">
+        <value>The value '{0}' is not a valid identifier</value>
+    </data>
+    <data name="Validations_UnsupportedAttributeType" xml:space="preserve">
+        <value>Unsupported attribute type: '{0}'. Must be one of these values: {1}</value>
+    </data>
+    <data name="Validations_InvalidDefaultValue" xml:space="preserve">
+        <value>The default value '{0}' is not a valid default for an attribute of type '{1}'</value>
     </data>
 </root>

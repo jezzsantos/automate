@@ -1,6 +1,6 @@
 ﻿namespace automate
 {
-    internal interface IPathResolver
+    internal interface IFilePathResolver
     {
         string CreatePath(string rootPath, string relativeOrAbsolutePath);
 

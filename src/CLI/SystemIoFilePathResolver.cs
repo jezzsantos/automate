@@ -3,7 +3,7 @@ using automate.Extensions;
 
 namespace automate
 {
-    internal class FilePathResolver : IPathResolver
+    internal class SystemIoFilePathResolver : IFilePathResolver
     {
         public string CreatePath(string rootPath, string relativeOrAbsolutePath)
         {

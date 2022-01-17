@@ -61,69 +61,6 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added code template {0} from: {1}.
-        /// </summary>
-        internal static string CommandLine_Output_CodeTemplatedAdded {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CodeTemplatedAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are no code templates.
-        /// </summary>
-        internal static string CommandLine_Output_NoCodeTemplates {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplates", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are {0} templates, called:.
-        /// </summary>
-        internal static string CommandLine_Output_NoCodeTemplatesListed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplatesListed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern.
-        /// </summary>
-        internal static string CommandLine_Output_NoPatternSelected {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoPatternSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} was created with ID: {1}.
-        /// </summary>
-        internal static string CommandLine_Output_PatternCreated {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} ({1}) is in use.
-        /// </summary>
-        internal static string CommandLine_Output_PatternInUse {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} is the default with ID: {1}.
-        /// </summary>
-        internal static string CommandLine_Output_PatternSwitched {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternSwitched", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The pattern meta-model could not be found for {0}.
         /// </summary>
         internal static string JsonFilePatternRepository_NotFound {
@@ -138,6 +75,24 @@ namespace automate {
         internal static string MemoryRepository_NotFound {
             get {
                 return ResourceManager.GetString("MemoryRepository_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attribute with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternApplication_AttributeByNameExists {
+            get {
+                return ResourceManager.GetString("PatternApplication_AttributeByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given &apos;defaultvalue&apos; must be one of the choices given in the &apos;isoneof&apos;..
+        /// </summary>
+        internal static string PatternApplication_AttributeDefaultValueIsNotAChoice {
+            get {
+                return ResourceManager.GetString("PatternApplication_AttributeDefaultValueIsNotAChoice", resourceCulture);
             }
         }
         
@@ -160,11 +115,47 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A collection with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternApplication_CollectionByNameExists {
+            get {
+                return ResourceManager.GetString("PatternApplication_CollectionByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An element with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternApplication_ElementByNameExists {
+            get {
+                return ResourceManager.GetString("PatternApplication_ElementByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pattern does not yet exist.
         /// </summary>
         internal static string PatternApplication_NoCurrentPattern {
             get {
                 return ResourceManager.GetString("PatternApplication_NoCurrentPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; does not resolve to an element in this pattern.
+        /// </summary>
+        internal static string PatternApplication_NodeExpressionNotFound {
+            get {
+                return ResourceManager.GetString("PatternApplication_NodeExpressionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression {0} is not a valid pattern expression.
+        /// </summary>
+        internal static string PatternPathResolver_InvalidExpression {
+            get {
+                return ResourceManager.GetString("PatternPathResolver_InvalidExpression", resourceCulture);
             }
         }
         
@@ -183,6 +174,33 @@ namespace automate {
         internal static string PatternStore_NotFoundAtLocationWithId {
             get {
                 return ResourceManager.GetString("PatternStore_NotFoundAtLocationWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default value &apos;{0}&apos; is not a valid default for an attribute of type &apos;{1}&apos;.
+        /// </summary>
+        internal static string Validations_InvalidDefaultValue {
+            get {
+                return ResourceManager.GetString("Validations_InvalidDefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; is not a valid identifier.
+        /// </summary>
+        internal static string Validations_InvalidIdentifier {
+            get {
+                return ResourceManager.GetString("Validations_InvalidIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported attribute type: &apos;{0}&apos;. Must be one of these values: {1}.
+        /// </summary>
+        internal static string Validations_UnsupportedAttributeType {
+            get {
+                return ResourceManager.GetString("Validations_UnsupportedAttributeType", resourceCulture);
             }
         }
     }

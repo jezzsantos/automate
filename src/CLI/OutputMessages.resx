@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
                 xmlns="">
         <xsd:element name="root" msdata:IsDataSet="true">
 
@@ -23,4 +24,34 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
+        <value>There are no code templates</value>
+    </data>
+    <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
+        <value>No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern</value>
+    </data>
+    <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
+        <value>Pattern: {0} ({1}) is in use</value>
+    </data>
+    <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
+        <value>Pattern: {0} was created with ID: {1}</value>
+    </data>
+    <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
+        <value>Pattern: {0} is the default with ID: {1}</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
+        <value>Added code template {0} from: {1}</value>
+    </data>
+    <data name="CommandLine_Output_NoCodeTemplatesListed" xml:space="preserve">
+        <value>There are {0} templates, called:</value>
+    </data>
+    <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
+        <value>Added attribute '{0}' to element {1}</value>
+    </data>
+    <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
+        <value>Added element '{0}' to element {1}</value>
+    </data>
+    <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
+        <value>Added collection '{0}' to element {1}</value>
+    </data>
 </root>

@@ -85,8 +85,8 @@ Lets assume for this example, that the fragments of this pattern exist in all th
 			- services
 				- BookingService.cs
 				- IBookingService.cs
-            - data
-                - Bookings.cs
+			- data
+				- Bookings.cs
 ```
 
 For each file that contains a fragment of the pattern, they execute this command:
@@ -138,53 +138,49 @@ and then the `ResourceName` attribute:
 
 Now, the tech lead knows that every new API contains multiple "Service Operations" (according to existing coding patterns).
 
-They now need to add a collection to the pattern to allow their contributors to define multiple operations.
+They now need to add a collection to the pattern to allow their contributors to define multiple service operations.
 
-`automate add-collection "Operations" --describedas "The service operations of the web API" `
+`automate add-collection "ServiceOperation" --displayedas "Operations" --describedas "The service operations of the web API" `
 
-> Notice here that the tech lead decided to name this collection `Operations` and give it a meaningful description, rather than name it `Service Operations`, since we are implicitly in the context of a notional service.
+> Notice here that the tech lead decided to name this collection with a name of `ServiceOperation` and give it a meaningful display name and description.
 
-Now, the tech lead needs to add a new "Element" to the collection representing each `Service Operation`, and on this element, define some attributes that describe each operation (as per the pattern defined above).
+> The name of a collection or element cannot contain spaces, since it is an identifier.
 
-`automate add-element "ServiceOperation" --aschildof {AcmeAPI.Operations}`
+And then the necessary attributes of a service operation:
 
-> Notice that the name of the element cannot contain spaces, since it is an identifier.
+`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
-And then the necessary attributes of an operation:
+`automate add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add-attribute "Route" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add-attribute "IsAuthorized" --isrequired --typeis "boolean" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate add-attribute "Route" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation}`
+> Note: The tech lead has deliberately ignored the optional properties of a service operation such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `RoadRunner` product matures.
 
-`automate add-attribute "IsAuthorized" --isrequired --typeis "bool" --defaultvalueis "true" --aschildof {AcmeAPI.Operations.ServiceOperation}`
-
-> Note: the tech lead has deliberately ignored the optional properties of a `ServiceOperation`, such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `RoadRunner` product matures.
-
-Now, a `ServiceOperation` is required to have a Request DTO and a response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various useful attributes.
+Now, a service operation (conceptually) has a Request DTO and a response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various attributes.
 
 First the request DTO:
 
-`automate add-collection "Request" --aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add-element "Request" --describedas "The HTTP request" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate --add-element "Field" --aschildof {AcmeAPI.Operations.ServiceOperation.Request}`
+`automate add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Request}`
 
-`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.Operations.ServiceOperation.Request.Field}`
+`automate add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
 and similarly, for the Response DTO:
 
-`automate add-collection "Response" --aschildof {AcmeAPI.Operations.ServiceOperation}`
+`automate add-element "Response" --describedas "The HTTP response" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate add-element "Field" --aschildof {AcmeAPI.Operations.ServiceOperation.Response}`
+`automate add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Response}`
 
-`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
+`automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
-`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.Operations.ServiceOperation.Response.Field}`
+`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
 So far, we are starting to build up our conceptual model. It now looks like this:
 
@@ -192,21 +188,20 @@ So far, we are starting to build up our conceptual model. It now looks like this
 - AcmeAPI (root element) (attached with 4 code templates)
 	- Name (attribute) (string, required)
 	- ResourceName (attribute) (string, required)
-	- Operations (collection)
-		- ServiceOperation (element)
-            - Name (attribute) (string, required)
-            - Verb (attribute) (required, oneof: "POST;PUT;GET;PATCH;DELETE")
-            - Route (attribute) (string, required)
-            - IsAuthorized (attribute) (boolean, default: true)
-			- Request (collection)
-				- Field (element)
-                    - Name (attribute) (string, required)
-                    - Type (attribute) (required, oneof "string;int;bool;DateTime")
-                    - IsOptional (attribute) (boolean, default: false)
-			- Response (collection)
-				- Field (element)
-                    - Name (attribute) (string, required)
-                    - Type (attribute) (required, oneof "string;int;bool;DateTime")
+	- ServiceOperation (collection)
+		- Name (attribute) (string, required)
+		- Verb (attribute) (required, oneof: "POST;PUT;GET;PATCH;DELETE")
+		- Route (attribute) (string, required)
+		- IsAuthorized (attribute) (boolean, default: true)
+		- Request (element)
+			- Field (collection)
+				- Name (attribute) (string, required)
+				- Type (attribute) (required, oneof "string;int;bool;DateTime")
+				- IsOptional (attribute) (boolean, default: false)
+		- Response (element)
+			- Field (collection)
+				- Name (attribute) (string, required)
+				- Type (attribute) (required, oneof "string;int;bool;DateTime")
 ```
 
 So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
@@ -249,7 +244,7 @@ namespace Acme.RoadRunner.Controllers
 	[ApiController]
 	public class {{model.name}}Controller : Controller
 	{
-{{~for operation in model.operations.items~}}
+{{~for operation in model.service_operation.items~}}
 {{~if operation.is_authorized~}}
 		[Authorize]
 {{~else~}}
@@ -266,34 +261,34 @@ namespace Acme.RoadRunner.Controllers
 	}
     
 {{~#Generate the Request & Response classes~}}
-{{~for operation in model.operations.items~}}
+{{~for operation in model.service_operation.items~}}
 	public class {{operation.name}}Request
 	{
-{{~for field in operation.request.items~}}
+{{~for field in operation.request.field.items~}}
 		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{operation.name}}Response
 	{
-{{~for field in operation.response.items~}}
+{{~for field in operation.response.field.items~}}
 		public {{field.type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 {{~end~}}
 
 {{~#Generate the Application DTO classes~}}
-{{~for operation in model.operations.items~}}
+{{~for operation in model.service_operation.items~}}
 	public class {{operation.name}}
 	{
-{{~for field in operation.request.items~}}
+{{~for field in operation.request.field.items~}}
 		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{model.resource_name}}
 	{
-{{~for field in operation.response.items~}}
+{{~for field in operation.response.field.items~}}
 		public {{field.type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
@@ -302,7 +297,7 @@ namespace Acme.RoadRunner.Controllers
 {{~#Generate DTO converters (using AutoMapper)~}}
 	internal static class {{model.name}}ConversionExtensions
 	{
-{{~for operation in model.operations.items~}}
+{{~for operation in model.service_operation.items~}}
 			public static {{operation.name}} ToDto(this {{operation.name}}Request request)
 			{
 				return request.ConvertTo<{{operation.name}}>();
@@ -326,7 +321,7 @@ namespace Acme.RoadRunner.Services
 {
 	public class {{model.name}}Service : I{{model.name}}Service
 	{
-{{for operation in model.operations.items}}
+{{for operation in model.service_operation.items}}
 		public {{operation.name}}Dto {{operation.name}}({{operation.name}}Request dto)
 		{
 			// Put your custom here and populate the return object
@@ -346,7 +341,7 @@ namespace Acme.RoadRunner.Services
 {
 	public interface {{model.name}}Service
 	{
-{{for operation in model.operations.items}}
+{{for operation in model.service_operation.items}}
 		{{operation.name}}Dto {{operation.name}}({{operation.name}}Request dto);
 {{end}}
 	}
@@ -361,17 +356,17 @@ using System;
 namespace Acme.RoadRunner.DTOs
 {
 {{~#Generate the Application DTO classes~}}
-{{~for operation in model.operations.items~}}
+{{~for operation in model.service_operation.items~}}
 	public class {{operation.name}}
 	{
-{{~for field in operation.request.items~}}
+{{~for field in operation.request.field.items~}}
 		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{model.resource_name}}
 	{
-{{~for field in operation.response.items~}}
+{{~for field in operation.response.field.items~}}
 		public {{field.type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
@@ -480,35 +475,44 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 
 ```
 {
-    "name": "Orders",
+	"name": "Orders",
 	"resource_name": "Order",
-    "operations": {
-        "description": "",
-        "items": [{
-                "name": "CreateOrder",
-                "verb": "Post",
-                "route": "/orders",
-                "is_authorized": true,
-                "request": {
-                    "description": "",
-                    "items": [{
-                            "name": "ProductId",
-                            "type": "string",
-                            "is_optional": false
-                        }
-                    ]
-                },
-                "response": {
-                    "description": "",
-                    "items": [{
-                            "name": "Id",
-                            "type": "string",
-                        }
-                    ]
-                },
-            }
-        ]
-    }
+	"service_operation": {
+		"display_name": "Operations",
+		"description": "The service operations of the web API",
+		"items": [{
+				"name": "CreateOrder",
+				"verb": "Post",
+				"route": "/orders",
+				"is_authorized": true,
+				"request": {
+					"description": "The HTTP request",
+					"field": {
+						"display_name": "Fields",
+						"description": "",
+						"items": [{
+							"name": "ProductId",
+							"type": "string",
+							"is_optional": false
+							}
+						], 
+					},
+				},
+				"response": {
+					"description": "The HTTP response",
+					"field": {
+						"display_name": "Fields",
+						"description": "",
+						"items": [{
+							"name": "ProductId",
+							"type": "string",
+							}
+						] 
+					}
+				}
+			}
+		]
+	}
 }
 ```
 

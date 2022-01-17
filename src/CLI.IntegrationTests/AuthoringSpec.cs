@@ -143,34 +143,34 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenCreateWithNameAndExists_ThenDisplaysError()
         {
-            this.setup.RunCommand("create aname");
-            this.setup.RunCommand("create aname");
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("create apattern");
 
-            this.setup.Should().DisplayError(ExceptionMessages.PatternStore_FoundNamed, "aname");
+            this.setup.Should().DisplayError(ExceptionMessages.PatternStore_FoundNamed, "apattern");
         }
 
         [Fact]
         public void WhenCreateWithName_ThenCreatesNewPattern()
         {
-            this.setup.RunCommand("create aname");
+            this.setup.RunCommand("create apattern");
 
             this.setup.Should().DisplayNoError();
-            this.setup.Patterns.Single().Name.Should().Be("aname");
+            this.setup.Patterns.Single().Name.Should().Be("apattern");
             this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Single().Id);
         }
 
         [Fact]
         public void WhenCreateMultipleTimes_ThenCreatesNewPatterns()
         {
-            this.setup.RunCommand("create aname1");
-            this.setup.RunCommand("create aname2");
-            this.setup.RunCommand("create aname3");
+            this.setup.RunCommand("create apattern1");
+            this.setup.RunCommand("create apattern2");
+            this.setup.RunCommand("create apattern3");
 
             this.setup.Should().DisplayNoError();
-            this.setup.Patterns.Should().Contain(x => x.Name == "aname1");
-            this.setup.Patterns.Should().Contain(x => x.Name == "aname2");
-            this.setup.Patterns.Should().Contain(x => x.Name == "aname3");
-            this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Find(x => x.Name == "aname3")!.Id);
+            this.setup.Patterns.Should().Contain(x => x.Name == "apattern1");
+            this.setup.Patterns.Should().Contain(x => x.Name == "apattern2");
+            this.setup.Patterns.Should().Contain(x => x.Name == "apattern3");
+            this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Find(x => x.Name == "apattern3")!.Id);
         }
 
         [Fact]
@@ -184,17 +184,17 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenUseWithNameAndNotExists_ThenDisplaysError()
         {
-            this.setup.RunCommand("use aname");
+            this.setup.RunCommand("use apattern");
 
             this.setup.Should()
-                .DisplayError(ExceptionMessages.PatternStore_NotFoundAtLocationWithId, "aname", this.setup.Location);
+                .DisplayError(ExceptionMessages.PatternStore_NotFoundAtLocationWithId, "apattern", this.setup.Location);
         }
 
         [Fact]
         public void WhenUseWithNameAndExists_ThenUsesPattern()
         {
-            this.setup.RunCommand("create aname");
-            this.setup.RunCommand("use aname");
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("use apattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Single().Id);
@@ -214,7 +214,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCodeTemplateAndFileMissing_ThenDisplaysHelp()
         {
-            this.setup.RunCommand("create aname");
+            this.setup.RunCommand("create apattern");
             this.setup.RunCommand("add-codetemplate");
 
             this.setup.Should().DisplayErrorForMissingArgument("add-codetemplate");
@@ -225,7 +225,7 @@ namespace CLI.IntegrationTests
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand("create aname");
+            this.setup.RunCommand("create apattern");
             this.setup.RunCommand($"add-codetemplate \"{template}\"");
 
             this.setup.Should().DisplayNoError();
@@ -237,22 +237,132 @@ namespace CLI.IntegrationTests
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand("create aname");
-            this.setup.RunCommand($"add-codetemplate \"{template}\" --name aname");
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand($"add-codetemplate \"{template}\" --name atemplatename");
 
             this.setup.Should().DisplayNoError();
-            this.setup.Patterns.Single().CodeTemplates.First().Name.Should().Be("aname");
+            this.setup.Patterns.Single().CodeTemplates.First().Name.Should().Be("atemplatename");
         }
 
         [Fact]
         public void WhenListCodeTemplatesAndNone_ThenDisplaysNone()
         {
-            this.setup.RunCommand("create aname");
+            this.setup.RunCommand("create apattern");
 
             this.setup.RunCommand("list-codetemplates");
 
             this.setup.Should().DisplayNoError();
-            this.setup.Should().DisplayMessage(ExceptionMessages.CommandLine_Output_NoCodeTemplates);
+            this.setup.Should().DisplayMessage(OutputMessages.CommandLine_Output_NoCodeTemplates);
+        }
+
+        [Fact]
+        public void WhenAddAttributeAndNoCurrentPattern_ThenDisplaysError()
+        {
+            this.setup.RunCommand("add-attribute anattribute");
+
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddAttribute_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-attribute anattribute");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                        this.setup.Patterns.Single().Id));
+            this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenAddAttributeWithIsRequired_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-attribute anattribute --isrequired");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                        this.setup.Patterns.Single().Id));
+            this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenAddAttributeWithIsRequiredFalse_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-attribute anattribute --isrequired false");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                        this.setup.Patterns.Single().Id));
+            this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenAddAttributeAsChildOfDeepElement_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-element anelementname1");
+            this.setup.RunCommand("add-element anelementname2 --aschildof {apattern.anelementname1}");
+            this.setup.RunCommand("add-attribute anattribute --aschildof {apattern.anelementname1.anelementname2}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Id));
+        }
+
+        [Fact]
+        public void WhenAddElementAndNoCurrentPattern_ThenDisplaysError()
+        {
+            this.setup.RunCommand("add-element anelement");
+
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddElement_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-element anelement");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementAdded.Format("anelement",
+                        this.setup.Patterns.Single().Id));
+        }
+
+        [Fact]
+        public void WhenAddCollectionAndNoCurrentPattern_ThenDisplaysError()
+        {
+            this.setup.RunCommand("add-collection acollection");
+
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddCollection_ThenAddsAttribute()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-collection acollection --displayedas adisplayname --describedas adescription");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CollectionAdded.Format("acollection",
+                        this.setup.Patterns.Single().Id));
         }
     }
 }

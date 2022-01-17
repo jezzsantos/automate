@@ -6,21 +6,25 @@ namespace automate
 {
     internal class PatternApplication
     {
-        private readonly IPathResolver pathResolver;
+        private readonly IFilePathResolver filePathResolver;
+        private readonly IPatternPathResolver patternPathResolver;
         private readonly PatternStore store;
 
         public PatternApplication(string currentDirectory) : this(new PatternStore(currentDirectory),
-            new FilePathResolver())
+            new SystemIoFilePathResolver(), new PatternPathResolver())
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        internal PatternApplication(PatternStore store, IPathResolver pathResolver)
+        internal PatternApplication(PatternStore store, IFilePathResolver filePathResolver,
+            IPatternPathResolver patternPathResolver)
         {
             store.GuardAgainstNull(nameof(store));
-            pathResolver.GuardAgainstNull(nameof(pathResolver));
+            filePathResolver.GuardAgainstNull(nameof(filePathResolver));
+            patternPathResolver.GuardAgainstNull(nameof(patternPathResolver));
             this.store = store;
-            this.pathResolver = pathResolver;
+            this.filePathResolver = filePathResolver;
+            this.patternPathResolver = patternPathResolver;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -48,8 +52,8 @@ namespace automate
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var fullPath = this.pathResolver.CreatePath(rootPath, relativeFilePath);
-            if (!this.pathResolver.ExistsAtPath(fullPath))
+            var fullPath = this.filePathResolver.CreatePath(rootPath, relativeFilePath);
+            if (!this.filePathResolver.ExistsAtPath(fullPath))
             {
                 throw new PatternException(
                     ExceptionMessages.PatternApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
@@ -59,7 +63,7 @@ namespace automate
             var templateName = string.IsNullOrEmpty(name)
                 ? $"CodeTemplate{pattern.CodeTemplates.Count + 1}"
                 : name;
-            if (CodeTemplateExistsByName(templateName))
+            if (CodeTemplateExistsByName(pattern, templateName))
             {
                 throw new PatternException(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format(name));
             }
@@ -79,6 +83,79 @@ namespace automate
             return pattern.CodeTemplates;
         }
 
+        public IElementContainer AddAttribute(string name, string type, string defaultValue,
+            bool isRequired, string isOneOf, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            VerifyCurrentPatternExists();
+            var pattern = this.store.GetCurrent();
+
+            if (AttributeExistsByName(pattern, name))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_AttributeByNameExists.Format(name));
+            }
+
+            var choices = isOneOf.SafeSplit(";");
+            if (defaultValue.HasValue()
+                && choices.Any()
+                && !choices.Contains(defaultValue))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_AttributeDefaultValueIsNotAChoice);
+            }
+
+            IElementContainer target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new PatternException(
+                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            var attribute = new Attribute(name, type, isRequired, defaultValue)
+            {
+                Choices = choices.ToList()
+            };
+            target.Attributes.Add(attribute);
+            this.store.Save(pattern);
+
+            return target;
+        }
+
+        public IElementContainer AddElement(string name, string displayName, string description, bool isCollection,
+            string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            VerifyCurrentPatternExists();
+            var pattern = this.store.GetCurrent();
+
+            if (ElementExistsByName(pattern, name))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_ElementByNameExists.Format(name));
+            }
+
+            IElementContainer target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new PatternException(
+                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            var element = new Element(name, displayName, description, isCollection);
+            target.Elements.Add(element);
+            this.store.Save(pattern);
+
+            return target;
+        }
+
         private void VerifyCurrentPatternExists()
         {
             if (this.store.GetCurrent().NotExists())
@@ -87,17 +164,19 @@ namespace automate
             }
         }
 
-        private bool CodeTemplateExistsByName(string templateName)
+        private static bool ElementExistsByName(PatternMetaModel pattern, string elementName)
         {
-            templateName.GuardAgainstNullOrEmpty(nameof(templateName));
+            return pattern.Elements.Any(ele => ele.Name.EqualsIgnoreCase(elementName));
+        }
 
-            var pattern = this.store.GetCurrent();
-            if (pattern.Exists())
-            {
-                return pattern.CodeTemplates.Any(template => template.Name == templateName);
-            }
+        private static bool AttributeExistsByName(PatternMetaModel pattern, string attributeName)
+        {
+            return pattern.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+        }
 
-            return false;
+        private static bool CodeTemplateExistsByName(PatternMetaModel pattern, string templateName)
+        {
+            return pattern.CodeTemplates.Any(template => template.Name.EqualsIgnoreCase(templateName));
         }
     }
 }

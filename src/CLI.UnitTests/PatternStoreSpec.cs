@@ -37,35 +37,38 @@ namespace CLI.UnitTests
         [Fact]
         public void WhenLoadAllAndPatterns_ThenReturnsAll()
         {
-            this.repository.New(new PatternMetaModel("aname1", "anid1"));
-            this.repository.New(new PatternMetaModel("aname2", "anid2"));
-            this.repository.New(new PatternMetaModel("aname3", "anid3"));
+            var pattern1 = new PatternMetaModel("aname1");
+            var pattern2 = new PatternMetaModel("aname2");
+            var pattern3 = new PatternMetaModel("aname3");
+            this.repository.New(pattern1);
+            this.repository.New(pattern2);
+            this.repository.New(pattern3);
 
             var result = this.store.LoadAll();
 
-            result.Should().Contain(x => x.Id == "anid1");
-            result.Should().Contain(x => x.Id == "anid2");
-            result.Should().Contain(x => x.Id == "anid3");
+            result.Should().Contain(x => x.Id == pattern1.Id);
+            result.Should().Contain(x => x.Id == pattern2.Id);
+            result.Should().Contain(x => x.Id == pattern3.Id);
         }
 
         [Fact]
         public void WhenSaveAllAndPatterns_ThenSaves()
         {
-            this.repository.New(new PatternMetaModel("aname1", "anid1"));
-            this.repository.New(new PatternMetaModel("aname2", "anid2"));
-            this.repository.New(new PatternMetaModel("aname3", "anid3"));
+            var pattern1 = new PatternMetaModel("aname1");
+            var pattern2 = new PatternMetaModel("aname2");
+            var pattern3 = new PatternMetaModel("aname3");
 
             this.store.SaveAll(new List<PatternMetaModel>
             {
-                new PatternMetaModel("aname1", "anid1"),
-                new PatternMetaModel("aname2", "anid2"),
-                new PatternMetaModel("aname3", "anid3")
+                pattern1,
+                pattern2,
+                pattern3
             });
 
             var result = this.repository.List();
-            result.Should().Contain(x => x.Id == "anid1");
-            result.Should().Contain(x => x.Id == "anid2");
-            result.Should().Contain(x => x.Id == "anid3");
+            result.Should().Contain(x => x.Id == pattern1.Id);
+            result.Should().Contain(x => x.Id == pattern2.Id);
+            result.Should().Contain(x => x.Id == pattern3.Id);
         }
 
         [Fact]
@@ -81,19 +84,22 @@ namespace CLI.UnitTests
         [Fact]
         public void WhenFindAndExists_ThenReturnsPattern()
         {
-            this.repository.New(new PatternMetaModel("aname1", "anid1"));
-            this.repository.New(new PatternMetaModel("aname2", "anid2"));
-            this.repository.New(new PatternMetaModel("aname3", "anid3"));
+            var pattern1 = new PatternMetaModel("aname1");
+            var pattern2 = new PatternMetaModel("aname2");
+            var pattern3 = new PatternMetaModel("aname3");
+            this.repository.New(pattern1);
+            this.repository.New(pattern2);
+            this.repository.New(pattern3);
 
             var result = this.store.Find("aname1");
 
-            result.Id.Should().Be("anid1");
+            result.Id.Should().Be(pattern1.Id);
         }
 
         [Fact]
         public void WhenCreateAndPatternExists_ThenThrows()
         {
-            this.repository.New(new PatternMetaModel("aname", "anid"));
+            this.repository.New(new PatternMetaModel("aname"));
 
             this.store
                 .Invoking(x => x.Create("aname"))
@@ -123,12 +129,18 @@ namespace CLI.UnitTests
         [Fact]
         public void WhenChangeCurrent_ThenChangesCurrent()
         {
-            this.repository.New(new PatternMetaModel("aname1", "anid1"));
-            this.repository.New(new PatternMetaModel("aname2", "anid2"));
+            var pattern1 = new PatternMetaModel("aname1");
+            var pattern2 = new PatternMetaModel("aname2");
+            this.repository.New(pattern1);
+            this.repository.New(pattern2);
 
-            this.store.ChangeCurrent("anid2");
+            this.store.ChangeCurrent(pattern1.Id);
 
-            this.repository.GetState().Current.Should().Be("anid2");
+            this.repository.GetState().Current.Should().Be(pattern1.Id);
+
+            this.store.ChangeCurrent(pattern2.Id);
+
+            this.repository.GetState().Current.Should().Be(pattern2.Id);
         }
     }
 }

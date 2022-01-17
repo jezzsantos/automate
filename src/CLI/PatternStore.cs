@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using automate.Extensions;
 
 namespace automate
@@ -57,8 +56,7 @@ namespace automate
                 throw new PatternException(ExceptionMessages.PatternStore_FoundNamed.Format(name));
             }
 
-            var id = Guid.NewGuid().ToString("N");
-            var pattern = new PatternMetaModel(name, id);
+            var pattern = new PatternMetaModel(name);
             this.repository.New(pattern);
 
             var state = this.repository.GetState();

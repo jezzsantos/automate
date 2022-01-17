@@ -2,6 +2,21 @@
 
 namespace automate
 {
+    internal class ViewSchema : CustomizableElementSchema
+    {
+        public bool IsVisible { get; set; }
+
+        public bool IsDefault { get; set; }
+
+        public string Caption { get; set; }
+
+        public PatternSchema Pattern { get; set; }
+
+        public List<AbstractElementSchema> Elements { get; set; }
+
+        public List<ExtensionPointSchema> ExtensionPoints { get; set; }
+    }
+
     internal class PatternModelSchema
     {
         public string BaseId { get; set; }
@@ -27,6 +42,17 @@ namespace automate
         public List<ExtensionPointSchema> ProvidedExtensionPoints { get; set; }
     }
 
+    internal class PatternElementSchema : CustomizableElementSchema
+    {
+        public string ValidationRules { get; set; }
+
+        public string Icon { get; set; }
+
+        public List<PropertySchema> Properties { get; set; }
+
+        public List<AutomationSettingsSchema> AutomationSettings { get; set; }
+    }
+
     internal class NamedElementSchema
     {
         public string Name { get; set; }
@@ -48,17 +74,6 @@ namespace automate
         public string CodeIdentifier { get; set; }
 
         public bool IsCodeIdentifierTracking { get; set; }
-    }
-
-    internal class PatternElementSchema : CustomizableElementSchema
-    {
-        public string ValidationRules { get; set; }
-
-        public string Icon { get; set; }
-
-        public List<PropertySchema> Properties { get; set; }
-
-        public List<AutomationSettingsSchema> AutomationSettings { get; set; }
     }
 
     internal class PropertySchema : CustomizableElementSchema
@@ -86,21 +101,6 @@ namespace automate
         public PatternElementSchema Owner { get; set; }
 
         public string Icon { get; set; }
-    }
-
-    internal class ViewSchema : CustomizableElementSchema
-    {
-        public bool IsVisible { get; set; }
-
-        public bool IsDefault { get; set; }
-
-        public string Caption { get; set; }
-
-        public PatternSchema Pattern { get; set; }
-
-        public List<AbstractElementSchema> Elements { get; set; }
-
-        public List<ExtensionPointSchema> ExtensionPoints { get; set; }
     }
 
     internal class AbstractElementSchema : PatternElementSchema
@@ -281,5 +281,28 @@ namespace automate
         ///     The property is imported from an extension point contract.
         /// </summary>
         ExtensionContract = 1
+    }
+
+    internal enum Cardinality
+    {
+        /// <summary>
+        ///     OneToOne instance of this item.
+        /// </summary>
+        OneToOne = 0,
+
+        /// <summary>
+        ///     ZeroToOne instance of this item.
+        /// </summary>
+        ZeroToOne = 1,
+
+        /// <summary>
+        ///     OneToMany instance of this item.
+        /// </summary>
+        OneToMany = 2,
+
+        /// <summary>
+        ///     ZeroToMany instances of this item.
+        /// </summary>
+        ZeroToMany = 3
     }
 }

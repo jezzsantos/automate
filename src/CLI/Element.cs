@@ -3,16 +3,19 @@ using automate.Extensions;
 
 namespace automate
 {
-    internal class PatternMetaModel : INamedEntity, IElementContainer, IAutomationContainer, ICustomizableEntity
+    internal class Element : INamedEntity, IElementContainer, IAutomationContainer, ICustomizableEntity
     {
-        public PatternMetaModel(string name)
+        public Element(string name, string displayName, string description, bool isCollection)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsIdentifier, nameof(name),
                 ExceptionMessages.Validations_InvalidIdentifier);
-            
-            Name = name;
+
             Id = IdGenerator.Create();
+            Name = name;
+            DisplayName = displayName;
+            Description = description;
+            IsCollection = isCollection;
             Attributes = new List<Attribute>();
             Elements = new List<Element>();
             CodeTemplates = new List<CodeTemplate>();
@@ -21,9 +24,15 @@ namespace automate
         /// <summary>
         ///     For serialization
         /// </summary>
-        public PatternMetaModel()
+        public Element()
         {
         }
+
+        public string DisplayName { get; set; }
+
+        public string Description { get; set; }
+
+        public bool IsCollection { get; set; }
 
         public List<CodeTemplate> CodeTemplates { get; set; }
 
@@ -31,8 +40,8 @@ namespace automate
 
         public List<Element> Elements { get; set; }
 
-        public string Name { get; set; }
-
         public string Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

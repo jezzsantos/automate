@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace automate.Extensions
 {
@@ -29,7 +30,7 @@ namespace automate.Extensions
         }
 
         public static void GuardAgainstInvalid<TValue>(this TValue value, Func<TValue, bool> validator,
-            string parameterName, string errorMessage = null)
+            string parameterName, string errorMessage = null, params object[] args)
         {
             validator.GuardAgainstNull(nameof(validator));
             parameterName.GuardAgainstNullOrEmpty(nameof(parameterName));
@@ -39,7 +40,11 @@ namespace automate.Extensions
             {
                 if (errorMessage.HasValue())
                 {
-                    throw new ArgumentOutOfRangeException(parameterName, errorMessage);
+                    var messageArgs = args.Exists() && args.Any()
+                        ? new object[] { value }.Concat(args).ToArray()
+                        : new object[] { value };
+                    throw new ArgumentOutOfRangeException(parameterName, value,
+                        string.Format(errorMessage ?? string.Empty, messageArgs));
                 }
                 throw new ArgumentOutOfRangeException(parameterName);
             }

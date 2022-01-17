@@ -59,5 +59,95 @@ namespace automate {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added attribute &apos;{0}&apos; to element {1}.
+        /// </summary>
+        internal static string CommandLine_Output_AttributeAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_AttributeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added code template {0} from: {1}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplatedAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplatedAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added collection &apos;{0}&apos; to element {1}.
+        /// </summary>
+        internal static string CommandLine_Output_CollectionAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CollectionAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added element &apos;{0}&apos; to element {1}.
+        /// </summary>
+        internal static string CommandLine_Output_ElementAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no code templates.
+        /// </summary>
+        internal static string CommandLine_Output_NoCodeTemplates {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are {0} templates, called:.
+        /// </summary>
+        internal static string CommandLine_Output_NoCodeTemplatesListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplatesListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern.
+        /// </summary>
+        internal static string CommandLine_Output_NoPatternSelected {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoPatternSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern: {0} was created with ID: {1}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternCreated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern: {0} ({1}) is in use.
+        /// </summary>
+        internal static string CommandLine_Output_PatternInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern: {0} is the default with ID: {1}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternSwitched {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternSwitched", resourceCulture);
+            }
+        }
     }
 }
