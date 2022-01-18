@@ -54,4 +54,10 @@
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
         <value>Added collection '{0}' to element {1}</value>
     </data>
+    <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
+        <value>Added code template command '{0}' with ID: {1}</value>
+    </data>
+    <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
+        <value>Added launch point for commands with name: '{0}'</value>
+    </data>
 </root>

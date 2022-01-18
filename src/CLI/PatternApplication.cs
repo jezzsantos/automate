@@ -44,7 +44,8 @@ namespace automate
             this.store.ChangeCurrent(current.Id);
         }
 
-        public CodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name)
+        public CodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
+            string parentExpression)
         {
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
             relativeFilePath.GuardAgainstNullOrEmpty(nameof(relativeFilePath));
@@ -60,10 +61,21 @@ namespace automate
                         relativeFilePath));
             }
 
-            var templateName = string.IsNullOrEmpty(name)
-                ? $"CodeTemplate{pattern.CodeTemplates.Count + 1}"
-                : name;
-            if (CodeTemplateExistsByName(pattern, templateName))
+            IPatternElement target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new PatternException(
+                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            var templateName = name.HasValue()
+                ? name
+                : $"CodeTemplate{pattern.CodeTemplates.Count + 1}";
+            if (CodeTemplateExistsByName(target, templateName))
             {
                 throw new PatternException(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format(name));
             }
@@ -83,18 +95,13 @@ namespace automate
             return pattern.CodeTemplates;
         }
 
-        public IElementContainer AddAttribute(string name, string type, string defaultValue,
+        public IPatternElement AddAttribute(string name, string type, string defaultValue,
             bool isRequired, string isOneOf, string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
-
-            if (AttributeExistsByName(pattern, name))
-            {
-                throw new PatternException(ExceptionMessages.PatternApplication_AttributeByNameExists.Format(name));
-            }
 
             var choices = isOneOf.SafeSplit(";");
             if (defaultValue.HasValue()
@@ -104,7 +111,7 @@ namespace automate
                 throw new PatternException(ExceptionMessages.PatternApplication_AttributeDefaultValueIsNotAChoice);
             }
 
-            IElementContainer target = pattern;
+            IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
                 target = this.patternPathResolver.Resolve(pattern, parentExpression);
@@ -113,6 +120,11 @@ namespace automate
                     throw new PatternException(
                         ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
+            }
+
+            if (AttributeExistsByName(target, name))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_AttributeByNameExists.Format(name));
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue)
@@ -125,7 +137,7 @@ namespace automate
             return target;
         }
 
-        public IElementContainer AddElement(string name, string displayName, string description, bool isCollection,
+        public IPatternElement AddElement(string name, string displayName, string description, bool isCollection,
             string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -133,12 +145,7 @@ namespace automate
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            if (ElementExistsByName(pattern, name))
-            {
-                throw new PatternException(ExceptionMessages.PatternApplication_ElementByNameExists.Format(name));
-            }
-
-            IElementContainer target = pattern;
+            IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
                 target = this.patternPathResolver.Resolve(pattern, parentExpression);
@@ -149,11 +156,82 @@ namespace automate
                 }
             }
 
+            if (ElementExistsByName(target, name))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_ElementByNameExists.Format(name));
+            }
+
             var element = new Element(name, displayName, description, isCollection);
             target.Elements.Add(element);
             this.store.Save(pattern);
 
             return target;
+        }
+
+        public AutomationCommand AddCodeTemplateCommand(string name, bool isTearOff, string filePath,
+            string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
+
+            VerifyCurrentPatternExists();
+            var pattern = this.store.GetCurrent();
+
+            IPatternElement target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new PatternException(
+                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            if (AutomationExistsByName(target, name))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_AutomationByNameExists.Format(name));
+            }
+
+            var automation = new AutomationCommand(name, isTearOff, filePath);
+            target.Automation.Add(automation);
+            this.store.Save(pattern);
+
+            return automation;
+        }
+
+        public AutomationLaunchPoint AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
+        {
+            commandIds.GuardAgainstNullOrEmpty(nameof(commandIds));
+
+            VerifyCurrentPatternExists();
+            var pattern = this.store.GetCurrent();
+
+            IPatternElement target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new PatternException(
+                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            var launchPointName = name.HasValue()
+                ? name
+                : $"LaunchPoint{target.Automation.Count + 1}";
+            if (AutomationExistsByName(target, launchPointName))
+            {
+                throw new PatternException(ExceptionMessages.PatternApplication_AutomationByNameExists.Format(name));
+            }
+
+            var commandIdentifiers = commandIds.SafeSplit(";").ToList();
+            var automation = new AutomationLaunchPoint(launchPointName, commandIdentifiers);
+            target.Automation.Add(automation);
+            this.store.Save(pattern);
+
+            return automation;
         }
 
         private void VerifyCurrentPatternExists()
@@ -164,19 +242,24 @@ namespace automate
             }
         }
 
-        private static bool ElementExistsByName(PatternMetaModel pattern, string elementName)
+        private static bool AutomationExistsByName(IAutomationContainer element, string automationName)
         {
-            return pattern.Elements.Any(ele => ele.Name.EqualsIgnoreCase(elementName));
+            return element.Automation.Any(ele => ele.Name.EqualsIgnoreCase(automationName));
         }
 
-        private static bool AttributeExistsByName(PatternMetaModel pattern, string attributeName)
+        private static bool ElementExistsByName(IElementContainer element, string elementName)
         {
-            return pattern.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+            return element.Elements.Any(ele => ele.Name.EqualsIgnoreCase(elementName));
         }
 
-        private static bool CodeTemplateExistsByName(PatternMetaModel pattern, string templateName)
+        private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {
-            return pattern.CodeTemplates.Any(template => template.Name.EqualsIgnoreCase(templateName));
+            return element.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+        }
+
+        private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)
+        {
+            return element.CodeTemplates.Any(template => template.Name.EqualsIgnoreCase(templateName));
         }
     }
 }

@@ -70,6 +70,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Added code template command &apos;{0}&apos; with ID: {1}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateCommandAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateCommandAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added code template {0} from: {1}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
@@ -93,6 +102,15 @@ namespace automate {
         internal static string CommandLine_Output_ElementAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ElementAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added launch point for commands with name: &apos;{0}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_LaunchPointAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_LaunchPointAdded", resourceCulture);
             }
         }
         

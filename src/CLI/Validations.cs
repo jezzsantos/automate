@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using automate.Extensions;
@@ -7,42 +8,52 @@ namespace automate
 {
     internal static class Validations
     {
-        public static bool IsIdentifier(string value)
+        public static bool IsNameIdentifier(string value)
         {
             return Regex.IsMatch(value, @"^[a-zA-Z0-9\.]+$");
         }
 
-        public static bool IsSupportedAttributeType(string value)
+        public static bool IsIdentifiers(List<string> values)
         {
-            return Attribute.SupportedTypes.Contains(value);
+            return values.TrueForAll(IdGenerator.IsValid);
         }
 
-        public static bool IsDefaultValueForType(string defaultValue, string type)
+        public static bool IsSupportedAttributeDataType(string value)
+        {
+            return Attribute.SupportedDataTypes.Contains(value);
+        }
+
+        public static bool IsDefaultValueForAttributeDataType(string defaultValue, string dataType)
         {
             if (!defaultValue.HasValue())
             {
                 return true;
             }
 
-            switch (type)
+            switch (dataType)
             {
                 case Attribute.DefaultType:
                     return true;
 
-                case "boolean":
+                case "bool":
                     return bool.TryParse(defaultValue, out var _);
 
-                case "integer":
+                case "int":
                     return int.TryParse(defaultValue, out var _);
 
-                case "datetime":
+                case "DateTime":
                     return DateTime.TryParse(defaultValue, out var _);
 
                 default:
                     throw new ArgumentOutOfRangeException(
-                        ExceptionMessages.Validations_UnsupportedAttributeType.Format(type,
-                            Attribute.SupportedTypes.Join(", ")));
+                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
+                            Attribute.SupportedDataTypes.Join(", ")));
             }
+        }
+
+        public static bool IsRuntimeFilePath(string path)
+        {
+            return Regex.IsMatch(path, @"^[~]{0,1}[\/\\\.A-Za-z0-9\(\)\{\}]+$");
         }
     }
 }

@@ -6,19 +6,30 @@ namespace automate
     {
     }
 
-    internal interface IAutomationContainer : IIdentifiableEntity
+    internal interface IAutomationContainer
     {
         List<CodeTemplate> CodeTemplates { get; set; }
+
+        List<IAutomation> Automation { get; set; }
     }
 
-    internal interface IElementContainer : IAttributeContainer
+    internal interface IAutomation : INamedEntity
+    {
+    }
+
+    internal interface IElementContainer
     {
         List<Element> Elements { get; set; }
     }
 
-    internal interface IAttributeContainer : IIdentifiableEntity
+    internal interface IAttributeContainer
     {
         List<Attribute> Attributes { get; set; }
+    }
+
+    internal interface IPatternElement : INamedEntity, ICustomizableEntity, IElementContainer, IAttributeContainer,
+        IAutomationContainer
+    {
     }
 
     internal interface INamedEntity : IIdentifiableEntity

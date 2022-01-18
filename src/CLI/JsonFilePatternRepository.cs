@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using automate.Extensions;
+using ServiceStack.Text;
+using StringExtensions = ServiceStack.StringExtensions;
 
 namespace automate
 {
@@ -147,18 +147,19 @@ namespace automate
     {
         public static string ToJson<T>(this T instance) where T : new()
         {
-            return JsonSerializer.Serialize(instance, new JsonSerializerOptions
+            using (var scope = JsConfig.BeginScope())
             {
-                WriteIndented = true,
-                IgnoreNullValues = true,
-                IncludeFields = false,
-                DefaultIgnoreCondition = JsonIgnoreCondition.Never
-            });
+                scope.Indent = true;
+                return StringExtensions.ToJson(instance);
+            }
         }
 
         public static T FromJson<T>(this string json) where T : new()
         {
-            return JsonSerializer.Deserialize<T>(json);
+            using (JsConfig.BeginScope())
+            {
+                return StringExtensions.FromJson<T>(json);
+            }
         }
     }
 }

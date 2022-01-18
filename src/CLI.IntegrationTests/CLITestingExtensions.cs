@@ -99,7 +99,7 @@ namespace CLI.IntegrationTests
                 .Given(() => Subject.Output.Value)
                 .ForCondition(value => value.Contains(messageText ?? string.Empty))
                 .FailWith("Expected {context:output} to contain {0} {reason}, but found {1}.", messageText,
-                    Subject.Error.Value);
+                    Subject.Output.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }

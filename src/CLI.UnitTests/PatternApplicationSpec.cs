@@ -89,7 +89,7 @@ namespace CLI.UnitTests
                 .Returns(false);
 
             this.application
-                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename"))
+                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
                 .WithMessage(
                     ExceptionMessages.PatternApplication_CodeTemplate_NotFoundAtLocation.Format("arootpath",
@@ -100,10 +100,10 @@ namespace CLI.UnitTests
         public void WhenAttachCodeTemplateAndTemplateWithSameName_ThenThrows()
         {
             this.store.Create("aname");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             this.application
-                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename"))
+                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
                 .WithMessage(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format("atemplatename"));
         }
@@ -112,7 +112,7 @@ namespace CLI.UnitTests
         public void WhenAttachCodeTemplateAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename"))
+                .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
                 .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
         }
@@ -121,7 +121,7 @@ namespace CLI.UnitTests
         public void WhenAttachCodeTemplate_ThenTemplateAdded()
         {
             this.store.Create("aname");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
             this.store.GetCurrent().CodeTemplates.Single().FullPath.Should().Be("afullpath");
@@ -140,9 +140,9 @@ namespace CLI.UnitTests
         public void WhenListCodeTemplates_ThenListsTemplates()
         {
             this.store.Create("aname");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename1");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename2");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename3");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename1", null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename2", null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename3", null);
 
             var result = this.application.ListCodeTemplates();
 
@@ -173,7 +173,7 @@ namespace CLI.UnitTests
         }
 
         [Fact]
-        public void WhenAddAttribute_TheAddsAndReturnsPatternId()
+        public void WhenAddAttribute_TheAddsAtributeToPattern()
         {
             this.application.CreateNewPattern("apatternname");
 
@@ -181,7 +181,7 @@ namespace CLI.UnitTests
 
             var attribute = this.store.GetCurrent().Attributes.Single();
             attribute.Name.Should().Be("anattributename");
-            attribute.Type.Should().Be("string");
+            attribute.DataType.Should().Be("string");
             attribute.DefaultValue.Should().Be("adefaultvalue");
             attribute.IsRequired.Should().BeFalse();
             attribute.Choices.Should().BeEmpty();
@@ -209,7 +209,7 @@ namespace CLI.UnitTests
 
             var attribute = this.store.GetCurrent().Attributes.Single();
             attribute.Name.Should().Be("anattributename");
-            attribute.Type.Should().Be("string");
+            attribute.DataType.Should().Be("string");
             attribute.DefaultValue.Should().BeNull();
             attribute.IsRequired.Should().BeFalse();
             attribute.Choices.Should().BeEmpty();
@@ -284,21 +284,6 @@ namespace CLI.UnitTests
         }
 
         [Fact]
-        public void WhenAddElement_TheAddsAndReturnsPatternId()
-        {
-            this.application.CreateNewPattern("apatternname");
-
-            var result = this.application.AddElement("anelementname", "adisplayname", "adescription", false, null);
-
-            var element = this.store.GetCurrent().Elements.Single();
-            element.Name.Should().Be("anelementname");
-            element.DisplayName.Should().Be("adisplayname");
-            element.Description.Should().Be("adescription");
-            element.IsCollection.Should().BeFalse();
-            result.Id.Should().Be(this.store.GetCurrent().Id);
-        }
-
-        [Fact]
         public void WhenAddElementAndParentNotExists_ThenThrows()
         {
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
@@ -312,6 +297,21 @@ namespace CLI.UnitTests
                 .Should().Throw<PatternException>()
                 .WithMessage(
                     ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenAddElement_TheAddsElementToPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+
+            var result = this.application.AddElement("anelementname", "adisplayname", "adescription", false, null);
+
+            var element = this.store.GetCurrent().Elements.Single();
+            element.Name.Should().Be("anelementname");
+            element.DisplayName.Should().Be("adisplayname");
+            element.Description.Should().Be("adescription");
+            element.IsCollection.Should().BeFalse();
+            result.Id.Should().Be(this.store.GetCurrent().Id);
         }
 
         [Fact]
@@ -331,6 +331,161 @@ namespace CLI.UnitTests
             var element = result.Elements.Single();
             element.Name.Should().Be("achildelementname");
             result.Id.Should().Be(parentElement.Id);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
+                .Should().Throw<PatternException>()
+                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndAlreadyExists_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddCodeTemplateCommand("acommandname", false, "~/apath", null);
+
+            this.application
+                .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
+                .Should().Throw<PatternException>()
+                .WithMessage(ExceptionMessages.PatternApplication_AutomationByNameExists.Format("acommandname"));
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndParentNotExists_ThenThrows()
+        {
+            this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
+                .Returns((PatternMetaModel)null);
+
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x =>
+                    x.AddCodeTemplateCommand("acommandname", false, "~/apath", "anunknownparent"))
+                .Should().Throw<PatternException>()
+                .WithMessage(
+                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommand_TheAddsAutomationToPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+
+            var result = this.application.AddCodeTemplateCommand("acommandname", false, "~/apath", null);
+
+            var automation = this.store.GetCurrent().Automation.Single().As<AutomationCommand>();
+            automation.Name.Should().Be("acommandname");
+            automation.IsTearOff.Should().BeFalse();
+            automation.FilePath.Should().Be("~/apath");
+            result.Id.Should().Be(automation.Id);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndParentIsElement_ThenAddsAutomationToElement()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("aparentelementname", null, null, false, null);
+            var parentElement = new Element("aparentelementname", null, null, false);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternMetaModel>(), "{apatternname.aparentelementname}"))
+                .Returns(parentElement);
+
+            var result = this.application.AddCodeTemplateCommand("acommandname", false, "~/apath",
+                "{apatternname.aparentelementname}");
+
+            result.Name.Should().Be("acommandname");
+            parentElement.Automation.Single().Id.Should().Be(result.Id);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.AddCommandLaunchPoint("acmdid1", null, null))
+                .Should().Throw<PatternException>()
+                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname", null);
+
+            this.application
+                .Invoking(x => x.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname", null))
+                .Should().Throw<PatternException>()
+                .WithMessage(ExceptionMessages.PatternApplication_AutomationByNameExists.Format("alaunchpointname"));
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndParentNotExists_ThenThrows()
+        {
+            this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
+                .Returns((PatternMetaModel)null);
+
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x =>
+                    x.AddCommandLaunchPoint("acmdid1", null, "anunknownparent"))
+                .Should().Throw<PatternException>()
+                .WithMessage(
+                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPoint_TheAddsAutomationToPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+
+            var commandId1 = IdGenerator.Create();
+            var commandId2 = IdGenerator.Create();
+            var commandId3 = IdGenerator.Create();
+            var result =
+                this.application.AddCommandLaunchPoint(new[] { commandId1, commandId2, commandId3 }.SafeJoin(";"),
+                    "alaunchpointname", null);
+
+            var automation = this.store.GetCurrent().Automation.Single().As<AutomationLaunchPoint>();
+            automation.Name.Should().Be("alaunchpointname");
+            automation.CommandIds.Should().ContainInOrder(commandId1, commandId2, commandId3);
+            result.Id.Should().Be(automation.Id);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndParentIsElement_ThenAddsAutomationToElement()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("aparentelementname", null, null, false, null);
+            var parentElement = new Element("aparentelementname", null, null, false);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternMetaModel>(), "{apatternname.aparentelementname}"))
+                .Returns(parentElement);
+
+            var result =
+                this.application.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname",
+                    "{apatternname.aparentelementname}");
+
+            result.Name.Should().Be("alaunchpointname");
+            parentElement.Automation.Single().Id.Should().Be(result.Id);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndNoName_TheAddsAutomationWithDefaultName()
+        {
+            this.application.CreateNewPattern("apatternname");
+            var commandId = IdGenerator.Create();
+
+            var result = this.application.AddCommandLaunchPoint(commandId, null, null);
+
+            var automation = this.store.GetCurrent().Automation.Single().As<AutomationLaunchPoint>();
+            automation.Name.Should().Be("LaunchPoint1");
+            automation.CommandIds.Should().ContainSingle(commandId);
+            result.Id.Should().Be(automation.Id);
         }
     }
 }

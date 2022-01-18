@@ -168,7 +168,7 @@ First the request DTO:
 
 `automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
 `automate add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
@@ -180,7 +180,7 @@ and similarly, for the Response DTO:
 
 `automate add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
-`automate add-attribute "Type" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
+`automate add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
 So far, we are starting to build up our conceptual model. It now looks like this:
 
@@ -196,12 +196,12 @@ So far, we are starting to build up our conceptual model. It now looks like this
 		- Request (element)
 			- Field (collection)
 				- Name (attribute) (string, required)
-				- Type (attribute) (required, oneof "string;int;bool;DateTime")
+				- DataType (attribute) (required, oneof "string;int;bool;DateTime")
 				- IsOptional (attribute) (boolean, default: false)
 		- Response (element)
 			- Field (collection)
 				- Name (attribute) (string, required)
-				- Type (attribute) (required, oneof "string;int;bool;DateTime")
+				- DataType (attribute) (required, oneof "string;int;bool;DateTime")
 ```
 
 So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
@@ -265,14 +265,14 @@ namespace Acme.RoadRunner.Controllers
 	public class {{operation.name}}Request
 	{
 {{~for field in operation.request.field.items~}}
-		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+		public {{field.data_type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{operation.name}}Response
 	{
 {{~for field in operation.response.field.items~}}
-		public {{field.type}} {{field.name}} { get; set; }
+		public {{field.data_type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 {{~end~}}
@@ -282,14 +282,14 @@ namespace Acme.RoadRunner.Controllers
 	public class {{operation.name}}
 	{
 {{~for field in operation.request.field.items~}}
-		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+		public {{field.data_type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{model.resource_name}}
 	{
 {{~for field in operation.response.field.items~}}
-		public {{field.type}} {{field.name}} { get; set; }
+		public {{field.data_type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 {{~end~}}
@@ -360,14 +360,14 @@ namespace Acme.RoadRunner.DTOs
 	public class {{operation.name}}
 	{
 {{~for field in operation.request.field.items~}}
-		public {{field.type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
+		public {{field.data_type}}{{if field.is_optional}}?{{end}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 
 	public class {{model.resource_name}}
 	{
 {{~for field in operation.response.field.items~}}
-		public {{field.type}} {{field.name}} { get; set; }
+		public {{field.data_type}} {{field.name}} { get; set; }
 {{~end~}}
 	}
 {{~end~}}
@@ -394,13 +394,13 @@ This can be done whenever some event on the meta-model is raised. For example, w
 
 These commands will decide **where** to render the files, and what filenames to use.
 
-`automate add-codetemplatecommand "CodeTemplate1" --aschildof {AcmeAPI} --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
+`automate add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
 
-`automate add-codetemplatecommand "CodeTemplate2" --astearoff --aschildof {AcmeAPI} --withpath "~/backend/Services/{{Name}}Service.cs"`
+`automate add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{Name}}Service.cs"`
 
-`automate add-codetemplatecommand "CodeTemplate3" --aschildof {AcmeAPI} --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
+`automate add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
 
-`automate add-codetemplatecommand "CodeTemplate4" --aschildof {AcmeAPI} --withpath "~/backend/Data/{{Name}}.gen.cs"`
+`automate add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{Name}}.gen.cs"`
 
 > These commands adds new "Commands" for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
 >
@@ -412,7 +412,7 @@ These commands will decide **where** to render the files, and what filenames to 
 
 Now, that we have the four explicit commands to execute, we can define a single "Launch Point" that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
 
-`automate add-commandlaunchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --as "Generate" --aschildof {AcmeAPI}`
+`automate add-command-launchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --name "Generate"`
 
 > This command adds a "Launch Point" called `Generate` that can now be executed on the `AcmeAPI` element.
 
@@ -492,7 +492,7 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 						"description": "",
 						"items": [{
 							"name": "ProductId",
-							"type": "string",
+							"data_type": "string",
 							"is_optional": false
 							}
 						], 
@@ -505,7 +505,7 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 						"description": "",
 						"items": [{
 							"name": "ProductId",
-							"type": "string",
+							"data_type": "string",
 							}
 						] 
 					}

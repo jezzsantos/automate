@@ -60,16 +60,10 @@
     <data name="PatternApplication_CollectionByNameExists" xml:space="preserve">
         <value>A collection with name {0} already exists. The name must be unique</value>
     </data>
+    <data name="PatternApplication_AutomationByNameExists" xml:space="preserve">
+        <value>Automation with name {0} already exists. The name must be unique</value>
+    </data>
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
         <value>The expression {0} is not a valid pattern expression</value>
-    </data>
-    <data name="Validations_InvalidIdentifier" xml:space="preserve">
-        <value>The value '{0}' is not a valid identifier</value>
-    </data>
-    <data name="Validations_UnsupportedAttributeType" xml:space="preserve">
-        <value>Unsupported attribute type: '{0}'. Must be one of these values: {1}</value>
-    </data>
-    <data name="Validations_InvalidDefaultValue" xml:space="preserve">
-        <value>The default value '{0}' is not a valid default for an attribute of type '{1}'</value>
     </data>
 </root>

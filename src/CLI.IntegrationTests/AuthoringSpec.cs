@@ -364,5 +364,33 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_CollectionAdded.Format("acollection",
                         this.setup.Patterns.Single().Id));
         }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommand_ThenAddsCommand()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.Format("CodeTemplate1",
+                        this.setup.Patterns.Single().Automation.Single().Id));
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPoint_ThenAddsLaunchPoint()
+        {
+            this.setup.RunCommand("create apattern");
+            this.setup.RunCommand("add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
+            var commandId = this.setup.Patterns.Single().Automation.Single().Id;
+
+            this.setup.RunCommand($"add-command-launchpoint {commandId} --name alaunchpoint");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.Format("alaunchpoint"));
+        }
     }
 }

@@ -2,6 +2,6 @@
 {
     internal interface IPatternPathResolver
     {
-        IElementContainer Resolve(PatternMetaModel pattern, string expression);
+        IPatternElement Resolve(PatternMetaModel pattern, string expression);
     }
 }

@@ -3,19 +3,16 @@ using automate.Extensions;
 
 namespace automate
 {
-    internal class PatternMetaModel : INamedEntity, IElementContainer, IAutomationContainer, ICustomizableEntity
+    internal class PatternMetaModel : IPatternElement
     {
         public PatternMetaModel(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsIdentifier, nameof(name),
-                ExceptionMessages.Validations_InvalidIdentifier);
-            
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+
             Name = name;
             Id = IdGenerator.Create();
-            Attributes = new List<Attribute>();
-            Elements = new List<Element>();
-            CodeTemplates = new List<CodeTemplate>();
         }
 
         /// <summary>
@@ -25,11 +22,13 @@ namespace automate
         {
         }
 
-        public List<CodeTemplate> CodeTemplates { get; set; }
+        public List<CodeTemplate> CodeTemplates { get; set; } = new List<CodeTemplate>();
 
-        public List<Attribute> Attributes { get; set; }
+        public List<IAutomation> Automation { get; set; } = new List<IAutomation>();
 
-        public List<Element> Elements { get; set; }
+        public List<Attribute> Attributes { get; set; } = new List<Attribute>();
+
+        public List<Element> Elements { get; set; } = new List<Element>();
 
         public string Name { get; set; }
 

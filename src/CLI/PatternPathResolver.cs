@@ -7,7 +7,7 @@ namespace automate
 {
     internal class PatternPathResolver : IPatternPathResolver
     {
-        public IElementContainer Resolve(PatternMetaModel pattern, string expression)
+        public IPatternElement Resolve(PatternMetaModel pattern, string expression)
         {
             pattern.GuardAgainstNull(nameof(pattern));
             expression.GuardAgainstNullOrEmpty(nameof(expression));
@@ -38,7 +38,7 @@ namespace automate
 
             var remainingParts = new Queue<string>(expressionParts.Skip(1));
             var nextPart = remainingParts.Dequeue();
-            IElementContainer target = pattern;
+            IPatternElement target = pattern;
             while (nextPart.Exists())
             {
                 var childElement = target.Elements

@@ -97,6 +97,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automation with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternApplication_AutomationByNameExists {
+            get {
+                return ResourceManager.GetString("PatternApplication_AutomationByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The code file {1} could not be found at location {0}.
         /// </summary>
         internal static string PatternApplication_CodeTemplate_NotFoundAtLocation {
@@ -174,33 +183,6 @@ namespace automate {
         internal static string PatternStore_NotFoundAtLocationWithId {
             get {
                 return ResourceManager.GetString("PatternStore_NotFoundAtLocationWithId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The default value &apos;{0}&apos; is not a valid default for an attribute of type &apos;{1}&apos;.
-        /// </summary>
-        internal static string Validations_InvalidDefaultValue {
-            get {
-                return ResourceManager.GetString("Validations_InvalidDefaultValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The value &apos;{0}&apos; is not a valid identifier.
-        /// </summary>
-        internal static string Validations_InvalidIdentifier {
-            get {
-                return ResourceManager.GetString("Validations_InvalidIdentifier", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unsupported attribute type: &apos;{0}&apos;. Must be one of these values: {1}.
-        /// </summary>
-        internal static string Validations_UnsupportedAttributeType {
-            get {
-                return ResourceManager.GetString("Validations_UnsupportedAttributeType", resourceCulture);
             }
         }
     }

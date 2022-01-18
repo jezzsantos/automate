@@ -15,7 +15,7 @@ namespace CLI.UnitTests
         {
             FluentActions.Invoking(() => new Attribute("^aninvalidname^", "string", true, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ExceptionMessages.Validations_InvalidIdentifier.Format("^aninvalidname^") + "*");
+                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
         }
 
         [Fact]
@@ -23,33 +23,37 @@ namespace CLI.UnitTests
         {
             FluentActions.Invoking(() => new Attribute("aname", "aninvalidtype", true, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ExceptionMessages.Validations_UnsupportedAttributeType.Format("aninvalidtype",
-                    Attribute.SupportedTypes.Join(", ") + "*"));
+                .WithMessage(ValidationMessages.Attribute_UnsupportedDataType.Format("aninvalidtype",
+                    Attribute.SupportedDataTypes.Join(", ") + "*"));
         }
 
         [Fact]
         public void WhenConstructedAndDefaultValueIsInvalidForBoolean_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("aname", "boolean", true, "notaboolean"))
+            FluentActions.Invoking(() => new Attribute("aname", "bool", true, "notaboolean"))
                 .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ExceptionMessages.Validations_InvalidDefaultValue.Format("notaboolean", "boolean") + "*");
+                .WithMessage(
+                    ValidationMessages.Attribute_InvalidDefaultValue.Format("notaboolean", "bool") + "*");
         }
 
         [Fact]
         public void WhenConstructedAndDefaultValueIsInvalidForInteger_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("aname", "integer", true, "notaninteger"))
+            FluentActions.Invoking(() => new Attribute("aname", "int", true, "notaninteger"))
                 .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ExceptionMessages.Validations_InvalidDefaultValue.Format("notaninteger", "integer") + "*");
+                .WithMessage(
+                    ValidationMessages.Attribute_InvalidDefaultValue.Format("notaninteger", "int") +
+                    "*");
         }
 
         [Fact]
         public void WhenConstructedAndDefaultValueIsInvalidForDateTime_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("aname", "datetime", true, "notadatetime"))
+            FluentActions.Invoking(() => new Attribute("aname", "DateTime", true, "notadatetime"))
                 .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ExceptionMessages.Validations_InvalidDefaultValue.Format("notadatetime", "datetime") +
-                             "*");
+                .WithMessage(
+                    ValidationMessages.Attribute_InvalidDefaultValue.Format("notadatetime", "DateTime") +
+                    "*");
         }
 
         [Fact]
@@ -57,7 +61,7 @@ namespace CLI.UnitTests
         {
             var attribute = new Attribute("aname", null, true, null);
 
-            attribute.Type.Should().Be(Attribute.DefaultType);
+            attribute.DataType.Should().Be(Attribute.DefaultType);
         }
     }
 }

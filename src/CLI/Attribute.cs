@@ -6,36 +6,36 @@ namespace automate
     internal class Attribute : INamedEntity
     {
         public const string DefaultType = "string";
-        public static readonly string[] SupportedTypes =
+        public static readonly string[] SupportedDataTypes =
         {
-            DefaultType, "boolean", "integer", "datetime"
+            DefaultType, "bool", "int", "DateTime"
         };
 
-        public Attribute(string name, string type, bool isRequired, string defaultValue)
+        public Attribute(string name, string dataType, bool isRequired, string defaultValue)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsIdentifier, nameof(name),
-                ExceptionMessages.Validations_InvalidIdentifier);
-            if (type.HasValue())
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+            if (dataType.HasValue())
             {
-                type.GuardAgainstInvalid(Validations.IsSupportedAttributeType, nameof(type),
-                    ExceptionMessages.Validations_UnsupportedAttributeType, SupportedTypes.Join(", "));
+                dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
+                    ValidationMessages.Attribute_UnsupportedDataType, SupportedDataTypes.Join(", "));
             }
-            var resolvedType = type.HasValue()
-                ? type
+            var resolvedDataType = dataType.HasValue()
+                ? dataType
                 : DefaultType;
             if (defaultValue.HasValue())
             {
-                defaultValue.GuardAgainstInvalid(s => Validations.IsDefaultValueForType(s, resolvedType),
+                defaultValue.GuardAgainstInvalid(
+                    s => Validations.IsDefaultValueForAttributeDataType(s, resolvedDataType),
                     nameof(defaultValue),
-                    ExceptionMessages.Validations_InvalidDefaultValue, resolvedType);
+                    ValidationMessages.Attribute_InvalidDefaultValue, resolvedDataType);
             }
             Id = IdGenerator.Create();
             Name = name;
-            Type = resolvedType;
+            DataType = resolvedDataType;
             IsRequired = isRequired;
             DefaultValue = defaultValue;
-            Choices = new List<string>();
         }
 
         /// <summary>
@@ -45,13 +45,13 @@ namespace automate
         {
         }
 
-        public string Type { get; set; }
+        public string DataType { get; set; }
 
         public bool IsRequired { get; set; }
 
         public string DefaultValue { get; set; }
 
-        public List<string> Choices { get; set; }
+        public List<string> Choices { get; set; } = new List<string>();
 
         public string Id { get; set; }
 

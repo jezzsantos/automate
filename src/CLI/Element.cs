@@ -3,22 +3,19 @@ using automate.Extensions;
 
 namespace automate
 {
-    internal class Element : INamedEntity, IElementContainer, IAutomationContainer, ICustomizableEntity
+    internal class Element : IPatternElement
     {
         public Element(string name, string displayName, string description, bool isCollection)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsIdentifier, nameof(name),
-                ExceptionMessages.Validations_InvalidIdentifier);
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
 
             Id = IdGenerator.Create();
             Name = name;
             DisplayName = displayName;
             Description = description;
             IsCollection = isCollection;
-            Attributes = new List<Attribute>();
-            Elements = new List<Element>();
-            CodeTemplates = new List<CodeTemplate>();
         }
 
         /// <summary>
@@ -34,11 +31,13 @@ namespace automate
 
         public bool IsCollection { get; set; }
 
-        public List<CodeTemplate> CodeTemplates { get; set; }
+        public List<CodeTemplate> CodeTemplates { get; set; } = new List<CodeTemplate>();
 
-        public List<Attribute> Attributes { get; set; }
+        public List<IAutomation> Automation { get; set; } = new List<IAutomation>();
 
-        public List<Element> Elements { get; set; }
+        public List<Attribute> Attributes { get; set; } = new List<Attribute>();
+
+        public List<Element> Elements { get; set; } = new List<Element>();
 
         public string Id { get; set; }
 

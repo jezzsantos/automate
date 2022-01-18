@@ -2,30 +2,27 @@
 
 namespace automate
 {
-    internal class CodeTemplate : INamedEntity
+    internal abstract class Automation : IAutomation
     {
-        public CodeTemplate(string name, string fullPath)
+        protected Automation(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
-            fullPath.GuardAgainstNullOrEmpty(nameof(fullPath));
+
             Id = IdGenerator.Create();
             Name = name;
-            FullPath = fullPath;
         }
 
         /// <summary>
         ///     For serialization
         /// </summary>
-        public CodeTemplate()
+        protected Automation()
         {
         }
 
-        public string FullPath { get; set; }
+        public string Name { get; set; }
 
         public string Id { get; set; }
-
-        public string Name { get; set; }
     }
 }
