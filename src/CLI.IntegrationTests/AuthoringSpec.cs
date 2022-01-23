@@ -273,7 +273,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                    OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
                         this.setup.Patterns.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
         }
@@ -287,7 +287,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                    OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
                         this.setup.Patterns.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeTrue();
         }
@@ -301,7 +301,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                    OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
                         this.setup.Patterns.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
         }
@@ -317,7 +317,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_AttributeAdded.Format("anattribute",
+                    OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
                         this.setup.Patterns.Single().Elements.Single().Elements.Single().Id));
         }
 
@@ -339,7 +339,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_ElementAdded.Format("anelement",
+                    OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("anelement",
                         this.setup.Patterns.Single().Id));
         }
 
@@ -361,7 +361,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CollectionAdded.Format("acollection",
+                    OutputMessages.CommandLine_Output_CollectionAdded.FormatTemplate("acollection",
                         this.setup.Patterns.Single().Id));
         }
 
@@ -374,7 +374,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.Format("CodeTemplate1",
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.FormatTemplate("CodeTemplate1",
                         this.setup.Patterns.Single().Automation.Single().Id));
         }
 
@@ -390,7 +390,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_LaunchPointAdded.Format("alaunchpoint"));
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate("alaunchpoint"));
         }
     }
 }

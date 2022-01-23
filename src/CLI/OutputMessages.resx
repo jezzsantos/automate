@@ -24,9 +24,6 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
-        <value>There are no code templates</value>
-    </data>
     <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
         <value>No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern</value>
     </data>
@@ -34,30 +31,30 @@
         <value>Pattern: {0} ({1}) is in use</value>
     </data>
     <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
-        <value>Pattern: {0} was created with ID: {1}</value>
+        <value>Pattern: {Name} was created with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
-        <value>Pattern: {0} is the default with ID: {1}</value>
+        <value>Pattern: {Name} is the default with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added code template {0} from: {1}</value>
+        <value>Added code template {Name} from: {FilePath}</value>
     </data>
-    <data name="CommandLine_Output_NoCodeTemplatesListed" xml:space="preserve">
-        <value>There are {0} templates, called:</value>
+    <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
+        <value>There are no code templates</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
-        <value>Added attribute '{0}' to element {1}</value>
+        <value>Added attribute '{Name}' to element {ParentId}</value>
     </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
-        <value>Added element '{0}' to element {1}</value>
+        <value>Added element '{Name}' to element {ParentId}</value>
     </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
-        <value>Added collection '{0}' to element {1}</value>
+        <value>Added collection '{Name}' to element {ParentId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
-        <value>Added code template command '{0}' with ID: {1}</value>
+        <value>Added code template command '{Name}' with ID: {CommandId}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
-        <value>Added launch point for commands with name: '{0}'</value>
+        <value>Added launch point for commands with name: '{Name}'</value>
     </data>
 </root>

@@ -61,7 +61,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added attribute &apos;{0}&apos; to element {1}.
+        ///   Looks up a localized string similar to Added attribute &apos;{Name}&apos; to element {ParentId}.
         /// </summary>
         internal static string CommandLine_Output_AttributeAdded {
             get {
@@ -70,7 +70,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added code template command &apos;{0}&apos; with ID: {1}.
+        ///   Looks up a localized string similar to Added code template command &apos;{Name}&apos; with ID: {CommandId}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
             get {
@@ -79,7 +79,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added code template {0} from: {1}.
+        ///   Looks up a localized string similar to Added code template {Name} from: {FilePath}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {
@@ -88,7 +88,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added collection &apos;{0}&apos; to element {1}.
+        ///   Looks up a localized string similar to Added collection &apos;{Name}&apos; to element {ParentId}.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
             get {
@@ -97,7 +97,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added element &apos;{0}&apos; to element {1}.
+        ///   Looks up a localized string similar to Added element &apos;{Name}&apos; to element {ParentId}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
             get {
@@ -106,7 +106,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added launch point for commands with name: &apos;{0}&apos;.
+        ///   Looks up a localized string similar to Added launch point for commands with name: &apos;{Name}&apos;.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
@@ -124,15 +124,6 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are {0} templates, called:.
-        /// </summary>
-        internal static string CommandLine_Output_NoCodeTemplatesListed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplatesListed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern.
         /// </summary>
         internal static string CommandLine_Output_NoPatternSelected {
@@ -142,7 +133,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} was created with ID: {1}.
+        ///   Looks up a localized string similar to Pattern: {Name} was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
             get {
@@ -160,7 +151,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} is the default with ID: {1}.
+        ///   Looks up a localized string similar to Pattern: {Name} is the default with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternSwitched {
             get {
