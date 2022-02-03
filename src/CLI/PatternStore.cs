@@ -90,6 +90,11 @@ namespace automate
             this.repository.Upsert(pattern);
         }
 
+        public void UploadCodeTemplate(PatternMetaModel pattern, string templateId, IFile source)
+        {
+            this.repository.UploadCodeTemplate(pattern, templateId, source);
+        }
+
         private bool ExistsByName(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));

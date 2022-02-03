@@ -53,8 +53,8 @@ namespace automate
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var fullPath = this.filePathResolver.CreatePath(rootPath, relativeFilePath);
-            if (!this.filePathResolver.ExistsAtPath(fullPath))
+            var absolutePath = this.filePathResolver.CreatePath(rootPath, relativeFilePath);
+            if (!this.filePathResolver.ExistsAtPath(absolutePath))
             {
                 throw new PatternException(
                     ExceptionMessages.PatternApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
@@ -80,9 +80,12 @@ namespace automate
                 throw new PatternException(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format(name));
             }
 
-            var codeTemplate = new CodeTemplate(templateName, fullPath);
+            var codeTemplate = new CodeTemplate(templateName, absolutePath);
             pattern.CodeTemplates.Add(codeTemplate);
             this.store.Save(pattern);
+
+            var sourceFile = this.filePathResolver.GetFileAtPath(absolutePath);
+            this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
             return codeTemplate;
         }

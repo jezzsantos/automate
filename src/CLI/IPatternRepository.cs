@@ -23,5 +23,7 @@ namespace automate
         PatternMetaModel FindByName(string name);
 
         PatternMetaModel FindById(string id);
+
+        void UploadCodeTemplate(PatternMetaModel pattern, string codeTemplateId, IFile source);
     }
 }

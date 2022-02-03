@@ -1,9 +1,12 @@
-﻿using automate.Extensions;
+﻿using System.Collections.Generic;
+using automate.Extensions;
 
 namespace automate
 {
     internal class CodeTemplate : INamedEntity
     {
+        public const string OriginalPathMetadataName = "OriginalFilePath";
+
         public CodeTemplate(string name, string fullPath)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -12,7 +15,10 @@ namespace automate
             fullPath.GuardAgainstNullOrEmpty(nameof(fullPath));
             Id = IdGenerator.Create();
             Name = name;
-            FullPath = fullPath;
+            Metadata = new Dictionary<string, string>
+            {
+                { OriginalPathMetadataName, fullPath }
+            };
         }
 
         /// <summary>
@@ -22,7 +28,7 @@ namespace automate
         {
         }
 
-        public string FullPath { get; set; }
+        public Dictionary<string, string> Metadata { get; set; }
 
         public string Id { get; set; }
 

@@ -7,6 +7,7 @@ namespace automate
     internal class MemoryRepository : IPatternRepository
     {
         public const string InMemoryLocation = "in-memory";
+        private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new Dictionary<string, byte[]>();
         private readonly Dictionary<string, PatternMetaModel> inMemoryPatterns =
             new Dictionary<string, PatternMetaModel>();
         private PatternState inMemoryState = new PatternState();
@@ -65,6 +66,11 @@ namespace automate
         {
             return this.inMemoryPatterns
                 .FirstOrDefault(p => p.Key == id).Value;
+        }
+
+        public void UploadCodeTemplate(PatternMetaModel pattern, string codeTemplateId, IFile file)
+        {
+            this.inMemoryCodeTemplates.Add(codeTemplateId, file.GetContents());
         }
     }
 }

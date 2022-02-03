@@ -22,6 +22,9 @@ namespace CLI.UnitTests
                 .Returns("afullpath");
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
+            var file = new Mock<IFile>();
+            this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
+                .Returns(file.Object);
             this.patternPathResolver = new Mock<IPatternPathResolver>();
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
                 .Returns((PatternMetaModel model, string _) => model);
@@ -124,7 +127,8 @@ namespace CLI.UnitTests
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
-            this.store.GetCurrent().CodeTemplates.Single().FullPath.Should().Be("afullpath");
+            this.store.GetCurrent().CodeTemplates.Single().Metadata.Should().Contain(pair =>
+                pair.Key == CodeTemplate.OriginalPathMetadataName && pair.Value == "afullpath");
         }
 
         [Fact]
@@ -173,7 +177,7 @@ namespace CLI.UnitTests
         }
 
         [Fact]
-        public void WhenAddAttribute_TheAddsAtributeToPattern()
+        public void WhenAddAttribute_TheAddsAttributeToPattern()
         {
             this.application.CreateNewPattern("apatternname");
 

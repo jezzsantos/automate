@@ -165,7 +165,8 @@ namespace automate
             var currentDirectory = Environment.CurrentDirectory;
             var template = application.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
             WriteOutput(console, outputStructured,
-                OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name, template.FullPath);
+                OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
+                template.Metadata[CodeTemplate.OriginalPathMetadataName]);
         }
 
         private static void HandleListCodeTemplate(bool outputStructured, IConsole console)

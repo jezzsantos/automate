@@ -66,4 +66,7 @@
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
         <value>The expression {0} is not a valid pattern expression</value>
     </data>
+    <data name="SystemIoFile_SourceFileNotExist" xml:space="preserve">
+        <value>The file does not exist at path: {0}</value>
+    </data>
 </root>

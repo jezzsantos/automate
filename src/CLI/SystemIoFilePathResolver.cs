@@ -13,11 +13,16 @@ namespace automate
             return Path.GetFullPath(Path.Combine(rootPath, relativeOrAbsolutePath));
         }
 
-        public bool ExistsAtPath(string fullPath)
+        public bool ExistsAtPath(string absolutePath)
         {
-            fullPath.GuardAgainstNullOrEmpty(nameof(fullPath));
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
 
-            return File.Exists(fullPath);
+            return File.Exists(absolutePath);
+        }
+
+        public IFile GetFileAtPath(string absolutePath)
+        {
+            return new SystemIoFile(absolutePath);
         }
     }
 }

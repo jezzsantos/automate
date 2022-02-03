@@ -185,5 +185,14 @@ namespace automate {
                 return ResourceManager.GetString("PatternStore_NotFoundAtLocationWithId", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file does not exist at path: {0}.
+        /// </summary>
+        internal static string SystemIoFile_SourceFileNotExist {
+            get {
+                return ResourceManager.GetString("SystemIoFile_SourceFileNotExist", resourceCulture);
+            }
+        }
     }
 }

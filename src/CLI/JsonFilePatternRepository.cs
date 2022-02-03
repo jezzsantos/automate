@@ -11,6 +11,7 @@ namespace automate
     {
         private const string PatternMetaModelFilename = "MetaModel.json";
         private const string StateFilename = "PatternState.json";
+        private const string CodeTemplateDirectoryName = "CodeTemplates";
         private static readonly string patternDirectoryPath = Path.Combine(Constants.RootPersistencePath, "patterns");
         private readonly string currentDirectory;
 
@@ -18,6 +19,12 @@ namespace automate
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
             this.currentDirectory = currentDirectory;
+        }
+
+        public void UploadCodeTemplate(PatternMetaModel pattern, string codeTemplateId, IFile file)
+        {
+            var uploadedFilePath = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, file.FullPath);
+            file.CopyTo(uploadedFilePath);
         }
 
         public string Location => Path.Combine(this.currentDirectory, patternDirectoryPath);
@@ -140,6 +147,15 @@ namespace automate
         {
             var location = CreatePathForPattern(id);
             return Path.Combine(location, PatternMetaModelFilename);
+        }
+
+        private string CreateFilenameForCodeTemplate(string id, string codeTemplateId, string templateFullPath)
+        {
+            var patternLocation = CreatePathForPattern(id);
+            var templateLocation = Path.Combine(patternLocation, CodeTemplateDirectoryName);
+            var templateFilename = $"{codeTemplateId}{Path.GetExtension(templateFullPath)}";
+
+            return Path.Combine(this.currentDirectory, Path.Combine(templateLocation, templateFilename));
         }
     }
 
