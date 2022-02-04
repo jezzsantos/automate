@@ -4,19 +4,19 @@ using automate.Extensions;
 
 namespace automate
 {
-    internal class PatternApplication
+    internal class AuthoringApplication
     {
         private readonly IFilePathResolver filePathResolver;
         private readonly IPatternPathResolver patternPathResolver;
         private readonly PatternStore store;
 
-        public PatternApplication(string currentDirectory) : this(new PatternStore(currentDirectory),
+        public AuthoringApplication(string currentDirectory) : this(new PatternStore(currentDirectory),
             new SystemIoFilePathResolver(), new PatternPathResolver())
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        internal PatternApplication(PatternStore store, IFilePathResolver filePathResolver,
+        internal AuthoringApplication(PatternStore store, IFilePathResolver filePathResolver,
             IPatternPathResolver patternPathResolver)
         {
             store.GuardAgainstNull(nameof(store));

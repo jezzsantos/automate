@@ -6,10 +6,10 @@ namespace automate.Extensions
 {
     internal static class CommandExtensions
     {
-        public static Command WithHandler(this Command command, string name)
+        public static Command WithHandler<THandlers>(this Command command, string name)
         {
-            var flags = BindingFlags.NonPublic | BindingFlags.Static;
-            var method = typeof(Program).GetMethod(name, flags);
+            const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
+            var method = typeof(THandlers).GetMethod(name, flags);
 
             var handler = CommandHandler.Create(method!);
             command.Handler = handler;

@@ -7,6 +7,8 @@ namespace automate
     internal class MemoryRepository : IPatternRepository
     {
         public const string InMemoryLocation = "in-memory";
+
+        // ReSharper disable once CollectionNeverQueried.Local
         private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new Dictionary<string, byte[]>();
         private readonly Dictionary<string, PatternMetaModel> inMemoryPatterns =
             new Dictionary<string, PatternMetaModel>();

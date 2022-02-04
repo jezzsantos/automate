@@ -57,4 +57,10 @@
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
         <value>Added launch point for commands with name: '{Name}'</value>
     </data>
+    <data name="CommandLine_Output_NoToolkitSelected" xml:space="preserve">
+        <value>No Toolkit is in use. You must run `automate install &lt;Path&gt;` first, to install a toolkit</value>
+    </data>
+    <data name="CommandLine_Output_ToolkitInUse" xml:space="preserve">
+        <value>Toolkit: {0} ({1}) is being used</value>
+    </data>
 </root>

@@ -8,14 +8,14 @@ using Xunit;
 namespace CLI.UnitTests
 {
     [Trait("Category", "Unit")]
-    public class PatternApplicationSpec
+    public class AuthoringApplicationSpec
     {
-        private readonly PatternApplication application;
+        private readonly AuthoringApplication application;
         private readonly Mock<IFilePathResolver> filePathResolver;
         private readonly Mock<IPatternPathResolver> patternPathResolver;
         private readonly PatternStore store;
 
-        public PatternApplicationSpec()
+        public AuthoringApplicationSpec()
         {
             this.filePathResolver = new Mock<IFilePathResolver>();
             this.filePathResolver.Setup(pr => pr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -30,7 +30,7 @@ namespace CLI.UnitTests
                 .Returns((PatternMetaModel model, string _) => model);
             this.store = new PatternStore(new MemoryRepository());
             this.application =
-                new PatternApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object);
+                new AuthoringApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object);
         }
 
         [Fact]

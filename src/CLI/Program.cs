@@ -1,35 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using automate.Extensions;
+using JetBrains.Annotations;
 
 namespace automate
 {
     internal class Program
     {
-        private static readonly PatternApplication application = new PatternApplication(Environment.CurrentDirectory);
+        public const string AuthoringCommandName = "pattern";
+        public const string RuntimeCommandName = "toolkit";
+        private static readonly AuthoringApplication authoring = new AuthoringApplication(Environment.CurrentDirectory);
+        private static readonly RuntimeApplication runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
-        // ReSharper disable once UnusedMember.Local
-
+        [UsedImplicitly]
         private static int Main(string[] args)
         {
             try
             {
-                Console.WriteLine(application.CurrentPatternId.Exists()
-                    ? OutputMessages.CommandLine_Output_PatternInUse.Format(application.CurrentPatternName,
-                        application.CurrentPatternId)
-                    : OutputMessages.CommandLine_Output_NoPatternSelected);
-                Console.WriteLine();
-
-                var command = new RootCommand
+                var authoringCommands = new Command(AuthoringCommandName, "Creating patterns")
                 {
                     new Command("create", "Creates a new pattern")
                     {
                         new Argument("Name", "The name of the pattern to create")
-                    }.WithHandler(nameof(HandleCreate)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleCreate)),
                     new Command("use", "Uses an existing pattern")
                     {
                         new Argument("Name", "The name of the existing pattern to use")
-                    }.WithHandler(nameof(HandleUse)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUse)),
                     new Command("add-codetemplate", "Adds a code template to an element")
                     {
                         new Argument("FilePath", "A relative path to the code file, from the current directory"),
@@ -37,9 +35,9 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddCodeTemplate)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
                     new Command("list-codetemplates", "Lists the code templates for this pattern")
-                        .WithHandler(nameof(HandleListCodeTemplate)),
+                        .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListCodeTemplate)),
                     new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                     {
                         new Argument("Name", "The name of the attribute"),
@@ -52,7 +50,7 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the attribute to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddAttribute)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddAttribute)),
                     new Command("add-element", "Adds an element to an element/collection in the pattern")
                     {
                         new Argument("Name", "The name of the element"),
@@ -62,7 +60,7 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the element to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddElement)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
                     new Command("add-collection", "Adds a collection to an element/collection in the pattern")
                     {
                         new Argument("Name", "The name of the collection"),
@@ -72,7 +70,7 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the collection to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddCollection)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
                     new Command("add-codetemplate-command", "Adds a command that renders a code template")
                     {
                         new Argument("Name", "The name of the code template"),
@@ -84,7 +82,7 @@ namespace automate
                             arity: ArgumentArity.ExactlyOne),
                         new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddCodeTemplateCommand)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
                     new Command("add-command-launchpoint", "Adds a launch point for a command")
                     {
                         new Argument("CommandIdentifiers", "The identifiers of the commands to launch"),
@@ -92,12 +90,36 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler(nameof(HandleAddCommandLaunchPoint))
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
                 };
-                command.Description = "Create and Run automated patterns";
+                var runtimeCommands = new Command(RuntimeCommandName, "Running toolkits");
+
+                var command = new RootCommand
+                {
+                    authoringCommands,
+                    runtimeCommands
+                };
+                command.Description = "Create automated patterns as toolkits";
                 command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
                     typeof(bool), () => false,
                     ArgumentArity.ZeroOrOne));
+
+                if (IsAuthoringCommand(args))
+                {
+                    Console.WriteLine(authoring.CurrentPatternId.Exists()
+                        ? OutputMessages.CommandLine_Output_PatternInUse.Format(authoring.CurrentPatternName,
+                            authoring.CurrentPatternId)
+                        : OutputMessages.CommandLine_Output_NoPatternSelected);
+                    Console.WriteLine();
+                }
+                if (IsRuntimeCommand(args))
+                {
+                    Console.WriteLine(runtime.CurrentToolkitId.Exists()
+                        ? OutputMessages.CommandLine_Output_ToolkitInUse.Format(runtime.CurrentToolkitName,
+                            runtime.CurrentToolkitId)
+                        : OutputMessages.CommandLine_Output_NoToolkitSelected);
+                    Console.WriteLine();
+                }
 
                 return command.Invoke(args);
             }
@@ -108,83 +130,104 @@ namespace automate
             }
         }
 
-        private static void HandleAddCodeTemplateCommand(string name, bool asTearOff, string withPath, string asChildOf,
-            bool outputStructured, IConsole console)
+        private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
-            var command = application.AddCodeTemplateCommand(name, asTearOff, withPath, asChildOf);
-            WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded, name,
-                command.Id);
+            return args.Count > 0 && args[0] == RuntimeCommandName;
         }
 
-        private static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
-            bool outputStructured, IConsole console)
+        private static bool IsAuthoringCommand(IReadOnlyList<string> args)
         {
-            var launchPoint = application.AddCommandLaunchPoint(commandIdentifiers, name, asChildOf);
-            WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
-                launchPoint.Name);
+            return args.Count > 0 && args[0] == AuthoringCommandName;
         }
 
-        private static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
-            bool outputStructured, IConsole console)
+        private class AuthoringHandlers
         {
-            var parent = application.AddElement(name, displayedAs, describedAs, false, asChildOf);
-            WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id);
-        }
-
-        private static void HandleAddCollection(string name, string displayedAs, string describedAs, string asChildOf,
-            bool outputStructured, IConsole console)
-        {
-            var parent = application.AddElement(name, displayedAs, describedAs, true, asChildOf);
-            WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name, parent.Id);
-        }
-
-        private static void HandleAddAttribute(string name, string isOfType, string defaultValue, bool isRequired,
-            string isOneOf, string asChildOf, bool outputStructured, IConsole console)
-        {
-            var parent = application.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
-            WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name, parent.Id);
-        }
-
-        private static void HandleCreate(string name, bool outputStructured, IConsole console)
-        {
-            application.CreateNewPattern(name);
-            WriteOutput(console, outputStructured,
-                OutputMessages.CommandLine_Output_PatternCreated, name, application.CurrentPatternId);
-        }
-
-        private static void HandleUse(string name, bool outputStructured, IConsole console)
-        {
-            application.SwitchCurrentPattern(name);
-            WriteOutput(console, outputStructured,
-                OutputMessages.CommandLine_Output_PatternSwitched, name, application.CurrentPatternId);
-        }
-
-        private static void HandleAddCodeTemplate(string filepath, string name, string asChildOf, bool outputStructured,
-            IConsole console)
-        {
-            var currentDirectory = Environment.CurrentDirectory;
-            var template = application.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
-            WriteOutput(console, outputStructured,
-                OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
-                template.Metadata[CodeTemplate.OriginalPathMetadataName]);
-        }
-
-        private static void HandleListCodeTemplate(bool outputStructured, IConsole console)
-        {
-            var templates = application.ListCodeTemplates();
-            if (templates.Count == 0)
+            internal static void HandleAddCodeTemplateCommand(string name, bool asTearOff, string withPath,
+                string asChildOf,
+                bool outputStructured, IConsole console)
             {
-                WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
+                var command = authoring.AddCodeTemplateCommand(name, asTearOff, withPath, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded, name,
+                    command.Id);
             }
-            else
+
+            internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
+                bool outputStructured, IConsole console)
             {
-                WriteOutput(console, outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates,
-                    templates.Count);
-                templates.ForEach(template => WriteOutput(console, outputStructured, $"{template.Name}"));
+                var launchPoint = authoring.AddCommandLaunchPoint(commandIdentifiers, name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
+                    launchPoint.Name);
+            }
+
+            internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var parent = authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id);
+            }
+
+            internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
+                string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var parent = authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
+                    parent.Id);
+            }
+
+            internal static void HandleAddAttribute(string name, string isOfType, string defaultValue, bool isRequired,
+                string isOneOf, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var parent = authoring.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
+                    parent.Id);
+            }
+
+            internal static void HandleCreate(string name, bool outputStructured, IConsole console)
+            {
+                authoring.CreateNewPattern(name);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_PatternCreated, name, authoring.CurrentPatternId);
+            }
+
+            internal static void HandleUse(string name, bool outputStructured, IConsole console)
+            {
+                authoring.SwitchCurrentPattern(name);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_PatternSwitched, name, authoring.CurrentPatternId);
+            }
+
+            internal static void HandleAddCodeTemplate(string filepath, string name, string asChildOf,
+                bool outputStructured,
+                IConsole console)
+            {
+                var currentDirectory = Environment.CurrentDirectory;
+                var template = authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
+                    template.Metadata[CodeTemplate.OriginalPathMetadataName]);
+            }
+
+            internal static void HandleListCodeTemplate(bool outputStructured, IConsole console)
+            {
+                var templates = authoring.ListCodeTemplates();
+                if (templates.Count == 0)
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
+                }
+                else
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates,
+                        templates.Count);
+                    templates.ForEach(template => console.WriteOutput(outputStructured, $"{template.Name}"));
+                }
             }
         }
+    }
 
-        private static void WriteOutput(IConsole console, bool outputStructured, string messageTemplate,
+    internal static class ConsoleExtensions
+    {
+        internal static void WriteOutput(this IConsole console, bool outputStructured, string messageTemplate,
             params object[] args)
         {
             console.WriteLine(outputStructured

@@ -20,6 +20,5 @@ namespace CLI.UnitTests
             this.metaModel.Name.Should().Be("aname");
             this.metaModel.Id.Should().NotBeEmpty();
         }
-        
     }
 }
