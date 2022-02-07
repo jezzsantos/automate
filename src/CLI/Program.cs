@@ -10,8 +10,8 @@ namespace automate
     {
         public const string AuthoringCommandName = "pattern";
         public const string RuntimeCommandName = "toolkit";
-        private static readonly AuthoringApplication authoring = new AuthoringApplication(Environment.CurrentDirectory);
-        private static readonly RuntimeApplication runtime = new RuntimeApplication(Environment.CurrentDirectory);
+        private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
+        private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
         [UsedImplicitly]
         private static int Main(string[] args)
@@ -112,17 +112,17 @@ namespace automate
 
                 if (IsAuthoringCommand(args))
                 {
-                    Console.WriteLine(authoring.CurrentPatternId.Exists()
-                        ? OutputMessages.CommandLine_Output_PatternInUse.Format(authoring.CurrentPatternName,
-                            authoring.CurrentPatternId)
+                    Console.WriteLine(Authoring.CurrentPatternId.Exists()
+                        ? OutputMessages.CommandLine_Output_PatternInUse.Format(Authoring.CurrentPatternName,
+                            Authoring.CurrentPatternId)
                         : OutputMessages.CommandLine_Output_NoPatternSelected);
                     Console.WriteLine();
                 }
                 if (IsRuntimeCommand(args))
                 {
-                    Console.WriteLine(runtime.CurrentToolkitId.Exists()
-                        ? OutputMessages.CommandLine_Output_ToolkitInUse.Format(runtime.CurrentToolkitName,
-                            runtime.CurrentToolkitId)
+                    Console.WriteLine(Runtime.CurrentToolkitId.Exists()
+                        ? OutputMessages.CommandLine_Output_ToolkitInUse.Format(Runtime.CurrentToolkitName,
+                            Runtime.CurrentToolkitId)
                         : OutputMessages.CommandLine_Output_NoToolkitSelected);
                     Console.WriteLine();
                 }
@@ -150,7 +150,7 @@ namespace automate
         {
             internal static void HandleBuild(string version, bool outputStructured, IConsole console)
             {
-                var package = authoring.PackageToolkit(version);
+                var package = Authoring.PackageToolkit(version);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
                     package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
             }
@@ -158,7 +158,7 @@ namespace automate
             internal static void HandleAddCodeTemplateCommand(string name, bool asTearOff, string withPath,
                 string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = authoring.AddCodeTemplateCommand(name, asTearOff, withPath, asChildOf);
+                var command = Authoring.AddCodeTemplateCommand(name, asTearOff, withPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded, name,
                     command.Id);
             }
@@ -166,7 +166,7 @@ namespace automate
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var launchPoint = authoring.AddCommandLaunchPoint(commandIdentifiers, name, asChildOf);
+                var launchPoint = Authoring.AddCommandLaunchPoint(commandIdentifiers, name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
                     launchPoint.Name);
             }
@@ -174,14 +174,14 @@ namespace automate
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var parent = authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
+                var parent = Authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id);
             }
 
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
                 string asChildOf, bool outputStructured, IConsole console)
             {
-                var parent = authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
+                var parent = Authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
                     parent.Id);
             }
@@ -189,30 +189,30 @@ namespace automate
             internal static void HandleAddAttribute(string name, string isOfType, string defaultValue, bool isRequired,
                 string isOneOf, string asChildOf, bool outputStructured, IConsole console)
             {
-                var parent = authoring.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
+                var parent = Authoring.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
                     parent.Id);
             }
 
             internal static void HandleCreate(string name, bool outputStructured, IConsole console)
             {
-                authoring.CreateNewPattern(name);
+                Authoring.CreateNewPattern(name);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternCreated, name, authoring.CurrentPatternId);
+                    OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
             }
 
             internal static void HandleUse(string name, bool outputStructured, IConsole console)
             {
-                authoring.SwitchCurrentPattern(name);
+                Authoring.SwitchCurrentPattern(name);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternSwitched, name, authoring.CurrentPatternId);
+                    OutputMessages.CommandLine_Output_PatternSwitched, name, Authoring.CurrentPatternId);
             }
 
             internal static void HandleAddCodeTemplate(string filepath, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var template = authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                var template = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
                     template.Metadata.OriginalFilePath);
@@ -220,7 +220,7 @@ namespace automate
 
             internal static void HandleListCodeTemplate(bool outputStructured, IConsole console)
             {
-                var templates = authoring.ListCodeTemplates();
+                var templates = Authoring.ListCodeTemplates();
                 if (templates.Count == 0)
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);

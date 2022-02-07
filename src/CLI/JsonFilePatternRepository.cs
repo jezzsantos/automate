@@ -12,7 +12,7 @@ namespace automate
         private const string PatternMetaModelFilename = "MetaModel.json";
         private const string StateFilename = "PatternState.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
-        private static readonly string patternDirectoryPath = Path.Combine(Constants.RootPersistencePath, "patterns");
+        private static readonly string PatternDirectoryPath = Path.Combine(Constants.RootPersistencePath, "patterns");
         private readonly string currentDirectory;
 
         public JsonFilePatternRepository(string currentDirectory)
@@ -27,7 +27,7 @@ namespace automate
             file.CopyTo(uploadedFilePath);
         }
 
-        public string Location => Path.Combine(this.currentDirectory, patternDirectoryPath);
+        public string Location => Path.Combine(this.currentDirectory, PatternDirectoryPath);
 
         public void New(PatternMetaModel pattern)
         {
@@ -126,7 +126,7 @@ namespace automate
 
         private static string CreateFilenameForState()
         {
-            return Path.Combine(patternDirectoryPath, StateFilename);
+            return Path.Combine(PatternDirectoryPath, StateFilename);
         }
 
         private static void EnsurePathExists(string filename)
@@ -140,7 +140,7 @@ namespace automate
 
         private static string CreatePathForPattern(string id)
         {
-            return Path.Combine(patternDirectoryPath, id);
+            return Path.Combine(PatternDirectoryPath, id);
         }
 
         private static string CreateFilenameForPatternById(string id)
