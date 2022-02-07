@@ -11,6 +11,7 @@ namespace CLI.UnitTests
     public class AuthoringApplicationSpec
     {
         private readonly AuthoringApplication application;
+        private readonly Mock<IPatternToolkitPackager> builder;
         private readonly Mock<IFilePathResolver> filePathResolver;
         private readonly Mock<IPatternPathResolver> patternPathResolver;
         private readonly PatternStore store;
@@ -29,8 +30,10 @@ namespace CLI.UnitTests
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
                 .Returns((PatternMetaModel model, string _) => model);
             this.store = new PatternStore(new MemoryRepository());
+            this.builder = new Mock<IPatternToolkitPackager>();
             this.application =
-                new AuthoringApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object);
+                new AuthoringApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object,
+                    this.builder.Object);
         }
 
         [Fact]
@@ -127,8 +130,7 @@ namespace CLI.UnitTests
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
-            this.store.GetCurrent().CodeTemplates.Single().Metadata.Should().Contain(pair =>
-                pair.Key == CodeTemplate.OriginalPathMetadataName && pair.Value == "afullpath");
+            this.store.GetCurrent().CodeTemplates.Single().Metadata.OriginalFilePath.Should().Be("afullpath");
         }
 
         [Fact]
@@ -490,6 +492,31 @@ namespace CLI.UnitTests
             automation.Name.Should().Be("LaunchPoint1");
             automation.CommandIds.Should().ContainSingle(commandId);
             result.Id.Should().Be(automation.Id);
+        }
+
+        [Fact]
+        public void WhenBuildToolkitAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.PackageToolkit(null))
+                .Should().Throw<PatternException>()
+                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenPackageToolkit_ThenPackagesToolkit()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.builder.Setup(bdr => bdr.Package(It.IsAny<PatternMetaModel>(), It.IsAny<string>()))
+                .Returns((PatternMetaModel pattern, string version) =>
+                    new PatternToolkitPackage(new PatternToolkit(pattern, version), "abuildlocation"));
+
+            var toolkit = this.application.PackageToolkit("2.0");
+
+            this.builder.Verify(bdr => bdr.Package(It.IsAny<PatternMetaModel>(), "2.0"));
+            toolkit.BuiltLocation.Should().Be("abuildlocation");
+            toolkit.Toolkit.PatternName.Should().Be("apatternname");
+            toolkit.Toolkit.Version.Should().Be("2.0");
         }
     }
 }

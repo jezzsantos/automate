@@ -36,3 +36,16 @@ runtime commands are largely going to be prefixed with `automate pattern "<PATTE
 
 
 
+# Architecture
+
+Similar to clean architecture.
+
+- We have a CommandLine (Console App) layer that defines the command line interface. (analogue: WebAPI)
+- It delegates command to Application Layer. (analogue: Application Layer)
+  - Application Layer manipulates (directly ) a `PatternMetaModel` object (Transactional Script).
+  - Application Layer uses `IRepositories` and other services to complete the transaction.
+-  
+
+## Improvements
+
+Would be nice to have an aggregate analogue that has all the actions in its interface and does all the work, but then has the ability to be serialised/deserialized (by application layer) into JSON.

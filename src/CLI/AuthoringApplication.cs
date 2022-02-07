@@ -7,24 +7,34 @@ namespace automate
     internal class AuthoringApplication
     {
         private readonly IFilePathResolver filePathResolver;
+        private readonly IPatternToolkitPackager packager;
         private readonly IPatternPathResolver patternPathResolver;
         private readonly PatternStore store;
 
-        public AuthoringApplication(string currentDirectory) : this(new PatternStore(currentDirectory),
-            new SystemIoFilePathResolver(), new PatternPathResolver())
+        public AuthoringApplication(string currentDirectory) : this(currentDirectory,
+            new PatternStore(currentDirectory), new SystemIoFilePathResolver())
+        {
+            currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
+        }
+
+        private AuthoringApplication(string currentDirectory, PatternStore store, IFilePathResolver pathResolver) :
+            this(store, pathResolver, new PatternPathResolver(),
+                new PatternToolkitPackager(store, new JsonFileToolkitRepository(), pathResolver))
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
         internal AuthoringApplication(PatternStore store, IFilePathResolver filePathResolver,
-            IPatternPathResolver patternPathResolver)
+            IPatternPathResolver patternPathResolver, IPatternToolkitPackager packager)
         {
             store.GuardAgainstNull(nameof(store));
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
             patternPathResolver.GuardAgainstNull(nameof(patternPathResolver));
+            packager.GuardAgainstNull(nameof(packager));
             this.store = store;
             this.filePathResolver = filePathResolver;
             this.patternPathResolver = patternPathResolver;
+            this.packager = packager;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -235,6 +245,16 @@ namespace automate
             this.store.Save(pattern);
 
             return automation;
+        }
+
+        public PatternToolkitPackage PackageToolkit(string version)
+        {
+            VerifyCurrentPatternExists();
+            var pattern = this.store.GetCurrent();
+
+            var package = this.packager.Package(pattern, version);
+
+            return package;
         }
 
         private void VerifyCurrentPatternExists()

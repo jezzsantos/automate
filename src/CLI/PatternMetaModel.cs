@@ -22,6 +22,8 @@ namespace automate
         {
         }
 
+        public string ToolkitVersion { get; set; }
+
         public List<CodeTemplate> CodeTemplates { get; set; } = new List<CodeTemplate>();
 
         public List<IAutomation> Automation { get; set; } = new List<IAutomation>();

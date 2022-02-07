@@ -70,6 +70,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toolkit for pattern: {0} has been built (v.{1}), and is ready to be installed with `automate toolkit install {2}`.
+        /// </summary>
+        internal static string CommandLine_Output_BuiltToolkit {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_BuiltToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added code template command &apos;{Name}&apos; with ID: {CommandId}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
@@ -124,7 +133,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern.
+        ///   Looks up a localized string similar to No Pattern is in use. You must run `automate pattern create &lt;Name&gt;` first to create a pattern.
         /// </summary>
         internal static string CommandLine_Output_NoPatternSelected {
             get {
@@ -133,7 +142,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Toolkit is in use. You must run `automate install &lt;Path&gt;` first, to install a toolkit.
+        ///   Looks up a localized string similar to No Toolkit is in use. You must run `automate toolkit install &lt;FilePath&gt;` first, to install a toolkit.
         /// </summary>
         internal static string CommandLine_Output_NoToolkitSelected {
             get {

@@ -187,6 +187,24 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Requested version number: {0}, is not a valid 2-dot version number.
+        /// </summary>
+        internal static string PatternToolkitPackager_InvalidVersionInstruction {
+            get {
+                return ResourceManager.GetString("PatternToolkitPackager_InvalidVersionInstruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: {0}, cannot be before the current toolkit version number: {1}.
+        /// </summary>
+        internal static string PatternToolkitPackager_VersionBeforeCurrent {
+            get {
+                return ResourceManager.GetString("PatternToolkitPackager_VersionBeforeCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file does not exist at path: {0}.
         /// </summary>
         internal static string SystemIoFile_SourceFileNotExist {

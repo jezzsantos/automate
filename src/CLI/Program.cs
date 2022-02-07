@@ -90,7 +90,13 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint)),
+                    new Command("build", "Builds a pattern into a toolkit")
+                    {
+                        new Option("--version", "A version number, or 'auto' to increment the last version",
+                            typeof(string),
+                            arity: ArgumentArity.ZeroOrOne)
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
                 };
                 var runtimeCommands = new Command(RuntimeCommandName, "Running toolkits");
 
@@ -142,9 +148,15 @@ namespace automate
 
         private class AuthoringHandlers
         {
+            internal static void HandleBuild(string version, bool outputStructured, IConsole console)
+            {
+                var package = authoring.PackageToolkit(version);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
+                    package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
+            }
+
             internal static void HandleAddCodeTemplateCommand(string name, bool asTearOff, string withPath,
-                string asChildOf,
-                bool outputStructured, IConsole console)
+                string asChildOf, bool outputStructured, IConsole console)
             {
                 var command = authoring.AddCodeTemplateCommand(name, asTearOff, withPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded, name,
@@ -167,8 +179,7 @@ namespace automate
             }
 
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
-                string asChildOf,
-                bool outputStructured, IConsole console)
+                string asChildOf, bool outputStructured, IConsole console)
             {
                 var parent = authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
@@ -198,14 +209,13 @@ namespace automate
             }
 
             internal static void HandleAddCodeTemplate(string filepath, string name, string asChildOf,
-                bool outputStructured,
-                IConsole console)
+                bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
                 var template = authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
-                    template.Metadata[CodeTemplate.OriginalPathMetadataName]);
+                    template.Metadata.OriginalFilePath);
             }
 
             internal static void HandleListCodeTemplate(bool outputStructured, IConsole console)

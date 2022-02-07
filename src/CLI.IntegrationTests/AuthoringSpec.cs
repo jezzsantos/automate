@@ -399,5 +399,24 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate("alaunchpoint"));
         }
+
+        [Fact]
+        public void WhenBuildToolkit_ThenBuildsToolkitOnDesktop()
+        {
+            var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
+
+            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand(
+                $"{Program.AuthoringCommandName} add-codetemplate \"{template}\" --name atemplatename");
+
+            this.setup.RunCommand($"{Program.AuthoringCommandName} build");
+
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("apattern", "1.0.0", location));
+        }
     }
 }

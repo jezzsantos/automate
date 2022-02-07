@@ -420,7 +420,7 @@ Now, that we have the four explicit commands to execute, we can define a single 
 
 Now the tech lead has a functioning pattern, it time to ship it to their team.
 
-`automate pattern build "AcmeAPI" --version "auto"`
+`automate pattern build --version "auto"`
 
 > This command creates a standalone (cross-platform) package (`AcmeAPI.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
 

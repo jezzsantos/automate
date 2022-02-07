@@ -25,7 +25,7 @@
         </value>
     </resheader>
     <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
-        <value>No Pattern is in use. You must run `automate create &lt;Name&gt;` first to create a pattern</value>
+        <value>No Pattern is in use. You must run `automate pattern create &lt;Name&gt;` first to create a pattern</value>
     </data>
     <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
         <value>Pattern: {0} ({1}) is in use</value>
@@ -58,9 +58,12 @@
         <value>Added launch point for commands with name: '{Name}'</value>
     </data>
     <data name="CommandLine_Output_NoToolkitSelected" xml:space="preserve">
-        <value>No Toolkit is in use. You must run `automate install &lt;Path&gt;` first, to install a toolkit</value>
+        <value>No Toolkit is in use. You must run `automate toolkit install &lt;FilePath&gt;` first, to install a toolkit</value>
     </data>
     <data name="CommandLine_Output_ToolkitInUse" xml:space="preserve">
         <value>Toolkit: {0} ({1}) is being used</value>
+    </data>
+    <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
+        <value>Toolkit for pattern: {0} has been built (v.{1}), and is ready to be installed with `automate toolkit install {2}`</value>
     </data>
 </root>
