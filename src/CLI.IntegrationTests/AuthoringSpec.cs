@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using automate;
@@ -10,117 +8,6 @@ using Xunit;
 
 namespace CLI.IntegrationTests
 {
-    [CollectionDefinition("CLI", DisableParallelization = true)]
-    public class AllCliTests : ICollectionFixture<CliTestSetup>
-    {
-    }
-
-    public class CliTestSetup : IDisposable
-    {
-        private const string ProcessName = "automate";
-        private readonly JsonFilePatternRepository repository;
-        private StandardOutput error;
-        private StandardOutput output;
-        private Process process;
-
-        public CliTestSetup()
-        {
-            Process.GetProcessesByName(ProcessName).ToList().ForEach(p => p.Kill());
-            this.repository = new JsonFilePatternRepository(Environment.CurrentDirectory);
-            ResetRepository();
-            ResetCommandLineSession();
-        }
-
-        public StandardOutput Output
-        {
-            get
-            {
-                if (this.process.NotExists())
-                {
-                    return new StandardOutput(string.Empty);
-                }
-
-                if (!this.output.Exists())
-                {
-                    var standardOutput = this.process.StandardOutput.ReadToEnd();
-                    this.output = new StandardOutput(standardOutput);
-                }
-
-                return this.output;
-            }
-        }
-
-        public StandardOutput Error
-        {
-            get
-            {
-                if (this.process.NotExists())
-                {
-                    return new StandardOutput(string.Empty);
-                }
-
-                if (!this.error.Exists())
-                {
-                    var standardError = this.process.StandardError.ReadToEnd();
-                    this.error = new StandardOutput(standardError);
-                }
-
-                return this.error;
-            }
-        }
-
-        internal List<PatternMetaModel> Patterns => this.repository.List();
-
-        internal PatternState PatternState => this.repository.GetState();
-
-        public string Location => this.repository.Location;
-
-        public void ResetRepository()
-        {
-            this.repository.DestroyAll();
-        }
-
-        public void RunCommand(string arguments)
-        {
-            KillProcess();
-            ResetCommandLineSession();
-            this.process = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(Environment.CurrentDirectory, ProcessName) + ".exe",
-                Arguments = arguments,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false
-            });
-            if (this.process.Exists())
-            {
-                this.process.WaitForExit();
-            }
-        }
-
-        public void Dispose()
-        {
-            KillProcess();
-        }
-
-        private void ResetCommandLineSession()
-        {
-            this.output = null;
-            this.error = null;
-        }
-
-        private void KillProcess()
-        {
-            if (this.process.Exists())
-            {
-                if (!this.process.HasExited)
-                {
-                    this.process.Kill();
-                }
-            }
-        }
-    }
-
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class AuthoringSpec
     {
@@ -133,9 +20,9 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenNoCommands_ThenDisplaysError()
+        public void WhenCreateAndNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName}");
+            this.setup.RunCommand($"{Program.CreateCommandName}");
 
             this.setup.Should().DisplayErrorForMissingCommand();
         }
@@ -143,8 +30,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenCreateWithNameAndExists_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
 
             this.setup.Should().DisplayError(ExceptionMessages.PatternStore_FoundNamed, "apattern");
         }
@@ -152,7 +39,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenCreateWithName_ThenCreatesNewPattern()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.Patterns.Single().Name.Should().Be("apattern");
@@ -162,9 +49,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenCreateMultipleTimes_ThenCreatesNewPatterns()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern1");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern2");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern3");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern1");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern2");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern3");
 
             this.setup.Should().DisplayNoError();
             this.setup.Patterns.Should().Contain(x => x.Name == "apattern1");
@@ -174,9 +61,17 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenEditAndNoCommands_ThenDisplaysError()
+        {
+            this.setup.RunCommand($"{Program.EditCommandName}");
+
+            this.setup.Should().DisplayErrorForMissingCommand();
+        }
+
+        [Fact]
         public void WhenUseWithoutName_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} use");
+            this.setup.RunCommand($"{Program.EditCommandName} use");
 
             this.setup.Should().DisplayErrorForMissingArgument("use");
         }
@@ -184,7 +79,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenUseWithNameAndNotExists_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} use apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} use apattern");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternStore_NotFoundAtLocationWithId, "apattern", this.setup.Location);
@@ -193,8 +88,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenUseWithNameAndExists_ThenUsesPattern()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} use apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} use apattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Single().Id);
@@ -205,7 +100,7 @@ namespace CLI.IntegrationTests
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-codetemplate {template}");
+            this.setup.RunCommand($"{Program.EditCommandName} add-codetemplate {template}");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
@@ -214,8 +109,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCodeTemplateAndFileMissing_ThenDisplaysHelp()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-codetemplate");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-codetemplate");
 
             this.setup.Should().DisplayErrorForMissingArgument("add-codetemplate");
         }
@@ -225,8 +120,8 @@ namespace CLI.IntegrationTests
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-codetemplate \"{template}\"");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-codetemplate \"{template}\"");
 
             this.setup.Should().DisplayNoError();
             this.setup.Patterns.Single().CodeTemplates.First().Name.Should().Be("CodeTemplate1");
@@ -237,9 +132,9 @@ namespace CLI.IntegrationTests
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-codetemplate \"{template}\" --name atemplatename");
+                $"{Program.EditCommandName} add-codetemplate \"{template}\" --name atemplatename");
 
             this.setup.Should().DisplayNoError();
             this.setup.Patterns.Single().CodeTemplates.First().Name.Should().Be("atemplatename");
@@ -248,9 +143,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListCodeTemplatesAndNone_ThenDisplaysNone()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} list-codetemplates");
+            this.setup.RunCommand($"{Program.EditCommandName} list-codetemplates");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayMessage(OutputMessages.CommandLine_Output_NoCodeTemplates);
@@ -259,7 +154,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddAttributeAndNoCurrentPattern_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-attribute anattribute");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
@@ -268,8 +163,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddAttribute_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-attribute anattribute");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -282,8 +177,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddAttributeWithIsRequired_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-attribute anattribute --isrequired");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute --isrequired");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -296,8 +191,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddAttributeWithIsRequiredFalse_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-attribute anattribute --isrequired false");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute --isrequired false");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -310,12 +205,12 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddAttributeAsChildOfDeepElement_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-element anelementname1");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element anelementname1");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-element anelementname2 --aschildof {{apattern.anelementname1}}");
+                $"{Program.EditCommandName} add-element anelementname2 --aschildof {{apattern.anelementname1}}");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-attribute anattribute --aschildof {{apattern.anelementname1.anelementname2}}");
+                $"{Program.EditCommandName} add-attribute anattribute --aschildof {{apattern.anelementname1.anelementname2}}");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -327,7 +222,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddElementAndNoCurrentPattern_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-element anelement");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element anelement");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
@@ -336,8 +231,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddElement_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-element anelement");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element anelement");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -349,7 +244,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCollectionAndNoCurrentPattern_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} add-collection acollection");
+            this.setup.RunCommand($"{Program.EditCommandName} add-collection acollection");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
@@ -358,9 +253,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCollection_ThenAddsAttribute()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-collection acollection --displayedas adisplayname --describedas adescription");
+                $"{Program.EditCommandName} add-collection acollection --displayedas adisplayname --describedas adescription");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -372,9 +267,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCodeTemplateCommand_ThenAddsCommand()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
+                $"{Program.EditCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -386,13 +281,13 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenAddCommandLaunchPoint_ThenAddsLaunchPoint()
         {
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
+                $"{Program.EditCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath ~/afilepath");
             var commandId = this.setup.Patterns.Single().Automation.Single().Id;
 
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-command-launchpoint {commandId} --name alaunchpoint");
+                $"{Program.EditCommandName} add-command-launchpoint {commandId} --name alaunchpoint");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -401,15 +296,23 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenBuildAndNoCommands_ThenDisplaysError()
+        {
+            this.setup.RunCommand($"{Program.BuildCommandName}");
+
+            this.setup.Should().DisplayErrorForMissingCommand();
+        }
+
+        [Fact]
         public void WhenBuildToolkit_ThenBuildsToolkitOnDesktop()
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} create apattern");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.AuthoringCommandName} add-codetemplate \"{template}\" --name atemplatename");
+                $"{Program.EditCommandName} add-codetemplate \"{template}\" --name atemplatename");
 
-            this.setup.RunCommand($"{Program.AuthoringCommandName} build");
+            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
 
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");

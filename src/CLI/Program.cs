@@ -8,8 +8,12 @@ namespace automate
 {
     internal class Program
     {
-        public const string AuthoringCommandName = "pattern";
-        public const string RuntimeCommandName = "toolkit";
+        public const string CreateCommandName = "create";
+        public const string EditCommandName = "edit";
+        public const string BuildCommandName = "build";
+        public const string InstallCommandName = "install";
+        public const string RunCommandName = "run";
+        public const string UsingCommandName = "using";
         private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
         private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
@@ -18,12 +22,15 @@ namespace automate
         {
             try
             {
-                var authoringCommands = new Command(AuthoringCommandName, "Creating patterns")
+                var createCommands = new Command(CreateCommandName, "Creating new patterns")
                 {
-                    new Command("create", "Creates a new pattern")
+                    new Command("pattern", "Creates a new pattern")
                     {
                         new Argument("Name", "The name of the pattern to create")
-                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleCreate)),
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleCreate))
+                };
+                var editCommands = new Command(EditCommandName, "Editing patterns")
+                {
                     new Command("use", "Uses an existing pattern")
                     {
                         new Argument("Name", "The name of the existing pattern to use")
@@ -90,20 +97,29 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
-                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint)),
-                    new Command("build", "Builds a pattern into a toolkit")
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
+                };
+                var buildCommands = new Command(BuildCommandName, "Building toolkits from patterns")
+                {
+                    new Command("toolkit", "Builds a pattern into a toolkit")
                     {
                         new Option("--version", "A version number, or 'auto' to increment the last version",
                             typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
                 };
-                var runtimeCommands = new Command(RuntimeCommandName, "Running toolkits");
+                var installCommands = new Command(InstallCommandName, "Installing toolkits");
+                var runCommands = new Command(RunCommandName, "Running patterns from toolkits");
+                var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits");
 
                 var command = new RootCommand
                 {
-                    authoringCommands,
-                    runtimeCommands
+                    createCommands,
+                    editCommands,
+                    buildCommands,
+                    installCommands,
+                    runCommands,
+                    usingCommands
                 };
                 command.Description = "Create automated patterns as toolkits";
                 command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
@@ -138,12 +154,12 @@ namespace automate
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
-            return args.Count > 0 && args[0] == RuntimeCommandName;
+            return args.Count > 0 && args[0] == UsingCommandName;
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
         {
-            return args.Count > 0 && args[0] == AuthoringCommandName;
+            return args.Count > 0 && args[0] == EditCommandName;
         }
 
         private class AuthoringHandlers

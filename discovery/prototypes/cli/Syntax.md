@@ -62,7 +62,7 @@ The tech lead now intends to provide some custom tooling to their team to help b
 
 On the command line, navigate to the source code directory of the new product called `RoadRunner`. eg. `cd C:/projects/acme/roadrunner/src`
 
-`automate pattern create "AcmeAPI"`
+`automate create pattern "AcmeAPI"`
 
 > This command registers a new pattern called `AcmeAPI` in the current directory. It saves a bunch of files defining the pattern, which could be added to source control in the `C:/projects/acme/roadrunner/src/automate` directory.
 
@@ -91,16 +91,16 @@ Lets assume for this example, that the fragments of this pattern exist in all th
 
 For each file that contains a fragment of the pattern, they execute this command:
 
-`automate pattern add-codetemplate "<file-path>"`
+`automate edit add-codetemplate "<file-path>"`
 
 > This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically name like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`
 
 For this codebase, this will be four similar commands:
 
-* `automate pattern add-codetemplate "backend/controllers/BookingController.cs"`
-* `automate pattern add-codetemplate "backend/services/BookingService.cs"`
-* `automate pattern add-codetemplate "backend/controllers/IBookingService.cs"`
-* `automate pattern add-codetemplate "backend/data/Bookings.cs"`
+* `automate edit add-codetemplate "backend/controllers/BookingController.cs"`
+* `automate edit add-codetemplate "backend/services/BookingService.cs"`
+* `automate edit add-codetemplate "backend/controllers/IBookingService.cs"`
+* `automate edit add-codetemplate "backend/data/Bookings.cs"`
 
 > This means now that conceptually, the pattern called `AcmeAPI` has a root element (called `AcmeAPI`) with four code templates called `CodeTemplate1` `CodeTemplate2`, `CodeTemplate3` and `CodeTemplate4`.
 
@@ -130,17 +130,17 @@ The tech lead decides that the contributor will have to at least name the new AP
 
 So the tech lead defines an attribute on the pattern called `Name`
 
-`automate pattern add-attribute "Name" --isrequired`
+`automate edit add-attribute "Name" --isrequired`
 
 and then the `ResourceName` attribute:
 
-`automate pattern add-attribute "ResourceName" --isrequired`
+`automate edit add-attribute "ResourceName" --isrequired`
 
 Now, the tech lead knows that every new API contains multiple "Service Operations" (according to existing coding patterns).
 
 They now need to add a collection to the pattern to allow their contributors to define multiple service operations.
 
-`automate pattern add-collection "ServiceOperation" --displayedas "Operations" --describedas "The service operations of the web API" `
+`automate edit add-collection "ServiceOperation" --displayedas "Operations" --describedas "The service operations of the web API" `
 
 > Notice here that the tech lead decided to name this collection with a name of `ServiceOperation` and give it a meaningful display name and description.
 
@@ -148,13 +148,13 @@ They now need to add a collection to the pattern to allow their contributors to 
 
 And then the necessary attributes of a service operation:
 
-`automate pattern add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate pattern add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate pattern add-attribute "Route" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Route" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate pattern add-attribute "IsAuthorized" --isrequired --typeis "boolean" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "IsAuthorized" --isrequired --typeis "boolean" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
 
 > Note: The tech lead has deliberately ignored the optional properties of a service operation such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `RoadRunner` product matures.
 
@@ -162,25 +162,25 @@ Now, a service operation (conceptually) has a Request DTO and a response DTO. Th
 
 First the request DTO:
 
-`automate pattern add-element "Request" --describedas "The HTTP request" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-element "Request" --describedas "The HTTP request" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate pattern add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Request}`
+`automate edit add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Request}`
 
-`automate pattern add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate pattern add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate pattern add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
 and similarly, for the Response DTO:
 
-`automate pattern add-element "Response" --describedas "The HTTP response" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-element "Response" --describedas "The HTTP response" --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate pattern add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Response}`
+`automate edit add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Response}`
 
-`automate pattern add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
+`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
-`automate pattern add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
+`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
 So far, we are starting to build up our conceptual model. It now looks like this:
 
@@ -222,11 +222,11 @@ The code template files have been renamed and can be found in the following loca
 
 `C:/projects/acme/roadrunner/src/automate/codetemplates`
 
-Each code template has a unique name that was assigned to it when the `automate pattern add --codetemplate "<filepath>"` command was run.
+Each code template has a unique name that was assigned to it when the `automate edit add --codetemplate "<filepath>"` command was run.
 
 Either look at the CLI output to find out the name of the template that was created. Or you can run this command to list them:
 
-`automate pattern list-codetemplates`
+`automate edit list-codetemplates`
 
 Open each of the template files in a text editor.
 
@@ -394,13 +394,13 @@ This can be done whenever some event on the meta-model is raised. For example, w
 
 These commands will decide **where** to render the files, and what filenames to use.
 
-`automate pattern add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
 
-`automate pattern add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{Name}}Service.cs"`
+`automate edit add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{Name}}Service.cs"`
 
-`automate pattern add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
 
-`automate pattern add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{Name}}.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{Name}}.gen.cs"`
 
 > These commands adds new "Commands" for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
 >
@@ -412,7 +412,7 @@ These commands will decide **where** to render the files, and what filenames to 
 
 Now, that we have the four explicit commands to execute, we can define a single "Launch Point" that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
 
-`automate pattern add-command-launchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --name "Generate"`
+`automate edit add-command-launchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --name "Generate"`
 
 > This command adds a "Launch Point" called `Generate` that can now be executed on the `AcmeAPI` element.
 
@@ -420,7 +420,7 @@ Now, that we have the four explicit commands to execute, we can define a single 
 
 Now the tech lead has a functioning pattern, it time to ship it to their team.
 
-`automate pattern build --version "auto"`
+`automate build toolkit --version "auto"`
 
 > This command creates a standalone (cross-platform) package (`AcmeAPI.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
 
@@ -430,7 +430,7 @@ Navigate to the new `RoadRunner` codebase: `cd C:/projects/acme/roadrunner/src`
 
 Download and install the new toolkit:
 
-`automate toolkit install "C:/Downloads/AcmeAPI.toolkit"`
+`automate install toolkit "C:/Downloads/AcmeAPI.toolkit"`
 
 > This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/roadrunner/src/automate/toolkits/AcmeAPI/v1.0.0.0`
 
@@ -446,24 +446,24 @@ For this example, lets call the new API the `Orders` API, in the `RoadRunner` pr
 
 To get started:
 
-`automate toolkit create "AcmeAPI"`
+`automate run pattern "AcmeAPI"`
 
-> This command creates a new `AcmeAPI`, and returns its unique PATTERNID.
+> This command creates a new instance of the pattern `AcmeAPI`, and names it "Orders API", and returns its unique PATTERNID.
 
-`automate toolkit "<PATTERNID>" --set "Name=Orders" --with ResourceName=Order"`
+`automate using "<PATTERNID>" --set "Name=Orders" --with ResourceName=Order"`
 
 > This command defines the `Name` and the `ResourceName` attributes of the pattern
 
-`automate toolkit "<PATTERNID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
+`automate using "<PATTERNID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
 
 > This command creates a new `ServiceOperation` instance to the "Operations" collection, and returns its unique OPERATIONID.
 >
 
-`automate toolkit "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
+`automate using "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
 
 > This command creates a new field in the Request DTO called `ProductId`
 
-`automate toolkit "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
+`automate using "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
 
 > This command creates a new field in the Response DTO called `Id`
 
@@ -524,7 +524,7 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 
 A codebase contributor can now ask the toolkit to write the new code for them!
 
-`automate toolkit "<PATTERNID>" --execute-command "Generate"`
+`automate using "<PATTERNID>" --execute-command "Generate"`
 
 > This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase at the relevant locations.
 
