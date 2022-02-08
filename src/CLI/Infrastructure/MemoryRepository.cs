@@ -83,6 +83,12 @@ namespace automate.Infrastructure
             this.inMemoryCodeTemplates.Add(codeTemplateId, file.GetContents());
         }
 
+        public PatternToolkitDefinition FindToolkitById(string id)
+        {
+            return this.inMemoryToolkits
+                .FirstOrDefault(t => t.Key == id).Value;
+        }
+
         public string ToolkitLocation => InMemoryLocation;
 
         public PatternToolkitDefinition GetToolkit(string id)
@@ -95,9 +101,14 @@ namespace automate.Infrastructure
             throw new PatternException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
         }
 
-        public string SaveToolkit(PatternToolkitDefinition toolkit)
+        public string ExportToolkit(PatternToolkitDefinition toolkit)
         {
             throw new NotImplementedException();
+        }
+
+        public void ImportToolkit(PatternToolkitDefinition toolkit)
+        {
+            this.inMemoryToolkits[toolkit.Id] = toolkit;
         }
     }
 }

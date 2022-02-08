@@ -66,7 +66,7 @@
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: {0} has been built (v.{1}), and is ready to be installed with command: `automate toolkit install "{2}"`</value>
     </data>
-    <data name="CommandLine_Output_InstallToolkit" xml:space="preserve">
+    <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
         <value>Toolkit for pattern: {0} (v.{1}) has been installed and is ready to use with command: `automate toolkit create "{0}"`</value>
     </data>
 </root>

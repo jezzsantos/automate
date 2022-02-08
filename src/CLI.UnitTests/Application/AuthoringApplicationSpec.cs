@@ -102,7 +102,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
                 .WithMessage(
-                    ExceptionMessages.PatternApplication_CodeTemplate_NotFoundAtLocation.Format("arootpath",
+                    ExceptionMessages.AuthoringApplication_CodeTemplate_NotFoundAtLocation.Format("arootpath",
                         "arelativepath"));
         }
 
@@ -115,7 +115,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format("atemplatename"));
+                .WithMessage(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists.Format("atemplatename"));
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.ListCodeTemplates())
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddAttribute("anattributename", null, null, false, null, null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddAttribute("anattributename", null, null, false, null, null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_AttributeByNameExists.Format("anattributename"));
+                .WithMessage(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format("anattributename"));
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x =>
                     x.AddAttribute("anattributename", null, "adefaultvalue", false, "avalue1;avalue2;avalue3", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_AttributeDefaultValueIsNotAChoice);
+                .WithMessage(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace CLI.UnitTests.Application
                     x.AddAttribute("anattributename", null, null, false, null, "anunknownparent"))
                 .Should().Throw<PatternException>()
                 .WithMessage(
-                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+                    ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
         }
 
         [Fact]
@@ -278,7 +278,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddElement("anelementname", null, null, false, null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddElement("anelementname", null, null, false, null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_ElementByNameExists.Format("anelementname"));
+                .WithMessage(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format("anelementname"));
         }
 
         [Fact]
@@ -306,7 +306,7 @@ namespace CLI.UnitTests.Application
                     x.AddElement("anelementname", null, null, false, "anunknownparent"))
                 .Should().Throw<PatternException>()
                 .WithMessage(
-                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+                    ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
         }
 
         [Fact]
@@ -349,7 +349,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -361,7 +361,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_AutomationByNameExists.Format("acommandname"));
+                .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("acommandname"));
         }
 
         [Fact]
@@ -377,7 +377,7 @@ namespace CLI.UnitTests.Application
                     x.AddCodeTemplateCommand("acommandname", false, "~/apath", "anunknownparent"))
                 .Should().Throw<PatternException>()
                 .WithMessage(
-                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+                    ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
         }
 
         [Fact]
@@ -417,7 +417,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddCommandLaunchPoint("acmdid1", null, null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -429,7 +429,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname", null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_AutomationByNameExists.Format("alaunchpointname"));
+                .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("alaunchpointname"));
         }
 
         [Fact]
@@ -445,7 +445,7 @@ namespace CLI.UnitTests.Application
                     x.AddCommandLaunchPoint("acmdid1", null, "anunknownparent"))
                 .Should().Throw<PatternException>()
                 .WithMessage(
-                    ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format("anunknownparent"));
+                    ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
         }
 
         [Fact]
@@ -504,20 +504,20 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.PackageToolkit(null))
                 .Should().Throw<PatternException>()
-                .WithMessage(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
             this.application.CreateNewPattern("apatternname");
-            this.builder.Setup(bdr => bdr.Package(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+            this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition pattern, string version) =>
                     new PatternToolkitPackage(new PatternToolkitDefinition(pattern, version), "abuildlocation"));
 
             var toolkit = this.application.PackageToolkit("2.0");
 
-            this.builder.Verify(bdr => bdr.Package(It.IsAny<PatternDefinition>(), "2.0"));
+            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), "2.0"));
             toolkit.BuiltLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");
             toolkit.Toolkit.Version.Should().Be("2.0");

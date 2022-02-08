@@ -117,9 +117,9 @@ namespace automate.Infrastructure {
         /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: {0} (v.{1}) has been installed and is ready to use with command: `automate toolkit create &quot;{0}&quot;`.
         /// </summary>
-        internal static string CommandLine_Output_InstallToolkit {
+        internal static string CommandLine_Output_InstalledToolkit {
             get {
-                return ResourceManager.GetString("CommandLine_Output_InstallToolkit", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_InstalledToolkit", resourceCulture);
             }
         }
         

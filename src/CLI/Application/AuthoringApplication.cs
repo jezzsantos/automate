@@ -8,34 +8,33 @@ namespace automate.Application
 {
     internal class AuthoringApplication
     {
-        private readonly IFilePathResolver filePathResolver;
+        private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
-        private readonly IPatternPathResolver patternPathResolver;
+        private readonly IPatternPathResolver patternResolver;
         private readonly IPatternStore store;
 
         public AuthoringApplication(string currentDirectory) : this(currentDirectory,
             new PatternStore(currentDirectory), new SystemIoFilePathResolver())
         {
-            currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        private AuthoringApplication(string currentDirectory, IPatternStore store, IFilePathResolver pathResolver) :
-            this(store, pathResolver, new PatternPathResolver(),
-                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory), pathResolver))
+        private AuthoringApplication(string currentDirectory, IPatternStore store, IFilePathResolver fileResolver) :
+            this(store, fileResolver, new PatternPathResolver(),
+                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory), fileResolver))
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        internal AuthoringApplication(IPatternStore store, IFilePathResolver filePathResolver,
-            IPatternPathResolver patternPathResolver, IPatternToolkitPackager packager)
+        internal AuthoringApplication(IPatternStore store, IFilePathResolver fileResolver,
+            IPatternPathResolver patternResolver, IPatternToolkitPackager packager)
         {
             store.GuardAgainstNull(nameof(store));
-            filePathResolver.GuardAgainstNull(nameof(filePathResolver));
-            patternPathResolver.GuardAgainstNull(nameof(patternPathResolver));
+            fileResolver.GuardAgainstNull(nameof(fileResolver));
+            patternResolver.GuardAgainstNull(nameof(patternResolver));
             packager.GuardAgainstNull(nameof(packager));
             this.store = store;
-            this.filePathResolver = filePathResolver;
-            this.patternPathResolver = patternPathResolver;
+            this.fileResolver = fileResolver;
+            this.patternResolver = patternResolver;
             this.packager = packager;
         }
 
@@ -65,22 +64,22 @@ namespace automate.Application
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var absolutePath = this.filePathResolver.CreatePath(rootPath, relativeFilePath);
-            if (!this.filePathResolver.ExistsAtPath(absolutePath))
+            var absolutePath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
+            if (!this.fileResolver.ExistsAtPath(absolutePath))
             {
                 throw new PatternException(
-                    ExceptionMessages.PatternApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
+                    ExceptionMessages.AuthoringApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
                         relativeFilePath));
             }
 
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
-                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
                     throw new PatternException(
-                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
@@ -89,14 +88,15 @@ namespace automate.Application
                 : $"CodeTemplate{pattern.CodeTemplates.Count + 1}";
             if (CodeTemplateExistsByName(target, templateName))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_CodeTemplateByNameExists.Format(name));
+                throw new PatternException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
+                    .Format(name));
             }
 
             var codeTemplate = new CodeTemplate(templateName, absolutePath);
             pattern.CodeTemplates.Add(codeTemplate);
             this.store.Save(pattern);
 
-            var sourceFile = this.filePathResolver.GetFileAtPath(absolutePath);
+            var sourceFile = this.fileResolver.GetFileAtPath(absolutePath);
             this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
             return codeTemplate;
@@ -123,23 +123,23 @@ namespace automate.Application
                 && choices.Any()
                 && !choices.Contains(defaultValue))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_AttributeDefaultValueIsNotAChoice);
+                throw new PatternException(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
             }
 
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
-                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
                     throw new PatternException(
-                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (AttributeExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_AttributeByNameExists.Format(name));
+                throw new PatternException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue)
@@ -163,17 +163,17 @@ namespace automate.Application
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
-                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
                     throw new PatternException(
-                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (ElementExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_ElementByNameExists.Format(name));
+                throw new PatternException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
             }
 
             var element = new Element(name, displayName, description, isCollection);
@@ -195,17 +195,17 @@ namespace automate.Application
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
-                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
                     throw new PatternException(
-                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (AutomationExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_AutomationByNameExists.Format(name));
+                throw new PatternException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
             }
 
             var automation = new AutomationCommand(name, isTearOff, filePath);
@@ -225,11 +225,11 @@ namespace automate.Application
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
-                target = this.patternPathResolver.Resolve(pattern, parentExpression);
+                target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
                     throw new PatternException(
-                        ExceptionMessages.PatternApplication_NodeExpressionNotFound.Format(parentExpression));
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
@@ -238,7 +238,7 @@ namespace automate.Application
                 : $"LaunchPoint{target.Automation.Count + 1}";
             if (AutomationExistsByName(target, launchPointName))
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_AutomationByNameExists.Format(name));
+                throw new PatternException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
             }
 
             var commandIdentifiers = commandIds.SafeSplit(";").ToList();
@@ -254,7 +254,7 @@ namespace automate.Application
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var package = this.packager.Package(pattern, version);
+            var package = this.packager.Pack(pattern, version);
 
             return package;
         }
@@ -263,7 +263,7 @@ namespace automate.Application
         {
             if (this.store.GetCurrent().NotExists())
             {
-                throw new PatternException(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                throw new PatternException(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
             }
         }
 

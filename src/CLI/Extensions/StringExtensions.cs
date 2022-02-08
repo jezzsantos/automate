@@ -115,7 +115,9 @@ namespace automate.Extensions
             }
 
             var paramIndex = 0;
-            var replacements = tokens.ToDictionary(token => token.Value.TrimStart('{').TrimEnd('}'), _ =>
+            var replacements = tokens
+                .DistinctBy(token => token.Value)
+                .ToDictionary(token => token.Value.TrimStart('{').TrimEnd('}'), _ =>
             {
                 paramIndex++;
                 return args.Length >= paramIndex

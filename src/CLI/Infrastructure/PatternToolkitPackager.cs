@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using automate.Domain;
 using automate.Extensions;
 
@@ -26,7 +27,7 @@ namespace automate.Infrastructure
             this.filePathResolver = filePathResolver;
         }
 
-        public PatternToolkitPackage Package(PatternDefinition pattern, string versionInstruction)
+        public PatternToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
         {
             var newVersion = UpdateToolkitVersion(pattern, versionInstruction);
 
@@ -34,9 +35,46 @@ namespace automate.Infrastructure
 
             PackageAssets(toolkit);
 
-            var location = this.toolkitStore.Save(toolkit);
+            var location = this.toolkitStore.Export(toolkit);
 
             return new PatternToolkitPackage(toolkit, location);
+        }
+
+        public PatternToolkitDefinition UnPack(IFile installer)
+        {
+            var toolkit = UnpackToolkit(installer);
+
+            //TODO: we will need to worry about existing versions of this toolkit, and existing products created from them  
+            this.toolkitStore.Import(toolkit);
+
+            return toolkit;
+        }
+
+        private static PatternToolkitDefinition UnpackToolkit(IFile installer)
+        {
+            var contents = installer.GetContents();
+
+            PatternToolkitDefinition toolkit;
+
+            try
+            {
+                toolkit = Encoding.UTF8.GetString(contents).FromJson<PatternToolkitDefinition>();
+            }
+            catch (Exception ex)
+            {
+                throw new PatternException(
+                    ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile.Format(
+                        installer.FullPath), ex);
+            }
+
+            if (toolkit.NotExists()
+                || !toolkit.Id.HasValue())
+            {
+                throw new PatternException(
+                    ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile.Format(
+                        installer.FullPath));
+            }
+            return toolkit;
         }
 
         private void PackageAssets(PatternToolkitDefinition toolkit)

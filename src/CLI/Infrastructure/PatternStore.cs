@@ -38,6 +38,7 @@ namespace automate.Infrastructure
         public void DestroyAll()
         {
             this.patternRepository.DestroyAll();
+            this.localStateRepository.DestroyAll();
         }
 
         public PatternDefinition GetCurrent()

@@ -22,11 +22,11 @@ namespace automate.Domain
         {
         }
 
-        public string Version { get; }
+        public string Version { get; set; }
 
         public string PatternName => Pattern.Name;
 
-        public PatternDefinition Pattern { get; }
+        public PatternDefinition Pattern { get; set; }
 
         public List<CodeTemplateFile> CodeTemplateFiles { get; set; }
 

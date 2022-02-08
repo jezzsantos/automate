@@ -105,7 +105,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{Program.EditCommandName} add-codetemplate {template}");
 
             this.setup.Should()
-                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -159,7 +159,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute");
 
             this.setup.Should()
-                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{Program.EditCommandName} add-element anelement");
 
             this.setup.Should()
-                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
@@ -249,7 +249,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{Program.EditCommandName} add-collection acollection");
 
             this.setup.Should()
-                .DisplayError(ExceptionMessages.PatternApplication_NoCurrentPattern);
+                .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]

@@ -61,6 +61,87 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attribute with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string AuthoringApplication_AttributeByNameExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_AttributeByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given &apos;defaultvalue&apos; must be one of the choices given in the &apos;isoneof&apos;..
+        /// </summary>
+        internal static string AuthoringApplication_AttributeDefaultValueIsNotAChoice {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_AttributeDefaultValueIsNotAChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automation with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string AuthoringApplication_AutomationByNameExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_AutomationByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The code file {1} could not be found at location {0}.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplate_NotFoundAtLocation {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplate_NotFoundAtLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A code template with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateByNameExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A collection with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string AuthoringApplication_CollectionByNameExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CollectionByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An element with name {0} already exists. The name must be unique.
+        /// </summary>
+        internal static string AuthoringApplication_ElementByNameExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_ElementByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern does not yet exist.
+        /// </summary>
+        internal static string AuthoringApplication_NoCurrentPattern {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_NoCurrentPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; does not resolve to an element in this pattern.
+        /// </summary>
+        internal static string AuthoringApplication_NodeExpressionNotFound {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_NodeExpressionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The pattern meta-model could not be found for {0}.
         /// </summary>
         internal static string JsonFileRepository_PatternNotFound {
@@ -84,87 +165,6 @@ namespace automate {
         internal static string MemoryRepository_NotFound {
             get {
                 return ResourceManager.GetString("MemoryRepository_NotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An attribute with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string PatternApplication_AttributeByNameExists {
-            get {
-                return ResourceManager.GetString("PatternApplication_AttributeByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given &apos;defaultvalue&apos; must be one of the choices given in the &apos;isoneof&apos;..
-        /// </summary>
-        internal static string PatternApplication_AttributeDefaultValueIsNotAChoice {
-            get {
-                return ResourceManager.GetString("PatternApplication_AttributeDefaultValueIsNotAChoice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automation with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string PatternApplication_AutomationByNameExists {
-            get {
-                return ResourceManager.GetString("PatternApplication_AutomationByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The code file {1} could not be found at location {0}.
-        /// </summary>
-        internal static string PatternApplication_CodeTemplate_NotFoundAtLocation {
-            get {
-                return ResourceManager.GetString("PatternApplication_CodeTemplate_NotFoundAtLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A code template with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string PatternApplication_CodeTemplateByNameExists {
-            get {
-                return ResourceManager.GetString("PatternApplication_CodeTemplateByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A collection with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string PatternApplication_CollectionByNameExists {
-            get {
-                return ResourceManager.GetString("PatternApplication_CollectionByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An element with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string PatternApplication_ElementByNameExists {
-            get {
-                return ResourceManager.GetString("PatternApplication_ElementByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern does not yet exist.
-        /// </summary>
-        internal static string PatternApplication_NoCurrentPattern {
-            get {
-                return ResourceManager.GetString("PatternApplication_NoCurrentPattern", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; does not resolve to an element in this pattern.
-        /// </summary>
-        internal static string PatternApplication_NodeExpressionNotFound {
-            get {
-                return ResourceManager.GetString("PatternApplication_NodeExpressionNotFound", resourceCulture);
             }
         }
         
@@ -196,6 +196,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The installer file at: {0}, contains an invalid toolkit definition.
+        /// </summary>
+        internal static string PatternToolkitPackager_InvalidInstallerFile {
+            get {
+                return ResourceManager.GetString("PatternToolkitPackager_InvalidInstallerFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Requested version number: {0}, is not a valid 2-dot version number.
         /// </summary>
         internal static string PatternToolkitPackager_InvalidVersionInstruction {
@@ -214,11 +223,29 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The installer could not be found at: {0}.
+        /// </summary>
+        internal static string RuntimeApplication_ToolkitInstallerNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ToolkitInstallerNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file does not exist at path: {0}.
         /// </summary>
         internal static string SystemIoFile_SourceFileNotExist {
             get {
                 return ResourceManager.GetString("SystemIoFile_SourceFileNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A toolkit with id {0} cannot be found in the toolkit store at location {1}.
+        /// </summary>
+        internal static string ToolkitStore_NotFoundAtLocationWithId {
+            get {
+                return ResourceManager.GetString("ToolkitStore_NotFoundAtLocationWithId", resourceCulture);
             }
         }
     }

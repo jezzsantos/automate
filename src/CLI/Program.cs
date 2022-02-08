@@ -270,7 +270,7 @@ namespace automate
             internal static void HandleInstall(string location, bool outputStructured, IConsole console)
             {
                 var toolkit = Runtime.InstallToolkit(location);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstallToolkit,
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkit,
                     toolkit.PatternName, toolkit.Version);
             }
         }

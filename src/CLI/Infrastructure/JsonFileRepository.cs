@@ -24,12 +24,25 @@ namespace automate.Infrastructure
         {
         }
 
-        internal JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository)
+        private JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
             localStateRepository.GuardAgainstNull(nameof(localStateRepository));
             this.currentDirectory = currentDirectory;
             this.localStateRepository = localStateRepository;
+        }
+
+        public List<PatternToolkitDefinition> ListToolkits()
+        {
+            if (!Directory.Exists(PatternLocation))
+            {
+                return new List<PatternToolkitDefinition>();
+            }
+
+            return Directory.GetDirectories(ToolkitLocation)
+                .Select(path => new DirectoryInfo(path).Name)
+                .Select(GetToolkit)
+                .ToList();
         }
 
         public void SaveLocalState(LocalState state)
@@ -120,11 +133,9 @@ namespace automate.Infrastructure
             this.localStateRepository.DestroyAll();
         }
 
-        public string ToolkitLocation => Path.Combine(this.currentDirectory, ToolkitDirectoryPath);
-
-        public string SaveToolkit(PatternToolkitDefinition toolkit)
+        public string ExportToolkit(PatternToolkitDefinition toolkit)
         {
-            var filename = CreateFilenameForToolkit(toolkit.PatternName, toolkit.Version);
+            var filename = CreateFilenameForExportedToolkit(toolkit.PatternName, toolkit.Version);
             EnsurePathExists(filename);
 
             using (var file = File.CreateText(filename))
@@ -135,9 +146,28 @@ namespace automate.Infrastructure
             return filename;
         }
 
+        public void ImportToolkit(PatternToolkitDefinition toolkit)
+        {
+            var filename = CreateFilenameForImportedToolkitById(toolkit.Id);
+            EnsurePathExists(filename);
+
+            using (var file = File.CreateText(filename))
+            {
+                file.Write(toolkit.ToJson());
+            }
+        }
+
+        public string ToolkitLocation => Path.Combine(this.currentDirectory, ToolkitDirectoryPath);
+
+        public PatternToolkitDefinition FindToolkitById(string id)
+        {
+            return ListToolkits()
+                .FirstOrDefault(toolkit => toolkit.Id == id);
+        }
+
         public PatternToolkitDefinition GetToolkit(string id)
         {
-            var filename = CreateFilenameForToolkitById(id);
+            var filename = CreateFilenameForImportedToolkitById(id);
             if (!File.Exists(filename))
             {
                 throw new PatternException(ExceptionMessages.JsonFileRepository_ToolkitNotFound.Format(id));
@@ -155,12 +185,12 @@ namespace automate.Infrastructure
             }
         }
 
-        private static string CreatePathForPattern(string id)
+        private string CreatePathForPattern(string id)
         {
-            return Path.Combine(PatternDirectoryPath, id);
+            return Path.Combine(PatternLocation, id);
         }
 
-        private static string CreateFilenameForPatternById(string id)
+        private string CreateFilenameForPatternById(string id)
         {
             var location = CreatePathForPattern(id);
             return Path.Combine(location, PatternMetaModelFilename);
@@ -175,7 +205,7 @@ namespace automate.Infrastructure
             return Path.Combine(this.currentDirectory, Path.Combine(templateLocation, templateFilename));
         }
 
-        private static string CreateFilenameForToolkit(string name, string version)
+        private static string CreateFilenameForExportedToolkit(string name, string version)
         {
             var filename = Path.ChangeExtension($"{name}_{version}", ToolkitFileExtension);
             var directory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -183,15 +213,15 @@ namespace automate.Infrastructure
             return Path.Combine(directory, filename);
         }
 
-        private static string CreateFilenameForToolkitById(string id)
+        private string CreateFilenameForImportedToolkitById(string id)
         {
             var location = CreatePathForToolkit(id);
             return Path.Combine(location, PatternMetaModelFilename);
         }
 
-        private static string CreatePathForToolkit(string id)
+        private string CreatePathForToolkit(string id)
         {
-            return Path.Combine(ToolkitDirectoryPath, id);
+            return Path.Combine(ToolkitLocation, id);
         }
     }
 }
