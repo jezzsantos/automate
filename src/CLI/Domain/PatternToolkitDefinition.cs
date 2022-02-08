@@ -10,7 +10,7 @@ namespace automate.Domain
             pattern.GuardAgainstNull(nameof(pattern));
             version.GuardAgainstNullOrEmpty(nameof(version));
 
-            Id = IdGenerator.Create();
+            Id = pattern.Id;
             Pattern = pattern;
             Version = version;
         }

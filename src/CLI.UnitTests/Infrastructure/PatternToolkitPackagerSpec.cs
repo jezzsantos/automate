@@ -137,6 +137,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.packager.Package(pattern, null);
 
+            result.Toolkit.Id.Should().Be("apatternid");
             result.Toolkit.Version.Should().Be("1.0.0");
             result.Toolkit.PatternName.Should().Be("apatternname");
             result.BuiltLocation.Should().Be("alocation");

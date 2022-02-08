@@ -24,7 +24,7 @@ namespace automate.Application
 
         public string CurrentToolkitName => this.store.GetCurrent().Name;
 
-        public PatternToolkitDefinition InstallToolkit(string location)
+        public PatternToolkitDefinition InstallToolkit(string installerLocation)
         {
             //TODO: file not exists -> error
             //TODO: file not contains a toolkit -> error
