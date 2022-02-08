@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using automate.Application;
 using automate.Extensions;
+using automate.Infrastructure;
 using JetBrains.Annotations;
 
 namespace automate
@@ -108,9 +110,22 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
                 };
-                var installCommands = new Command(InstallCommandName, "Installing toolkits");
-                var runCommands = new Command(RunCommandName, "Running patterns from toolkits");
-                var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits");
+                var installCommands = new Command(InstallCommandName, "Installing toolkits")
+                {
+                    new Command("toolkit", "Installs the pattern from a toolkit")
+                    {
+                        new Argument("Location",
+                            "The location of the *.toolkit file to install into the current directory")
+                    }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleInstall))
+                };
+                var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
+                {
+                    new Command("no-op")
+                };
+                var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
+                {
+                    new Command("no-op")
+                };
 
                 var command = new RootCommand
                 {
@@ -247,6 +262,16 @@ namespace automate
                         templates.Count);
                     templates.ForEach(template => console.WriteOutput(outputStructured, $"{template.Name}"));
                 }
+            }
+        }
+
+        private class RuntimeHandlers
+        {
+            internal static void HandleInstall(string location, bool outputStructured, IConsole console)
+            {
+                var toolkit = Runtime.InstallToolkit(location);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstallToolkit,
+                    toolkit.PatternName, toolkit.Version);
             }
         }
     }

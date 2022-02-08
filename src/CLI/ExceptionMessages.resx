@@ -39,8 +39,11 @@
     <data name="PatternApplication_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="JsonFilePatternRepository_NotFound" xml:space="preserve">
+    <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
         <value>The pattern meta-model could not be found for {0}</value>
+    </data>
+    <data name="JsonFileRepository_ToolkitNotFound" xml:space="preserve">
+        <value>The toolkit could not be found for {0}</value>
     </data>
     <data name="MemoryRepository_NotFound" xml:space="preserve">
         <value>The pattern meta-model could not be found for {0}</value>

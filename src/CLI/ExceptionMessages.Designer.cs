@@ -63,9 +63,18 @@ namespace automate {
         /// <summary>
         ///   Looks up a localized string similar to The pattern meta-model could not be found for {0}.
         /// </summary>
-        internal static string JsonFilePatternRepository_NotFound {
+        internal static string JsonFileRepository_PatternNotFound {
             get {
-                return ResourceManager.GetString("JsonFilePatternRepository_NotFound", resourceCulture);
+                return ResourceManager.GetString("JsonFileRepository_PatternNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The toolkit could not be found for {0}.
+        /// </summary>
+        internal static string JsonFileRepository_ToolkitNotFound {
+            get {
+                return ResourceManager.GetString("JsonFileRepository_ToolkitNotFound", resourceCulture);
             }
         }
         

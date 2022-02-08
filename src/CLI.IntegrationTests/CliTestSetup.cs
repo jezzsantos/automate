@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using automate;
+using automate.Domain;
 using automate.Extensions;
+using automate.Infrastructure;
 using Xunit;
 
 namespace CLI.IntegrationTests
@@ -17,7 +18,7 @@ namespace CLI.IntegrationTests
     public class CliTestSetup : IDisposable
     {
         private const string ProcessName = "automate";
-        private readonly JsonFilePatternRepository repository;
+        private readonly JsonFileRepository repository;
         private StandardOutput error;
         private StandardOutput output;
         private Process process;
@@ -25,7 +26,7 @@ namespace CLI.IntegrationTests
         public CliTestSetup()
         {
             Process.GetProcessesByName(ProcessName).ToList().ForEach(p => p.Kill());
-            this.repository = new JsonFilePatternRepository(Environment.CurrentDirectory);
+            this.repository = new JsonFileRepository(Environment.CurrentDirectory);
             ResetRepository();
             ResetCommandLineSession();
         }
@@ -68,11 +69,11 @@ namespace CLI.IntegrationTests
             }
         }
 
-        internal List<PatternMetaModel> Patterns => this.repository.List();
+        internal List<PatternDefinition> Patterns => this.repository.ListPatterns();
 
-        internal PatternState PatternState => this.repository.GetState();
+        internal LocalState LocalState => this.repository.GetLocalState();
 
-        public string Location => this.repository.Location;
+        public string Location => this.repository.PatternLocation;
 
         public void ResetRepository()
         {

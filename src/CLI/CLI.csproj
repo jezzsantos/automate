@@ -37,11 +37,11 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="OutputMessages.resx">
+        <EmbeddedResource Update="Infrastructure\OutputMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>OutputMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="ValidationMessages.resx">
+        <EmbeddedResource Update="Domain\ValidationMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
@@ -52,12 +52,12 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>ExceptionMessages.resx</DependentUpon>
         </Compile>
-        <Compile Update="OutputMessages.Designer.cs">
+        <Compile Update="Infrastructure\OutputMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>OutputMessages.resx</DependentUpon>
         </Compile>
-        <Compile Update="ValidationMessages.Designer.cs">
+        <Compile Update="Domain\ValidationMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ValidationMessages.resx</DependentUpon>

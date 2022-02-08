@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using automate;
 using automate.Extensions;
+using automate.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -43,7 +44,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Patterns.Single().Name.Should().Be("apattern");
-            this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Single().Id);
+            this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Patterns.Single().Id);
         }
 
         [Fact]
@@ -57,7 +58,8 @@ namespace CLI.IntegrationTests
             this.setup.Patterns.Should().Contain(x => x.Name == "apattern1");
             this.setup.Patterns.Should().Contain(x => x.Name == "apattern2");
             this.setup.Patterns.Should().Contain(x => x.Name == "apattern3");
-            this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Find(x => x.Name == "apattern3")!.Id);
+            this.setup.LocalState.CurrentPattern.Should()
+                .Be(this.setup.Patterns.Find(x => x.Name == "apattern3")!.Id);
         }
 
         [Fact]
@@ -92,7 +94,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{Program.EditCommandName} use apattern");
 
             this.setup.Should().DisplayNoError();
-            this.setup.PatternState.Current.Should().Be(this.setup.Patterns.Single().Id);
+            this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Patterns.Single().Id);
         }
 
         [Fact]
