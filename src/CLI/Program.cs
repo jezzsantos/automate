@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.Linq;
 using automate.Application;
 using automate.Extensions;
 using automate.Infrastructure;
@@ -120,10 +121,14 @@ namespace automate
                 };
                 var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
                 {
+                    new Command("list-toolkits", "Lists all installed toolkits")
+                        .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
                     new Command("toolkit", "Creates a new solution from a toolkit")
                     {
                         new Argument("Name", "The name of the toolkit that you want to use")
-                    }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution))
+                    }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
+                    new Command("list-solutions", "Lists all created solutions")
+                        .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
                 };
                 var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
                 {
@@ -255,15 +260,15 @@ namespace automate
             internal static void HandleListCodeTemplate(bool outputStructured, IConsole console)
             {
                 var templates = Authoring.ListCodeTemplates();
-                if (templates.Count == 0)
+                if (templates.Any())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplatesListed,
+                        templates.Select(template =>
+                            $"{{\"Name\": \"{template.Name}\", \"ID\": \"{template.Id}\"}}\n").Join());
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates,
-                        templates.Count);
-                    templates.ForEach(template => console.WriteOutput(outputStructured, $"{template.Name}"));
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
                 }
             }
         }
@@ -277,11 +282,41 @@ namespace automate
                     toolkit.PatternName, toolkit.Version);
             }
 
+            internal static void HandleListToolkits(bool outputStructured, IConsole console)
+            {
+                var toolkits = Runtime.ListInstalledToolkits();
+                if (toolkits.Any())
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
+                        toolkits.Select(toolkit =>
+                            $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}\n").Join());
+                }
+                else
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledToolkits);
+                }
+            }
+
             internal static void HandleNewSolution(string name, bool outputStructured, IConsole console)
             {
                 var solution = Runtime.CreateSolution(name);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit
                     , solution.PatternName, solution.Id);
+            }
+
+            internal static void HandleListSolutions(bool outputStructured, IConsole console)
+            {
+                var solutions = Runtime.ListCreatedSolutions();
+                if (solutions.Any())
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
+                        solutions.Select(solution =>
+                            $"{{\"Name\": \"{solution.PatternName}\", \"ID\": \"{solution.Id}\"}}\n").Join());
+                }
+                else
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledSolutions);
+                }
             }
         }
     }

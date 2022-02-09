@@ -133,8 +133,8 @@ namespace CLI.IntegrationTests
         public void WhenAddCodeTemplateAndNamed_ThenAddsCodeTemplate()
         {
             var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
-
             this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+
             this.setup.RunCommand(
                 $"{Program.EditCommandName} add-codetemplate \"{template}\" --name atemplatename");
 
@@ -151,6 +151,25 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayMessage(OutputMessages.CommandLine_Output_NoCodeTemplates);
+        }
+
+        [Fact]
+        public void WhenListCodeTemplatesAndOne_ThenDisplaysOne()
+        {
+            var location = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-codetemplate \"{location}\" --name atemplatename");
+
+            this.setup.RunCommand($"{Program.EditCommandName} list-codetemplates");
+
+            var template = this.setup.Patterns.Single().CodeTemplates.Single();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplatesListed.FormatTemplate(
+                        $"{{\"Name\": \"atemplatename\", \"ID\": \"{template.Id}\"}}"));
         }
 
         [Fact]

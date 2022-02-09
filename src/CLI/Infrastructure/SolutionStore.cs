@@ -1,4 +1,5 @@
-﻿using automate.Domain;
+﻿using System.Collections.Generic;
+using automate.Domain;
 using automate.Extensions;
 
 namespace automate.Infrastructure
@@ -33,6 +34,11 @@ namespace automate.Infrastructure
         public void Save(SolutionDefinition solution)
         {
             this.solutionRepository.UpsertSolution(solution);
+        }
+
+        public List<SolutionDefinition> ListAll()
+        {
+            return this.solutionRepository.ListSolutions();
         }
     }
 }

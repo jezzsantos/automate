@@ -1,4 +1,5 @@
-﻿using automate.Domain;
+﻿using System.Collections.Generic;
+using automate.Domain;
 
 namespace automate.Infrastructure
 {
@@ -13,5 +14,7 @@ namespace automate.Infrastructure
         void ChangeCurrent(string id);
 
         ToolkitDefinition FindByName(string name);
+
+        List<ToolkitDefinition> ListAll();
     }
 }

@@ -97,6 +97,15 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code templates:\n{Templates}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplatesListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplatesListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added collection &apos;{Name}&apos; to element {ParentId}.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
@@ -124,11 +133,29 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created solutions:\n{Solutions}.
+        /// </summary>
+        internal static string CommandLine_Output_InstalledSolutionsListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_InstalledSolutionsListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: {Name} (v.{Version}) has been installed and is ready to use with command: `automate toolkit create &quot;{Name}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkit {
             get {
                 return ResourceManager.GetString("CommandLine_Output_InstalledToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed toolkits:\n{Toolkits}.
+        /// </summary>
+        internal static string CommandLine_Output_InstalledToolkitsListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_InstalledToolkitsListed", resourceCulture);
             }
         }
         
@@ -147,6 +174,24 @@ namespace automate.Infrastructure {
         internal static string CommandLine_Output_NoCodeTemplates {
             get {
                 return ResourceManager.GetString("CommandLine_Output_NoCodeTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no created solution.
+        /// </summary>
+        internal static string CommandLine_Output_NoInstalledSolutions {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoInstalledSolutions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no installed toolkits.
+        /// </summary>
+        internal static string CommandLine_Output_NoInstalledToolkits {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoInstalledToolkits", resourceCulture);
             }
         }
         

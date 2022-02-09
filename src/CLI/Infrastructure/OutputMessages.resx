@@ -42,6 +42,9 @@
     <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
         <value>There are no code templates</value>
     </data>
+    <data name="CommandLine_Output_CodeTemplatesListed" xml:space="preserve">
+        <value>Code templates:\n{Templates}</value>
+    </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
         <value>Added attribute '{Name}' to element {ParentId}</value>
     </data>
@@ -71,5 +74,17 @@
     </data>
     <data name="CommandLine_Output_CreateSolutionFromToolkit" xml:space="preserve">
         <value>Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}</value>
+    </data>
+    <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
+        <value>There are no installed toolkits</value>
+    </data>
+    <data name="CommandLine_Output_InstalledToolkitsListed" xml:space="preserve">
+        <value>Installed toolkits:\n{Toolkits}</value>
+    </data>
+    <data name="CommandLine_Output_NoInstalledSolutions" xml:space="preserve">
+        <value>There are no created solution</value>
+    </data>
+    <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
+        <value>Created solutions:\n{Solutions}</value>
     </data>
 </root>

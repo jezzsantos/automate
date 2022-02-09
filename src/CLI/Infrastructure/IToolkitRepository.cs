@@ -1,4 +1,5 @@
-﻿using automate.Domain;
+﻿using System.Collections.Generic;
+using automate.Domain;
 
 namespace automate.Infrastructure
 {
@@ -15,6 +16,8 @@ namespace automate.Infrastructure
         ToolkitDefinition FindToolkitById(string id);
 
         ToolkitDefinition FindToolkitByName(string name);
+
+        List<ToolkitDefinition> ListToolkits();
 
         void DestroyAll();
     }

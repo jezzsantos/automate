@@ -1,4 +1,5 @@
-﻿using automate.Domain;
+﻿using System.Collections.Generic;
+using automate.Domain;
 using automate.Extensions;
 
 namespace automate.Infrastructure
@@ -66,6 +67,11 @@ namespace automate.Infrastructure
         public ToolkitDefinition FindByName(string name)
         {
             return this.toolkitRepository.FindToolkitByName(name);
+        }
+
+        public List<ToolkitDefinition> ListAll()
+        {
+            return this.toolkitRepository.ListToolkits();
         }
     }
 }

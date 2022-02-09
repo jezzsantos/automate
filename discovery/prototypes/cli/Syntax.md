@@ -434,7 +434,13 @@ Download and install the new toolkit:
 
 > This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/roadrunner/src/automate/toolkits/AcmeAPI/v1.0.0.0`
 
-Now, a project contributor can define their own API with this toolkit.
+To list all the installed toolkits and versions of them:
+
+`automate run list-toolkits`
+
+> This commands lists all the installed toolkits in the current directory.
+
+Now, a project contributor can define their own API with this newly installed toolkit.
 
 #### Creating the New API
 
@@ -449,6 +455,14 @@ To get started:
 `automate run toolkit "AcmeAPI"`
 
 > This command creates a new "solution" from the `AcmeAPI` toolkit, and returns its unique SOLUTIONID.
+
+To list all the solutions that have been created:
+
+`automate run list-solutions`
+
+> This commands lists all the created solutions in the current directory.
+
+Now, lets program one of the solutions:
 
 `automate using "<SOLUTIONID>" --set "Name=Orders" --with ResourceName=Order"`
 

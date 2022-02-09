@@ -116,6 +116,13 @@ namespace automate.Infrastructure
                 .ToList();
         }
 
+        public List<ToolkitDefinition> ListToolkits()
+        {
+            return this.inMemoryToolkits
+                .Select(pair => pair.Value)
+                .ToList();
+        }
+
         public ToolkitDefinition FindToolkitById(string id)
         {
             return this.inMemoryToolkits

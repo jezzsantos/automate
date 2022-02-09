@@ -84,6 +84,33 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenListInstalledToolkitsAndNone_ThenDisplaysNone()
+        {
+            this.setup.RunCommand($"{Program.RunCommandName} list-toolkits");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_NoInstalledToolkits);
+        }
+
+        [Fact]
+        public void WhenListInstalledToolkitsAndOne_ThenDisplaysOne()
+        {
+            BuildAndInstallToolkit();
+
+            this.setup.RunCommand($"{Program.RunCommandName} list-toolkits");
+
+            var toolkit = this.setup.Toolkits.Single();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_InstalledToolkitsListed.FormatTemplate(
+                        $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}"));
+        }
+
+        [Fact]
         public void WhenCreateSolution_ThenCreatesSolution()
         {
             BuildAndInstallToolkit();
@@ -97,6 +124,34 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.PatternName,
                         solution.Id));
+        }
+
+        [Fact]
+        public void WhenListInstalledSolutionsAndNone_ThenDisplaysNone()
+        {
+            this.setup.RunCommand($"{Program.RunCommandName} list-solutions");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_NoInstalledSolutions);
+        }
+
+        [Fact]
+        public void WhenListCreatedSolutionsAndOne_ThenDisplaysOne()
+        {
+            BuildAndInstallToolkit();
+            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+
+            this.setup.RunCommand($"{Program.RunCommandName} list-solutions");
+
+            var solution = this.setup.Solutions.Single();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_InstalledSolutionsListed.FormatTemplate(
+                        $"{{\"Name\": \"{solution.PatternName}\", \"ID\": \"{solution.Id}\"}}"));
         }
 
         private string BuildAndInstallToolkit()

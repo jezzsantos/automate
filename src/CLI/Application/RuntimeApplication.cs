@@ -1,4 +1,5 @@
-﻿using automate.Domain;
+﻿using System.Collections.Generic;
+using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;
 
@@ -70,6 +71,16 @@ namespace automate.Application
             this.solutionStore.Save(solution);
 
             return solution;
+        }
+
+        public List<ToolkitDefinition> ListInstalledToolkits()
+        {
+            return this.toolkitStore.ListAll();
+        }
+
+        public List<SolutionDefinition> ListCreatedSolutions()
+        {
+            return this.solutionStore.ListAll();
         }
     }
 }

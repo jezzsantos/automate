@@ -77,6 +77,8 @@ namespace CLI.IntegrationTests
 
         internal List<SolutionDefinition> Solutions => this.repository.ListSolutions();
 
+        internal List<ToolkitDefinition> Toolkits => this.repository.ListToolkits();
+
         public void ResetRepository()
         {
             this.repository.DestroyAll();
