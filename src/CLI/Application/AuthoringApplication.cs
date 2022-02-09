@@ -110,7 +110,7 @@ namespace automate.Application
             return pattern.CodeTemplates;
         }
 
-        public IPatternElement AddAttribute(string name, string type, string defaultValue,
+        public (IPatternElement parent, Attribute child) AddAttribute(string name, string type, string defaultValue,
             bool isRequired, string isOneOf, string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -149,10 +149,11 @@ namespace automate.Application
             target.Attributes.Add(attribute);
             this.store.Save(pattern);
 
-            return target;
+            return (target, attribute);
         }
 
-        public IPatternElement AddElement(string name, string displayName, string description, bool isCollection,
+        public (IPatternElement parent, IPatternElement child) AddElement(string name, string displayName,
+            string description, bool isCollection,
             string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -180,7 +181,7 @@ namespace automate.Application
             target.Elements.Add(element);
             this.store.Save(pattern);
 
-            return target;
+            return (target, element);
         }
 
         public AutomationCommand AddCodeTemplateCommand(string name, bool isTearOff, string filePath,
@@ -257,6 +258,12 @@ namespace automate.Application
             var package = this.packager.Pack(pattern, version);
 
             return package;
+        }
+
+        public PatternDefinition GetCurrentPattern()
+        {
+            VerifyCurrentPatternExists();
+            return this.store.GetCurrent();
         }
 
         private void VerifyCurrentPatternExists()

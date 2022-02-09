@@ -191,7 +191,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
-                        this.setup.Patterns.Single().Id));
+                        this.setup.Patterns.Single().Id, this.setup.Patterns.Single().Attributes.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
         }
 
@@ -205,7 +205,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
-                        this.setup.Patterns.Single().Id));
+                        this.setup.Patterns.Single().Id, this.setup.Patterns.Single().Attributes.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeTrue();
         }
 
@@ -219,7 +219,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
-                        this.setup.Patterns.Single().Id));
+                        this.setup.Patterns.Single().Id, this.setup.Patterns.Single().Attributes.Single().Id));
             this.setup.Patterns.Single().Attributes.Single().IsRequired.Should().BeFalse();
         }
 
@@ -237,7 +237,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("anattribute",
-                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Id));
+                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Id,
+                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Attributes.Single().Id));
         }
 
         [Fact]
@@ -250,7 +251,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenAddElement_ThenAddsAttribute()
+        public void WhenAddElement_ThenAddsElement()
         {
             this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
             this.setup.RunCommand($"{Program.EditCommandName} add-element anelement");
@@ -259,7 +260,25 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("anelement",
-                        this.setup.Patterns.Single().Id));
+                        this.setup.Patterns.Single().Id, this.setup.Patterns.Single().Elements.Single().Id));
+        }
+
+        [Fact]
+        public void WhenAddElementAsChildOfDeepElement_ThenAddsElement()
+        {
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element anelementname1");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-element anelementname2 --aschildof {{apattern.anelementname1}}");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-element anelementname3 --aschildof {{apattern.anelementname1.anelementname2}}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("anelementname3",
+                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Id,
+                        this.setup.Patterns.Single().Elements.Single().Elements.Single().Elements.Single().Id));
         }
 
         [Fact]
@@ -282,7 +301,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CollectionAdded.FormatTemplate("acollection",
-                        this.setup.Patterns.Single().Id));
+                        this.setup.Patterns.Single().Id, this.setup.Patterns.Single().Elements.Single().Id));
         }
 
         [Fact]
@@ -341,6 +360,46 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("apattern", "1.0.0", location));
+        }
+
+        [Fact]
+        public void WhenListElementsAndNoCurrentPattern_ThenDisplaysError()
+        {
+            this.setup.RunCommand($"{Program.EditCommandName} list-elements");
+
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenListElements_ThenDisplaysTree()
+        {
+            var template = Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-codetemplate \"{template}\" --name atemplatename");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute anattribute");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element anelement");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-attribute anattribute --aschildof {{apattern.anelement}}");
+            this.setup.RunCommand($"{Program.EditCommandName} add-collection acollection");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-attribute anattribute --aschildof {{apattern.acollection}}");
+
+            this.setup.RunCommand($"{Program.EditCommandName} list-elements");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                        "- apattern (root element) (attached with 1 code templates)\n" +
+                        "\t- anattribute (attribute) (string)\n" +
+                        "\t- anelement (element)\n" +
+                        "\t\t- anattribute (attribute) (string)\n" +
+                        "\t- acollection (collection)\n" +
+                        "\t\t- anattribute (attribute) (string)\n"
+                        ,
+                        this.setup.Patterns.Single().Id));
         }
     }
 }

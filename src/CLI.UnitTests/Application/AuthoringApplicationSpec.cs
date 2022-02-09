@@ -195,7 +195,7 @@ namespace CLI.UnitTests.Application
             attribute.DefaultValue.Should().Be("adefaultvalue");
             attribute.IsRequired.Should().BeFalse();
             attribute.Choices.Should().BeEmpty();
-            result.Id.Should().Be(this.store.GetCurrent().Id);
+            result.parent.Id.Should().Be(this.store.GetCurrent().Id);
         }
 
         [Fact]
@@ -267,9 +267,9 @@ namespace CLI.UnitTests.Application
             var result = this.application.AddAttribute("anattributename", null, null, false, null,
                 "{apatternname.anelementname}");
 
-            var attribute = result.Attributes.Single();
+            var attribute = result.parent.Attributes.Single();
             attribute.Name.Should().Be("anattributename");
-            result.Id.Should().Be(parentElement.Id);
+            result.parent.Id.Should().Be(parentElement.Id);
         }
 
         [Fact]
@@ -321,7 +321,7 @@ namespace CLI.UnitTests.Application
             element.DisplayName.Should().Be("adisplayname");
             element.Description.Should().Be("adescription");
             element.IsCollection.Should().BeFalse();
-            result.Id.Should().Be(this.store.GetCurrent().Id);
+            result.parent.Id.Should().Be(this.store.GetCurrent().Id);
         }
 
         [Fact]
@@ -338,9 +338,9 @@ namespace CLI.UnitTests.Application
                 this.application.AddElement("achildelementname", null, null, false,
                     "{apatternname.aparentelementname}");
 
-            var element = result.Elements.Single();
+            var element = result.parent.Elements.Single();
             element.Name.Should().Be("achildelementname");
-            result.Id.Should().Be(parentElement.Id);
+            result.parent.Id.Should().Be(parentElement.Id);
         }
 
         [Fact]

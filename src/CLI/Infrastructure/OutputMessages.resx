@@ -43,16 +43,21 @@
         <value>There are no code templates</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatesListed" xml:space="preserve">
-        <value>Code templates:\n{Templates}</value>
+        <value>Code templates:
+{Templates}</value>
+    </data>
+    <data name="CommandLine_Output_ElementsListed" xml:space="preserve">
+        <value>Pattern:
+{Tree}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
-        <value>Added attribute '{Name}' to element {ParentId}</value>
+        <value>Added attribute '{Name}' to element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
-        <value>Added element '{Name}' to element {ParentId}</value>
+        <value>Added element '{Name}' to element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
-        <value>Added collection '{Name}' to element {ParentId}</value>
+        <value>Added collection '{Name}' to element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
         <value>Added code template command '{Name}' with ID: {CommandId}</value>
@@ -79,12 +84,14 @@
         <value>There are no installed toolkits</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkitsListed" xml:space="preserve">
-        <value>Installed toolkits:\n{Toolkits}</value>
+        <value>Installed toolkits:
+{Toolkits}</value>
     </data>
     <data name="CommandLine_Output_NoInstalledSolutions" xml:space="preserve">
         <value>There are no created solution</value>
     </data>
     <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
-        <value>Created solutions:\n{Solutions}</value>
+        <value>Created solutions:
+{Solutions}</value>
     </data>
 </root>

@@ -61,7 +61,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added attribute &apos;{Name}&apos; to element {ParentId}.
+        ///   Looks up a localized string similar to Added attribute &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_AttributeAdded {
             get {
@@ -97,7 +97,8 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code templates:\n{Templates}.
+        ///   Looks up a localized string similar to Code templates:
+        ///{Templates}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatesListed {
             get {
@@ -106,7 +107,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added collection &apos;{Name}&apos; to element {ParentId}.
+        ///   Looks up a localized string similar to Added collection &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
             get {
@@ -124,7 +125,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added element &apos;{Name}&apos; to element {ParentId}.
+        ///   Looks up a localized string similar to Added element &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
             get {
@@ -133,7 +134,18 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created solutions:\n{Solutions}.
+        ///   Looks up a localized string similar to Pattern:
+        ///{Tree}.
+        /// </summary>
+        internal static string CommandLine_Output_ElementsListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementsListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created solutions:
+        ///{Solutions}.
         /// </summary>
         internal static string CommandLine_Output_InstalledSolutionsListed {
             get {
@@ -151,7 +163,8 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installed toolkits:\n{Toolkits}.
+        ///   Looks up a localized string similar to Installed toolkits:
+        ///{Toolkits}.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkitsListed {
             get {

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
+using System.Text;
 using automate.Application;
+using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;
 using JetBrains.Annotations;
+using Attribute = automate.Domain.Attribute;
 
 namespace automate
 {
@@ -34,6 +37,8 @@ namespace automate
                 };
                 var editCommands = new Command(EditCommandName, "Editing patterns")
                 {
+                    new Command("list-elements", "Lists all elements for this pattern")
+                        .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListElements)),
                     new Command("use", "Uses an existing pattern")
                     {
                         new Argument("Name", "The name of the existing pattern to use")
@@ -213,24 +218,26 @@ namespace automate
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var parent = Authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id);
+                var (parent, element) = Authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id,
+                    element.Id);
             }
 
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
                 string asChildOf, bool outputStructured, IConsole console)
             {
-                var parent = Authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
+                var (parent, collection) = Authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
-                    parent.Id);
+                    parent.Id, collection.Id);
             }
 
             internal static void HandleAddAttribute(string name, string isOfType, string defaultValue, bool isRequired,
                 string isOneOf, string asChildOf, bool outputStructured, IConsole console)
             {
-                var parent = Authoring.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
+                var (parent, attribute) =
+                    Authoring.AddAttribute(name, isOfType, defaultValue, isRequired, isOneOf, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
-                    parent.Id);
+                    parent.Id, attribute.Id);
             }
 
             internal static void HandleCreate(string name, bool outputStructured, IConsole console)
@@ -238,6 +245,14 @@ namespace automate
                 Authoring.CreateNewPattern(name);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
+            }
+
+            internal static void HandleListElements(bool outputStructured, IConsole console)
+            {
+                var pattern = Authoring.GetCurrentPattern();
+
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_ElementsListed, DisplayTree(pattern));
             }
 
             internal static void HandleUse(string name, bool outputStructured, IConsole console)
@@ -269,6 +284,36 @@ namespace automate
                 else
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
+                }
+            }
+
+            private static string DisplayTree(PatternDefinition pattern)
+            {
+                var output = new StringBuilder();
+
+                DisplayElement(pattern, 0);
+                return output.ToString();
+
+                void DisplayElement(IPatternElement element, int indentLevel)
+                {
+                    output.Append(indentLevel > 0
+                        ? new string('\t', indentLevel)
+                        : "");
+                    output.Append($"- {element.Name}");
+                    output.Append(
+                        $" ({(element is PatternDefinition ? "root element" : ((Element)element).IsCollection ? "collection" : "element")})");
+                    output.Append(element.CodeTemplates.Any()
+                        ? $" (attached with {element.CodeTemplates.Count} code templates)\n"
+                        : "\n");
+                    element.Attributes.ForEach(a => DisplayAttribute(a, indentLevel + 1));
+                    element.Elements.ForEach(e => DisplayElement(e, indentLevel + 1));
+                }
+
+                void DisplayAttribute(Attribute attribute, int indentLevel)
+                {
+                    output.Append(new string('\t', indentLevel));
+                    output.Append(
+                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? " required" : "")}{(attribute.Choices.Any() ? " oneof: " + $"{attribute.Choices.Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? $"{attribute.DefaultValue}" : "")})\n");
                 }
             }
         }

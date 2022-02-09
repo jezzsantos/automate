@@ -204,6 +204,10 @@ So far, we are starting to build up our conceptual model. It now looks like this
 				- DataType (attribute) (required, oneof "string;int;bool;DateTime")
 ```
 
+Run this command view your own configuration:
+
+`automate edit list-elements `
+
 So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
 
 The code that needs to be written into the codebase (C# classes, enums, interfaces, etc) that are needed to contain the Controller, Service Interface, Service Implementation and DTOs can now be derived from this meta-model, and the file names, and directory structure for those classes can be derived from this meta-model too, with naming and structural conventions the tech lead can define.
@@ -456,11 +460,11 @@ To get started:
 
 > This command creates a new "solution" from the `AcmeAPI` toolkit, and returns its unique SOLUTIONID.
 
-To list all the solutions that have been created:
+To list all the solutions that have been created so far:
 
 `automate run list-solutions`
 
-> This commands lists all the created solutions in the current directory.
+> This commands lists all the solutions created from toolkits in the current directory.
 
 Now, lets program one of the solutions:
 
