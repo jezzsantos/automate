@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using automate;
 using automate.Extensions;
 using automate.Infrastructure;
@@ -45,10 +46,18 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkit_ThenInstallsToolkit()
         {
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
-            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
-            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
+            BuildAndInstallToolkit();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "1.0.0"));
+        }
+
+        [Fact]
+        public void WhenInstallToolkitWithSameToolkitSameVersionAgain_ThenInstallsToolkit()
+        {
+            var location = BuildAndInstallToolkit();
 
             this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");
 
@@ -56,6 +65,50 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "1.0.0"));
+        }
+
+        [Fact]
+        public void WhenInstallToolkitWithSameToolkitNextVersionAgain_ThenInstallsToolkit()
+        {
+            BuildAndInstallToolkit();
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var locationV2 = Path.Combine(desktopFolder, "apattern_2.0.toolkit");
+            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
+
+            this.setup.RunCommand($"{Program.InstallCommandName} toolkit {locationV2}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "2.0.0"));
+        }
+
+        [Fact]
+        public void WhenCreateSolution_ThenCreatesSolution()
+        {
+            BuildAndInstallToolkit();
+
+            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+
+            var solution = this.setup.Solutions.Single();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.PatternName,
+                        solution.Id));
+        }
+
+        private string BuildAndInstallToolkit()
+        {
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
+            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
+
+            this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");
+
+            return location;
         }
     }
 }

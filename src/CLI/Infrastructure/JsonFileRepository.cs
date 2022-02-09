@@ -7,15 +7,19 @@ using automate.Extensions;
 
 namespace automate.Infrastructure
 {
-    internal class JsonFileRepository : IPatternRepository, IToolkitRepository, ILocalStateRepository
+    internal class JsonFileRepository : IPatternRepository, IToolkitRepository, ISolutionRepository,
+        ILocalStateRepository
     {
-        private const string PatternMetaModelFilename = "MetaModel.json";
+        private const string PatternDefinitionFilename = "MetaModel.json";
+        private const string SolutionDefinitionFilename = "Solution.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
-        private const string ToolkitFileExtension = ".toolkit";
+        private const string ToolkitInstallerFileExtension = ".toolkit";
         private static readonly string PatternDirectoryPath =
             Path.Combine(InfrastructureConstants.RootPersistencePath, "patterns");
         private static readonly string ToolkitDirectoryPath =
             Path.Combine(InfrastructureConstants.RootPersistencePath, "toolkits");
+        private static readonly string SolutionDirectoryPath =
+            Path.Combine(InfrastructureConstants.RootPersistencePath, "solutions");
         private readonly string currentDirectory;
         private readonly ILocalStateRepository localStateRepository;
 
@@ -32,11 +36,11 @@ namespace automate.Infrastructure
             this.localStateRepository = localStateRepository;
         }
 
-        public List<PatternToolkitDefinition> ListToolkits()
+        public List<ToolkitDefinition> ListToolkits()
         {
             if (!Directory.Exists(PatternLocation))
             {
-                return new List<PatternToolkitDefinition>();
+                return new List<ToolkitDefinition>();
             }
 
             return Directory.GetDirectories(ToolkitLocation)
@@ -67,7 +71,7 @@ namespace automate.Infrastructure
             var filename = CreateFilenameForPatternById(id);
             if (!File.Exists(filename))
             {
-                throw new PatternException(ExceptionMessages.JsonFileRepository_PatternNotFound.Format(id));
+                throw new AutomateException(ExceptionMessages.JsonFileRepository_PatternNotFound.Format(id));
             }
 
             return File.ReadAllText(filename).FromJson<PatternDefinition>();
@@ -129,11 +133,60 @@ namespace automate.Infrastructure
                     .ToList()
                     .ForEach(directory => Directory.Delete(directory, true));
             }
+            if (Directory.Exists(SolutionLocation))
+            {
+                Directory.GetDirectories(SolutionLocation)
+                    .ToList()
+                    .ForEach(directory => Directory.Delete(directory, true));
+            }
 
             this.localStateRepository.DestroyAll();
         }
 
-        public string ExportToolkit(PatternToolkitDefinition toolkit)
+        public string SolutionLocation => Path.Combine(this.currentDirectory, SolutionDirectoryPath);
+
+        public void UpsertSolution(SolutionDefinition solution)
+        {
+            var filename = CreateFilenameForSolutionById(solution.Id);
+            EnsurePathExists(filename);
+
+            using (var file = File.CreateText(filename))
+            {
+                file.Write(solution.ToJson());
+            }
+        }
+
+        public SolutionDefinition GetSolution(string id)
+        {
+            var filename = CreateFilenameForSolutionById(id);
+            if (!File.Exists(filename))
+            {
+                throw new AutomateException(ExceptionMessages.JsonFileRepository_SolutionNotFound.Format(id));
+            }
+
+            return File.ReadAllText(filename).FromJson<SolutionDefinition>();
+        }
+
+        public List<SolutionDefinition> ListSolutions()
+        {
+            if (!Directory.Exists(SolutionLocation))
+            {
+                return new List<SolutionDefinition>();
+            }
+
+            return Directory.GetDirectories(SolutionLocation)
+                .Select(path => new DirectoryInfo(path).Name)
+                .Select(GetSolution)
+                .ToList();
+        }
+
+        public SolutionDefinition FindSolutionById(string id)
+        {
+            return ListSolutions()
+                .FirstOrDefault(solution => solution.Id == id);
+        }
+
+        public string ExportToolkit(ToolkitDefinition toolkit)
         {
             var filename = CreateFilenameForExportedToolkit(toolkit.PatternName, toolkit.Version);
             EnsurePathExists(filename);
@@ -146,7 +199,7 @@ namespace automate.Infrastructure
             return filename;
         }
 
-        public void ImportToolkit(PatternToolkitDefinition toolkit)
+        public void ImportToolkit(ToolkitDefinition toolkit)
         {
             var filename = CreateFilenameForImportedToolkitById(toolkit.Id);
             EnsurePathExists(filename);
@@ -159,21 +212,27 @@ namespace automate.Infrastructure
 
         public string ToolkitLocation => Path.Combine(this.currentDirectory, ToolkitDirectoryPath);
 
-        public PatternToolkitDefinition FindToolkitById(string id)
+        public ToolkitDefinition FindToolkitById(string id)
         {
             return ListToolkits()
                 .FirstOrDefault(toolkit => toolkit.Id == id);
         }
 
-        public PatternToolkitDefinition GetToolkit(string id)
+        public ToolkitDefinition FindToolkitByName(string name)
+        {
+            return ListToolkits()
+                .FirstOrDefault(toolkit => toolkit.PatternName == name);
+        }
+
+        public ToolkitDefinition GetToolkit(string id)
         {
             var filename = CreateFilenameForImportedToolkitById(id);
             if (!File.Exists(filename))
             {
-                throw new PatternException(ExceptionMessages.JsonFileRepository_ToolkitNotFound.Format(id));
+                throw new AutomateException(ExceptionMessages.JsonFileRepository_ToolkitNotFound.Format(id));
             }
 
-            return File.ReadAllText(filename).FromJson<PatternToolkitDefinition>();
+            return File.ReadAllText(filename).FromJson<ToolkitDefinition>();
         }
 
         private static void EnsurePathExists(string filename)
@@ -185,15 +244,15 @@ namespace automate.Infrastructure
             }
         }
 
-        private string CreatePathForPattern(string id)
-        {
-            return Path.Combine(PatternLocation, id);
-        }
-
         private string CreateFilenameForPatternById(string id)
         {
             var location = CreatePathForPattern(id);
-            return Path.Combine(location, PatternMetaModelFilename);
+            return Path.Combine(location, PatternDefinitionFilename);
+        }
+
+        private string CreatePathForPattern(string id)
+        {
+            return Path.Combine(PatternLocation, id);
         }
 
         private string CreateFilenameForCodeTemplate(string id, string codeTemplateId, string templateFullPath)
@@ -207,7 +266,7 @@ namespace automate.Infrastructure
 
         private static string CreateFilenameForExportedToolkit(string name, string version)
         {
-            var filename = Path.ChangeExtension($"{name}_{version}", ToolkitFileExtension);
+            var filename = Path.ChangeExtension($"{name}_{version}", ToolkitInstallerFileExtension);
             var directory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             return Path.Combine(directory, filename);
@@ -216,12 +275,23 @@ namespace automate.Infrastructure
         private string CreateFilenameForImportedToolkitById(string id)
         {
             var location = CreatePathForToolkit(id);
-            return Path.Combine(location, PatternMetaModelFilename);
+            return Path.Combine(location, PatternDefinitionFilename);
         }
 
         private string CreatePathForToolkit(string id)
         {
             return Path.Combine(ToolkitLocation, id);
+        }
+
+        private string CreateFilenameForSolutionById(string id)
+        {
+            var location = CreatePathForSolution(id);
+            return Path.Combine(location, SolutionDefinitionFilename);
+        }
+
+        private string CreatePathForSolution(string id)
+        {
+            return Path.Combine(SolutionLocation, id);
         }
     }
 }

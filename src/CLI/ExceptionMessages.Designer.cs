@@ -142,11 +142,20 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The pattern meta-model could not be found for {0}.
+        ///   Looks up a localized string similar to The pattern definition could not be found for {0}.
         /// </summary>
         internal static string JsonFileRepository_PatternNotFound {
             get {
                 return ResourceManager.GetString("JsonFileRepository_PatternNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The solution definition could not be found for {0}.
+        /// </summary>
+        internal static string JsonFileRepository_SolutionNotFound {
+            get {
+                return ResourceManager.GetString("JsonFileRepository_SolutionNotFound", resourceCulture);
             }
         }
         
@@ -160,7 +169,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The pattern meta-model could not be found for {0}.
+        ///   Looks up a localized string similar to The pattern definition could not be found for {0}.
         /// </summary>
         internal static string MemoryRepository_NotFound {
             get {
@@ -228,6 +237,15 @@ namespace automate {
         internal static string RuntimeApplication_ToolkitInstallerNotFound {
             get {
                 return ResourceManager.GetString("RuntimeApplication_ToolkitInstallerNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No toolkit is installed called &apos;{0}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ToolkitNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ToolkitNotFound", resourceCulture);
             }
         }
         

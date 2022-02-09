@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             this.store
                 .Invoking(x => x.Find("aname"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Format("aname",
                         this.repository.PatternLocation));
@@ -106,7 +106,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.store
                 .Invoking(x => x.Create("aname"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternStore_FoundNamed.Format("aname"));
         }
 
@@ -124,7 +124,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             this.store
                 .Invoking(x => x.ChangeCurrent("anid"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Format("anid",
                         this.repository.PatternLocation));

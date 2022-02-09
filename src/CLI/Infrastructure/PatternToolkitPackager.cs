@@ -31,7 +31,7 @@ namespace automate.Infrastructure
         {
             var newVersion = UpdateToolkitVersion(pattern, versionInstruction);
 
-            var toolkit = new PatternToolkitDefinition(pattern, newVersion);
+            var toolkit = new ToolkitDefinition(pattern, newVersion);
 
             PackageAssets(toolkit);
 
@@ -40,7 +40,7 @@ namespace automate.Infrastructure
             return new PatternToolkitPackage(toolkit, location);
         }
 
-        public PatternToolkitDefinition UnPack(IFile installer)
+        public ToolkitDefinition UnPack(IFile installer)
         {
             var toolkit = UnpackToolkit(installer);
 
@@ -50,19 +50,19 @@ namespace automate.Infrastructure
             return toolkit;
         }
 
-        private static PatternToolkitDefinition UnpackToolkit(IFile installer)
+        private static ToolkitDefinition UnpackToolkit(IFile installer)
         {
             var contents = installer.GetContents();
 
-            PatternToolkitDefinition toolkit;
+            ToolkitDefinition toolkit;
 
             try
             {
-                toolkit = Encoding.UTF8.GetString(contents).FromJson<PatternToolkitDefinition>();
+                toolkit = Encoding.UTF8.GetString(contents).FromJson<ToolkitDefinition>();
             }
             catch (Exception ex)
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile.Format(
                         installer.FullPath), ex);
             }
@@ -70,14 +70,14 @@ namespace automate.Infrastructure
             if (toolkit.NotExists()
                 || !toolkit.Id.HasValue())
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile.Format(
                         installer.FullPath));
             }
             return toolkit;
         }
 
-        private void PackageAssets(PatternToolkitDefinition toolkit)
+        private void PackageAssets(ToolkitDefinition toolkit)
         {
             if (toolkit.Pattern.CodeTemplates.NotExists())
             {
@@ -124,14 +124,14 @@ namespace automate.Infrastructure
             {
                 if (requestedVersion < currentVersion)
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.PatternToolkitPackager_VersionBeforeCurrent.Format(versionInstruction,
                             currentVersion.ToString(VersionFieldCount)));
                 }
                 return new Version(requestedVersion.Major, requestedVersion.Minor, requestedVersion.ZeroBuild());
             }
 
-            throw new PatternException(
+            throw new AutomateException(
                 ExceptionMessages.PatternToolkitPackager_InvalidVersionInstruction.Format(versionInstruction));
         }
     }

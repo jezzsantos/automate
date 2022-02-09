@@ -6,6 +6,6 @@ namespace automate.Infrastructure
     {
         PatternToolkitPackage Pack(PatternDefinition pattern, string versionInstruction);
 
-        PatternToolkitDefinition UnPack(IFile installer);
+        ToolkitDefinition UnPack(IFile installer);
     }
 }

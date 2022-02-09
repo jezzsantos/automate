@@ -120,7 +120,10 @@ namespace automate
                 };
                 var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
                 {
-                    new Command("no-op")
+                    new Command("toolkit", "Creates a new solution from a toolkit")
+                    {
+                        new Argument("Name", "The name of the toolkit that you want to use")
+                    }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution))
                 };
                 var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
                 {
@@ -272,6 +275,13 @@ namespace automate
                 var toolkit = Runtime.InstallToolkit(location);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkit,
                     toolkit.PatternName, toolkit.Version);
+            }
+
+            internal static void HandleNewSolution(string name, bool outputStructured, IConsole console)
+            {
+                var solution = Runtime.CreateSolution(name);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit
+                    , solution.PatternName, solution.Id);
             }
         }
     }

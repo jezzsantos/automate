@@ -55,7 +55,7 @@ namespace automate.Infrastructure
             var pattern = this.patternRepository.FindPatternByName(name);
             if (pattern.NotExists())
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Format(name,
                         this.patternRepository.PatternLocation));
             }
@@ -68,7 +68,7 @@ namespace automate.Infrastructure
             name.GuardAgainstNullOrEmpty(nameof(name));
             if (ExistsByName(name))
             {
-                throw new PatternException(ExceptionMessages.PatternStore_FoundNamed.Format(name));
+                throw new AutomateException(ExceptionMessages.PatternStore_FoundNamed.Format(name));
             }
 
             var pattern = new PatternDefinition(name);
@@ -86,7 +86,7 @@ namespace automate.Infrastructure
             var pattern = this.patternRepository.FindPatternById(id);
             if (pattern.NotExists())
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Format(id,
                         this.patternRepository.PatternLocation));
             }

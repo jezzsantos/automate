@@ -67,7 +67,7 @@ namespace automate.Application
             var absolutePath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
             if (!this.fileResolver.ExistsAtPath(absolutePath))
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.AuthoringApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
                         relativeFilePath));
             }
@@ -78,7 +78,7 @@ namespace automate.Application
                 target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
@@ -88,7 +88,7 @@ namespace automate.Application
                 : $"CodeTemplate{pattern.CodeTemplates.Count + 1}";
             if (CodeTemplateExistsByName(target, templateName))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
                     .Format(name));
             }
 
@@ -123,7 +123,7 @@ namespace automate.Application
                 && choices.Any()
                 && !choices.Contains(defaultValue))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
             }
 
             IPatternElement target = pattern;
@@ -132,14 +132,14 @@ namespace automate.Application
                 target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (AttributeExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue)
@@ -166,14 +166,14 @@ namespace automate.Application
                 target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (ElementExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
             }
 
             var element = new Element(name, displayName, description, isCollection);
@@ -198,14 +198,14 @@ namespace automate.Application
                 target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
 
             if (AutomationExistsByName(target, name))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
             }
 
             var automation = new AutomationCommand(name, isTearOff, filePath);
@@ -228,7 +228,7 @@ namespace automate.Application
                 target = this.patternResolver.Resolve(pattern, parentExpression);
                 if (target.NotExists())
                 {
-                    throw new PatternException(
+                    throw new AutomateException(
                         ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
                 }
             }
@@ -238,7 +238,7 @@ namespace automate.Application
                 : $"LaunchPoint{target.Automation.Count + 1}";
             if (AutomationExistsByName(target, launchPointName))
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
             }
 
             var commandIdentifiers = commandIds.SafeSplit(";").ToList();
@@ -263,7 +263,7 @@ namespace automate.Application
         {
             if (this.store.GetCurrent().NotExists())
             {
-                throw new PatternException(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
             }
         }
 

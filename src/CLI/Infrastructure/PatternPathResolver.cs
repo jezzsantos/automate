@@ -18,13 +18,13 @@ namespace automate.Infrastructure
                 .Captures.FirstOrDefault()?.Value;
             if (!expressionPath.HasValue())
             {
-                throw new PatternException(ExceptionMessages.PatternPathResolver_InvalidExpression.Format(expression));
+                throw new AutomateException(ExceptionMessages.PatternPathResolver_InvalidExpression.Format(expression));
             }
 
             var expressionParts = expressionPath.SafeSplit(".");
             if (expressionParts.HasNone())
             {
-                throw new PatternException(ExceptionMessages.PatternPathResolver_InvalidExpression.Format(expression));
+                throw new AutomateException(ExceptionMessages.PatternPathResolver_InvalidExpression.Format(expression));
             }
 
             if (expressionParts.First().NotEqualsOrdinal(pattern.Name))

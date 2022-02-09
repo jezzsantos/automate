@@ -75,6 +75,8 @@ namespace CLI.IntegrationTests
 
         public string Location => this.repository.PatternLocation;
 
+        internal List<SolutionDefinition> Solutions => this.repository.ListSolutions();
+
         public void ResetRepository()
         {
             this.repository.DestroyAll();

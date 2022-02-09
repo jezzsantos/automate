@@ -70,7 +70,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: {0} has been built (v.{1}), and is ready to be installed with command: `automate toolkit install &quot;{2}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: {Name} has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install &quot;{FilePath}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_BuiltToolkit {
             get {
@@ -106,6 +106,15 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}.
+        /// </summary>
+        internal static string CommandLine_Output_CreateSolutionFromToolkit {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CreateSolutionFromToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added element &apos;{Name}&apos; to element {ParentId}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
@@ -115,7 +124,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: {0} (v.{1}) has been installed and is ready to use with command: `automate toolkit create &quot;{0}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: {Name} (v.{Version}) has been installed and is ready to use with command: `automate toolkit create &quot;{Name}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkit {
             get {
@@ -187,7 +196,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit: {0} ({1}) is being used.
+        ///   Looks up a localized string similar to Toolkit: {Name} ({Version}) is being used.
         /// </summary>
         internal static string CommandLine_Output_ToolkitInUse {
             get {

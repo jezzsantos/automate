@@ -3,9 +3,9 @@ using automate.Extensions;
 
 namespace automate.Domain
 {
-    internal class PatternToolkitDefinition : IIdentifiableEntity
+    internal class ToolkitDefinition : IIdentifiableEntity
     {
-        public PatternToolkitDefinition(PatternDefinition pattern, string version)
+        public ToolkitDefinition(PatternDefinition pattern, string version)
         {
             pattern.GuardAgainstNull(nameof(pattern));
             version.GuardAgainstNullOrEmpty(nameof(version));
@@ -18,7 +18,7 @@ namespace automate.Domain
         /// <summary>
         ///     For serialization
         /// </summary>
-        public PatternToolkitDefinition()
+        public ToolkitDefinition()
         {
         }
 
@@ -29,8 +29,6 @@ namespace automate.Domain
         public PatternDefinition Pattern { get; set; }
 
         public List<CodeTemplateFile> CodeTemplateFiles { get; set; }
-
-        public string Name { get; set; }
 
         public string Id { get; set; }
     }

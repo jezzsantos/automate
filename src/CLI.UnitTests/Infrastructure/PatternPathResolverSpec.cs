@@ -39,7 +39,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             this.resolver
                 .Invoking(x => x.Resolve(new PatternDefinition("apatternname"), "notavalidformat"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternPathResolver_InvalidExpression.Format("notavalidformat"));
         }
 
@@ -48,7 +48,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             this.resolver
                 .Invoking(x => x.Resolve(new PatternDefinition("apatternname"), "{}"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternPathResolver_InvalidExpression.Format("{}"));
         }
 

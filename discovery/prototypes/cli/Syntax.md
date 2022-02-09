@@ -438,7 +438,7 @@ Now, a project contributor can define their own API with this toolkit.
 
 #### Creating the New API
 
-For this example, lets call the new API the `Orders` API, in the `RoadRunner` product/service.
+For this example, lets call the new API that we want help building, the: `Orders` API, in the `RoadRunner` product/service.
 
 * The new API will have one authorized POST operation called `CreateOrder` at `/orders`.
 * This HTTP request takes a `ProductId` as the only request parameter
@@ -446,24 +446,24 @@ For this example, lets call the new API the `Orders` API, in the `RoadRunner` pr
 
 To get started:
 
-`automate run pattern "AcmeAPI"`
+`automate run toolkit "AcmeAPI"`
 
-> This command creates a new instance of the pattern `AcmeAPI`, and names it "Orders API", and returns its unique PATTERNID.
+> This command creates a new "solution" from the `AcmeAPI` toolkit, and returns its unique SOLUTIONID.
 
-`automate using "<PATTERNID>" --set "Name=Orders" --with ResourceName=Order"`
+`automate using "<SOLUTIONID>" --set "Name=Orders" --with ResourceName=Order"`
 
 > This command defines the `Name` and the `ResourceName` attributes of the pattern
 
-`automate using "<PATTERNID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
+`automate using "<SOLUTIONID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
 
 > This command creates a new `ServiceOperation` instance to the "Operations" collection, and returns its unique OPERATIONID.
 >
 
-`automate using "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
+`automate using "<SOLUTIONID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
 
 > This command creates a new field in the Request DTO called `ProductId`
 
-`automate using "<PATTERNID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
+`automate using "<SOLUTIONID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
 
 > This command creates a new field in the Response DTO called `Id`
 
@@ -524,7 +524,7 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 
 A codebase contributor can now ask the toolkit to write the new code for them!
 
-`automate using "<PATTERNID>" --execute-command "Generate"`
+`automate using "<SOLUTIONID>" --execute-command "Generate"`
 
 > This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase at the relevant locations.
 

@@ -30,17 +30,17 @@ namespace automate.Infrastructure
             this.localStateRepository.DestroyAll();
         }
 
-        public string Export(PatternToolkitDefinition toolkit)
+        public string Export(ToolkitDefinition toolkit)
         {
             return this.toolkitRepository.ExportToolkit(toolkit);
         }
 
-        public void Import(PatternToolkitDefinition toolkit)
+        public void Import(ToolkitDefinition toolkit)
         {
             this.toolkitRepository.ImportToolkit(toolkit);
         }
 
-        public PatternToolkitDefinition GetCurrent()
+        public ToolkitDefinition GetCurrent()
         {
             var state = this.localStateRepository.GetLocalState();
             return state.CurrentToolkit.HasValue()
@@ -53,7 +53,7 @@ namespace automate.Infrastructure
             var toolkit = this.toolkitRepository.FindToolkitById(id);
             if (toolkit.NotExists())
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.ToolkitStore_NotFoundAtLocationWithId.Format(id,
                         this.toolkitRepository.ToolkitLocation));
             }
@@ -61,6 +61,11 @@ namespace automate.Infrastructure
             var state = this.localStateRepository.GetLocalState();
             state.CurrentToolkit = id;
             this.localStateRepository.SaveLocalState(state);
+        }
+
+        public ToolkitDefinition FindByName(string name)
+        {
+            return this.toolkitRepository.FindToolkitByName(name);
         }
     }
 }

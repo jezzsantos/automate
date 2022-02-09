@@ -4,21 +4,21 @@ using System.Runtime.Serialization;
 namespace automate
 {
     [Serializable]
-    internal class PatternException : Exception
+    internal class AutomateException : Exception
     {
-        public PatternException()
+        public AutomateException()
         {
         }
 
-        public PatternException(string message) : base(message)
+        public AutomateException(string message) : base(message)
         {
         }
 
-        public PatternException(string message, Exception inner) : base(message, inner)
+        public AutomateException(string message, Exception inner) : base(message, inner)
         {
         }
 
-        protected PatternException(
+        protected AutomateException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {

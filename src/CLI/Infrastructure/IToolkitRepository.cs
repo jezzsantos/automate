@@ -6,13 +6,15 @@ namespace automate.Infrastructure
     {
         string ToolkitLocation { get; }
 
-        string ExportToolkit(PatternToolkitDefinition toolkit);
+        string ExportToolkit(ToolkitDefinition toolkit);
 
-        void ImportToolkit(PatternToolkitDefinition toolkit);
+        void ImportToolkit(ToolkitDefinition toolkit);
 
-        PatternToolkitDefinition GetToolkit(string id);
+        ToolkitDefinition GetToolkit(string id);
 
-        PatternToolkitDefinition FindToolkitById(string id);
+        ToolkitDefinition FindToolkitById(string id);
+
+        ToolkitDefinition FindToolkitByName(string name);
 
         void DestroyAll();
     }

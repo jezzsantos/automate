@@ -4,12 +4,14 @@ namespace automate.Infrastructure
 {
     internal interface IToolkitStore
     {
-        string Export(PatternToolkitDefinition toolkit);
+        string Export(ToolkitDefinition toolkit);
 
-        void Import(PatternToolkitDefinition toolkit);
+        void Import(ToolkitDefinition toolkit);
 
-        PatternToolkitDefinition GetCurrent();
+        ToolkitDefinition GetCurrent();
 
         void ChangeCurrent(string id);
+
+        ToolkitDefinition FindByName(string name);
     }
 }

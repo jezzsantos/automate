@@ -8,50 +8,68 @@ namespace automate.Application
     {
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
-        private readonly IToolkitStore store;
+        private readonly ISolutionStore solutionStore;
+        private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(string currentDirectory) : this(currentDirectory, new PatternStore(currentDirectory),
-            new ToolkitStore(currentDirectory),
-            new SystemIoFilePathResolver())
+            new ToolkitStore(currentDirectory), new SolutionStore(currentDirectory), new SystemIoFilePathResolver())
         {
         }
 
         private RuntimeApplication(string currentDirectory, IPatternStore patternStore, IToolkitStore toolkitStore,
-            IFilePathResolver fileResolver) :
-            this(toolkitStore, fileResolver, new PatternToolkitPackager(patternStore, toolkitStore, fileResolver))
+            ISolutionStore solutionStore, IFilePathResolver fileResolver) :
+            this(toolkitStore, solutionStore, fileResolver,
+                new PatternToolkitPackager(patternStore, toolkitStore, fileResolver))
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        internal RuntimeApplication(IToolkitStore store, IFilePathResolver fileResolver,
+        internal RuntimeApplication(IToolkitStore toolkitStore, ISolutionStore solutionStore,
+            IFilePathResolver fileResolver,
             IPatternToolkitPackager packager)
         {
-            store.GuardAgainstNull(nameof(store));
+            toolkitStore.GuardAgainstNull(nameof(toolkitStore));
+            solutionStore.GuardAgainstNull(nameof(solutionStore));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
             packager.GuardAgainstNull(nameof(packager));
-            this.store = store;
+            this.toolkitStore = toolkitStore;
+            this.solutionStore = solutionStore;
             this.fileResolver = fileResolver;
             this.packager = packager;
         }
 
-        public string CurrentToolkitId => this.store.GetCurrent()?.Id;
+        public string CurrentToolkitId => this.toolkitStore.GetCurrent()?.Id;
 
-        public string CurrentToolkitName => this.store.GetCurrent().Name;
+        public string CurrentToolkitName => this.toolkitStore.GetCurrent().PatternName;
 
-        public PatternToolkitDefinition InstallToolkit(string installerLocation)
+        public ToolkitDefinition InstallToolkit(string installerLocation)
         {
             if (!this.fileResolver.ExistsAtPath(installerLocation))
             {
-                throw new PatternException(
+                throw new AutomateException(
                     ExceptionMessages.RuntimeApplication_ToolkitInstallerNotFound.Format(installerLocation));
             }
 
             var installer = this.fileResolver.GetFileAtPath(installerLocation);
             var toolkit = this.packager.UnPack(installer);
 
-            this.store.ChangeCurrent(toolkit.Id);
+            this.toolkitStore.ChangeCurrent(toolkit.Id);
 
             return toolkit;
+        }
+
+        public SolutionDefinition CreateSolution(string toolkitName)
+        {
+            var toolkit = this.toolkitStore.FindByName(toolkitName);
+            if (toolkit.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
+            }
+
+            var solution = new SolutionDefinition(toolkit.Id, toolkitName);
+            this.solutionStore.Save(solution);
+
+            return solution;
         }
     }
 }

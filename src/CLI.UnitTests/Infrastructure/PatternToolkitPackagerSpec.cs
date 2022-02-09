@@ -24,7 +24,7 @@ namespace CLI.UnitTests.Infrastructure
             var repo = new MemoryRepository();
             var patternStore = new PatternStore(repo, repo);
             this.toolkitStore = new Mock<IToolkitStore>();
-            this.toolkitStore.Setup(store => store.Export(It.IsAny<PatternToolkitDefinition>()))
+            this.toolkitStore.Setup(store => store.Export(It.IsAny<ToolkitDefinition>()))
                 .Returns("alocation");
             this.resolver = new Mock<IFilePathResolver>();
             patternStore.Create("apatternname");
@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.packager
                 .Invoking(x => x.Pack(pattern, "0.1"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternToolkitPackager_VersionBeforeCurrent.Format("0.1", "1.0.0"));
         }
 
@@ -89,7 +89,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.packager
                 .Invoking(x => x.Pack(pattern, "notaversionnumber"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternToolkitPackager_InvalidVersionInstruction.Format("notaversionnumber"));
         }
@@ -125,7 +125,7 @@ namespace CLI.UnitTests.Infrastructure
 
             result.Toolkit.CodeTemplateFiles.Should().ContainSingle(ctf =>
                 ctf.Id == pattern.CodeTemplates.Single().Id && ctf.Contents == fileContents);
-            this.toolkitStore.Verify(repo => repo.Export(It.Is<PatternToolkitDefinition>(toolkit =>
+            this.toolkitStore.Verify(repo => repo.Export(It.Is<ToolkitDefinition>(toolkit =>
                 toolkit.Version == "1.0.0"
                 && toolkit.CodeTemplateFiles.Single().Id == pattern.CodeTemplates.Single().Id
                 && toolkit.CodeTemplateFiles.Single().Contents == fileContents
@@ -143,7 +143,7 @@ namespace CLI.UnitTests.Infrastructure
             result.Toolkit.Version.Should().Be("1.0.0");
             result.Toolkit.PatternName.Should().Be("apatternname");
             result.BuiltLocation.Should().Be("alocation");
-            this.toolkitStore.Verify(repo => repo.Export(It.Is<PatternToolkitDefinition>(toolkit =>
+            this.toolkitStore.Verify(repo => repo.Export(It.Is<ToolkitDefinition>(toolkit =>
                 toolkit.Version == "1.0.0"
                 && toolkit.Pattern == pattern
             )));
@@ -160,7 +160,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.packager
                 .Invoking(x => x.UnPack(installer.Object))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile
                         .Format("afullpath"));
@@ -177,7 +177,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.packager
                 .Invoking(x => x.UnPack(installer.Object))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile
                         .Format("afullpath"));
@@ -186,7 +186,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenUnPack_ThenReturnsToolkit()
         {
-            var toolkit = new PatternToolkitDefinition
+            var toolkit = new ToolkitDefinition
             {
                 Id = "atoolkitid",
                 Pattern = new PatternDefinition()
@@ -200,7 +200,7 @@ namespace CLI.UnitTests.Infrastructure
             var result = this.packager.UnPack(installer.Object);
 
             result.Id.Should().Be("atoolkitid");
-            this.toolkitStore.Verify(ts => ts.Import(It.Is<PatternToolkitDefinition>(t =>
+            this.toolkitStore.Verify(ts => ts.Import(It.Is<ToolkitDefinition>(t =>
                 t.Id == "atoolkitid"
             )));
         }

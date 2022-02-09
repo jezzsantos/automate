@@ -15,16 +15,21 @@ namespace CLI.UnitTests.Application
         private readonly RuntimeApplication application;
         private readonly Mock<IFilePathResolver> fileResolver;
         private readonly Mock<IPatternToolkitPackager> packager;
+        private readonly Mock<ISolutionStore> solutionStore;
+        private readonly Mock<IToolkitStore> toolkitStore;
 
         public RuntimeApplicationSpec()
         {
-            var store = new Mock<IToolkitStore>();
+            this.toolkitStore = new Mock<IToolkitStore>();
+            this.solutionStore = new Mock<ISolutionStore>();
             this.fileResolver = new Mock<IFilePathResolver>();
             this.fileResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             this.packager = new Mock<IPatternToolkitPackager>();
 
-            this.application = new RuntimeApplication(store.Object, this.fileResolver.Object, this.packager.Object);
+            this.application =
+                new RuntimeApplication(this.toolkitStore.Object, this.solutionStore.Object, this.fileResolver.Object,
+                    this.packager.Object);
         }
 
         [Fact]
@@ -41,7 +46,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x => x.InstallToolkit("aninstallerlocation"))
-                .Should().Throw<PatternException>()
+                .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ToolkitInstallerNotFound.Format("aninstallerlocation"));
         }
@@ -50,7 +55,7 @@ namespace CLI.UnitTests.Application
         public void WhenInstallToolkit_ThenReturnsInstalledToolkit()
         {
             this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IFile>()))
-                .Returns(new PatternToolkitDefinition
+                .Returns(new ToolkitDefinition
                 {
                     Id = "atoolkitid"
                 });
@@ -58,6 +63,37 @@ namespace CLI.UnitTests.Application
             var result = this.application.InstallToolkit("aninstallerlocation");
 
             result.Id.Should().Be("atoolkitid");
+        }
+
+        [Fact]
+        public void WhenCreateSolutionAndToolkitNotExist_ThenThrows()
+        {
+            this.toolkitStore.Setup(ts => ts.FindByName(It.IsAny<string>()))
+                .Returns((ToolkitDefinition)null);
+
+            this.application
+                .Invoking(x => x.CreateSolution("atoolkitname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format("atoolkitname"));
+        }
+
+        [Fact]
+        public void WhenCreateSolution_ThenReturnsNewSolution()
+        {
+            this.toolkitStore.Setup(ts => ts.FindByName(It.IsAny<string>()))
+                .Returns(new ToolkitDefinition
+                {
+                    Id = "atoolkitid"
+                });
+
+            var result = this.application.CreateSolution("atoolkitname");
+
+            result.Id.Should().NotBeNull();
+            result.PatternName.Should().Be("atoolkitname");
+            this.solutionStore.Verify(ss => ss.Save(It.Is<SolutionDefinition>(s =>
+                s.ToolkitId == "atoolkitid"
+                && s.PatternName == "atoolkitname"
+            )));
         }
     }
 }

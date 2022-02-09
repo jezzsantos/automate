@@ -24,29 +24,32 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
-        <value>Pattern does not yet exist</value>
-    </data>
     <data name="PatternStore_NotFoundAtLocationWithId" xml:space="preserve">
         <value>A pattern with id {0} cannot be found in the pattern store at location {1}</value>
     </data>
     <data name="PatternStore_FoundNamed" xml:space="preserve">
         <value>A pattern with the name {0} already exists</value>
     </data>
+    <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
+        <value>The pattern definition could not be found for {0}</value>
+    </data>
+    <data name="JsonFileRepository_ToolkitNotFound" xml:space="preserve">
+        <value>The toolkit could not be found for {0}</value>
+    </data>
+    <data name="JsonFileRepository_SolutionNotFound" xml:space="preserve">
+        <value>The solution definition could not be found for {0}</value>
+    </data>
+    <data name="MemoryRepository_NotFound" xml:space="preserve">
+        <value>The pattern definition could not be found for {0}</value>
+    </data>
+    <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
+        <value>Pattern does not yet exist</value>
+    </data>
     <data name="AuthoringApplication_CodeTemplate_NotFoundAtLocation" xml:space="preserve">
         <value>The code file {1} could not be found at location {0}</value>
     </data>
     <data name="AuthoringApplication_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name {0} already exists. The name must be unique</value>
-    </data>
-    <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
-        <value>The pattern meta-model could not be found for {0}</value>
-    </data>
-    <data name="JsonFileRepository_ToolkitNotFound" xml:space="preserve">
-        <value>The toolkit could not be found for {0}</value>
-    </data>
-    <data name="MemoryRepository_NotFound" xml:space="preserve">
-        <value>The pattern meta-model could not be found for {0}</value>
     </data>
     <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name {0} already exists. The name must be unique</value>
@@ -66,6 +69,12 @@
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name {0} already exists. The name must be unique</value>
     </data>
+    <data name="RuntimeApplication_ToolkitInstallerNotFound" xml:space="preserve">
+        <value>The installer could not be found at: {0}</value>
+    </data>
+    <data name="RuntimeApplication_ToolkitNotFound" xml:space="preserve">
+        <value>No toolkit is installed called '{0}'</value>
+    </data>
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
         <value>The expression {0} is not a valid pattern expression</value>
     </data>
@@ -77,9 +86,6 @@
     </data>
     <data name="PatternToolkitPackager_VersionBeforeCurrent" xml:space="preserve">
         <value>Requested version number: {0}, cannot be before the current toolkit version number: {1}</value>
-    </data>
-    <data name="RuntimeApplication_ToolkitInstallerNotFound" xml:space="preserve">
-        <value>The installer could not be found at: {0}</value>
     </data>
     <data name="PatternToolkitPackager_InvalidInstallerFile" xml:space="preserve">
         <value>The installer file at: {0}, contains an invalid toolkit definition</value>

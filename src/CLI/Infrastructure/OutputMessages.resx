@@ -61,12 +61,15 @@
         <value>No Toolkit is in use. You must first run command: `automate toolkit install "&lt;FilePath&gt;"` to install a toolkit</value>
     </data>
     <data name="CommandLine_Output_ToolkitInUse" xml:space="preserve">
-        <value>Toolkit: {0} ({1}) is being used</value>
+        <value>Toolkit: {Name} ({Version}) is being used</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: {0} has been built (v.{1}), and is ready to be installed with command: `automate toolkit install "{2}"`</value>
+        <value>Toolkit for pattern: {Name} has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install "{FilePath}"`</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: {0} (v.{1}) has been installed and is ready to use with command: `automate toolkit create "{0}"`</value>
+        <value>Toolkit for pattern: {Name} (v.{Version}) has been installed and is ready to use with command: `automate toolkit create "{Name}"`</value>
+    </data>
+    <data name="CommandLine_Output_CreateSolutionFromToolkit" xml:space="preserve">
+        <value>Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}</value>
     </data>
 </root>

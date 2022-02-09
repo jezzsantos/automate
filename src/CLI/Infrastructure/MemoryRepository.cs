@@ -6,7 +6,7 @@ using automate.Extensions;
 
 namespace automate.Infrastructure
 {
-    internal class MemoryRepository : IPatternRepository, IToolkitRepository, ILocalStateRepository
+    internal class MemoryRepository : IPatternRepository, IToolkitRepository, ISolutionRepository, ILocalStateRepository
     {
         public const string InMemoryLocation = "in-memory";
 
@@ -14,10 +14,12 @@ namespace automate.Infrastructure
         private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new Dictionary<string, byte[]>();
         private readonly Dictionary<string, PatternDefinition> inMemoryPatterns =
             new Dictionary<string, PatternDefinition>();
+        private readonly Dictionary<string, SolutionDefinition> inMemorySolutions =
+            new Dictionary<string, SolutionDefinition>();
 
         // ReSharper disable once CollectionNeverUpdated.Local
-        private readonly Dictionary<string, PatternToolkitDefinition> inMemoryToolkits =
-            new Dictionary<string, PatternToolkitDefinition>();
+        private readonly Dictionary<string, ToolkitDefinition> inMemoryToolkits =
+            new Dictionary<string, ToolkitDefinition>();
         private LocalState inMemoryState = new LocalState();
 
         public void SaveLocalState(LocalState state)
@@ -44,7 +46,7 @@ namespace automate.Infrastructure
                 return this.inMemoryPatterns[id];
             }
 
-            throw new PatternException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
+            throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
         }
 
         public List<PatternDefinition> ListPatterns()
@@ -63,6 +65,7 @@ namespace automate.Infrastructure
         {
             this.inMemoryPatterns.Clear();
             this.inMemoryToolkits.Clear();
+            this.inMemorySolutions.Clear();
             this.inMemoryState = new LocalState();
         }
 
@@ -83,30 +86,66 @@ namespace automate.Infrastructure
             this.inMemoryCodeTemplates.Add(codeTemplateId, file.GetContents());
         }
 
-        public PatternToolkitDefinition FindToolkitById(string id)
+        public string SolutionLocation => InMemoryLocation;
+
+        public void UpsertSolution(SolutionDefinition solution)
+        {
+            this.inMemorySolutions[solution.Id] = solution;
+        }
+
+        public SolutionDefinition GetSolution(string id)
+        {
+            if (this.inMemorySolutions.ContainsKey(id))
+            {
+                return this.inMemorySolutions[id];
+            }
+
+            throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
+        }
+
+        public SolutionDefinition FindSolutionById(string id)
+        {
+            return this.inMemorySolutions
+                .FirstOrDefault(p => p.Key == id).Value;
+        }
+
+        public List<SolutionDefinition> ListSolutions()
+        {
+            return this.inMemorySolutions
+                .Select(solution => solution.Value)
+                .ToList();
+        }
+
+        public ToolkitDefinition FindToolkitById(string id)
         {
             return this.inMemoryToolkits
                 .FirstOrDefault(t => t.Key == id).Value;
         }
 
+        public ToolkitDefinition FindToolkitByName(string name)
+        {
+            return this.inMemoryToolkits
+                .FirstOrDefault(p => p.Value.PatternName == name).Value;
+        }
+
         public string ToolkitLocation => InMemoryLocation;
 
-        public PatternToolkitDefinition GetToolkit(string id)
+        public ToolkitDefinition GetToolkit(string id)
         {
             if (this.inMemoryToolkits.ContainsKey(id))
             {
                 return this.inMemoryToolkits[id];
             }
 
-            throw new PatternException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
+            throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
         }
 
-        public string ExportToolkit(PatternToolkitDefinition toolkit)
+        public string ExportToolkit(ToolkitDefinition toolkit)
         {
             throw new NotImplementedException();
         }
 
-        public void ImportToolkit(PatternToolkitDefinition toolkit)
+        public void ImportToolkit(ToolkitDefinition toolkit)
         {
             this.inMemoryToolkits[toolkit.Id] = toolkit;
         }
