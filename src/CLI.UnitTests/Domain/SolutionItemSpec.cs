@@ -12,7 +12,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithValue_ThenValueAssigned()
         {
-            var result = new SolutionItem("avalue");
+            var result = new SolutionItem("avalue", Attribute.DefaultType);
 
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().Be("avalue");
@@ -29,8 +29,6 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
-            result.Properties[nameof(PatternDefinition.DisplayName)].Value.Should().Be("apatternname");
-            result.Properties[nameof(PatternDefinition.Description)].Value.Should().Be("adescription");
             result.Value.Should().BeNull();
             result.IsMaterialised.Should().BeTrue();
         }
@@ -125,13 +123,12 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenMaterialiseAndValue_ThenDoesNothing()
+        public void WhenMaterialiseAndValue_ThenThrows()
         {
-            var result = new SolutionItem("avalue")
-                .Materialise("anothervalue");
-
-            result.IsMaterialised.Should().BeTrue();
-            result.Value.Should().Be("anothervalue");
+            new SolutionItem(25, "int")
+                .Invoking(x => x.Materialise(99))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
         }
 
         [Fact]
@@ -155,8 +152,6 @@ namespace CLI.UnitTests.Domain
 
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
-            result.Properties[nameof(Element.DisplayName)].Value.Should().Be("adisplayname");
-            result.Properties[nameof(Element.Description)].Value.Should().Be("adescription");
             result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
             result.Items.Should().BeNull();
         }
@@ -173,8 +168,6 @@ namespace CLI.UnitTests.Domain
 
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
-            result.Properties[nameof(Element.DisplayName)].Value.Should().Be("adisplayname");
-            result.Properties[nameof(Element.Description)].Value.Should().Be("adescription");
             result.Properties.Should().NotContainKey("anattributename");
             result.Items.Should().BeEmpty();
         }
@@ -211,8 +204,6 @@ namespace CLI.UnitTests.Domain
 
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
-            result.Properties[nameof(Element.DisplayName)].Value.Should().Be("adisplayname");
-            result.Properties[nameof(Element.Description)].Value.Should().Be("adescription");
             result.Items.Should().BeNull();
 
             item.IsMaterialised.Should().BeTrue();
@@ -268,7 +259,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndValue_ThenReturnsFalse()
         {
-            var result = new SolutionItem("avalue")
+            var result = new SolutionItem("avalue", Attribute.DefaultType)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -277,7 +268,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenGetPropertyAndNotExists_ThenThrows()
         {
-            new SolutionItem("avalue")
+            new SolutionItem("avalue", Attribute.DefaultType)
                 .Invoking(x => x.GetProperty("anunknownname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_NotAProperty.Format("anunknownname"));

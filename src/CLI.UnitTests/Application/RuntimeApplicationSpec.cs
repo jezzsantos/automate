@@ -399,5 +399,52 @@ namespace CLI.UnitTests.Application
             solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
             this.solutionStore.Verify(ss => ss.Save(solution));
         }
+
+        [Fact]
+        public void WhenGetConfigurationAndSolutionNotExist_ThenThrows()
+        {
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns((SolutionDefinition)null);
+
+            this.application
+                .Invoking(x => x.GetSolutionConfiguration("asolutionid"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format("asolutionid"));
+        }
+
+        [Fact]
+        public void WhenGetConfiguration_ThenReturnsConfiguration()
+        {
+            var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
+            var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
+            var element1 = new Element("anelementname1", "adisplayname1", "adescription1", false);
+            var element2 = new Element("anelementname2", "adisplayname2", "adescription2", false);
+            element2.Attributes.Add(attribute2);
+            element1.Elements.Add(element2);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Attributes.Add(attribute1);
+            pattern.Elements.Add(element1);
+
+            var solution = new SolutionDefinition("atoolkitname", pattern);
+            solution.Model.Properties["anelementname1"].Materialise();
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(solution);
+
+            var result = this.application.GetSolutionConfiguration("asolutionid");
+
+            result.Should().Be(JsonConversions.ToJson<dynamic>(new
+            {
+                anattributename1 = "adefaultvalue1",
+                anelementname1 = new
+                {
+                    anelementname2 = new
+                    {
+                        anattributename2 = "adefaultvalue2"
+                    }
+                }
+            }));
+        }
     }
 }

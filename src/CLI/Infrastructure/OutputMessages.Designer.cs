@@ -245,6 +245,16 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The solution is configured:
+        ///{Configuration}.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionConfiguration {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The solution was configured.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfigured {

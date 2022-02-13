@@ -169,6 +169,23 @@ namespace CLI.IntegrationTests
             this.setup.Solutions.Single().Model.Properties["AProperty"].Value.Should().Be("avalue");
         }
 
+        [Fact]
+        public void WhenViewConfiguration_ThenDisplaysConfiguration()
+        {
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty=avalue\"");
+
+            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --view-configuration");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
+                    new
+                    {
+                        a_property = "avalue"
+                    }.ToJson<dynamic>()));
+        }
+
         private SolutionDefinition BuildInstallAndCreateSolution()
         {
             BuildAndInstallToolkit();

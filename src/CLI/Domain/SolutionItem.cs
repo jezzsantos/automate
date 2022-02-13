@@ -16,11 +16,7 @@ namespace automate.Domain
             Value = null;
             Items = null;
 
-            Properties = new Dictionary<string, SolutionItem>
-            {
-                { nameof(PatternDefinition.DisplayName), new SolutionItem(pattern.DisplayName) },
-                { nameof(PatternDefinition.Description), new SolutionItem(pattern.Description) }
-            };
+            Properties = new Dictionary<string, SolutionItem>();
             pattern.Attributes
                 .ForEach(attr =>
                 {
@@ -38,7 +34,7 @@ namespace automate.Domain
             ElementSchema = null;
             AttributeSchema = attribute;
             IsMaterialised = attribute.DefaultValue.HasValue();
-            Value = attribute.DefaultValue;
+            SetValue(attribute.DefaultValue, attribute.DataType);
             Properties = null;
             Items = null;
         }
@@ -55,14 +51,14 @@ namespace automate.Domain
             Items = null;
         }
 
-        public SolutionItem(string value)
+        public SolutionItem(object value, string dataType)
         {
             Name = null;
             PatternSchema = null;
             AttributeSchema = null;
             ElementSchema = null;
             IsMaterialised = true;
-            Value = value;
+            SetValue(value, dataType);
             Properties = null;
             Items = null;
         }
@@ -86,29 +82,33 @@ namespace automate.Domain
 
         public List<SolutionItem> Items { get; set; }
 
-        public object Name { get; set; }
+        public string Name { get; set; }
 
         public bool IsMaterialised { get; set; }
 
+        public bool IsPattern => PatternSchema.Exists();
+
+        public bool IsElement => ElementSchema.Exists();
+
+        public bool IsAttribute => AttributeSchema.Exists();
+
+        public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
+
         public SolutionItem Materialise(object value = null)
         {
-            if (PatternSchema.Exists())
+            if (IsPattern)
             {
                 throw new AutomateException(
                     ExceptionMessages.SolutionItem_PatternAlreadyMaterialised.Format(PatternSchema.Name));
             }
 
-            if (ElementSchema.Exists())
+            if (IsElement)
             {
-                Properties = new Dictionary<string, SolutionItem>
-                {
-                    { nameof(Element.DisplayName), new SolutionItem(ElementSchema.DisplayName) },
-                    { nameof(Element.Description), new SolutionItem(ElementSchema.Description) }
-                };
+                Properties = new Dictionary<string, SolutionItem>();
                 if (!ElementSchema.IsCollection)
                 {
                     ElementSchema.Attributes.ForEach(
-                        attribute => { Properties.Add(attribute.Name, new SolutionItem(attribute)); });
+                        attr => { Properties.Add(attr.Name, new SolutionItem(attr)); });
                 }
                 ElementSchema.Elements.ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
                 Items = ElementSchema.IsCollection
@@ -117,18 +117,15 @@ namespace automate.Domain
                 IsMaterialised = true;
             }
 
-            if (AttributeSchema.Exists())
+            if (IsAttribute)
             {
-                Value = value;
+                SetValue(value, AttributeSchema.DataType);
                 IsMaterialised = true;
             }
 
-            if (PatternSchema.NotExists()
-                && ElementSchema.NotExists()
-                && AttributeSchema.NotExists())
+            if (IsValue)
             {
-                Value = value;
-                IsMaterialised = true;
+                throw new AutomateException(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
             }
 
             return this;
@@ -136,7 +133,7 @@ namespace automate.Domain
 
         public SolutionItem MaterialiseCollectionItem()
         {
-            if (ElementSchema.NotExists()
+            if (!IsElement
                 || !ElementSchema.IsCollection)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
@@ -149,6 +146,8 @@ namespace automate.Domain
 
             var item = new SolutionItem(ElementSchema);
             item.Materialise();
+            item.ElementSchema.Attributes.ForEach(
+                attr => { item.Properties.Add(attr.Name, new SolutionItem(attr)); });
             item.Items = null;
             Items.Add(item);
 
@@ -157,11 +156,11 @@ namespace automate.Domain
 
         public bool HasAttribute(string name)
         {
-            if (PatternSchema.Exists())
+            if (IsPattern)
             {
                 return PatternSchema.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(name));
             }
-            if (ElementSchema.Exists())
+            if (IsElement)
             {
                 return ElementSchema.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(name));
             }
@@ -183,6 +182,11 @@ namespace automate.Domain
             }
 
             return new SolutionItemProperty(Properties[name]);
+        }
+
+        private void SetValue(object value, string dataType)
+        {
+            Value = Attribute.SetValue(value, dataType);
         }
     }
 
@@ -218,9 +222,9 @@ namespace automate.Domain
             return this.item.AttributeSchema.IsValidDataTye(value);
         }
 
-        public void SetProperty(string value)
+        public void SetProperty(object value)
         {
-            this.item.Value = value;
+            this.item.Value = Attribute.SetValue(value, DataType);
         }
     }
 }

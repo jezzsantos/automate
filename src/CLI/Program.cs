@@ -149,7 +149,9 @@ namespace automate
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--set", "A name=value pair of properties to assign", arity: ArgumentArity.ZeroOrOne),
                     new Option("--and-set", "A name=value pair of properties to assign",
-                        arity: ArgumentArity.ZeroOrMore)
+                        arity: ArgumentArity.ZeroOrMore),
+                    new Option("--view-configuration", "View the current configuration of this solution", typeof(bool),
+                        () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
 
                 var command = new RootCommand
@@ -381,21 +383,30 @@ namespace automate
             }
 
             internal static void HandleUsing(string solutionId, string add, string addOneTo, string set,
-                string[] andSet,
+                string[] andSet, bool viewConfiguration,
                 bool outputStructured, IConsole console)
             {
-                var sets = new List<string>();
-                if (set.HasValue())
+                if (!viewConfiguration)
                 {
-                    sets.Add(set);
-                }
-                if (andSet.HasAny())
-                {
-                    sets.AddRange(andSet);
-                }
+                    var sets = new List<string>();
+                    if (set.HasValue())
+                    {
+                        sets.Add(set);
+                    }
+                    if (andSet.HasAny())
+                    {
+                        sets.AddRange(andSet);
+                    }
 
-                Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured);
+                    Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured);
+                }
+                else
+                {
+                    var configuration = Runtime.GetSolutionConfiguration(solutionId);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
+                        configuration);
+                }
             }
         }
     }

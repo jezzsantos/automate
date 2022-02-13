@@ -367,6 +367,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Value has already been materialized.
+        /// </summary>
+        internal static string SolutionItem_ValueAlreadyMaterialised {
+            get {
+                return ResourceManager.GetString("SolutionItem_ValueAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The expression {0} is not a valid solution expression.
         /// </summary>
         internal static string SolutionPathResolver_InvalidExpression {

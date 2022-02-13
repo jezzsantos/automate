@@ -123,6 +123,9 @@
     <data name="SolutionItem_PatternAlreadyMaterialised" xml:space="preserve">
         <value>The Pattern '{0}' has already been materialized</value>
     </data>
+    <data name="SolutionItem_ValueAlreadyMaterialised" xml:space="preserve">
+        <value>The Value has already been materialized</value>
+    </data>
     <data name="SolutionItem_MaterialiseNotACollection" xml:space="preserve">
         <value>Cannot materialise item in an non-collection element</value>
     </data>

@@ -491,27 +491,22 @@ After this set of commands, the solution is fully configured.
 
 You can see the actual configuration of the solution, with this command:
 
-`automate using "<SOLUTIONID>" --list-configuration`
+`automate using "<SOLUTIONID>" --view-configuration`
 
-Behind the scenes, the pattern meta-model has been populated with data that looks like this.
+This command should print out a JSON object that looks like this:
 
 ```
 {
 	"name": "Orders",
 	"resource_name": "Order",
 	"service_operation": {
-		"display_name": "Operations",
-		"description": "The service operations of the web API",
 		"items": [{
 				"name": "CreateOrder",
 				"verb": "Post",
 				"route": "/orders",
 				"is_authorized": true,
 				"request": {
-					"description": "The HTTP request",
 					"field": {
-						"display_name": "Fields",
-						"description": "",
 						"items": [{
 							"name": "ProductId",
 							"data_type": "string",
@@ -521,10 +516,7 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 					},
 				},
 				"response": {
-					"description": "The HTTP response",
 					"field": {
-						"display_name": "Fields",
-						"description": "",
 						"items": [{
 							"name": "ProductId",
 							"data_type": "string",

@@ -200,6 +200,17 @@ namespace automate.Application
             return solution;
         }
 
+        public string GetSolutionConfiguration(string solutionId)
+        {
+            var solution = this.solutionStore.FindById(solutionId);
+            if (solution.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
+            }
+
+            return solution.GetConfiguration();
+        }
+
         private static bool IsValidAssignment(string assignment)
         {
             const string propertyNameExpression = @"[\w]+";

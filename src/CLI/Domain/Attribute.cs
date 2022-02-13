@@ -85,6 +85,40 @@ namespace automate.Domain
             }
         }
 
+        public static object SetValue(object value, string dataType)
+        {
+            switch (dataType)
+            {
+                case "string":
+                    return value.IsNull()
+                        ? null
+                        : value.ToString();
+
+                case "bool":
+                    return value.IsNull()
+                        ? false
+                        : Convert.ToBoolean(value);
+
+                case "int":
+                    return value.IsNull()
+                        ? null
+                        : Convert.ToInt32(value);
+
+                case "decimal":
+                    return value.IsNull() ? null : value.IsNull() ? false : Convert.ToDecimal(value);
+
+                case "DateTime":
+                    return value.IsNull()
+                        ? null
+                        : Convert.ToDateTime(value);
+
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
+                            SupportedDataTypes.Join(", ")));
+            }
+        }
+
         public string Id { get; set; }
 
         public string Name { get; set; }
