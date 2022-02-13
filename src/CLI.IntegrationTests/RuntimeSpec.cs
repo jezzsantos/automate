@@ -2,8 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using automate;
+using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;
+using FluentAssertions;
 using Xunit;
 
 namespace CLI.IntegrationTests
@@ -40,7 +42,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{Program.UsingCommandName}");
 
-            this.setup.Should().DisplayErrorForMissingCommand();
+            this.setup.Should().DisplayErrorForMissingArgument(Program.UsingCommandName);
         }
 
         [Fact]
@@ -48,7 +50,6 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "1.0.0"));
@@ -88,7 +89,6 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{Program.RunCommandName} list-toolkits");
 
-            this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_NoInstalledToolkits);
@@ -129,6 +129,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListInstalledSolutionsAndNone_ThenDisplaysNone()
         {
+            BuildAndInstallToolkit();
+
             this.setup.RunCommand($"{Program.RunCommandName} list-solutions");
 
             this.setup.Should().DisplayNoError();
@@ -154,11 +156,33 @@ namespace CLI.IntegrationTests
                         $"{{\"Name\": \"{solution.PatternName}\", \"ID\": \"{solution.Id}\"}}"));
         }
 
+        [Fact]
+        public void WhenConfigureSolutionAndSetProperty_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+
+            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty=avalue\"");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured);
+            this.setup.Solutions.Single().Model.Properties["AProperty"].Value.Should().Be("avalue");
+        }
+
+        private SolutionDefinition BuildInstallAndCreateSolution()
+        {
+            BuildAndInstallToolkit();
+            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+
+            return this.setup.Solutions.Single();
+        }
+
         private string BuildAndInstallToolkit()
         {
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
             this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty");
             this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
 
             this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");

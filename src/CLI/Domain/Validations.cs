@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using automate.Extensions;
@@ -30,25 +29,7 @@ namespace automate.Domain
                 return true;
             }
 
-            switch (dataType)
-            {
-                case Attribute.DefaultType:
-                    return true;
-
-                case "bool":
-                    return bool.TryParse(defaultValue, out var _);
-
-                case "int":
-                    return int.TryParse(defaultValue, out var _);
-
-                case "DateTime":
-                    return DateTime.TryParse(defaultValue, out var _);
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
-                            Attribute.SupportedDataTypes.Join(", ")));
-            }
+            return Attribute.IsValidDataType(dataType, defaultValue);
         }
 
         public static bool IsRuntimeFilePath(string path)

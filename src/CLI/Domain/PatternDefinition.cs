@@ -13,6 +13,8 @@ namespace automate.Domain
 
             Name = name;
             Id = IdGenerator.Create();
+            DisplayName = name;
+            Description = null;
         }
 
         /// <summary>
@@ -21,6 +23,10 @@ namespace automate.Domain
         public PatternDefinition()
         {
         }
+
+        public string DisplayName { get; set; }
+
+        public string Description { get; set; }
 
         public string ToolkitVersion { get; set; }
 

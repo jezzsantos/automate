@@ -118,12 +118,12 @@ namespace automate.Extensions
             var replacements = tokens
                 .DistinctBy(token => token.Value)
                 .ToDictionary(token => token.Value.TrimStart('{').TrimEnd('}'), _ =>
-            {
-                paramIndex++;
-                return args.Length >= paramIndex
-                    ? args[paramIndex - 1].ToString()
-                    : null;
-            });
+                {
+                    paramIndex++;
+                    return args.Length >= paramIndex
+                        ? args[paramIndex - 1].ToString()
+                        : null;
+                });
 
             return replacements;
         }

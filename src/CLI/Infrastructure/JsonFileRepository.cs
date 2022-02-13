@@ -36,19 +36,6 @@ namespace automate.Infrastructure
             this.localStateRepository = localStateRepository;
         }
 
-        public List<ToolkitDefinition> ListToolkits()
-        {
-            if (!Directory.Exists(PatternLocation))
-            {
-                return new List<ToolkitDefinition>();
-            }
-
-            return Directory.GetDirectories(ToolkitLocation)
-                .Select(path => new DirectoryInfo(path).Name)
-                .Select(GetToolkit)
-                .ToList();
-        }
-
         public void SaveLocalState(LocalState state)
         {
             this.localStateRepository.SaveLocalState(state);
@@ -145,6 +132,11 @@ namespace automate.Infrastructure
 
         public string SolutionLocation => Path.Combine(this.currentDirectory, SolutionDirectoryPath);
 
+        public void NewSolution(SolutionDefinition solution)
+        {
+            UpsertSolution(solution);
+        }
+
         public void UpsertSolution(SolutionDefinition solution)
         {
             var filename = CreateFilenameForSolutionById(solution.Id);
@@ -184,6 +176,19 @@ namespace automate.Infrastructure
         {
             return ListSolutions()
                 .FirstOrDefault(solution => solution.Id == id);
+        }
+
+        public List<ToolkitDefinition> ListToolkits()
+        {
+            if (!Directory.Exists(PatternLocation))
+            {
+                return new List<ToolkitDefinition>();
+            }
+
+            return Directory.GetDirectories(ToolkitLocation)
+                .Select(path => new DirectoryInfo(path).Name)
+                .Select(GetToolkit)
+                .ToList();
         }
 
         public string ExportToolkit(ToolkitDefinition toolkit)

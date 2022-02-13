@@ -102,6 +102,16 @@ namespace CLI.IntegrationTests
             }
         }
 
+        public void ClearOutput()
+        {
+            this.process.StandardOutput.ReadToEnd();
+        }
+
+        public void ClearError()
+        {
+            this.process.StandardError.ReadToEnd();
+        }
+
         public void Dispose()
         {
             KillProcess();

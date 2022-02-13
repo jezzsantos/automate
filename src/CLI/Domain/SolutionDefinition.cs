@@ -4,14 +4,15 @@ namespace automate.Domain
 {
     internal class SolutionDefinition
     {
-        public SolutionDefinition(string toolkitId, string toolkitName)
+        public SolutionDefinition(string toolkitId, PatternDefinition pattern)
         {
             toolkitId.GuardAgainstNullOrEmpty(nameof(toolkitId));
-            toolkitName.GuardAgainstNullOrEmpty(nameof(toolkitName));
+            pattern.GuardAgainstNull(nameof(pattern));
 
             Id = IdGenerator.Create();
             ToolkitId = toolkitId;
-            PatternName = toolkitName;
+            Pattern = pattern;
+            InitialiseSchema();
         }
 
         /// <summary>
@@ -21,10 +22,19 @@ namespace automate.Domain
         {
         }
 
+        public PatternDefinition Pattern { get; set; }
+
         public string ToolkitId { get; set; }
 
-        public string PatternName { get; set; }
+        public string PatternName => Pattern?.Name;
 
         public string Id { get; set; }
+
+        public SolutionItem Model { get; set; }
+
+        private void InitialiseSchema()
+        {
+            Model = new SolutionItem(Pattern);
+        }
     }
 }

@@ -42,14 +42,14 @@ namespace automate.Infrastructure
             IPatternElement target = pattern;
             while (nextPart.Exists())
             {
-                var childElement = target.Elements
+                var descendant = target.Elements
                     .FirstOrDefault(element => element.Name.EqualsIgnoreCase(nextPart));
-                if (childElement.NotExists())
+                if (descendant.NotExists())
                 {
                     return null;
                 }
 
-                target = childElement;
+                target = descendant;
                 remainingParts.TryDequeue(out nextPart);
             }
 

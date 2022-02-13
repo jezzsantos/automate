@@ -106,15 +106,6 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A collection with name {0} already exists. The name must be unique.
-        /// </summary>
-        internal static string AuthoringApplication_CollectionByNameExists {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_CollectionByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An element with name {0} already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_ElementByNameExists {
@@ -232,6 +223,87 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: {1}, and to a new collection with Name {2}.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_AddAndAddTo {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddAndAddTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element (referenced by &apos;{0}&apos;) already exists, and cannot be added again.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_AddElementExists {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddElementExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; pattern does not have an element referenced by &apos;{1}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_AddToExpressionNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddToExpressionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element (referenced by &apos;{0}&apos;) does not have a property called &apos;{1}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyNotExists {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property &apos;{1}&apos; (on element &apos;{0}&apos;) can only have one of these values &apos;{2}&apos;, it cannot be &apos;{3}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property &apos;{1}&apos; (on element &apos;{0}&apos;) is of type &apos;{2}&apos;, and cannot accept value &apos;{3}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_NoChanges {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_NoChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{1}&apos; but contains invalid assignment: &apos;{0}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No solution with ID: &apos;{0}&apos; has been created..
+        /// </summary>
+        internal static string RuntimeApplication_SolutionNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_SolutionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The installer could not be found at: {0}.
         /// </summary>
         internal static string RuntimeApplication_ToolkitInstallerNotFound {
@@ -241,11 +313,65 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No toolkit is installed called &apos;{0}&apos;.
+        ///   Looks up a localized string similar to No toolkit with Name: &apos;{0}&apos; is installed.
         /// </summary>
         internal static string RuntimeApplication_ToolkitNotFound {
             get {
                 return ResourceManager.GetString("RuntimeApplication_ToolkitNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot materialise item in an non-collection element.
+        /// </summary>
+        internal static string SolutionItem_MaterialiseNotACollection {
+            get {
+                return ResourceManager.GetString("SolutionItem_MaterialiseNotACollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property &apos;{0}&apos; is not an attribute.
+        /// </summary>
+        internal static string SolutionItem_NotAnAttribute {
+            get {
+                return ResourceManager.GetString("SolutionItem_NotAnAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property &apos;{0}&apos; cannot be found on this element.
+        /// </summary>
+        internal static string SolutionItem_NotAProperty {
+            get {
+                return ResourceManager.GetString("SolutionItem_NotAProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This solution item is not yet materialised.
+        /// </summary>
+        internal static string SolutionItem_NotMaterialised {
+            get {
+                return ResourceManager.GetString("SolutionItem_NotMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Pattern &apos;{0}&apos; has already been materialized.
+        /// </summary>
+        internal static string SolutionItem_PatternAlreadyMaterialised {
+            get {
+                return ResourceManager.GetString("SolutionItem_PatternAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression {0} is not a valid solution expression.
+        /// </summary>
+        internal static string SolutionPathResolver_InvalidExpression {
+            get {
+                return ResourceManager.GetString("SolutionPathResolver_InvalidExpression", resourceCulture);
             }
         }
         

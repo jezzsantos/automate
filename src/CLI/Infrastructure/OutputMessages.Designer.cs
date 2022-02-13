@@ -218,15 +218,6 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Toolkit is in use. You must first run command: `automate toolkit install &quot;&lt;FilePath&gt;&quot;` to install a toolkit.
-        /// </summary>
-        internal static string CommandLine_Output_NoToolkitSelected {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoToolkitSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Pattern: {Name} was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
@@ -236,7 +227,7 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {0} ({1}) is in use.
+        ///   Looks up a localized string similar to Pattern: {Name} ({Version}) is in use.
         /// </summary>
         internal static string CommandLine_Output_PatternInUse {
             get {
@@ -254,11 +245,11 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit: {Name} ({Version}) is being used.
+        ///   Looks up a localized string similar to The solution was configured.
         /// </summary>
-        internal static string CommandLine_Output_ToolkitInUse {
+        internal static string CommandLine_Output_SolutionConfigured {
             get {
-                return ResourceManager.GetString("CommandLine_Output_ToolkitInUse", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_SolutionConfigured", resourceCulture);
             }
         }
     }

@@ -63,9 +63,6 @@
     <data name="AuthoringApplication_ElementByNameExists" xml:space="preserve">
         <value>An element with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="AuthoringApplication_CollectionByNameExists" xml:space="preserve">
-        <value>A collection with name {0} already exists. The name must be unique</value>
-    </data>
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name {0} already exists. The name must be unique</value>
     </data>
@@ -73,7 +70,7 @@
         <value>The installer could not be found at: {0}</value>
     </data>
     <data name="RuntimeApplication_ToolkitNotFound" xml:space="preserve">
-        <value>No toolkit is installed called '{0}'</value>
+        <value>No toolkit with Name: '{0}' is installed</value>
     </data>
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
         <value>The expression {0} is not a valid pattern expression</value>
@@ -93,4 +90,50 @@
     <data name="ToolkitStore_NotFoundAtLocationWithId" xml:space="preserve">
         <value>A toolkit with id {0} cannot be found in the toolkit store at location {1}</value>
     </data>
+    <data name="RuntimeApplication_SolutionNotFound" xml:space="preserve">
+        <value>No solution with ID: '{0}' has been created.</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_AddAndAddTo" xml:space="preserve">
+        <value>Tried to configure solution ID: '{0}' to add both a new element with Name: {1}, and to a new collection with Name {2}</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_NoChanges" xml:space="preserve">
+        <value>Tried to configure solution ID: '{0}' without any changes</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
+        <value>Tried to configure solution ID: '{1}' but contains invalid assignment: '{0}'</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_AddToExpressionNotFound" xml:space="preserve">
+        <value>The '{0}' pattern does not have an element referenced by '{1}'</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_AddElementExists" xml:space="preserve">
+        <value>The element (referenced by '{0}') already exists, and cannot be added again</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
+        <value>The element (referenced by '{0}') does not have a property called '{1}'</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf" xml:space="preserve">
+        <value>The property '{1}' (on element '{0}') can only have one of these values '{2}', it cannot be '{3}'</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible" xml:space="preserve">
+        <value>The property '{1}' (on element '{0}') is of type '{2}', and cannot accept value '{3}'</value>
+    </data>
+    <data name="SolutionPathResolver_InvalidExpression" xml:space="preserve">
+        <value>The expression {0} is not a valid solution expression</value>
+    </data>
+    <data name="SolutionItem_PatternAlreadyMaterialised" xml:space="preserve">
+        <value>The Pattern '{0}' has already been materialized</value>
+    </data>
+    <data name="SolutionItem_MaterialiseNotACollection" xml:space="preserve">
+        <value>Cannot materialise item in an non-collection element</value>
+    </data>
+    <data name="SolutionItem_NotMaterialised" xml:space="preserve">
+        <value>This solution item is not yet materialised</value>
+    </data>
+    <data name="SolutionItem_NotAProperty" xml:space="preserve">
+        <value>The property '{0}' cannot be found on this element</value>
+    </data>
+    <data name="SolutionItem_NotAnAttribute" xml:space="preserve">
+        <value>The property '{0}' is not an attribute</value>
+    </data>
+
 </root>

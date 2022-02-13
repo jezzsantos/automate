@@ -8,5 +8,7 @@ namespace automate.Infrastructure
         void Save(SolutionDefinition solution);
 
         List<SolutionDefinition> ListAll();
+
+        SolutionDefinition FindById(string id);
     }
 }

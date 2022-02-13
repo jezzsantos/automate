@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using automate.Domain;
 using automate.Extensions;
 
@@ -33,12 +34,18 @@ namespace automate.Infrastructure
 
         public void Save(SolutionDefinition solution)
         {
-            this.solutionRepository.UpsertSolution(solution);
+            this.solutionRepository.NewSolution(solution);
         }
 
         public List<SolutionDefinition> ListAll()
         {
             return this.solutionRepository.ListSolutions();
+        }
+
+        public SolutionDefinition FindById(string id)
+        {
+            return ListAll()
+                .FirstOrDefault(sol => sol.Id == id);
         }
     }
 }

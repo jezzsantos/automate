@@ -88,6 +88,11 @@ namespace automate.Infrastructure
 
         public string SolutionLocation => InMemoryLocation;
 
+        public void NewSolution(SolutionDefinition solution)
+        {
+            this.inMemorySolutions.Add(solution.Id, solution);
+        }
+
         public void UpsertSolution(SolutionDefinition solution)
         {
             this.inMemorySolutions[solution.Id] = solution;

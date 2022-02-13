@@ -48,7 +48,8 @@ namespace automate
                         new Argument("FilePath", "A relative path to the code file, from the current directory"),
                         new Option("--name", "A friendly name for the code template",
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
                     new Command("list-codetemplates", "Lists the code templates for this pattern")
@@ -63,7 +64,8 @@ namespace automate
                             () => false, ArgumentArity.ZeroOrOne),
                         new Option("--isoneof", "A list of semi-colon delimited values", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The element/collection to add the attribute to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the attribute to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddAttribute)),
                     new Command("add-element", "Adds an element to an element/collection in the pattern")
@@ -73,7 +75,8 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--describedas", "A description for the element", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The element/collection to add the element to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the element to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
                     new Command("add-collection", "Adds a collection to an element/collection in the pattern")
@@ -83,7 +86,8 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--describedas", "A description for the collection", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The element/collection to add the collection to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the collection to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
                     new Command("add-codetemplate-command", "Adds a command that renders a code template")
@@ -95,7 +99,8 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
                             arity: ArgumentArity.ExactlyOne),
-                        new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
                     new Command("add-command-launchpoint", "Adds a launch point for a command")
@@ -103,7 +108,8 @@ namespace automate
                         new Argument("CommandIdentifiers", "The identifiers of the commands to launch"),
                         new Option("--name", "A name for the launch point", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The element/collection to add the launch point to", typeof(string),
+                        new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                            typeof(string),
                             arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
                 };
@@ -137,8 +143,14 @@ namespace automate
                 };
                 var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
                 {
-                    new Command("no-op")
-                };
+                    new Argument("SolutionId", "The identifier of the current solution that you are using"),
+                    new Option("--add", "The expression of the element to add", arity: ArgumentArity.ZeroOrOne),
+                    new Option("--add-one-to", "The expression of the collection to add a new element to",
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--set", "A name=value pair of properties to assign", arity: ArgumentArity.ZeroOrOne),
+                    new Option("--and-set", "A name=value pair of properties to assign",
+                        arity: ArgumentArity.ZeroOrMore)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
 
                 var command = new RootCommand
                 {
@@ -156,19 +168,21 @@ namespace automate
 
                 if (IsAuthoringCommand(args))
                 {
-                    Console.WriteLine(Authoring.CurrentPatternId.Exists()
-                        ? OutputMessages.CommandLine_Output_PatternInUse.Format(Authoring.CurrentPatternName,
-                            Authoring.CurrentPatternId)
-                        : OutputMessages.CommandLine_Output_NoPatternSelected);
-                    Console.WriteLine();
+                    if (Authoring.CurrentPatternId.Exists())
+                    {
+                        Console.WriteLine(
+                            OutputMessages.CommandLine_Output_PatternInUse.FormatTemplate(Authoring.CurrentPatternName,
+                                Authoring.CurrentPatternId));
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.Error.WriteLine(OutputMessages.CommandLine_Output_NoPatternSelected);
+                        Console.Error.WriteLine();
+                    }
                 }
                 if (IsRuntimeCommand(args))
                 {
-                    Console.WriteLine(Runtime.CurrentToolkitId.Exists()
-                        ? OutputMessages.CommandLine_Output_ToolkitInUse.Format(Runtime.CurrentToolkitName,
-                            Runtime.CurrentToolkitId)
-                        : OutputMessages.CommandLine_Output_NoToolkitSelected);
-                    Console.WriteLine();
                 }
 
                 return command.Invoke(args);
@@ -182,12 +196,14 @@ namespace automate
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
-            return args.Count > 0 && args[0] == UsingCommandName;
+            return args.Count > 0
+                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == UsingCommandName);
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
         {
-            return args.Count > 0 && args[0] == EditCommandName;
+            return args.Count > 0
+                   && (args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName);
         }
 
         private class AuthoringHandlers
@@ -362,6 +378,24 @@ namespace automate
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledSolutions);
                 }
+            }
+
+            internal static void HandleUsing(string solutionId, string add, string addOneTo, string set,
+                string[] andSet,
+                bool outputStructured, IConsole console)
+            {
+                var sets = new List<string>();
+                if (set.HasValue())
+                {
+                    sets.Add(set);
+                }
+                if (andSet.HasAny())
+                {
+                    sets.AddRange(andSet);
+                }
+
+                Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured);
             }
         }
     }

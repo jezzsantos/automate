@@ -5,11 +5,11 @@ using Xunit;
 namespace CLI.UnitTests.Domain
 {
     [Trait("Category", "Unit")]
-    public class PatternMetaModelSpec
+    public class PatternDefinitionSpec
     {
         private readonly PatternDefinition pattern;
 
-        public PatternMetaModelSpec()
+        public PatternDefinitionSpec()
         {
             this.pattern = new PatternDefinition("aname");
         }

@@ -468,26 +468,30 @@ To list all the solutions that have been created so far:
 
 Now, lets program one of the solutions:
 
-`automate using "<SOLUTIONID>" --set "Name=Orders" --with ResourceName=Order"`
+`automate using "<SOLUTIONID>" --set "Name=Orders" --and-set "ResourceName=Order"`
 
 > This command defines the `Name` and the `ResourceName` attributes of the pattern
 
-`automate using "<SOLUTIONID>" --add "ServiceOperation" --to "Operations" --with "Name=CreateOrder" --with "Verb=Post" --with "Route=/orders" --with "IsAuthorized=true"`
+`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperations}" --and-set "Name=CreateOrder" --and-set "Verb=Post" --and-set "Route=/orders" --and-set "IsAuthorized=true"`
 
-> This command creates a new `ServiceOperation` instance to the "Operations" collection, and returns its unique OPERATIONID.
+> This command creates a new `ServiceOperation` instance and adds it to the `ServiceOperations` collection, and returns its unique OPERATIONID.
 >
 
-`automate using "<SOLUTIONID>" --add "Field" --to "<OPERATIONID>.Request" --with "Name=ProductId" --with "Type=string" --with "IsOptional=false"`
+`automate using "<SOLUTIONID>" --add "{<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "Type=string" --and-set "IsOptional=false"`
 
-> This command creates a new field in the Request DTO called `ProductId`
+> This command creates a new `Field` in the Request DTO called `ProductId`
 
-`automate using "<SOLUTIONID>" --add "Field" --to "<OPERATIONID>.Response" --with "Name=Id" --with "Type=string"`
+`automate using "<SOLUTIONID>" --add "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "Type=string"`
 
-> This command creates a new field in the Response DTO called `Id`
+> This command creates a new `Field` in the Response DTO called `Id`
 
 
 
-After this set of commands, the pattern is fully configured.
+After this set of commands, the solution is fully configured.
+
+You can see the actual configuration of the solution, with this command:
+
+`automate using "<SOLUTIONID>" --list-configuration`
 
 Behind the scenes, the pattern meta-model has been populated with data that looks like this.
 
@@ -537,8 +541,6 @@ Behind the scenes, the pattern meta-model has been populated with data that look
 > Notice, that the names of elements in the meta-model have been changed to snake-case.
 >
 > Notice, that the collections in the meta model have `items` containing the sub-elements.
-
-
 
 A codebase contributor can now ask the toolkit to write the new code for them!
 

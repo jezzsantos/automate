@@ -42,7 +42,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
 
-            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayError(OutputMessages.CommandLine_Output_NoPatternSelected);
             this.setup.Patterns.Single().Name.Should().Be("apattern");
             this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Patterns.Single().Id);
         }

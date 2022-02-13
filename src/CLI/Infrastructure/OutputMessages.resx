@@ -28,7 +28,7 @@
         <value>No Pattern is in use. You must first run command: `automate pattern create &lt;Name&gt;` to create a pattern</value>
     </data>
     <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
-        <value>Pattern: {0} ({1}) is in use</value>
+        <value>Pattern: {Name} ({Version}) is in use</value>
     </data>
     <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
         <value>Pattern: {Name} was created with ID: {PatternId}</value>
@@ -65,12 +65,6 @@
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
         <value>Added launch point for commands with name: '{Name}'</value>
     </data>
-    <data name="CommandLine_Output_NoToolkitSelected" xml:space="preserve">
-        <value>No Toolkit is in use. You must first run command: `automate toolkit install "&lt;FilePath&gt;"` to install a toolkit</value>
-    </data>
-    <data name="CommandLine_Output_ToolkitInUse" xml:space="preserve">
-        <value>Toolkit: {Name} ({Version}) is being used</value>
-    </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: {Name} has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install "{FilePath}"`</value>
     </data>
@@ -93,5 +87,8 @@
     <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
         <value>Created solutions:
 {Solutions}</value>
+    </data>
+    <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
+        <value>The solution was configured</value>
     </data>
 </root>

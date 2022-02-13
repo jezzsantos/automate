@@ -7,6 +7,8 @@ namespace automate.Infrastructure
     {
         string SolutionLocation { get; }
 
+        void NewSolution(SolutionDefinition solution);
+
         void UpsertSolution(SolutionDefinition solution);
 
         SolutionDefinition GetSolution(string id);

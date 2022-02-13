@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using automate.Extensions;
 
 namespace automate.Domain
@@ -8,7 +9,7 @@ namespace automate.Domain
         public const string DefaultType = "string";
         public static readonly string[] SupportedDataTypes =
         {
-            DefaultType, "bool", "int", "DateTime"
+            DefaultType, "bool", "int", "decimal", "DateTime"
         };
 
         public Attribute(string name, string dataType, bool isRequired, string defaultValue)
@@ -52,6 +53,37 @@ namespace automate.Domain
         public string DefaultValue { get; set; }
 
         public List<string> Choices { get; set; } = new List<string>();
+
+        public bool IsValidDataTye(string value)
+        {
+            return IsValidDataType(DataType, value);
+        }
+
+        public static bool IsValidDataType(string dataType, string value)
+        {
+            switch (dataType)
+            {
+                case "string":
+                    return true;
+
+                case "bool":
+                    return bool.TryParse(value, out var _);
+
+                case "int":
+                    return int.TryParse(value, out var _);
+
+                case "decimal":
+                    return decimal.TryParse(value, out var _);
+
+                case "DateTime":
+                    return DateTime.TryParse(value, out var _);
+
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
+                            SupportedDataTypes.Join(", ")));
+            }
+        }
 
         public string Id { get; set; }
 
