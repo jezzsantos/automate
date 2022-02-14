@@ -79,6 +79,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The name &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
+        /// </summary>
+        internal static string AuthoringApplication_AttributeNameReserved {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_AttributeNameReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automation with name {0} already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_AutomationByNameExists {

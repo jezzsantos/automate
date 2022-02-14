@@ -51,6 +51,9 @@
     <data name="AuthoringApplication_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name {0} already exists. The name must be unique</value>
     </data>
+    <data name="AuthoringApplication_AttributeNameReserved" xml:space="preserve">
+        <value>The name '{0}' is a reserved name, and cannot be used as a name for an attribute</value>
+    </data>
     <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name {0} already exists. The name must be unique</value>
     </data>

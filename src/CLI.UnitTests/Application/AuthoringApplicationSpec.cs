@@ -183,6 +183,19 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenAddAttributeWithReservedName_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x => x.AddAttribute(Attribute.ReservedAttributeNames[0], null, null, false, null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_AttributeNameReserved.Format(
+                        Attribute.ReservedAttributeNames[0]));
+        }
+
+        [Fact]
         public void WhenAddAttribute_TheAddsAttributeToPattern()
         {
             this.application.CreateNewPattern("apatternname");

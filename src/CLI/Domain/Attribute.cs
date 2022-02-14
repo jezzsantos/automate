@@ -11,6 +11,7 @@ namespace automate.Domain
         {
             DefaultType, "bool", "int", "decimal", "DateTime"
         };
+        public static readonly string[] ReservedAttributeNames = { nameof(Id) };
 
         public Attribute(string name, string dataType, bool isRequired, string defaultValue)
         {

@@ -137,6 +137,11 @@ namespace automate.Application
                 }
             }
 
+            if (AttributeNameIsReserved(name))
+            {
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeNameReserved.Format(name));
+            }
+
             if (AttributeExistsByName(target, name))
             {
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
@@ -287,6 +292,11 @@ namespace automate.Application
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {
             return element.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+        }
+
+        private static bool AttributeNameIsReserved(string attributeName)
+        {
+            return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
         }
 
         private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)
