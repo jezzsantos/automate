@@ -57,9 +57,6 @@
     <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name {0} already exists. The name must be unique</value>
     </data>
-    <data name="AuthoringApplication_AttributeDefaultValueIsNotAChoice" xml:space="preserve">
-        <value>The given 'defaultvalue' must be one of the choices given in the 'isoneof'.</value>
-    </data>
     <data name="AuthoringApplication_NodeExpressionNotFound" xml:space="preserve">
         <value>The expression: '{0}' does not resolve to an element in this pattern</value>
     </data>

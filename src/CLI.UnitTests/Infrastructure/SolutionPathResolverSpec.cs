@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             pattern.Elements.Add(element);
             var solution = new SolutionDefinition("atoolkitid", pattern);
 
@@ -91,7 +91,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndFullyQualifiedElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             pattern.Elements.Add(element);
             var solution = new SolutionDefinition("atoolkitid", pattern);
 
@@ -104,9 +104,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDeepElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3", null, null, false);
-            var element2 = new Element("anelementname2", null, null, false);
-            var element1 = new Element("anelementname1", null, null, false);
+            var element3 = new Element("anelementname3");
+            var element2 = new Element("anelementname2");
+            var element1 = new Element("anelementname1");
             element2.Elements.Add(element3);
             element1.Elements.Add(element2);
             pattern.Elements.Add(element1);

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using automate.Extensions;
+using ServiceStack;
 
 namespace automate.Domain
 {
-    internal class Element : IPatternElement
+    internal class Element : IPatternElement, IValidateable, ICloneable<Element>
     {
-        public Element(string name, string displayName, string description, bool isCollection)
+        public Element(string name, string displayName = null, string description = null, bool isCollection = false,
+            ElementCardinality cardinality = ElementCardinality.Single)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
@@ -16,6 +18,7 @@ namespace automate.Domain
             DisplayName = displayName;
             Description = description;
             IsCollection = isCollection;
+            Cardinality = cardinality;
         }
 
         /// <summary>
@@ -25,11 +28,18 @@ namespace automate.Domain
         {
         }
 
+        public ElementCardinality Cardinality { get; set; }
+
         public string DisplayName { get; set; }
 
         public string Description { get; set; }
 
         public bool IsCollection { get; set; }
+
+        public Element Clone()
+        {
+            return this.CreateCopy();
+        }
 
         public List<CodeTemplate> CodeTemplates { get; set; } = new List<CodeTemplate>();
 
@@ -42,5 +52,10 @@ namespace automate.Domain
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            return ValidationResults.None;
+        }
     }
 }

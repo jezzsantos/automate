@@ -161,19 +161,21 @@ namespace CLI.IntegrationTests
         {
             var solution = BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty=avalue\"");
+            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty1=avalue\"");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured);
-            this.setup.Solutions.Single().Model.Properties["AProperty"].Value.Should().Be("avalue");
+            this.setup.Solutions.Single().Model.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
         [Fact]
         public void WhenViewConfiguration_ThenDisplaysConfiguration()
         {
             var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty=avalue\"");
+            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{Program.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
 
             this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --view-configuration");
 
@@ -182,8 +184,31 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
                     new
                     {
-                        a_property = "avalue"
+                        a_property1 = "avalue1",
+                        an_element1 = new
+                        {
+                            a_property3 = "A"
+                        },
+                        a_collection2 = new { }
                     }.ToJson<dynamic>()));
+        }
+
+        [Fact]
+        public void WhenValidate_ThenDisplaysErrors()
+        {
+            var solution = BuildInstallAndCreateSolution();
+
+            this.setup.RunCommand($"{Program.ValidateCommandName} {solution.Id}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionValidationFailed
+                        .FormatTemplate(
+                            "1. {apattern.AProperty1} requires its value to be set\r\n" +
+                            "2. {apattern.AnElement1} requires at least one instance\r\n" +
+                            "3. {apattern.ACollection2} requires at least one instance\r\n\r\n"
+                        ));
         }
 
         private SolutionDefinition BuildInstallAndCreateSolution()
@@ -199,10 +224,20 @@ namespace CLI.IntegrationTests
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
             this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
-            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty1 --isrequired");
+            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand($"{Program.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-attribute AProperty3 --aschildof {{apattern.AnElement1}} --isoneof \"A;B;C\"");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement}}");
+            this.setup.RunCommand(
+                $"{Program.EditCommandName} add-collection ACollection2 --aschildof {{apattern}} --ality OneOrMany");
             this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
 
             this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");
+
+            this.setup.Should().DisplayNoError();
 
             return location;
         }

@@ -262,5 +262,24 @@ namespace automate.Infrastructure {
                 return ResourceManager.GetString("CommandLine_Output_SolutionConfigured", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The solution is not correctly configured in these ways:
+        ///{Errors}.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionValidationFailed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionValidationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The solution is configured correctly.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionValidationSuccess {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionValidationSuccess", resourceCulture);
+            }
+        }
     }
 }

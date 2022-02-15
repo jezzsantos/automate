@@ -88,7 +88,9 @@ namespace automate.Domain
 
         public bool IsPattern => PatternSchema.Exists();
 
-        public bool IsElement => ElementSchema.Exists();
+        public bool IsElement => ElementSchema.Exists() && !ElementSchema.IsCollection;
+
+        public bool IsCollection => ElementSchema.Exists() && ElementSchema.IsCollection;
 
         public bool IsAttribute => AttributeSchema.Exists();
 
@@ -105,15 +107,18 @@ namespace automate.Domain
             if (IsElement)
             {
                 Properties = new Dictionary<string, SolutionItem>();
-                if (!ElementSchema.IsCollection)
-                {
-                    ElementSchema.Attributes.ForEach(
-                        attr => { Properties.Add(attr.Name, new SolutionItem(attr)); });
-                }
+                ElementSchema.Attributes.ForEach(
+                    attr => { Properties.Add(attr.Name, new SolutionItem(attr)); });
                 ElementSchema.Elements.ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
-                Items = ElementSchema.IsCollection
-                    ? new List<SolutionItem>()
-                    : null;
+                Items = null;
+                IsMaterialised = true;
+            }
+
+            if (IsCollection)
+            {
+                Properties = new Dictionary<string, SolutionItem>();
+                ElementSchema.Elements.ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
+                Items = new List<SolutionItem>();
                 IsMaterialised = true;
             }
 
@@ -133,8 +138,7 @@ namespace automate.Domain
 
         public SolutionItem MaterialiseCollectionItem()
         {
-            if (!IsElement
-                || !ElementSchema.IsCollection)
+            if (!IsCollection)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
             }
@@ -144,11 +148,10 @@ namespace automate.Domain
                 Materialise();
             }
 
-            var item = new SolutionItem(ElementSchema);
+            var collectedElement = ElementSchema.Clone();
+            collectedElement.IsCollection = false;
+            var item = new SolutionItem(collectedElement);
             item.Materialise();
-            item.ElementSchema.Attributes.ForEach(
-                attr => { item.Properties.Add(attr.Name, new SolutionItem(attr)); });
-            item.Items = null;
             Items.Add(item);
 
             return item;
@@ -182,6 +185,121 @@ namespace automate.Domain
             }
 
             return new SolutionItemProperty(Properties[name]);
+        }
+
+        public ValidationResults Validate(ValidationContext context)
+        {
+            context.GuardAgainstNull(nameof(context));
+
+            if (IsPattern)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{PatternSchema.Name}");
+                return new ValidationResults(
+                    Properties.SelectMany(prop => prop.Value.Validate(subContext).Results));
+            }
+
+            if (IsElement)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{ElementSchema.Name}");
+                var results = ValidationResults.None;
+
+                if (IsMaterialised)
+                {
+                    if (Properties.HasAny())
+                    {
+                        results.AddRange(
+                            Properties.SelectMany(prop => prop.Value.Validate(subContext).Results));
+                    }
+                }
+                else
+                {
+                    if (ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        results.Add(subContext,
+                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                .Format(Name));
+                    }
+                    if (ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (Items.HasAny() && Items.Count > 1)
+                        {
+                            results.Add(subContext,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(Name));
+                        }
+                    }
+                }
+
+                return results;
+            }
+
+            if (IsCollection)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{ElementSchema.Name}");
+                var results = ValidationResults.None;
+
+                if (IsMaterialised)
+                {
+                    if (ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        if (Items.HasNone())
+                        {
+                            results.Add(subContext,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    .Format(Name));
+                        }
+                    }
+                    if (ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (Items.HasAny() && Items.Count > 1)
+                        {
+                            results.Add(subContext,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(Name));
+                        }
+                    }
+                    if (Items.HasAny())
+                    {
+                        results.AddRange(Items.SelectMany(item => item.Validate(subContext).Results));
+                    }
+                }
+                else
+                {
+                    if (ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        results.Add(subContext,
+                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                .Format(Name));
+                    }
+                    if (ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (Items.HasAny() && Items.Count > 1)
+                        {
+                            results.Add(subContext,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(Name));
+                        }
+                    }
+                }
+
+                return results;
+            }
+
+            if (IsAttribute)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{AttributeSchema.Name}");
+                var results = ValidationResults.None;
+
+                results.AddRange(AttributeSchema.Validate(subContext, Value));
+
+                return results;
+            }
+
+            return ValidationResults.None;
         }
 
         private void SetValue(object value, string dataType)
@@ -219,7 +337,7 @@ namespace automate.Domain
 
         public bool DataTypeMatches(string value)
         {
-            return this.item.AttributeSchema.IsValidDataTye(value);
+            return this.item.AttributeSchema.IsValidDataType(value);
         }
 
         public void SetProperty(object value)

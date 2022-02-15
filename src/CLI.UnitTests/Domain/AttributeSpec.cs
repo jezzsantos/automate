@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using automate.Domain;
 using automate.Extensions;
 using FluentAssertions;
+using ServiceStack;
 using Xunit;
 using Attribute = automate.Domain.Attribute;
+using CollectionExtensions = automate.Extensions.CollectionExtensions;
 
 namespace CLI.UnitTests.Domain
 {
@@ -13,7 +17,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithInvalidName_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("^aninvalidname^", "string", true, null))
+            FluentActions.Invoking(() => new Attribute("^aninvalidname^", "string", true))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
         }
@@ -21,10 +25,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithInvalidType_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("aname", "aninvalidtype", true, null))
+            FluentActions.Invoking(() => new Attribute("aname", "aninvalidtype", true))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Attribute_UnsupportedDataType.Format("aninvalidtype",
-                    Attribute.SupportedDataTypes.Join(", ") + "*"));
+                    CollectionExtensions.Join(Attribute.SupportedDataTypes, ", ") + "*"));
         }
 
         [Fact]
@@ -47,7 +51,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenConstructedAndDefaultValueIsInvalidForDateTime_ThenThrows()
+        public void WhenConstructedAndDefaultValueIsInvalidDataType_ThenThrows()
         {
             FluentActions.Invoking(() => new Attribute("aname", "DateTime", true, "notadatetime"))
                 .Should().Throw<ArgumentOutOfRangeException>()
@@ -57,11 +61,74 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenConstructedAndDefaultValueIsNotChoice_ThenThrows()
+        {
+            FluentActions.Invoking(() => new Attribute("aname", defaultValue: "notachoice",
+                    choices: new List<string> { "achoice1", "achoice2" }))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ValidationMessages.Attribute_DefaultValueIsNotAChoice.Format("notachoice",
+                        ListExtensions.Join(new[] { "achoice1", "achoice2" }, "; ")) +
+                    "*");
+        }
+
+        [Fact]
+        public void WhenConstructedAndChoiceIsInvalidDataType_ThenThrows()
+        {
+            FluentActions.Invoking(() =>
+                    new Attribute("aname", "DateTime", choices: new List<string> { "achoice1", "achoice2" }))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ValidationMessages.Attribute_WrongDataTypeChoice.Format("achoice1", "DateTime") +
+                    "*");
+        }
+
+        [Fact]
         public void WhenConstructedWithNullType_ThenTypeIsDefaultType()
         {
-            var attribute = new Attribute("aname", null, true, null);
+            var attribute = new Attribute("aname", null, true);
 
             attribute.DataType.Should().Be(Attribute.DefaultType);
+        }
+
+        [Fact]
+        public void WhenConstructedWithChoices_ThenSetsChoices()
+        {
+            var result = new Attribute("aname", choices: new List<string> { "achoice1", "achoice2" });
+
+            result.Choices.Should().Contain("achoice1");
+            result.Choices.Should().Contain("achoice2");
+        }
+
+        [Fact]
+        public void WhenValidateAndNotRequired_ThenReturnsNoErrors()
+        {
+            var attribute = new Attribute("aname");
+
+            var result = attribute.Validate(new ValidationContext("apath"), null);
+
+            result.Results.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenValidateAndIsRequiredAndNoValue_ThenReturnsError()
+        {
+            var attribute = new Attribute("aname", "string", true);
+
+            var result = attribute.Validate(new ValidationContext("apath"), null);
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("aname"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsRequiredAndValue_ThenReturnsNoErrors()
+        {
+            var attribute = new Attribute("aname", "string", true);
+
+            var result = attribute.Validate(new ValidationContext("apath"), "avalue");
+
+            result.Results.Should().BeEmpty();
         }
     }
 }

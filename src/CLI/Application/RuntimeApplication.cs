@@ -211,6 +211,17 @@ namespace automate.Application
             return solution.GetConfiguration();
         }
 
+        public ValidationResults ValidateSolution(string solutionId)
+        {
+            var solution = this.solutionStore.FindById(solutionId);
+            if (solution.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
+            }
+
+            return solution.Model.Validate(new ValidationContext());
+        }
+
         private static bool IsValidAssignment(string assignment)
         {
             const string propertyNameExpression = @"[\w]+";

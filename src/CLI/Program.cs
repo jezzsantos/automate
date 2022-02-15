@@ -20,6 +20,7 @@ namespace automate
         public const string InstallCommandName = "install";
         public const string RunCommandName = "run";
         public const string UsingCommandName = "using";
+        public const string ValidateCommandName = "validate";
         private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
         private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
@@ -76,8 +77,7 @@ namespace automate
                         new Option("--describedas", "A description for the element", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The expression of the element/collection to add the element to",
-                            typeof(string),
-                            arity: ArgumentArity.ZeroOrOne)
+                            typeof(string), arity: ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
                     new Command("add-collection", "Adds a collection to an element/collection in the pattern")
                     {
@@ -88,7 +88,10 @@ namespace automate
                             arity: ArgumentArity.ZeroOrOne),
                         new Option("--aschildof", "The expression of the element/collection to add the collection to",
                             typeof(string),
-                            arity: ArgumentArity.ZeroOrOne)
+                            arity: ArgumentArity.ZeroOrOne),
+                        new Option("--ality",
+                            "The number of instances of this element in this collection that must exist",
+                            typeof(ElementCardinality), () => ElementCardinality.ZeroOrMany, ArgumentArity.ZeroOrOne)
                     }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
                     new Command("add-codetemplate-command", "Adds a command that renders a code template")
                     {
@@ -153,6 +156,10 @@ namespace automate
                     new Option("--view-configuration", "View the current configuration of this solution", typeof(bool),
                         () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
+                var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
+                {
+                    new Argument("SolutionId", "The identifier of the current solution that you are validating")
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate));
 
                 var command = new RootCommand
                 {
@@ -161,7 +168,8 @@ namespace automate
                     buildCommands,
                     installCommands,
                     runCommands,
-                    usingCommands
+                    usingCommands,
+                    validateCommands
                 };
                 command.Description = "Create automated patterns as toolkits";
                 command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
@@ -199,7 +207,8 @@ namespace automate
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
             return args.Count > 0
-                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == UsingCommandName);
+                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == UsingCommandName ||
+                       args[0] == ValidateCommandName);
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
@@ -236,15 +245,16 @@ namespace automate
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var (parent, element) = Authoring.AddElement(name, displayedAs, describedAs, false, asChildOf);
+                var (parent, element) = Authoring.AddElement(name, displayedAs, describedAs, false,
+                    ElementCardinality.Single, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id,
                     element.Id);
             }
 
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
-                string asChildOf, bool outputStructured, IConsole console)
+                string asChildOf, ElementCardinality ality, bool outputStructured, IConsole console)
             {
-                var (parent, collection) = Authoring.AddElement(name, displayedAs, describedAs, true, asChildOf);
+                var (parent, collection) = Authoring.AddElement(name, displayedAs, describedAs, true, ality, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
                     parent.Id, collection.Id);
             }
@@ -407,6 +417,32 @@ namespace automate
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
                         configuration);
                 }
+            }
+
+            internal static void HandleValidate(string solutionId,
+                bool outputStructured, IConsole console)
+            {
+                var errors = Runtime.ValidateSolution(solutionId);
+
+                if (errors.Count > 0)
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                        DisplayValidationErrors(errors));
+                }
+                else
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+                }
+            }
+
+            private static string DisplayValidationErrors(ValidationResults results)
+            {
+                var builder = new StringBuilder();
+                var counter = 1;
+                results.Results.ToList()
+                    .ForEach(result => { builder.AppendLine($"{counter++}. {result.Context.Path} {result.Message}"); });
+
+                return builder.ToString();
             }
         }
     }

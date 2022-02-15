@@ -118,14 +118,6 @@ namespace automate.Application
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var choices = isOneOf.SafeSplit(";");
-            if (defaultValue.HasValue()
-                && choices.Any()
-                && !choices.Contains(defaultValue))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
-            }
-
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
             {
@@ -147,10 +139,8 @@ namespace automate.Application
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
             }
 
-            var attribute = new Attribute(name, type, isRequired, defaultValue)
-            {
-                Choices = choices.ToList()
-            };
+            var choices = isOneOf.SafeSplit(";").ToList();
+            var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
             target.Attributes.Add(attribute);
             this.store.Save(pattern);
 
@@ -158,7 +148,7 @@ namespace automate.Application
         }
 
         public (IPatternElement parent, IPatternElement child) AddElement(string name, string displayName,
-            string description, bool isCollection,
+            string description, bool isCollection, ElementCardinality cardinality,
             string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -182,7 +172,7 @@ namespace automate.Application
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
             }
 
-            var element = new Element(name, displayName, description, isCollection);
+            var element = new Element(name, displayName, description, isCollection, cardinality);
             target.Elements.Add(element);
             this.store.Save(pattern);
 

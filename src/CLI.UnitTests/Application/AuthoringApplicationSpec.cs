@@ -212,18 +212,6 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenAddAttributeAndDefaultValueIsNotOneOfChoices_ThenThrows()
-        {
-            this.application.CreateNewPattern("apatternname");
-
-            this.application
-                .Invoking(x =>
-                    x.AddAttribute("anattributename", null, "adefaultvalue", false, "avalue1;avalue2;avalue3", null))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_AttributeDefaultValueIsNotAChoice);
-        }
-
-        [Fact]
         public void WhenAddAttributeAndNoType_TheAddsAttributeWithDefaultType()
         {
             this.application.CreateNewPattern("apatternname");
@@ -236,19 +224,6 @@ namespace CLI.UnitTests.Application
             attribute.DefaultValue.Should().BeNull();
             attribute.IsRequired.Should().BeFalse();
             attribute.Choices.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void WhenAddAttributeAndDefaultValueIsOneOfChoices_ThenAddsAttribute()
-        {
-            this.application.CreateNewPattern("apatternname");
-
-            this.application.AddAttribute("anattributename", null, "avalue2", false, "avalue1;avalue2;avalue3", null);
-
-            var attribute = this.store.GetCurrent().Attributes.Single();
-            attribute.DefaultValue.Should().Be("avalue2");
-            attribute.IsRequired.Should().BeFalse();
-            attribute.Choices.Should().ContainInOrder("avalue1", "avalue2", "avalue3");
         }
 
         [Fact]
@@ -271,8 +246,8 @@ namespace CLI.UnitTests.Application
         public void WhenAddAttributeAndParentIsElement_ThenAddsAttributeToElement()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddElement("anelementname", null, null, false, null);
-            var parentElement = new Element("anelementname", null, null, false);
+            this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+            var parentElement = new Element("anelementname");
             this.patternPathResolver
                 .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(parentElement);
@@ -289,7 +264,7 @@ namespace CLI.UnitTests.Application
         public void WhenAddElementAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.AddElement("anelementname", null, null, false, null))
+                .Invoking(x => x.AddElement("anelementname", null, null, false, ElementCardinality.Single, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -298,10 +273,10 @@ namespace CLI.UnitTests.Application
         public void WhenAddElementAndAlreadyExists_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddElement("anelementname", null, null, false, null);
+            this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
 
             this.application
-                .Invoking(x => x.AddElement("anelementname", null, null, false, null))
+                .Invoking(x => x.AddElement("anelementname", null, null, false, ElementCardinality.Single, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format("anelementname"));
         }
@@ -316,7 +291,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.AddElement("anelementname", null, null, false, "anunknownparent"))
+                    x.AddElement("anelementname", null, null, false, ElementCardinality.Single, "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
@@ -327,7 +302,8 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateNewPattern("apatternname");
 
-            var result = this.application.AddElement("anelementname", "adisplayname", "adescription", false, null);
+            var result = this.application.AddElement("anelementname", "adisplayname", "adescription", false,
+                ElementCardinality.Single, null);
 
             var element = this.store.GetCurrent().Elements.Single();
             element.Name.Should().Be("anelementname");
@@ -341,14 +317,14 @@ namespace CLI.UnitTests.Application
         public void WhenAddElementAndParentIsElement_ThenAddsElementToElement()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddElement("aparentelementname", null, null, false, null);
-            var parentElement = new Element("aparentelementname", null, null, false);
+            this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
+            var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);
 
             var result =
-                this.application.AddElement("achildelementname", null, null, false,
+                this.application.AddElement("achildelementname", null, null, false, ElementCardinality.Single,
                     "{apatternname.aparentelementname}");
 
             var element = result.parent.Elements.Single();
@@ -411,8 +387,8 @@ namespace CLI.UnitTests.Application
         public void WhenAddCodeTemplateCommandAndParentIsElement_ThenAddsAutomationToElement()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddElement("aparentelementname", null, null, false, null);
-            var parentElement = new Element("aparentelementname", null, null, false);
+            this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
+            var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);
@@ -483,8 +459,8 @@ namespace CLI.UnitTests.Application
         public void WhenAddCommandLaunchPointAndParentIsElement_ThenAddsAutomationToElement()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddElement("aparentelementname", null, null, false, null);
-            var parentElement = new Element("aparentelementname", null, null, false);
+            this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
+            var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);

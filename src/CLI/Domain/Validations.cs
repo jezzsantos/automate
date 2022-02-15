@@ -17,19 +17,19 @@ namespace automate.Domain
             return values.TrueForAll(IdGenerator.IsValid);
         }
 
-        public static bool IsSupportedAttributeDataType(string value)
+        public static bool IsSupportedAttributeDataType(string dataType)
         {
-            return Attribute.SupportedDataTypes.Contains(value);
+            return Attribute.SupportedDataTypes.Contains(dataType);
         }
 
-        public static bool IsDefaultValueForAttributeDataType(string defaultValue, string dataType)
+        public static bool IsValueOfDataType(string value, string dataType)
         {
-            if (!defaultValue.HasValue())
+            if (!value.HasValue())
             {
                 return true;
             }
 
-            return Attribute.IsValidDataType(dataType, defaultValue);
+            return Attribute.IsValidDataType(dataType, value);
         }
 
         public static bool IsRuntimeFilePath(string path)

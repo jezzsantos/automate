@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using automate.Extensions;
+using StringExtensions = ServiceStack.StringExtensions;
 
 namespace automate.Domain
 {
-    internal class Attribute : INamedEntity
+    internal class Attribute : INamedEntity, IValidateable
     {
         public const string DefaultType = "string";
         public static readonly string[] SupportedDataTypes =
@@ -13,7 +14,8 @@ namespace automate.Domain
         };
         public static readonly string[] ReservedAttributeNames = { nameof(Id) };
 
-        public Attribute(string name, string dataType, bool isRequired, string defaultValue)
+        public Attribute(string name, string dataType = DefaultType, bool isRequired = false,
+            string defaultValue = null, List<string> choices = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
@@ -29,15 +31,30 @@ namespace automate.Domain
             if (defaultValue.HasValue())
             {
                 defaultValue.GuardAgainstInvalid(
-                    s => Validations.IsDefaultValueForAttributeDataType(s, resolvedDataType),
+                    dv => Validations.IsValueOfDataType(dv, resolvedDataType),
                     nameof(defaultValue),
                     ValidationMessages.Attribute_InvalidDefaultValue, resolvedDataType);
+                if (choices.HasAny())
+                {
+                    defaultValue.GuardAgainstInvalid(choices.Contains, nameof(defaultValue),
+                        ValidationMessages.Attribute_DefaultValueIsNotAChoice, StringExtensions.Join(choices, "; "));
+                }
             }
+
+            if (choices.HasAny())
+            {
+                choices.ForEach(choice =>
+                    choice.GuardAgainstInvalid(
+                        _ => Validations.IsValueOfDataType(choice, resolvedDataType), nameof(choices),
+                        ValidationMessages.Attribute_WrongDataTypeChoice.Format(choice, dataType)));
+            }
+
             Id = IdGenerator.Create();
             Name = name;
             DataType = resolvedDataType;
             IsRequired = isRequired;
             DefaultValue = defaultValue;
+            Choices = choices ?? new List<string>();
         }
 
         /// <summary>
@@ -53,9 +70,9 @@ namespace automate.Domain
 
         public string DefaultValue { get; set; }
 
-        public List<string> Choices { get; set; } = new List<string>();
+        public List<string> Choices { get; set; }
 
-        public bool IsValidDataTye(string value)
+        public bool IsValidDataType(string value)
         {
             return IsValidDataType(DataType, value);
         }
@@ -78,6 +95,32 @@ namespace automate.Domain
 
                 case "DateTime":
                     return DateTime.TryParse(value, out var _);
+
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
+                            SupportedDataTypes.Join(", ")));
+            }
+        }
+
+        public static bool IsValidDataType(string dataType, object value)
+        {
+            switch (dataType)
+            {
+                case "string":
+                    return value is string || value is null;
+
+                case "bool":
+                    return value is bool;
+
+                case "int":
+                    return value is int;
+
+                case "decimal":
+                    return value is decimal;
+
+                case "DateTime":
+                    return value is DateTime;
 
                 default:
                     throw new ArgumentOutOfRangeException(
@@ -123,5 +166,27 @@ namespace automate.Domain
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            var results = ValidationResults.None;
+            if (IsRequired)
+            {
+                if (value.IsNull())
+                {
+                    results.Add(new ValidationResult(context,
+                        ValidationMessages.Attribute_ValidationRule_RequiredValue.Format(Name)));
+                }
+            }
+
+            if (!IsValidDataType(DataType, value))
+            {
+                results.Add(
+                    new ValidationResult(context,
+                        ValidationMessages.Attribute_ValidationRule_WrongDataTypeValue.Format(value, DataType)));
+            }
+
+            return results;
+        }
     }
 }

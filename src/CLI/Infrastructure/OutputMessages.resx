@@ -95,4 +95,11 @@
         <value>The solution is configured:
 {Configuration}</value>
     </data>
+    <data name="CommandLine_Output_SolutionValidationFailed" xml:space="preserve">
+        <value>The solution is not correctly configured in these ways:
+{Errors}</value>
+    </data>
+    <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
+        <value>The solution is configured correctly</value>
+    </data>
 </root>

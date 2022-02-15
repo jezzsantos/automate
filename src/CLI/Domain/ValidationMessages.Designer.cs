@@ -61,6 +61,15 @@ namespace automate.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The default value &apos;{0}&apos; must be one of the choices &apos;{1}&apos;.
+        /// </summary>
+        internal static string Attribute_DefaultValueIsNotAChoice {
+            get {
+                return ResourceManager.GetString("Attribute_DefaultValueIsNotAChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The default value &apos;{0}&apos; is not a valid default for an attribute of dataType &apos;{1}&apos;.
         /// </summary>
         internal static string Attribute_InvalidDefaultValue {
@@ -75,6 +84,33 @@ namespace automate.Domain {
         internal static string Attribute_UnsupportedDataType {
             get {
                 return ResourceManager.GetString("Attribute_UnsupportedDataType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to requires its value to be set.
+        /// </summary>
+        internal static string Attribute_ValidationRule_RequiredValue {
+            get {
+                return ResourceManager.GetString("Attribute_ValidationRule_RequiredValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to has a value of &apos;{0}&apos; which is not of the correct data type &apos;{1}&apos;.
+        /// </summary>
+        internal static string Attribute_ValidationRule_WrongDataTypeValue {
+            get {
+                return ResourceManager.GetString("Attribute_ValidationRule_WrongDataTypeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The choice &apos;{0}&apos; is not of the correct data type &apos;{1}&apos;.
+        /// </summary>
+        internal static string Attribute_WrongDataTypeChoice {
+            get {
+                return ResourceManager.GetString("Attribute_WrongDataTypeChoice", resourceCulture);
             }
         }
         
@@ -111,6 +147,24 @@ namespace automate.Domain {
         internal static string InvalidNameIdentifier {
             get {
                 return ResourceManager.GetString("InvalidNameIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to has more than one instance.
+        /// </summary>
+        internal static string SolutionItem_ValidationRule_ElementHasMoreThanOneInstance {
+            get {
+                return ResourceManager.GetString("SolutionItem_ValidationRule_ElementHasMoreThanOneInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to requires at least one instance.
+        /// </summary>
+        internal static string SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance {
+            get {
+                return ResourceManager.GetString("SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance", resourceCulture);
             }
         }
     }

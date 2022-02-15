@@ -51,8 +51,8 @@ namespace CLI.UnitTests.Domain
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
             var attribute3 = new Attribute("anattributename3", "int", false, "25");
-            var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1", false);
-            var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2", false);
+            var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1");
+            var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2");
             var collectionLevel1 = new Element("acollectionname2", "adisplayname1", "adescription1", true);
             elementLevel2.Attributes.Add(attribute2);
             collectionLevel1.Attributes.Add(attribute3);

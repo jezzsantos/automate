@@ -86,7 +86,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             pattern.Elements.Add(element);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname}");
@@ -98,9 +98,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDeepElementExpressionNotExist_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
-            var elementLevel1 = new Element("anelementname1", null, null, false);
+            var elementLevel1 = new Element("anelementname1");
             pattern.Elements.Add(elementLevel1);
-            var elementLevel2 = new Element("anelementname2", null, null, false);
+            var elementLevel2 = new Element("anelementname2");
             elementLevel1.Elements.Add(elementLevel2);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname1.anelementname2.anuknownelement}");
@@ -112,11 +112,11 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDeepElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var elementLevel1 = new Element("anelementname1", null, null, false);
+            var elementLevel1 = new Element("anelementname1");
             pattern.Elements.Add(elementLevel1);
-            var elementLevel2 = new Element("anelementname2", null, null, false);
+            var elementLevel2 = new Element("anelementname2");
             elementLevel1.Elements.Add(elementLevel2);
-            var elementLevel3 = new Element("anelementname3", null, null, false);
+            var elementLevel3 = new Element("anelementname3");
             elementLevel2.Elements.Add(elementLevel3);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname1.anelementname2.anelementname3}");

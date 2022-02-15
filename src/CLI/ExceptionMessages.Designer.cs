@@ -70,15 +70,6 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The given &apos;defaultvalue&apos; must be one of the choices given in the &apos;isoneof&apos;..
-        /// </summary>
-        internal static string AuthoringApplication_AttributeDefaultValueIsNotAChoice {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_AttributeDefaultValueIsNotAChoice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The name &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
         /// </summary>
         internal static string AuthoringApplication_AttributeNameReserved {

@@ -3,7 +3,7 @@ using automate.Extensions;
 
 namespace automate.Domain
 {
-    internal class PatternDefinition : IPatternElement
+    internal class PatternDefinition : IPatternElement, IValidateable
     {
         public PatternDefinition(string name)
         {
@@ -41,5 +41,10 @@ namespace automate.Domain
         public string Name { get; set; }
 
         public string Id { get; set; }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            return ValidationResults.None;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using automate;
+﻿using System.Linq;
+using automate;
 using automate.Domain;
 using automate.Extensions;
 using FluentAssertions;
@@ -37,7 +38,7 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructedWithAttributeWithoutDefaultValue_ThenAttributeAssigned()
         {
             var pattern = new PatternDefinition("apatternname");
-            var attribute = new Attribute("aname", "string", false, null);
+            var attribute = new Attribute("aname");
             pattern.Attributes.Add(attribute);
 
             var result = new SolutionItem(pattern);
@@ -67,7 +68,7 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructedWithElement_ThenElementAssigned()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element = new Element("anelementname", "adisplayname", "adescription", false);
+            var element = new Element("anelementname", "adisplayname", "adescription");
             element.Attributes.Add(new Attribute("anattributename", "string", false, "adefaultvalue"));
             pattern.Elements.Add(element);
 
@@ -143,7 +144,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndElement_ThenMaterialises()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", false);
+            var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
@@ -168,7 +169,7 @@ namespace CLI.UnitTests.Domain
 
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
-            result.Properties.Should().NotContainKey("anattributename");
+            result.Properties.Should().BeEmpty();
             result.Items.Should().BeEmpty();
         }
 
@@ -187,7 +188,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItemAndNotACollection_ThenThrows()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", false);
+            var element = new Element("anelementname", "adisplayname", "adescription");
 
             new SolutionItem(element)
                 .Invoking(x => x.MaterialiseCollectionItem())
@@ -226,7 +227,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyInElementSchema_ThenReturnsTrue()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", false);
+            var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
@@ -239,7 +240,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyNotInSchema_ThenReturnsFalse()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", false);
+            var element = new Element("anelementname", "adisplayname", "adescription");
 
             var result = new SolutionItem(element)
                 .HasAttribute("anattributename");
@@ -250,7 +251,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndAttribute_ThenReturnsFalse()
         {
-            var result = new SolutionItem(new Attribute("anattributename", null, false, null))
+            var result = new SolutionItem(new Attribute("anattributename", null))
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -278,7 +279,7 @@ namespace CLI.UnitTests.Domain
         public void WhenGetPropertyAndNotAnAttribute_ThenThrows()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             pattern.Elements.Add(element);
 
             new SolutionItem(pattern)
@@ -290,7 +291,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenGetPropertyAndNotMaterialised_ThenThrows()
         {
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
@@ -303,7 +304,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenGetPropertyAndMaterialised_ThenReturnsProperty()
         {
-            var element = new Element("anelementname", null, null, false);
+            var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
@@ -312,6 +313,135 @@ namespace CLI.UnitTests.Domain
                 .GetProperty("anattributename");
 
             result.Name.Should().Be("anattributename");
+        }
+
+        [Fact]
+        public void WhenValidateAndIsPatternWithInvalidProperties_ThenReturnsErrors()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Attributes.Add(new Attribute("anattributename", isRequired: true));
+
+            var result = new SolutionItem(pattern)
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsElementAndNotMaterialised_ThenReturnsErrors()
+        {
+            var element = new Element("anelementname");
+
+            var result = new SolutionItem(element)
+                .Validate(new ValidationContext());
+
+            result.Results.First().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
+                    "anelementname"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsCollectionAndNotMaterialised_ThenReturnsErrors()
+        {
+            var element = new Element("acollectionname", isCollection: true, cardinality: ElementCardinality.OneOrMany);
+
+            var result = new SolutionItem(element)
+                .Validate(new ValidationContext());
+
+            result.Results.First().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
+                    "acollectionname"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsElementWithInvalidProperties_ThenReturnsErrors()
+        {
+            var element = new Element("anelementname");
+            element.Attributes.Add(new Attribute("anattributename", isRequired: true));
+
+            var result = new SolutionItem(element)
+                .Materialise()
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsElementWithMissingItems_ThenReturnsErrors()
+        {
+            var element1 = new Element("anelementname1");
+            var element2 = new Element("anelementname2");
+            element1.Elements.Add(element2);
+
+            var result = new SolutionItem(element1)
+                .Materialise()
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
+                    "anelementname2"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsCollectionWithMissingItems_ThenReturnsErrors()
+        {
+            var collection = new Element("acollectionname", isCollection: true,
+                cardinality: ElementCardinality.OneOrMany);
+
+            var result = new SolutionItem(collection)
+                .Materialise()
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
+                    "acollectionname"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsCollectionWithTooManyItems_ThenReturnsErrors()
+        {
+            var collection = new Element("acollectionname", isCollection: true,
+                cardinality: ElementCardinality.Single);
+
+            var solutionItem = new SolutionItem(collection);
+            solutionItem.MaterialiseCollectionItem();
+            solutionItem.MaterialiseCollectionItem();
+
+            var result = solutionItem.Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance.Format(
+                    "acollectionname"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsAttributeWithInvalidValue_ThenReturnsErrors()
+        {
+            var attribute = new Attribute("anattributename", isRequired: true);
+
+            var result = new SolutionItem(attribute)
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+        }
+
+        [Fact]
+        public void WhenValidateAndIsAttributeWithWrongDataTypeValue_ThenReturnsErrors()
+        {
+            var attribute = new Attribute("anattributename", "int");
+            var solutionItem = new SolutionItem(attribute)
+            {
+                Value = "awrongvalue"
+            };
+
+            var result = solutionItem
+                .Validate(new ValidationContext());
+
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.Attribute_ValidationRule_WrongDataTypeValue.Format("awrongvalue", "int"));
         }
     }
 }

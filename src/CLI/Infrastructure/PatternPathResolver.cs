@@ -27,7 +27,7 @@ namespace automate.Infrastructure
                 throw new AutomateException(ExceptionMessages.PatternPathResolver_InvalidExpression.Format(expression));
             }
 
-            if (expressionParts.First().NotEqualsOrdinal(pattern.Name))
+            if (expressionParts.First().NotEqualsIgnoreCase(pattern.Name))
             {
                 return null;
             }

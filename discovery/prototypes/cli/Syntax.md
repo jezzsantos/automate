@@ -146,6 +146,8 @@ They now need to add a collection to the pattern to allow their contributors to 
 
 > The name of a collection or element cannot contain spaces, since it is an identifier.
 
+> Collections are created with a "Cardinality" of `ZeroOrMany` by default. Which means that they can have either zero or any number of instances of them in the collection. Elements have a cardinality of `Single`. Other cardinalities can be also used on collections to apply different constraints, i.e. `ZeroOrOne`, `OneOrMany`.
+
 And then the necessary attributes of a service operation:
 
 `automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
@@ -530,17 +532,17 @@ This command should print out a JSON object that looks like this:
 }
 ```
 
-> Notice, that the names of elements in the meta-model have been changed to snake-case.
+> Notice, that the names of elements and attributes in this solution have been changed to snake-case.
 >
-> Notice, that the collections in the meta model have `items` containing the sub-elements.
+> Notice, that the collections in the solution have `items` containing the sub-elements.
 
-A codebase contributor can now ask the toolkit to write the new code for them!
+A codebase contributor can finally ask the toolkit to write the new code for them!
 
 `automate using "<SOLUTIONID>" --execute-command "Generate"`
 
 > This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase at the relevant locations.
 
-> If any of the required properties are not set, an error will be displayed. If all goes well, a list of commands will be displayed.
+> If any of the required properties are not set, or any required elements/collections are missing, then validation errors will be displayed. You can manually validate the solution with this command: `automate validate "<SOLUTIONID>"` 
 
 The `RoadRunner` codebase should now look like this:
 
