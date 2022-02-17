@@ -116,6 +116,16 @@ namespace automate.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The command &apos;{Command}&apos; was executed successfully:
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandExecuted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandExecuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}.
         /// </summary>
         internal static string CommandLine_Output_CreateSolutionFromToolkit {

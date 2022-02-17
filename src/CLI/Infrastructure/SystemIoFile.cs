@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using automate.Domain;
 using automate.Extensions;
 
 namespace automate.Infrastructure

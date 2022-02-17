@@ -3,13 +3,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using automate.Domain;
 using automate.Extensions;
+using Scriban;
 using ServiceStack;
 
 namespace automate.Infrastructure
 {
     internal class SolutionPathResolver : ISolutionPathResolver
     {
-        public SolutionItem Resolve(SolutionDefinition solution, string expression)
+        public SolutionItem ResolveItem(SolutionDefinition solution, string expression)
         {
             solution.GuardAgainstNull(nameof(solution));
             expression.GuardAgainstNullOrEmpty(nameof(expression));
@@ -57,6 +58,22 @@ namespace automate.Infrastructure
             }
 
             return target;
+        }
+
+        public string ResolveExpression(string expression, SolutionItem solutionItem)
+        {
+            if (!expression.HasValue())
+            {
+                return null;
+            }
+            return Transform(expression, solutionItem);
+        }
+
+        private static string Transform(string template, SolutionItem solutionItem)
+        {
+            var engine = Template.Parse(template);
+
+            return engine.Render(solutionItem.GetConfiguration());
         }
     }
 }

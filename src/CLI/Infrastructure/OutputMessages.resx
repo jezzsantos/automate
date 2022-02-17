@@ -102,4 +102,8 @@
     <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
         <value>The solution is configured correctly</value>
     </data>
+    <data name="CommandLine_Output_CommandExecuted" xml:space="preserve">
+        <value>The command '{Command}' was executed successfully:
+{Log}</value>
+    </data>
 </root>

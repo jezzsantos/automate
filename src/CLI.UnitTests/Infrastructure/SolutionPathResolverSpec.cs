@@ -5,6 +5,7 @@ using automate.Extensions;
 using automate.Infrastructure;
 using FluentAssertions;
 using Xunit;
+using Attribute = automate.Domain.Attribute;
 
 namespace CLI.UnitTests.Infrastructure
 {
@@ -22,7 +23,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndSolutionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.Resolve(null, "anexpression"))
+                .Invoking(x => x.ResolveItem(null, "anexpression"))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -30,7 +31,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.Resolve(new SolutionDefinition(), null))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(), null))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -38,7 +39,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsInvalidFormat_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.Resolve(new SolutionDefinition(), "notavalidexpression"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(), "notavalidexpression"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("notavalidexpression"));
         }
@@ -47,7 +48,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsEmpty_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.Resolve(new SolutionDefinition(), "{}"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(), "{}"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("{}"));
         }
@@ -55,10 +56,9 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveAndExpressionIsJustNameOfPattern_ThenReturnsPattern()
         {
-            var solution =
-                new SolutionDefinition { Id = "asolutionid", Pattern = new PatternDefinition("apatternname") };
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
 
-            var result = this.resolver.Resolve(solution, "{apatternname}");
+            var result = this.resolver.ResolveItem(solution, "{apatternname}");
 
             result.Should().Be(solution.Model);
         }
@@ -66,10 +66,9 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveAndExpressionElementNotExist_ThenReturnsNull()
         {
-            var solution =
-                new SolutionDefinition("atoolkitid", new PatternDefinition("apatternname"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
 
-            var result = this.resolver.Resolve(solution, "{anunknownelementname}");
+            var result = this.resolver.ResolveItem(solution, "{anunknownelementname}");
 
             result.Should().BeNull();
         }
@@ -80,9 +79,9 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.Elements.Add(element);
-            var solution = new SolutionDefinition("atoolkitid", pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
-            var result = this.resolver.Resolve(solution, "{anelementname}");
+            var result = this.resolver.ResolveItem(solution, "{anelementname}");
 
             result.ElementSchema.Should().Be(element);
         }
@@ -93,9 +92,9 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.Elements.Add(element);
-            var solution = new SolutionDefinition("atoolkitid", pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
-            var result = this.resolver.Resolve(solution, "{apatternname.anelementname}");
+            var result = this.resolver.ResolveItem(solution, "{apatternname.anelementname}");
 
             result.ElementSchema.Should().Be(element);
         }
@@ -110,13 +109,43 @@ namespace CLI.UnitTests.Infrastructure
             element2.Elements.Add(element3);
             element1.Elements.Add(element2);
             pattern.Elements.Add(element1);
-            var solution = new SolutionDefinition("atoolkitid", pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise().Properties["anelementname2"].Materialise()
                 .Properties["anelementname3"].Materialise();
 
-            var result = this.resolver.Resolve(solution, "{anelementname1.anelementname2.anelementname3}");
+            var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
 
             result.ElementSchema.Should().Be(element3);
+        }
+
+        [Fact]
+        public void WhenResolveExpressionAndExpressionIsNull_ThenReturnsNull()
+        {
+            var result = this.resolver.ResolveExpression(null, new SolutionItem());
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenResolveExpressionAndExpressionContainsNoSyntax_ThenReturnsExpression()
+        {
+            var result = this.resolver.ResolveExpression("anexpression", new SolutionItem());
+
+            result.Should().Be("anexpression");
+        }
+
+        [Fact]
+        public void WhenResolveExpressionAndExpressionContainsSyntax_ThenReturnsExpression()
+        {
+            var element = new Element("anelementname");
+            var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
+            element.Attributes.Add(attribute);
+            var solution = new SolutionItem(element);
+            solution.Materialise();
+
+            var result = this.resolver.ResolveExpression("anexpression{{anattributename}}anexpression", solution);
+
+            result.Should().Be("anexpressionadefaultvalueanexpression");
         }
     }
 }

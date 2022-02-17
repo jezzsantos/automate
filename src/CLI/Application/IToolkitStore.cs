@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using automate.Domain;
 
-namespace automate.Infrastructure
+namespace automate.Application
 {
     internal interface IToolkitStore
     {

@@ -25,76 +25,79 @@
         </value>
     </resheader>
     <data name="PatternStore_NotFoundAtLocationWithId" xml:space="preserve">
-        <value>A pattern with id {0} cannot be found in the pattern store at location {1}</value>
+        <value>A pattern with id: '{0}' cannot be found in the pattern store at location: '{1}'</value>
     </data>
     <data name="PatternStore_FoundNamed" xml:space="preserve">
-        <value>A pattern with the name {0} already exists</value>
+        <value>A pattern with the name: '{0}' already exists</value>
     </data>
     <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
-        <value>The pattern definition could not be found for {0}</value>
+        <value>The pattern definition could not be found for: '{0}'</value>
     </data>
     <data name="JsonFileRepository_ToolkitNotFound" xml:space="preserve">
-        <value>The toolkit could not be found for {0}</value>
+        <value>The toolkit could not be found for: '{0}'</value>
     </data>
     <data name="JsonFileRepository_SolutionNotFound" xml:space="preserve">
-        <value>The solution definition could not be found for {0}</value>
+        <value>The solution definition could not be found for: '{0}'</value>
     </data>
     <data name="MemoryRepository_NotFound" xml:space="preserve">
-        <value>The pattern definition could not be found for {0}</value>
+        <value>The pattern definition could not be found for: '{0}'</value>
     </data>
     <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
         <value>Pattern does not yet exist</value>
     </data>
     <data name="AuthoringApplication_CodeTemplate_NotFoundAtLocation" xml:space="preserve">
-        <value>The code file {1} could not be found at location {0}</value>
+        <value>'The code file: '{1}' could not be found at location: '{0}'</value>
     </data>
     <data name="AuthoringApplication_CodeTemplateByNameExists" xml:space="preserve">
-        <value>A code template with name {0} already exists. The name must be unique</value>
+        <value>A code template with name: '{0}' already exists. The name must be unique</value>
     </data>
     <data name="AuthoringApplication_AttributeNameReserved" xml:space="preserve">
-        <value>The name '{0}' is a reserved name, and cannot be used as a name for an attribute</value>
+        <value>The name: '{0}' is a reserved name, and cannot be used as a name for an attribute</value>
     </data>
     <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
-        <value>An attribute with name {0} already exists. The name must be unique</value>
+        <value>An attribute with name: '{0}' already exists. The name must be unique</value>
     </data>
     <data name="AuthoringApplication_NodeExpressionNotFound" xml:space="preserve">
         <value>The expression: '{0}' does not resolve to an element in this pattern</value>
     </data>
     <data name="AuthoringApplication_ElementByNameExists" xml:space="preserve">
-        <value>An element with name {0} already exists. The name must be unique</value>
+        <value>An element with name: '{0}' already exists. The name must be unique</value>
     </data>
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
-        <value>Automation with name {0} already exists. The name must be unique</value>
+        <value>Automation with name: '{0}' already exists. The name must be unique</value>
+    </data>
+    <data name="AuthoringApplication_CodeTemplateNotExists" xml:space="preserve">
+        <value>A CodeTemplate with name: '{0}' does not exist</value>
     </data>
     <data name="RuntimeApplication_ToolkitInstallerNotFound" xml:space="preserve">
-        <value>The installer could not be found at: {0}</value>
+        <value>The installer could not be found at: '{0}'</value>
     </data>
     <data name="RuntimeApplication_ToolkitNotFound" xml:space="preserve">
         <value>No toolkit with Name: '{0}' is installed</value>
     </data>
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
-        <value>The expression {0} is not a valid pattern expression</value>
+        <value>The expression: '{0}' is not a valid pattern expression</value>
     </data>
     <data name="SystemIoFile_SourceFileNotExist" xml:space="preserve">
-        <value>The file does not exist at path: {0}</value>
+        <value>The file does not exist at path: '{0}'</value>
     </data>
     <data name="PatternToolkitPackager_InvalidVersionInstruction" xml:space="preserve">
-        <value>Requested version number: {0}, is not a valid 2-dot version number</value>
+        <value>Requested version number: '{0}', is not a valid 2-dot version number</value>
     </data>
     <data name="PatternToolkitPackager_VersionBeforeCurrent" xml:space="preserve">
-        <value>Requested version number: {0}, cannot be before the current toolkit version number: {1}</value>
+        <value>Requested version number: '{0}', cannot be before the current toolkit version number: '{1}'</value>
     </data>
     <data name="PatternToolkitPackager_InvalidInstallerFile" xml:space="preserve">
-        <value>The installer file at: {0}, contains an invalid toolkit definition</value>
+        <value>The installer file at: '{0}', contains an invalid toolkit definition</value>
     </data>
     <data name="ToolkitStore_NotFoundAtLocationWithId" xml:space="preserve">
-        <value>A toolkit with id {0} cannot be found in the toolkit store at location {1}</value>
+        <value>A toolkit with id: '{0}' cannot be found in the toolkit store at location: '{1}'</value>
     </data>
     <data name="RuntimeApplication_SolutionNotFound" xml:space="preserve">
         <value>No solution with ID: '{0}' has been created.</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddAndAddTo" xml:space="preserve">
-        <value>Tried to configure solution ID: '{0}' to add both a new element with Name: {1}, and to a new collection with Name {2}</value>
+        <value>Tried to configure solution ID: '{0}' to add both a new element with Name: '{1}', and to a new collection with Name: '{2}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_NoChanges" xml:space="preserve">
         <value>Tried to configure solution ID: '{0}' without any changes</value>
@@ -103,25 +106,25 @@
         <value>Tried to configure solution ID: '{1}' but contains invalid assignment: '{0}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddToExpressionNotFound" xml:space="preserve">
-        <value>The '{0}' pattern does not have an element referenced by '{1}'</value>
+        <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddElementExists" xml:space="preserve">
-        <value>The element (referenced by '{0}') already exists, and cannot be added again</value>
+        <value>The element (referenced by: '{0}') already exists, and cannot be added again</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
-        <value>The element (referenced by '{0}') does not have a property called '{1}'</value>
+        <value>The element (referenced by: '{0}') does not have a property called: '{1}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf" xml:space="preserve">
-        <value>The property '{1}' (on element '{0}') can only have one of these values '{2}', it cannot be '{3}'</value>
+        <value>The property: '{1}' (on element: '{0}') can only have one of these values: '{2}', it cannot be: '{3}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible" xml:space="preserve">
-        <value>The property '{1}' (on element '{0}') is of type '{2}', and cannot accept value '{3}'</value>
+        <value>The property: '{1}' (on element: '{0}') is of type: '{2}', and cannot accept value: '{3}'</value>
     </data>
     <data name="SolutionPathResolver_InvalidExpression" xml:space="preserve">
-        <value>The expression {0} is not a valid solution expression</value>
+        <value>The expression: '{0}' is not a valid solution expression</value>
     </data>
     <data name="SolutionItem_PatternAlreadyMaterialised" xml:space="preserve">
-        <value>The Pattern '{0}' has already been materialized</value>
+        <value>The Pattern: '{0}' has already been materialized</value>
     </data>
     <data name="SolutionItem_ValueAlreadyMaterialised" xml:space="preserve">
         <value>The Value has already been materialized</value>
@@ -133,10 +136,15 @@
         <value>This solution item is not yet materialised</value>
     </data>
     <data name="SolutionItem_NotAProperty" xml:space="preserve">
-        <value>The property '{0}' cannot be found on this element</value>
+        <value>The property: '{0}' cannot be found on this element</value>
     </data>
     <data name="SolutionItem_NotAnAttribute" xml:space="preserve">
-        <value>The property '{0}' is not an attribute</value>
+        <value>The property: '{0}' is not an attribute</value>
     </data>
-
+    <data name="SolutionDefinition_UnknownCommand" xml:space="preserve">
+        <value>Command: '{0}' does not exist on pattern: '{1}'</value>
+    </data>
+    <data name="CodeTemplateCommand_TemplateNotExists" xml:space="preserve">
+        <value>The code template with ID: '{0}' does not exist in the  toolkit</value>
+    </data>
 </root>

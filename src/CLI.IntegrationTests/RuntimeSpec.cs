@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using automate;
 using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;
@@ -19,12 +18,13 @@ namespace CLI.IntegrationTests
         {
             this.setup = setup;
             this.setup.ResetRepository();
+            DeleteCodeFolder();
         }
 
         [Fact]
         public void WhenInstallNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.InstallCommandName}");
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName}");
 
             this.setup.Should().DisplayErrorForMissingCommand();
         }
@@ -32,7 +32,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenRunNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.RunCommandName}");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName}");
 
             this.setup.Should().DisplayErrorForMissingCommand();
         }
@@ -40,9 +40,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenUsingNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{Program.UsingCommandName}");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName}");
 
-            this.setup.Should().DisplayErrorForMissingArgument(Program.UsingCommandName);
+            this.setup.Should().DisplayErrorForMissingArgument(CommandLineApi.UsingCommandName);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace CLI.IntegrationTests
         {
             var location = BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -74,9 +74,9 @@ namespace CLI.IntegrationTests
             BuildAndInstallToolkit();
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var locationV2 = Path.Combine(desktopFolder, "apattern_2.0.toolkit");
-            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            this.setup.RunCommand($"{Program.InstallCommandName} toolkit {locationV2}");
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -87,7 +87,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListInstalledToolkitsAndNone_ThenDisplaysNone()
         {
-            this.setup.RunCommand($"{Program.RunCommandName} list-toolkits");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-toolkits");
 
             this.setup.Should()
                 .DisplayMessage(
@@ -99,7 +99,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{Program.RunCommandName} list-toolkits");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-toolkits");
 
             var toolkit = this.setup.Toolkits.Single();
 
@@ -115,7 +115,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
 
             var solution = this.setup.Solutions.Single();
 
@@ -131,7 +131,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{Program.RunCommandName} list-solutions");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-solutions");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -143,9 +143,9 @@ namespace CLI.IntegrationTests
         public void WhenListCreatedSolutionsAndOne_ThenDisplaysOne()
         {
             BuildAndInstallToolkit();
-            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
 
-            this.setup.RunCommand($"{Program.RunCommandName} list-solutions");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-solutions");
 
             var solution = this.setup.Solutions.Single();
 
@@ -161,7 +161,7 @@ namespace CLI.IntegrationTests
         {
             var solution = BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty1=avalue\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue\"");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -173,11 +173,12 @@ namespace CLI.IntegrationTests
         public void WhenViewConfiguration_ThenDisplaysConfiguration()
         {
             var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
-                $"{Program.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
+                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{Program.UsingCommandName} {solution.Id} --view-configuration");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --view-configuration");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -189,16 +190,25 @@ namespace CLI.IntegrationTests
                         {
                             a_property3 = "A"
                         },
-                        a_collection2 = new { }
+                        a_collection2 = new
+                        {
+                            items = new[]
+                            {
+                                new
+                                {
+                                    a_property4 = "adefaultvalue4"
+                                }
+                            }
+                        }
                     }.ToJson<dynamic>()));
         }
 
         [Fact]
-        public void WhenValidate_ThenDisplaysErrors()
+        public void WhenValidateAndErrors_ThenDisplaysErrors()
         {
             var solution = BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{Program.ValidateCommandName} {solution.Id}");
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} {solution.Id}");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -211,10 +221,57 @@ namespace CLI.IntegrationTests
                         ));
         }
 
+        [Fact]
+        public void WhenValidateAndNoErrors_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} {solution.Id}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPoint_ThenDisplaysSuccess()
+        {
+            var testDirectory = Environment.CurrentDirectory;
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
+
+            var artifactLink = this.setup.Solutions.Single().Model.ArtifactLinks.First().Path;
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("alaunchpoint",
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bfile.cs",
+                        Path.Combine(testDirectory, @"code\Bfile.cs")) +
+                    "\r\n"));
+            artifactLink.Should()
+                .Be(Path.Combine(testDirectory, @"code\Bfile.cs"));
+        }
+
+        private void DeleteCodeFolder()
+        {
+            var directory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "code"));
+            if (directory.Exists)
+            {
+                directory.Delete(true);
+            }
+        }
+
         private SolutionDefinition BuildInstallAndCreateSolution()
         {
             BuildAndInstallToolkit();
-            this.setup.RunCommand($"{Program.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
 
             return this.setup.Solutions.Single();
         }
@@ -223,19 +280,29 @@ namespace CLI.IntegrationTests
         {
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
-            this.setup.RunCommand($"{Program.CreateCommandName} pattern apattern");
-            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{Program.EditCommandName} add-attribute AProperty2 --typeis int");
-            this.setup.RunCommand($"{Program.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern apattern");
             this.setup.RunCommand(
-                $"{Program.EditCommandName} add-attribute AProperty3 --aschildof {{apattern.AnElement1}} --isoneof \"A;B;C\"");
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\"");
             this.setup.RunCommand(
-                $"{Program.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement}}");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath \"~/code/{{{{an_element1.a_property3}}}}file.cs\"");
+            var commandId = this.setup.Patterns.Single().Automation.Single().Id;
             this.setup.RunCommand(
-                $"{Program.EditCommandName} add-collection ACollection2 --aschildof {{apattern}} --ality OneOrMany");
-            this.setup.RunCommand($"{Program.BuildCommandName} toolkit");
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId} --name alaunchpoint");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{apattern.AnElement1}} --isoneof \"A;B;C\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement}}");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{apattern}} --ality OneOrMany");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{apattern.ACollection2}} --defaultvalueis adefaultvalue4");
 
-            this.setup.RunCommand($"{Program.InstallCommandName} toolkit {location}");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();
 

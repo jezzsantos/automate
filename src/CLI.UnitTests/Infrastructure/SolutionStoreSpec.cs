@@ -20,9 +20,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenListAllAndSolutions_ThenReturnsAll()
         {
-            var solution1 = new SolutionDefinition("atoolkitid1", new PatternDefinition());
-            var solution2 = new SolutionDefinition("atoolkitid2", new PatternDefinition());
-            var solution3 = new SolutionDefinition("atoolkitid3", new PatternDefinition());
+            var solution1 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
+            var solution2 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2"), "1.0"));
+            var solution3 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3"), "1.0"));
             this.repository.NewSolution(solution1);
             this.repository.NewSolution(solution2);
             this.repository.NewSolution(solution3);
@@ -45,9 +48,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenFindByIdAndExists_ThenReturnsSolution()
         {
-            var solution1 = new SolutionDefinition("atoolkitid1", new PatternDefinition());
-            var solution2 = new SolutionDefinition("atoolkitid2", new PatternDefinition());
-            var solution3 = new SolutionDefinition("atoolkitid3", new PatternDefinition());
+            var solution1 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
+            var solution2 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2"), "1.0"));
+            var solution3 =
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3"), "1.0"));
             this.repository.NewSolution(solution1);
             this.repository.NewSolution(solution2);
             this.repository.NewSolution(solution3);

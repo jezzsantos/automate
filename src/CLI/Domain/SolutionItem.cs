@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using automate.Extensions;
+using StringExtensions = ServiceStack.StringExtensions;
 
 namespace automate.Domain
 {
@@ -96,6 +97,8 @@ namespace automate.Domain
 
         public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
 
+        public List<ArtifactLink> ArtifactLinks { get; set; } = new List<ArtifactLink>();
+
         public SolutionItem Materialise(object value = null)
         {
             if (IsPattern)
@@ -150,11 +153,12 @@ namespace automate.Domain
 
             var collectedElement = ElementSchema.Clone();
             collectedElement.IsCollection = false;
-            var item = new SolutionItem(collectedElement);
-            item.Materialise();
-            Items.Add(item);
+            collectedElement.Cardinality = ElementCardinality.Single;
+            var childItem = new SolutionItem(collectedElement);
+            childItem.Materialise();
+            Items.Add(childItem);
 
-            return item;
+            return childItem;
         }
 
         public bool HasAttribute(string name)
@@ -300,6 +304,42 @@ namespace automate.Domain
             }
 
             return ValidationResults.None;
+        }
+
+        public Dictionary<string, object> GetConfiguration()
+        {
+            var properties = new Dictionary<string, object>();
+            ConvertToDictionary(this, properties);
+            return properties;
+
+            object ConvertToDictionary(SolutionItem solutionItem, IDictionary<string, object> props)
+            {
+                if (solutionItem.IsAttribute || solutionItem.IsValue)
+                {
+                    return solutionItem.Value;
+                }
+                if (solutionItem.Properties.HasAny())
+                {
+                    foreach (var (key, value) in solutionItem.Properties)
+                    {
+                        props.Add(ConvertName(key), ConvertToDictionary(value, new Dictionary<string, object>()));
+                    }
+                }
+                if (solutionItem.Items.HasAny())
+                {
+                    var items = new List<object>();
+                    solutionItem.Items.ForEach(item =>
+                        items.Add(ConvertToDictionary(item, new Dictionary<string, object>())));
+                    props.Add(ConvertName(nameof(Items)), items);
+                }
+
+                return props;
+            }
+
+            string ConvertName(string name)
+            {
+                return StringExtensions.ToLowercaseUnderscore(name);
+            }
         }
 
         private void SetValue(object value, string dataType)

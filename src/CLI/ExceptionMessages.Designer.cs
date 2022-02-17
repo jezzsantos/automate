@@ -61,7 +61,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An attribute with name {0} already exists. The name must be unique.
+        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_AttributeByNameExists {
             get {
@@ -70,7 +70,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
+        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
         /// </summary>
         internal static string AuthoringApplication_AttributeNameReserved {
             get {
@@ -79,7 +79,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automation with name {0} already exists. The name must be unique.
+        ///   Looks up a localized string similar to Automation with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_AutomationByNameExists {
             get {
@@ -88,7 +88,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The code file {1} could not be found at location {0}.
+        ///   Looks up a localized string similar to &apos;The code file: &apos;{1}&apos; could not be found at location: &apos;{0}&apos;.
         /// </summary>
         internal static string AuthoringApplication_CodeTemplate_NotFoundAtLocation {
             get {
@@ -97,7 +97,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A code template with name {0} already exists. The name must be unique.
+        ///   Looks up a localized string similar to A code template with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_CodeTemplateByNameExists {
             get {
@@ -106,7 +106,16 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An element with name {0} already exists. The name must be unique.
+        ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateNotExists {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An element with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_ElementByNameExists {
             get {
@@ -133,7 +142,16 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The pattern definition could not be found for {0}.
+        ///   Looks up a localized string similar to The code template with ID: &apos;{0}&apos; does not exist in the  toolkit.
+        /// </summary>
+        internal static string CodeTemplateCommand_TemplateNotExists {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_TemplateNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The pattern definition could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_PatternNotFound {
             get {
@@ -142,7 +160,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution definition could not be found for {0}.
+        ///   Looks up a localized string similar to The solution definition could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_SolutionNotFound {
             get {
@@ -151,7 +169,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The toolkit could not be found for {0}.
+        ///   Looks up a localized string similar to The toolkit could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_ToolkitNotFound {
             get {
@@ -160,7 +178,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The pattern definition could not be found for {0}.
+        ///   Looks up a localized string similar to The pattern definition could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string MemoryRepository_NotFound {
             get {
@@ -169,7 +187,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expression {0} is not a valid pattern expression.
+        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid pattern expression.
         /// </summary>
         internal static string PatternPathResolver_InvalidExpression {
             get {
@@ -178,7 +196,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A pattern with the name {0} already exists.
+        ///   Looks up a localized string similar to A pattern with the name: &apos;{0}&apos; already exists.
         /// </summary>
         internal static string PatternStore_FoundNamed {
             get {
@@ -187,7 +205,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A pattern with id {0} cannot be found in the pattern store at location {1}.
+        ///   Looks up a localized string similar to A pattern with id: &apos;{0}&apos; cannot be found in the pattern store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string PatternStore_NotFoundAtLocationWithId {
             get {
@@ -196,7 +214,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The installer file at: {0}, contains an invalid toolkit definition.
+        ///   Looks up a localized string similar to The installer file at: &apos;{0}&apos;, contains an invalid toolkit definition.
         /// </summary>
         internal static string PatternToolkitPackager_InvalidInstallerFile {
             get {
@@ -205,7 +223,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: {0}, is not a valid 2-dot version number.
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, is not a valid 2-dot version number.
         /// </summary>
         internal static string PatternToolkitPackager_InvalidVersionInstruction {
             get {
@@ -214,7 +232,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: {0}, cannot be before the current toolkit version number: {1}.
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, cannot be before the current toolkit version number: &apos;{1}&apos;.
         /// </summary>
         internal static string PatternToolkitPackager_VersionBeforeCurrent {
             get {
@@ -223,7 +241,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: {1}, and to a new collection with Name {2}.
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_AddAndAddTo {
             get {
@@ -232,7 +250,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The element (referenced by &apos;{0}&apos;) already exists, and cannot be added again.
+        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) already exists, and cannot be added again.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_AddElementExists {
             get {
@@ -241,7 +259,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; pattern does not have an element referenced by &apos;{1}&apos;.
+        ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_AddToExpressionNotFound {
             get {
@@ -250,7 +268,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The element (referenced by &apos;{0}&apos;) does not have a property called &apos;{1}&apos;.
+        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_ElementPropertyNotExists {
             get {
@@ -259,7 +277,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property &apos;{1}&apos; (on element &apos;{0}&apos;) can only have one of these values &apos;{2}&apos;, it cannot be &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) can only have one of these values: &apos;{2}&apos;, it cannot be: &apos;{3}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf {
             get {
@@ -268,7 +286,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property &apos;{1}&apos; (on element &apos;{0}&apos;) is of type &apos;{2}&apos;, and cannot accept value &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) is of type: &apos;{2}&apos;, and cannot accept value: &apos;{3}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible {
             get {
@@ -304,7 +322,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The installer could not be found at: {0}.
+        ///   Looks up a localized string similar to The installer could not be found at: &apos;{0}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ToolkitInstallerNotFound {
             get {
@@ -322,6 +340,15 @@ namespace automate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command: &apos;{0}&apos; does not exist on pattern: &apos;{1}&apos;.
+        /// </summary>
+        internal static string SolutionDefinition_UnknownCommand {
+            get {
+                return ResourceManager.GetString("SolutionDefinition_UnknownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot materialise item in an non-collection element.
         /// </summary>
         internal static string SolutionItem_MaterialiseNotACollection {
@@ -331,7 +358,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property &apos;{0}&apos; is not an attribute.
+        ///   Looks up a localized string similar to The property: &apos;{0}&apos; is not an attribute.
         /// </summary>
         internal static string SolutionItem_NotAnAttribute {
             get {
@@ -340,7 +367,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property &apos;{0}&apos; cannot be found on this element.
+        ///   Looks up a localized string similar to The property: &apos;{0}&apos; cannot be found on this element.
         /// </summary>
         internal static string SolutionItem_NotAProperty {
             get {
@@ -358,7 +385,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Pattern &apos;{0}&apos; has already been materialized.
+        ///   Looks up a localized string similar to The Pattern: &apos;{0}&apos; has already been materialized.
         /// </summary>
         internal static string SolutionItem_PatternAlreadyMaterialised {
             get {
@@ -376,7 +403,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expression {0} is not a valid solution expression.
+        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid solution expression.
         /// </summary>
         internal static string SolutionPathResolver_InvalidExpression {
             get {
@@ -385,7 +412,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file does not exist at path: {0}.
+        ///   Looks up a localized string similar to The file does not exist at path: &apos;{0}&apos;.
         /// </summary>
         internal static string SystemIoFile_SourceFileNotExist {
             get {
@@ -394,7 +421,7 @@ namespace automate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A toolkit with id {0} cannot be found in the toolkit store at location {1}.
+        ///   Looks up a localized string similar to A toolkit with id: &apos;{0}&apos; cannot be found in the toolkit store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string ToolkitStore_NotFoundAtLocationWithId {
             get {

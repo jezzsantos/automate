@@ -336,19 +336,31 @@ namespace CLI.UnitTests.Application
         public void WhenAddCodeTemplateCommandAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
+                .Invoking(x => x.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndCodeTemplateNotExists_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_CodeTemplateNotExists.Format("atemplatename"));
         }
 
         [Fact]
         public void WhenAddCodeTemplateCommandAndAlreadyExists_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddCodeTemplateCommand("acommandname", false, "~/apath", null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
             this.application
-                .Invoking(x => x.AddCodeTemplateCommand("acommandname", false, "~/apath", null))
+                .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("acommandname"));
         }
@@ -363,7 +375,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.AddCodeTemplateCommand("acommandname", false, "~/apath", "anunknownparent"))
+                    x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format("anunknownparent"));
@@ -373,11 +385,29 @@ namespace CLI.UnitTests.Application
         public void WhenAddCodeTemplateCommand_TheAddsAutomationToPattern()
         {
             this.application.CreateNewPattern("apatternname");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
-            var result = this.application.AddCodeTemplateCommand("acommandname", false, "~/apath", null);
+            var result =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<AutomationCommand>();
+            var automation = this.store.GetCurrent().Automation.Single().As<CodeTemplateCommand>();
             automation.Name.Should().Be("acommandname");
+            automation.IsTearOff.Should().BeFalse();
+            automation.FilePath.Should().Be("~/apath");
+            result.Id.Should().Be(automation.Id);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommandAndNoName_TheAddsAutomationWithDefaultName()
+        {
+            this.application.CreateNewPattern("apatternname");
+            IdGenerator.Create();
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+
+            var result = this.application.AddCodeTemplateCommand("atemplatename", null, false, "~/apath", null);
+
+            var automation = this.store.GetCurrent().Automation.Single().As<CodeTemplateCommand>();
+            automation.Name.Should().Be("CodeTemplateCommand1");
             automation.IsTearOff.Should().BeFalse();
             automation.FilePath.Should().Be("~/apath");
             result.Id.Should().Be(automation.Id);
@@ -387,13 +417,14 @@ namespace CLI.UnitTests.Application
         public void WhenAddCodeTemplateCommandAndParentIsElement_ThenAddsAutomationToElement()
         {
             this.application.CreateNewPattern("apatternname");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
             var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);
 
-            var result = this.application.AddCodeTemplateCommand("acommandname", false, "~/apath",
+            var result = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
                 "{apatternname.aparentelementname}");
 
             result.Name.Should().Be("acommandname");
@@ -449,7 +480,7 @@ namespace CLI.UnitTests.Application
                 this.application.AddCommandLaunchPoint(new[] { commandId1, commandId2, commandId3 }.SafeJoin(";"),
                     "alaunchpointname", null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<AutomationLaunchPoint>();
+            var automation = this.store.GetCurrent().Automation.Single().As<CommandLaunchPoint>();
             automation.Name.Should().Be("alaunchpointname");
             automation.CommandIds.Should().ContainInOrder(commandId1, commandId2, commandId3);
             result.Id.Should().Be(automation.Id);
@@ -481,7 +512,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.AddCommandLaunchPoint(commandId, null, null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<AutomationLaunchPoint>();
+            var automation = this.store.GetCurrent().Automation.Single().As<CommandLaunchPoint>();
             automation.Name.Should().Be("LaunchPoint1");
             automation.CommandIds.Should().ContainSingle(commandId);
             result.Id.Should().Be(automation.Id);

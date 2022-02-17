@@ -34,7 +34,7 @@ namespace automate.Domain
 
         public static bool IsRuntimeFilePath(string path)
         {
-            return Regex.IsMatch(path, @"^[~]{0,1}[\/\\\.A-Za-z0-9\(\)\{\}]+$");
+            return Regex.IsMatch(path, @"^[~]{0,1}[\/\\\._ A-Za-z0-9\(\)\{\}]+$");
         }
     }
 }

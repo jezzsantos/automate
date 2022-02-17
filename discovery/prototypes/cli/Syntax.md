@@ -400,17 +400,17 @@ This can be done whenever some event on the meta-model is raised. For example, w
 
 These commands will decide **where** to render the files, and what filenames to use.
 
-`automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{Name}}Controller.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{name}}Controller.gen.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{Name}}Service.cs"`
+`automate edit add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{name}}Service.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{Name}}Service.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{name}}Service.gen.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{Name}}.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{name}}.gen.cs"`
 
 > These commands adds new "Commands" for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
 >
-> Notice that the filename for each uses an expression that includes the `Name` attribute of the pattern.
+> Notice that the filename for each uses an expression that includes the `name` attribute of the pattern. It is in lowercase here, as all attributes and element names are snake-cased when this template is executed.
 >
 > Notice that for `CodeTemplate2` we use the option `--astearoff`  (and a slight variation on the file extension in the `--withpath` option) to indicate that this file will only be generated once, and only if the specified file does not exist at the specified location with the specified name.
 >
@@ -536,13 +536,15 @@ This command should print out a JSON object that looks like this:
 >
 > Notice, that the collections in the solution have `items` containing the sub-elements.
 
-A codebase contributor can finally ask the toolkit to write the new code for them!
+A codebase contributor can now finally ask the toolkit to write the new API code for them!
 
-`automate using "<SOLUTIONID>" --execute-command "Generate"`
+`automate execute "<SOLUTIONID>" --command "Generate"`
 
-> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase at the relevant locations.
+> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` projects at the configured locations.
 
-> If any of the required properties are not set, or any required elements/collections are missing, then validation errors will be displayed. You can manually validate the solution with this command: `automate validate "<SOLUTIONID>"` 
+> If any of the required properties (of attributes) are not set, or any required elements of collections are missing, then appropriate validation errors will be displayed explaining the problem. 
+>
+> You can manually validate the solution at any time, with this command: `automate validate "<SOLUTIONID>"` 
 
 The `RoadRunner` codebase should now look like this:
 
@@ -552,7 +554,7 @@ The `RoadRunner` codebase should now look like this:
 		- RoadRunner
 			- src
 				- automate
-					- (various directories and files)
+					- (...various directories and files)
 				- backend
 					- controllers
 						- OrdersController.gen.cs

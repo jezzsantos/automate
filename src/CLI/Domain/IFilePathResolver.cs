@@ -1,4 +1,4 @@
-﻿namespace automate.Infrastructure
+﻿namespace automate.Domain
 {
     internal interface IFile
     {

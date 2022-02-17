@@ -23,6 +23,8 @@ namespace automate.Domain
 
         public string Name { get; set; }
 
+        public abstract CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem ownerSolution);
+
         public string Id { get; set; }
     }
 }

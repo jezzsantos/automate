@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using automate.Application;
 using automate.Domain;
 using automate.Extensions;
 

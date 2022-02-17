@@ -199,16 +199,22 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItem_ThenMaterialisesNewElement()
         {
-            var item = new SolutionItem(new Element("anelementname", "adisplayname", "adescription", true));
+            var element = new Element("anelementname", "adisplayname", "adescription", true);
+            var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
+            element.Attributes.Add(attribute);
+            var solutionItem = new SolutionItem(element);
 
-            var result = item.MaterialiseCollectionItem();
+            var result = solutionItem.MaterialiseCollectionItem();
 
             result.IsMaterialised.Should().BeTrue();
+            result.IsCollection.Should().BeFalse();
             result.Value.Should().BeNull();
             result.Items.Should().BeNull();
+            result.Properties.Should().ContainSingle(prop =>
+                prop.Key == "anattributename" && (string)prop.Value.Value == "adefaultvalue");
 
-            item.IsMaterialised.Should().BeTrue();
-            item.Items.Should().Contain(result);
+            solutionItem.IsMaterialised.Should().BeTrue();
+            solutionItem.Items.Should().Contain(result);
         }
 
         [Fact]

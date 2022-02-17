@@ -70,7 +70,7 @@ namespace automate.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
-            var solution = new SolutionDefinition(toolkit.Id, toolkit.Pattern);
+            var solution = new SolutionDefinition(toolkit);
             this.solutionStore.Save(solution);
 
             return solution;
@@ -121,7 +121,7 @@ namespace automate.Application
             var newItem = solution.Model;
             if (addElementExpression.HasValue())
             {
-                var solutionItem = this.solutionPathResolver.Resolve(solution, addElementExpression);
+                var solutionItem = this.solutionPathResolver.ResolveItem(solution, addElementExpression);
                 if (solutionItem.NotExists())
                 {
                     throw new AutomateException(
@@ -142,7 +142,7 @@ namespace automate.Application
 
             if (addToCollectionExpression.HasValue())
             {
-                var collection = this.solutionPathResolver.Resolve(solution, addToCollectionExpression);
+                var collection = this.solutionPathResolver.ResolveItem(solution, addToCollectionExpression);
                 if (collection.NotExists())
                 {
                     throw new AutomateException(
@@ -220,6 +220,20 @@ namespace automate.Application
             }
 
             return solution.Model.Validate(new ValidationContext());
+        }
+
+        public CommandExecutionResult ExecuteCommand(string solutionId, string name)
+        {
+            var solution = this.solutionStore.FindById(solutionId);
+            if (solution.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
+            }
+
+            var result = solution.ExecuteCommand(name);
+            this.solutionStore.Save(solution);
+
+            return result;
         }
 
         private static bool IsValidAssignment(string assignment)

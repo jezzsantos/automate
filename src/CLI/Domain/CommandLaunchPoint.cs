@@ -4,9 +4,9 @@ using automate.Extensions;
 
 namespace automate.Domain
 {
-    internal class AutomationLaunchPoint : Automation
+    internal class CommandLaunchPoint : Automation
     {
-        public AutomationLaunchPoint(string name, List<string> commandIds) : base(name)
+        public CommandLaunchPoint(string name, List<string> commandIds) : base(name)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
             commandIds.GuardAgainstInvalid(ids => ids.Exists() && ids.Any(), nameof(commandIds),
@@ -19,10 +19,25 @@ namespace automate.Domain
         /// <summary>
         ///     For serialization
         /// </summary>
-        public AutomationLaunchPoint()
+        public CommandLaunchPoint()
         {
         }
 
         public List<string> CommandIds { get; set; }
+
+        public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem ownerSolution)
+        {
+            var logs = new List<string>();
+            toolkit.Pattern.Automation
+                .Where(auto => CommandIds.Contains(auto.Id))
+                .ToList()
+                .ForEach(cmd =>
+                {
+                    var result = cmd.Execute(toolkit, ownerSolution);
+                    logs.AddRange(result.Log);
+                });
+
+            return new CommandExecutionResult(Name, logs);
+        }
     }
 }

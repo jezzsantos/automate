@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using automate.Application;
 using automate.Domain;
 using automate.Extensions;
 

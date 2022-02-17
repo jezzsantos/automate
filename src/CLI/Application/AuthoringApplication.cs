@@ -179,10 +179,11 @@ namespace automate.Application
             return (target, element);
         }
 
-        public AutomationCommand AddCodeTemplateCommand(string name, bool isTearOff, string filePath,
+        public CodeTemplateCommand AddCodeTemplateCommand(string codeTemplateName, string name, bool isTearOff,
+            string filePath,
             string parentExpression)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
+            codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
             filePath.GuardAgainstNullOrEmpty(nameof(filePath));
 
             VerifyCurrentPatternExists();
@@ -199,19 +200,29 @@ namespace automate.Application
                 }
             }
 
-            if (AutomationExistsByName(target, name))
+            var codeTemplate = pattern.CodeTemplates.FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
+            if (codeTemplate.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_CodeTemplateNotExists.Format(codeTemplateName));
+            }
+            var commandName = name.HasValue()
+                ? name
+                : $"CodeTemplateCommand{target.Automation.Count + 1}";
+            if (AutomationExistsByName(target, commandName))
+            {
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(commandName));
             }
 
-            var automation = new AutomationCommand(name, isTearOff, filePath);
+            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isTearOff, filePath);
             target.Automation.Add(automation);
             this.store.Save(pattern);
 
             return automation;
         }
 
-        public AutomationLaunchPoint AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
+        public CommandLaunchPoint AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
         {
             commandIds.GuardAgainstNullOrEmpty(nameof(commandIds));
 
@@ -234,11 +245,12 @@ namespace automate.Application
                 : $"LaunchPoint{target.Automation.Count + 1}";
             if (AutomationExistsByName(target, launchPointName))
             {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(name));
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(launchPointName));
             }
 
             var commandIdentifiers = commandIds.SafeSplit(";").ToList();
-            var automation = new AutomationLaunchPoint(launchPointName, commandIdentifiers);
+            var automation = new CommandLaunchPoint(launchPointName, commandIdentifiers);
             target.Automation.Add(automation);
             this.store.Save(pattern);
 

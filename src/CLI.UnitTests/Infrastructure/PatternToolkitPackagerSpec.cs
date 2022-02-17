@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using automate;
+using automate.Application;
 using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;

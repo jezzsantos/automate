@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using automate.Extensions;
 using StringExtensions = ServiceStack.StringExtensions;
 
@@ -6,14 +6,12 @@ namespace automate.Domain
 {
     internal class SolutionDefinition
     {
-        public SolutionDefinition(string toolkitId, PatternDefinition pattern)
+        public SolutionDefinition(ToolkitDefinition toolkit)
         {
-            toolkitId.GuardAgainstNullOrEmpty(nameof(toolkitId));
-            pattern.GuardAgainstNull(nameof(pattern));
+            toolkit.GuardAgainstNull(nameof(toolkit));
 
             Id = IdGenerator.Create();
-            ToolkitId = toolkitId;
-            Pattern = pattern;
+            Toolkit = toolkit;
             InitialiseSchema();
         }
 
@@ -24,11 +22,9 @@ namespace automate.Domain
         {
         }
 
-        public PatternDefinition Pattern { get; set; }
+        public ToolkitDefinition Toolkit { get; set; }
 
-        public string ToolkitId { get; set; }
-
-        public string PatternName => Pattern?.Name;
+        public string PatternName => Toolkit.Pattern?.Name;
 
         public string Id { get; set; }
 
@@ -36,43 +32,26 @@ namespace automate.Domain
 
         public string GetConfiguration()
         {
-            var properties = new Dictionary<string, object>();
-            ConvertToDictionary(Model, properties);
-            return properties.ToJson();
+            return Model.GetConfiguration().ToJson();
+        }
 
-            object ConvertToDictionary(SolutionItem solutionItem, IDictionary<string, object> props)
+        public CommandExecutionResult ExecuteCommand(string name)
+        {
+            var command =
+                Toolkit.Pattern.Automation.FirstOrDefault(
+                    automation => StringExtensions.EqualsIgnoreCase(automation.Name, name));
+            if (command.NotExists())
             {
-                if (solutionItem.IsAttribute || solutionItem.IsValue)
-                {
-                    return solutionItem.Value;
-                }
-                if (solutionItem.Properties.HasAny())
-                {
-                    foreach (var (key, value) in solutionItem.Properties)
-                    {
-                        props.Add(ConvertName(key), ConvertToDictionary(value, new Dictionary<string, object>()));
-                    }
-                }
-                if (solutionItem.Items.HasAny())
-                {
-                    var items = new List<object>();
-                    solutionItem.Items.ForEach(item =>
-                        items.Add(ConvertToDictionary(item, new Dictionary<string, object>())));
-                    props.Add(ConvertName(nameof(SolutionItem.Items)), items);
-                }
-
-                return props;
+                throw new AutomateException(
+                    ExceptionMessages.SolutionDefinition_UnknownCommand.Format(name, PatternName));
             }
 
-            string ConvertName(string name)
-            {
-                return StringExtensions.ToLowercaseUnderscore(name);
-            }
+            return command.Execute(Toolkit, Model);
         }
 
         private void InitialiseSchema()
         {
-            Model = new SolutionItem(Pattern);
+            Model = new SolutionItem(Toolkit.Pattern);
         }
     }
 }

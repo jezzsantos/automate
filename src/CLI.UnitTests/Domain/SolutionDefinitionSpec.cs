@@ -23,7 +23,7 @@ namespace CLI.UnitTests.Domain
             pattern.Elements.Add(element2);
             pattern.Elements.Add(element3);
 
-            var solution = new SolutionDefinition("atoolkitid", pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             solution.Model.Should().NotBeNull();
             var solutionElement1 = solution.Model.Properties["anelementname1"];
@@ -62,7 +62,7 @@ namespace CLI.UnitTests.Domain
             pattern.Elements.Add(elementLevel1);
             pattern.Elements.Add(collectionLevel1);
 
-            var solution = new SolutionDefinition("atoolkitname", pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solution.Model.Properties["acollectionname2"].MaterialiseCollectionItem();

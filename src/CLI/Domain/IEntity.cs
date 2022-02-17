@@ -15,6 +15,7 @@ namespace automate.Domain
 
     internal interface IAutomation : INamedEntity
     {
+        CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem ownerSolution);
     }
 
     internal interface IElementContainer
