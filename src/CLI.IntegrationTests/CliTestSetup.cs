@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using automate.Domain;
 using automate.Extensions;
 using automate.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ServiceStack;
 using Xunit;
 
 namespace CLI.IntegrationTests
@@ -17,57 +20,17 @@ namespace CLI.IntegrationTests
 
     public class CliTestSetup : IDisposable
     {
-        private const string ProcessName = "automate";
         private readonly JsonFileRepository repository;
-        private StandardOutput error;
-        private StandardOutput output;
-        private Process process;
 
         public CliTestSetup()
         {
-            Process.GetProcessesByName(ProcessName).ToList().ForEach(p => p.Kill());
             this.repository = new JsonFileRepository(Environment.CurrentDirectory);
             ResetRepository();
-            ResetCommandLineSession();
         }
 
-        public StandardOutput Output
-        {
-            get
-            {
-                if (this.process.NotExists())
-                {
-                    return new StandardOutput(string.Empty);
-                }
+        public StandardOutput Output { get; private set; }
 
-                if (!this.output.Exists())
-                {
-                    var standardOutput = this.process.StandardOutput.ReadToEnd();
-                    this.output = new StandardOutput(standardOutput);
-                }
-
-                return this.output;
-            }
-        }
-
-        public StandardOutput Error
-        {
-            get
-            {
-                if (this.process.NotExists())
-                {
-                    return new StandardOutput(string.Empty);
-                }
-
-                if (!this.error.Exists())
-                {
-                    var standardError = this.process.StandardError.ReadToEnd();
-                    this.error = new StandardOutput(standardError);
-                }
-
-                return this.error;
-            }
-        }
+        public StandardOutput Error { get; private set; }
 
         internal List<PatternDefinition> Patterns => this.repository.ListPatterns();
 
@@ -86,50 +49,141 @@ namespace CLI.IntegrationTests
 
         public void RunCommand(string arguments)
         {
-            KillProcess();
-            ResetCommandLineSession();
-            this.process = Process.Start(new ProcessStartInfo
+            var host = Host.CreateDefaultBuilder()
+                .Build();
+            host.Start();
+
+            var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+
+            using (var errorStream = new MemoryStream())
             {
-                FileName = Path.Combine(Environment.CurrentDirectory, ProcessName) + ".exe",
-                Arguments = arguments,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false
-            });
-            if (this.process.Exists())
-            {
-                this.process.WaitForExit();
+                using (var outputStream = new MemoryStream())
+                {
+                    using (var errorWriter = new StreamWriter(errorStream))
+                    {
+                        errorWriter.AutoFlush = true;
+                        using (var outputWriter = new StreamWriter(outputStream))
+                        {
+                            outputWriter.AutoFlush = true;
+
+                            var standardOutput = Console.Out;
+                            var standardError = Console.Error;
+                            Console.SetError(errorWriter);
+                            Console.SetOut(outputWriter);
+
+                            try
+                            {
+                                Output = new StandardOutput(string.Empty);
+                                Error = new StandardOutput(string.Empty);
+
+                                try
+                                {
+                                    CommandLineApi.Execute(arguments.SplitToCommandLineArgs());
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.Error.WriteLine(ex.ToString());
+                                }
+
+                                Output = new StandardOutput(outputStream.ReadToEnd());
+                                Error = new StandardOutput(errorStream.ReadToEnd());
+                            }
+                            finally
+                            {
+                                Console.SetOut(standardOutput);
+                                Console.SetError(standardError);
+                                lifetime.StopApplication();
+                                host.WaitForShutdownAsync().GetAwaiter().GetResult();
+                                host.StopAsync().GetAwaiter().GetResult();
+                                host.Dispose();
+                            }
+                        }
+                    }
+                }
             }
-        }
-
-        public void ClearOutput()
-        {
-            this.process.StandardOutput.ReadToEnd();
-        }
-
-        public void ClearError()
-        {
-            this.process.StandardError.ReadToEnd();
         }
 
         public void Dispose()
         {
-            KillProcess();
         }
+    }
 
-        private void ResetCommandLineSession()
+    internal static class CommandLineExtensions
+    {
+        public static string[] SplitToCommandLineArgs(this string commandLine)
         {
-            this.output = null;
-            this.error = null;
-        }
-
-        private void KillProcess()
-        {
-            if (this.process.Exists())
+            if (!commandLine.HasValue())
             {
-                if (!this.process.HasExited)
+                return Array.Empty<string>();
+            }
+
+            return Parse().ToArray();
+
+            IEnumerable<string> Parse()
+            {
+                var result = new StringBuilder();
+
+                var quoted = false;
+                var escaped = false;
+                var started = false;
+                var allowCaret = false;
+                for (var index = 0; index < commandLine.Length; index++)
                 {
-                    this.process.Kill();
+                    var character = commandLine[index];
+                    if (character == '^' && !quoted)
+                    {
+                        if (allowCaret)
+                        {
+                            result.Append(character);
+                            started = true;
+                            escaped = false;
+                            allowCaret = false;
+                        }
+                        else if (index + 1 < commandLine.Length && commandLine[index + 1] == '^')
+                        {
+                            allowCaret = true;
+                        }
+                        else if (index + 1 == commandLine.Length)
+                        {
+                            result.Append(character);
+                            started = true;
+                            escaped = false;
+                        }
+                    }
+                    else if (escaped)
+                    {
+                        result.Append(character);
+                        started = true;
+                        escaped = false;
+                    }
+                    else if (character == '"')
+                    {
+                        quoted = !quoted;
+                        started = true;
+                    }
+                    else if (character == '\\' && index + 1 < commandLine.Length && commandLine[index + 1] == '"')
+                    {
+                        escaped = true;
+                    }
+                    else if (character == ' ' && !quoted)
+                    {
+                        if (started)
+                        {
+                            yield return result.ToString();
+                        }
+                        result.Clear();
+                        started = false;
+                    }
+                    else
+                    {
+                        result.Append(character);
+                        started = true;
+                    }
+                }
+
+                if (started)
+                {
+                    yield return result.ToString();
                 }
             }
         }
