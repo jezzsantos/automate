@@ -1,0 +1,27 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore src/Automate.sln
+    - name: Build
+      run: dotnet build src/Automate.sln --no-restore
+    - name: Unit Test
+      run: dotnet test --filter Category=Unit src/Automate.sln --no-build --verbosity normal
+    - name: Integration Test
+      run: dotnet test --filter Category=Integration src/Automate.sln --no-build --verbosity normal
