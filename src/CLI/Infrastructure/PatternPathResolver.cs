@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using automate.Application;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI.Application;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class PatternPathResolver : IPatternPathResolver
     {

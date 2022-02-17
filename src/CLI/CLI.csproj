@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <AssemblyName>automate</AssemblyName>
-        <RootNamespace>automate</RootNamespace>
+        <RootNamespace>Automate.CLI</RootNamespace>
         <PackageId>automate</PackageId>
         <Authors>jezzsantos</Authors>
         <Description>Templatise patterns from your own codebase, make them programmable, then share them with your team</Description>
@@ -14,6 +14,8 @@
         <RepositoryType>GitHub</RepositoryType>
         <Company>jezzsantos</Company>
         <Product>automate</Product>
+        <Copyright>Copyright 2022</Copyright>
+        <Title>automate</Title>
     </PropertyGroup>
 
     <ItemGroup>

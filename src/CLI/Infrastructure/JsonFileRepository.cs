@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class JsonFileRepository : IPatternRepository, IToolkitRepository, ISolutionRepository,
         ILocalStateRepository

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace automate.Infrastructure {
+namespace Automate.CLI.Infrastructure {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace automate.Infrastructure {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("automate.Infrastructure.OutputMessages", typeof(OutputMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Automate.CLI.Infrastructure.OutputMessages", typeof(OutputMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

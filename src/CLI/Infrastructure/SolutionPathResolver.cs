@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 using Scriban;
 using ServiceStack;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class SolutionPathResolver : ISolutionPathResolver
     {

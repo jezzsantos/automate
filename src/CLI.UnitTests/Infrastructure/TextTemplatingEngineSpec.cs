@@ -1,5 +1,5 @@
-﻿using automate.Domain;
-using automate.Infrastructure;
+﻿using Automate.CLI.Domain;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

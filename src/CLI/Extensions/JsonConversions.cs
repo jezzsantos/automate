@@ -1,6 +1,6 @@
 ﻿using ServiceStack.Text;
 
-namespace automate.Extensions
+namespace Automate.CLI.Extensions
 {
     internal static class JsonConversions
     {

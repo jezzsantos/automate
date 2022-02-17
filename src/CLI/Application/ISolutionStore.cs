@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using automate.Domain;
+using Automate.CLI.Domain;
 
-namespace automate.Application
+namespace Automate.CLI.Application
 {
     internal interface ISolutionStore
     {

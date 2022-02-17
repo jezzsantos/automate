@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 using FluentAssertions;
 using Moq;
 using Xunit;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class ViewSchema : CustomizableElementSchema
     {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 using ServiceStack;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal interface IValidateable
     {

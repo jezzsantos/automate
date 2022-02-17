@@ -2,7 +2,7 @@
 using System.CommandLine.NamingConventionBinder;
 using System.Reflection;
 
-namespace automate.Extensions
+namespace Automate.CLI.Extensions
 {
     internal static class CommandExtensions
     {

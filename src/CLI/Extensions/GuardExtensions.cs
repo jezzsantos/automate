@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace automate.Extensions
+namespace Automate.CLI.Extensions
 {
     internal static class GuardExtensions
     {

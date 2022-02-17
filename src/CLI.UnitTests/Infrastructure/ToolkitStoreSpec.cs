@@ -1,4 +1,4 @@
-﻿using automate.Infrastructure;
+﻿using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

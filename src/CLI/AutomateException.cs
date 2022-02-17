@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace automate
+namespace Automate.CLI
 {
     [Serializable]
     internal class AutomateException : Exception

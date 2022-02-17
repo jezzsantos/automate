@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace automate.Domain {
+namespace Automate.CLI.Domain {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace automate.Domain {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("automate.Domain.DomainMessages", typeof(DomainMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Automate.CLI.Domain.DomainMessages", typeof(DomainMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

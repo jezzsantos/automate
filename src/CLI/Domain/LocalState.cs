@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class LocalState
     {

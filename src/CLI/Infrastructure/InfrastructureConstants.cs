@@ -1,4 +1,4 @@
-﻿namespace automate.Infrastructure
+﻿namespace Automate.CLI.Infrastructure
 {
     internal static class InfrastructureConstants
     {

@@ -1,4 +1,4 @@
-﻿using automate.Extensions;
+﻿using Automate.CLI.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using automate.Domain;
+using Automate.CLI.Domain;
 using FluentAssertions;
 using Xunit;
 

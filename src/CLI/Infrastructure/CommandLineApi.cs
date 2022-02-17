@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
 using System.Text;
-using automate.Application;
-using automate.Domain;
-using automate.Extensions;
-using Attribute = automate.Domain.Attribute;
+using Automate.CLI.Application;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
+using Attribute = Automate.CLI.Domain.Attribute;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class CommandLineApi
     {

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using automate.Domain;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ServiceStack;
 using Xunit;
 
@@ -50,6 +51,7 @@ namespace CLI.IntegrationTests
         public void RunCommand(string arguments)
         {
             var host = Host.CreateDefaultBuilder()
+                .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
                 .Build();
             host.Start();
 

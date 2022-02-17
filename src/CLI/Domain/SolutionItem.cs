@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 using StringExtensions = ServiceStack.StringExtensions;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class SolutionItem
     {

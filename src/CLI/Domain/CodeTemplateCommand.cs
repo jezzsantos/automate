@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class CodeTemplateCommand : Automation
     {

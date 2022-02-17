@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using automate;
-using automate.Domain;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class MemoryRepository : IPatternRepository, IToolkitRepository, ISolutionRepository, ILocalStateRepository
     {

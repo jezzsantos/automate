@@ -1,7 +1,7 @@
-﻿using automate.Domain;
+﻿using Automate.CLI.Domain;
 using Scriban;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal class TextTemplatingEngine : ITextTemplatingEngine
     {

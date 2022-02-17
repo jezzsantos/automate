@@ -1,6 +1,6 @@
-﻿using automate.Domain;
+﻿using Automate.CLI.Domain;
 
-namespace automate.Infrastructure
+namespace Automate.CLI.Infrastructure
 {
     internal interface ILocalStateRepository
     {

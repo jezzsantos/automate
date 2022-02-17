@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal static class Validations
     {

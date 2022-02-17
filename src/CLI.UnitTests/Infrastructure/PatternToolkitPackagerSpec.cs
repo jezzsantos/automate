@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using automate;
-using automate.Application;
-using automate.Domain;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI;
+using Automate.CLI.Application;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Moq;
 using Xunit;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace automate.Extensions
+namespace Automate.CLI.Extensions
 {
     internal static class StringExtensions
     {

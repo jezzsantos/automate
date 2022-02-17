@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using automate;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

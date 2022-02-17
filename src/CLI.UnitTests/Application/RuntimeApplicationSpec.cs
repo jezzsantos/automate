@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using automate;
-using automate.Application;
-using automate.Domain;
-using automate.Extensions;
+using Automate.CLI;
+using Automate.CLI.Application;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 using FluentAssertions;
 using Moq;
 using ServiceStack;
 using Xunit;
-using Attribute = automate.Domain.Attribute;
+using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace CLI.UnitTests.Application
 {

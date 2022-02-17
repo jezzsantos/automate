@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class CommandExecutionResult
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 using ServiceStack;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal class Element : IPatternElement, IValidateable, ICloneable<Element>
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using automate.Domain;
-using automate.Extensions;
-using automate.Infrastructure;
+using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 
-namespace automate.Application
+namespace Automate.CLI.Application
 {
     internal class AuthoringApplication
     {

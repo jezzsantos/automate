@@ -1,6 +1,6 @@
-﻿using automate.Extensions;
+﻿using Automate.CLI.Extensions;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal abstract class Automation : IAutomation
     {

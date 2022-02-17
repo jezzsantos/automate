@@ -1,4 +1,4 @@
-﻿namespace automate.Domain
+﻿namespace Automate.CLI.Domain
 {
     internal interface ISolutionPathResolver
     {

@@ -1,17 +1,19 @@
 ﻿using System;
-using automate.Infrastructure;
+using Automate.CLI.Infrastructure;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace automate
+namespace Automate.CLI
 {
     internal class Program
     {
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
+                .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
+                .ConfigureServices((_, _) =>
                 {
                     //services.AddTransient<MyService>();
                 });

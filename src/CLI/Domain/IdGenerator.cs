@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using automate.Extensions;
+using Automate.CLI.Extensions;
 
-namespace automate.Domain
+namespace Automate.CLI.Domain
 {
     internal static class IdGenerator
     {

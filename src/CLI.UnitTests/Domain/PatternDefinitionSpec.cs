@@ -1,4 +1,4 @@
-﻿using automate.Domain;
+﻿using Automate.CLI.Domain;
 using FluentAssertions;
 using Xunit;
 
