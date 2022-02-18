@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using System.Linq;
 using System.Text;
 using Automate.CLI.Application;
@@ -200,7 +202,22 @@ namespace Automate.CLI.Infrastructure
             {
             }
 
-            return command.Invoke(args);
+            var parser = new CommandLineBuilder(command)
+                .UseDefaults()
+                .UseExceptionHandler((ex, context) =>
+                {
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Red;
+
+                    context.Console.Error.Write(ex.InnerException.Exists()
+                        ? ex.InnerException.Message
+                        : ex.Message);
+
+                    Console.ResetColor();
+                }, 1)
+                .Build();
+
+            return parser.Invoke(args);
         }
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
