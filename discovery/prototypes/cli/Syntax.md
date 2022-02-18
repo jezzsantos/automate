@@ -497,11 +497,19 @@ Now, lets program one of the solutions:
 > This command creates a new `ServiceOperation` instance and adds it to the `ServiceOperations` collection, and returns its unique OPERATIONID.
 >
 
-`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "Type=string" --and-set "IsOptional=false"`
+`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Request}"`
+
+> This command creates a new `Request` first 
+
+`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "DataType=string" --and-set "IsOptional=false"`
 
 > This command creates a new `Field` in the Request DTO called `ProductId`
 
-`automate using "<SOLUTIONID>" --add "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "Type=string"`
+`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Response}"`
+
+> This command creates a new `Response` 
+
+`automate using "<SOLUTIONID>" --add-one-to "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "DataType=string"`
 
 > This command creates a new `Field` in the Response DTO called `Id`
 
@@ -513,7 +521,7 @@ You can see the actual configuration of the solution, with this command:
 
 `automate using "<SOLUTIONID>" --view-configuration`
 
-This command should print out a JSON object that looks like this:
+This command should print out a JSON object that looks just like this:
 
 ```
 {
@@ -527,20 +535,24 @@ This command should print out a JSON object that looks like this:
 				"name": "CreateOrder",
 				"verb": "Post",
 				"route": "/orders",
-				"is_authorized": true,
+				"is_authorized": "true",
 				"request": {
+					"id": "xxxxxxxx"
 					"field": {
+						"id": "xxxxxxxx"
 						"items": [{
 							"id": "xxxxxxxx"
 							"name": "ProductId",
 							"data_type": "string",
-							"is_optional": false
+							"is_optional": "false"
 							}
 						], 
 					},
 				},
 				"response": {
+					"id": "xxxxxxxx"
 					"field": {
+						"id": "xxxxxxxx"
 						"items": [{
 							"id": "xxxxxxxx"
 							"name": "ProductId",

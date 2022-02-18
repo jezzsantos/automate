@@ -47,8 +47,12 @@ namespace Automate.CLI.Infrastructure
             var target = solution.Model;
             while (nextPart.Exists())
             {
-                var descendantProperty = target.Properties.GetValueOrDefault(nextPart);
-                var descendantItem = target.Items.Safe().FirstOrDefault(item => item.Id.EqualsIgnoreCase(nextPart));
+                var descendantProperty = target.Properties.Exists()
+                    ? target.Properties.GetValueOrDefault(nextPart)
+                    : null;
+                var descendantItem = target.Items.Exists()
+                    ? target.Items.FirstOrDefault(item => item.Id.EqualsIgnoreCase(nextPart))
+                    : null;
                 if (descendantProperty.NotExists() && descendantItem.NotExists())
                 {
                     return null;

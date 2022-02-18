@@ -117,6 +117,24 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
+        public void WhenResolveAndDeepElementExpressionNotMaterialised_ThenReturnsNull()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element3 = new Element("anelementname3");
+            var element2 = new Element("anelementname2");
+            var element1 = new Element("anelementname1");
+            element2.Elements.Add(element3);
+            element1.Elements.Add(element2);
+            pattern.Elements.Add(element1);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            solution.Model.Properties["anelementname1"].Materialise();
+
+            var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
         public void WhenResolveAndDeepElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
