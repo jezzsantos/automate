@@ -89,7 +89,7 @@
 {Solutions}</value>
     </data>
     <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
-        <value>The solution was configured</value>
+        <value>The solution item '{0}' (ID: '{1}') was configured successfully</value>
     </data>
     <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
         <value>The solution is configured:

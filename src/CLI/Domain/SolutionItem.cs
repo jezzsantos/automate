@@ -5,10 +5,11 @@ using StringExtensions = ServiceStack.StringExtensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionItem
+    internal class SolutionItem : IIdentifiableEntity
     {
         public SolutionItem(PatternDefinition pattern)
         {
+            Id = IdGenerator.Create();
             Name = pattern.Name;
             PatternSchema = pattern;
             AttributeSchema = null;
@@ -30,6 +31,7 @@ namespace Automate.CLI.Domain
 
         public SolutionItem(Attribute attribute)
         {
+            Id = IdGenerator.Create();
             Name = attribute.Name;
             PatternSchema = null;
             ElementSchema = null;
@@ -42,6 +44,7 @@ namespace Automate.CLI.Domain
 
         public SolutionItem(Element element)
         {
+            Id = IdGenerator.Create();
             Name = element.Name;
             PatternSchema = null;
             AttributeSchema = null;
@@ -54,6 +57,7 @@ namespace Automate.CLI.Domain
 
         public SolutionItem(object value, string dataType)
         {
+            Id = IdGenerator.Create();
             Name = null;
             PatternSchema = null;
             AttributeSchema = null;
@@ -309,28 +313,32 @@ namespace Automate.CLI.Domain
         public Dictionary<string, object> GetConfiguration()
         {
             var properties = new Dictionary<string, object>();
-            ConvertToDictionary(this, properties);
+            FilterConfiguration(this, properties);
             return properties;
 
-            object ConvertToDictionary(SolutionItem solutionItem, IDictionary<string, object> props)
+            object FilterConfiguration(SolutionItem solutionItem, IDictionary<string, object> props)
             {
                 if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
                     return solutionItem.Value;
                 }
-                if (solutionItem.Properties.HasAny())
+                if (solutionItem.IsPattern || solutionItem.IsElement || solutionItem.IsCollection)
                 {
-                    foreach (var (key, value) in solutionItem.Properties)
+                    props.Add(ConvertName(nameof(Id)), solutionItem.Id);
+                    if (solutionItem.Properties.HasAny())
                     {
-                        props.Add(ConvertName(key), ConvertToDictionary(value, new Dictionary<string, object>()));
+                        foreach (var (key, value) in solutionItem.Properties)
+                        {
+                            props.Add(ConvertName(key), FilterConfiguration(value, new Dictionary<string, object>()));
+                        }
                     }
-                }
-                if (solutionItem.Items.HasAny())
-                {
-                    var items = new List<object>();
-                    solutionItem.Items.ForEach(item =>
-                        items.Add(ConvertToDictionary(item, new Dictionary<string, object>())));
-                    props.Add(ConvertName(nameof(Items)), items);
+                    if (solutionItem.Items.HasAny())
+                    {
+                        var items = new List<object>();
+                        solutionItem.Items.ForEach(item =>
+                            items.Add(FilterConfiguration(item, new Dictionary<string, object>())));
+                        props.Add(ConvertName(nameof(Items)), items);
+                    }
                 }
 
                 return props;
@@ -341,6 +349,8 @@ namespace Automate.CLI.Domain
                 return StringExtensions.ToLowercaseUnderscore(name);
             }
         }
+
+        public string Id { get; set; }
 
         private void SetValue(object value, string dataType)
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Builder;
+using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Linq;
 using System.Text;
@@ -120,7 +121,7 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("toolkit", "Builds a pattern into a toolkit")
                 {
-                    new Option("--version", "A version number, or 'auto' to increment the last version",
+                    new Option("--versionas", "A specific version number, or 'auto' to auto-increment the current version",
                         typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
@@ -187,15 +188,13 @@ namespace Automate.CLI.Infrastructure
             {
                 if (Authoring.CurrentPatternId.Exists())
                 {
-                    Console.WriteLine(
+                    ConsoleExtensions.WriteOutput(
                         OutputMessages.CommandLine_Output_PatternInUse.FormatTemplate(Authoring.CurrentPatternName,
-                            Authoring.CurrentPatternId));
-                    Console.WriteLine();
+                            Authoring.CurrentPatternId), ConsoleColor.Gray);
                 }
                 else
                 {
-                    Console.Error.WriteLine(OutputMessages.CommandLine_Output_NoPatternSelected);
-                    Console.Error.WriteLine();
+                    ConsoleExtensions.WriteError(OutputMessages.CommandLine_Output_NoPatternSelected, ConsoleColor.DarkYellow);
                 }
             }
             if (IsRuntimeCommand(args))
@@ -206,14 +205,10 @@ namespace Automate.CLI.Infrastructure
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) =>
                 {
-                    Console.ResetColor();
-                    Console.ForegroundColor = ConsoleColor.Red;
-
-                    context.Console.Error.Write(ex.InnerException.Exists()
+                    Console.Error.WriteLine();
+                    context.Console.WriteError(ex.InnerException.Exists()
                         ? ex.InnerException.Message
-                        : ex.Message);
-
-                    Console.ResetColor();
+                        : ex.Message, ConsoleColor.Red);
                 }, 1)
                 .Build();
 
@@ -235,9 +230,9 @@ namespace Automate.CLI.Infrastructure
 
         private class AuthoringHandlers
         {
-            internal static void HandleBuild(string version, bool outputStructured, IConsole console)
+            internal static void HandleBuild(string versionas, bool outputStructured, IConsole console)
             {
-                var package = Authoring.PackageToolkit(version);
+                var package = Authoring.PackageToolkit(versionas);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
                     package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
             }
@@ -360,7 +355,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? " required" : "")}{(attribute.Choices.Any() ? " oneof: " + $"{attribute.Choices.Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? $"{attribute.DefaultValue}" : "")})\n");
+                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.Any() ? ", oneof: " + $"{attribute.Choices.Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
                 }
             }
         }
@@ -427,8 +422,8 @@ namespace Automate.CLI.Infrastructure
                         sets.AddRange(andSet);
                     }
 
-                    Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured);
+                    var solutionItem = Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
                 }
                 else
                 {
@@ -485,12 +480,39 @@ namespace Automate.CLI.Infrastructure
 
     internal static class ConsoleExtensions
     {
-        internal static void WriteOutput(this IConsole console, bool outputStructured, string messageTemplate,
+        public static void WriteOutput(this IConsole console, bool outputStructured, string messageTemplate,
             params object[] args)
         {
             console.WriteLine(outputStructured
                 ? messageTemplate.FormatTemplateStructured(args)
                 : messageTemplate.FormatTemplate(args));
+        }
+
+        public static void WriteError(this IConsole console, string message, ConsoleColor color)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            console.Error.WriteLine(message);
+            Console.Error.WriteLine();
+            Console.ResetColor();
+        }
+
+        public static void WriteOutput(string message, ConsoleColor color)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
+            Console.WriteLine();
+            Console.ResetColor();
+        }
+
+        public static void WriteError(string message, ConsoleColor color)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            Console.Error.WriteLine(message);
+            Console.Error.WriteLine();
+            Console.ResetColor();
         }
     }
 }

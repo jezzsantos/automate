@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
@@ -255,12 +256,13 @@ namespace CLI.UnitTests.Application
             var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(solution);
+            var solutionItem = new SolutionItem(new Element("acollectionname", null, null, true));
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname", null, null, true)));
+                .Returns(solutionItem);
 
-            var result = this.application.ConfigureSolution("asolutionid", null, "apatternname.acollection", null);
+            var result = this.application.ConfigureSolution("asolutionid", null, "apatternname.acollectionname", null);
 
-            result.Id.Should().Be(solution.Id);
+            result.Id.Should().Be(solutionItem.Items.Single().Id);
             this.solutionStore.Verify(ss => ss.Save(solution));
         }
 
@@ -346,7 +348,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null,
                 new List<string> { "anattributename=avalue" });
 
-            result.Id.Should().Be(solution.Id);
+            result.Id.Should().Be(solutionItem.Id);
             solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
             this.solutionStore.Verify(ss => ss.Save(solution));
         }
@@ -368,7 +370,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null,
                 new List<string> { "anattributename=avalue" });
 
-            result.Id.Should().Be(solution.Id);
+            result.Id.Should().Be(solutionItem.Id);
             solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
             this.solutionStore.Verify(ss => ss.Save(solution));
         }
@@ -409,11 +411,14 @@ namespace CLI.UnitTests.Application
 
             result.Should().Be(JsonConversions.ToJson<dynamic>(new
             {
+                id = solution.Model.Id,
                 anattributename1 = "adefaultvalue1",
                 anelementname1 = new
                 {
+                    id = solution.Model.Properties["anelementname1"].Id,
                     anelementname2 = new
                     {
+                        id = solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
                         anattributename2 = "adefaultvalue2"
                     }
                 }

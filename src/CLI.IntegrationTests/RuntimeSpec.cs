@@ -157,16 +157,45 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetProperty_ThenDisplaysSuccess()
+        public void WhenConfigureSolutionAndSetPropertyOnPattern_ThenDisplaysSuccess()
         {
             var solution = BuildInstallAndCreateSolution();
 
             this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue\"");
 
+            var item = this.setup.Solutions.Single().Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured);
-            this.setup.Solutions.Single().Model.Properties["AProperty1"].Value.Should().Be("avalue");
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("apattern", item.Id));
+            item.Properties["AProperty1"].Value.Should().Be("avalue");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndSetPropertyOnElement_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --set \"AProperty3=B\"");
+
+            var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+            item.Properties["AProperty3"].Value.Should().Be("B");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndSetPropertyOnCollection_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+
+            var item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+            item.Properties["AProperty4"].Value.Should().Be("adefaultvalue4");
         }
 
         [Fact]
@@ -180,22 +209,31 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --view-configuration");
 
+            solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
                     new
                     {
+                        id = solution.Model.Id,
                         a_property1 = "avalue1",
                         an_element1 = new
                         {
-                            a_property3 = "A"
+                            id = solution.Model.Properties["AnElement1"].Id,
+                            a_property3 = "A",
+                            a_collection1 = new
+                            {
+                                id = solution.Model.Properties["AnElement1"].Properties["ACollection1"].Id
+                            }
                         },
                         a_collection2 = new
                         {
+                            id = solution.Model.Properties["ACollection2"].Id,
                             items = new[]
                             {
                                 new
                                 {
+                                    id = solution.Model.Properties["ACollection2"].Items.Single().Id,
                                     a_property4 = "adefaultvalue4"
                                 }
                             }
@@ -259,7 +297,7 @@ namespace CLI.IntegrationTests
                 .Be(Path.Combine(testDirectory, @"code\Bfile.cs"));
         }
 
-        private void DeleteCodeFolder()
+        private static void DeleteCodeFolder()
         {
             var directory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "code"));
             if (directory.Exists)
@@ -294,7 +332,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{apattern.AnElement1}} --isoneof \"A;B;C\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement}}");
+                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement1}}");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{apattern}} --ality OneOrMany");
             this.setup.RunCommand(

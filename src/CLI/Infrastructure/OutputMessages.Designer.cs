@@ -265,7 +265,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution was configured.
+        ///   Looks up a localized string similar to The solution item &apos;{0}&apos; (ID: &apos;{1}&apos;) was configured successfully.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfigured {
             get {

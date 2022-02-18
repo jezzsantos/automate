@@ -1,5 +1,4 @@
 ﻿using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -43,53 +42,6 @@ namespace CLI.UnitTests.Domain
             solutionElement3.Value.Should().BeNull();
             solutionElement3.IsMaterialised.Should().BeFalse();
             solutionElement3.Items.Should().BeNull();
-        }
-
-        [Fact]
-        public void WhenGetConfiguration_ThenReturnsConfiguration()
-        {
-            var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
-            var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
-            var attribute3 = new Attribute("anattributename3", "int", false, "25");
-            var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2");
-            var collectionLevel1 = new Element("acollectionname2", "adisplayname1", "adescription1", true);
-            elementLevel2.Attributes.Add(attribute2);
-            collectionLevel1.Attributes.Add(attribute3);
-            elementLevel1.Elements.Add(elementLevel2);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute1);
-            pattern.Elements.Add(elementLevel1);
-            pattern.Elements.Add(collectionLevel1);
-
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
-            solution.Model.Properties["anelementname1"].Materialise();
-            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            solution.Model.Properties["acollectionname2"].MaterialiseCollectionItem();
-
-            var result = solution.GetConfiguration();
-
-            result.Should().Be(new
-            {
-                anattributename1 = "adefaultvalue1",
-                anelementname1 = new
-                {
-                    anelementname2 = new
-                    {
-                        anattributename2 = "adefaultvalue2"
-                    }
-                },
-                acollectionname2 = new
-                {
-                    items = new[]
-                    {
-                        new
-                        {
-                            anattributename3 = 25
-                        }
-                    }
-                }
-            }.ToJson<dynamic>());
         }
     }
 }

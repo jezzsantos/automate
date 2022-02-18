@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Scriban;
-using ServiceStack;
+using CollectionExtensions = ServiceStack.CollectionExtensions;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -24,7 +24,7 @@ namespace Automate.CLI.Infrastructure
                     ExceptionMessages.SolutionPathResolver_InvalidExpression.Format(expression));
             }
 
-            var expressionParts = expressionPath.SafeSplit(".").ToArray();
+            var expressionParts = CollectionExtensions.ToArray(expressionPath.SafeSplit("."));
             if (expressionParts.HasNone())
             {
                 throw new AutomateException(
@@ -47,13 +47,21 @@ namespace Automate.CLI.Infrastructure
             var target = solution.Model;
             while (nextPart.Exists())
             {
-                var descendant = target.Properties.GetValueOrDefault(nextPart);
-                if (descendant.NotExists())
+                var descendantProperty = target.Properties.GetValueOrDefault(nextPart);
+                var descendantItem = target.Items.Safe().FirstOrDefault(item => item.Id.EqualsIgnoreCase(nextPart));
+                if (descendantProperty.NotExists() && descendantItem.NotExists())
                 {
                     return null;
                 }
+                if (descendantProperty.Exists())
+                {
+                    target = descendantProperty;
+                }
+                if (descendantItem.Exists())
+                {
+                    target = descendantItem;
+                }
 
-                target = descendant;
                 remainingParts.TryDequeue(out nextPart);
             }
 

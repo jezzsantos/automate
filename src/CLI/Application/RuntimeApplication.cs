@@ -86,7 +86,7 @@ namespace Automate.CLI.Application
             return this.solutionStore.ListAll();
         }
 
-        public SolutionDefinition ConfigureSolution(string solutionId, string addElementExpression,
+        public SolutionItem ConfigureSolution(string solutionId, string addElementExpression,
             string addToCollectionExpression, List<string> propertyAssignments)
         {
             if (addElementExpression.HasValue() && addToCollectionExpression.HasValue())
@@ -197,7 +197,7 @@ namespace Automate.CLI.Application
 
             this.solutionStore.Save(solution);
 
-            return solution;
+            return newItem;
         }
 
         public string GetSolutionConfiguration(string solutionId)
@@ -239,7 +239,7 @@ namespace Automate.CLI.Application
         private static bool IsValidAssignment(string assignment)
         {
             const string propertyNameExpression = @"[\w]+";
-            const string propertyValueExpression = @"[\w\d \.\(\)]+";
+            const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
             return Regex.IsMatch(assignment, $"({propertyNameExpression})[=]{{1}}({propertyValueExpression})");
         }
 

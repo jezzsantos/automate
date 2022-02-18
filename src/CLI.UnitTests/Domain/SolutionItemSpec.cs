@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -15,6 +16,7 @@ namespace CLI.UnitTests.Domain
         {
             var result = new SolutionItem("avalue", Attribute.DefaultType);
 
+            result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().Be("avalue");
         }
@@ -29,6 +31,7 @@ namespace CLI.UnitTests.Domain
 
             var result = new SolutionItem(pattern);
 
+            result.Id.Should().NotBeNull();
             result.Should().NotBeNull();
             result.Value.Should().BeNull();
             result.IsMaterialised.Should().BeTrue();
@@ -44,6 +47,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
             result.Properties["aname"].AttributeSchema.Should().Be(attribute);
             result.Properties["aname"].Value.Should().BeNull();
             result.Properties["aname"].IsMaterialised.Should().BeFalse();
@@ -59,6 +63,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
             result.Properties["aname"].AttributeSchema.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(attribute.DefaultValue);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
@@ -75,6 +80,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
             result.Properties["anelementname"].ElementSchema.Should().Be(element);
             result.Properties["anelementname"].Value.Should().BeNull();
             result.Properties["anelementname"].IsMaterialised.Should().BeFalse();
@@ -92,6 +98,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
             result.Properties["acollectionname"].ElementSchema.Should().Be(element);
             result.Properties["acollectionname"].Value.Should().BeNull();
             result.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
@@ -115,6 +122,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern);
 
             result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
             var solutionElement1 = result.Properties["anelementname1"];
             solutionElement1.ElementSchema.Should().Be(element1);
             solutionElement1.Value.Should().BeNull();
@@ -151,6 +159,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(element)
                 .Materialise();
 
+            result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
             result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
@@ -167,6 +176,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(element)
                 .Materialise();
 
+            result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
             result.Properties.Should().BeEmpty();
@@ -181,6 +191,7 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(attribute)
                 .Materialise("avalue");
 
+            result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().Be("avalue");
         }
@@ -206,6 +217,7 @@ namespace CLI.UnitTests.Domain
 
             var result = solutionItem.MaterialiseCollectionItem();
 
+            result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.IsCollection.Should().BeFalse();
             result.Value.Should().BeNull();
@@ -448,6 +460,66 @@ namespace CLI.UnitTests.Domain
 
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.Attribute_ValidationRule_WrongDataTypeValue.Format("awrongvalue", "int"));
+        }
+
+        [Fact]
+        public void WhenGetConfiguration_ThenReturnsConfiguration()
+        {
+            var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
+            var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
+            var attribute3 = new Attribute("anattributename3", "int", false, "25");
+            var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1");
+            var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            var collectionLevel1 = new Element("acollectionname2", "adisplayname1", "adescription1", true);
+            elementLevel2.Attributes.Add(attribute2);
+            collectionLevel1.Attributes.Add(attribute3);
+            elementLevel1.Elements.Add(elementLevel2);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Attributes.Add(attribute1);
+            pattern.Elements.Add(elementLevel1);
+            pattern.Elements.Add(collectionLevel1);
+
+            var solutionItem = new SolutionItem(pattern);
+            solutionItem.Properties["anelementname1"].Materialise();
+            solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            solutionItem.Properties["acollectionname2"].MaterialiseCollectionItem();
+
+            var result = solutionItem.GetConfiguration();
+
+            result.Should().BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "id", solutionItem.Id },
+                { "anattributename1", "adefaultvalue1" },
+                {
+                    "anelementname1", new Dictionary<string, object>
+                    {
+                        { "id", solutionItem.Properties["anelementname1"].Id },
+                        {
+                            "anelementname2", new Dictionary<string, object>
+                            {
+                                { "id", solutionItem.Properties["anelementname1"].Properties["anelementname2"].Id },
+                                { "anattributename2", "adefaultvalue2" }
+                            }
+                        }
+                    }
+                },
+                {
+                    "acollectionname2", new Dictionary<string, object>
+                    {
+                        { "id", solutionItem.Properties["acollectionname2"].Id },
+                        {
+                            "items", new List<object>
+                            {
+                                new Dictionary<string, object>
+                                {
+                                    { "id", solutionItem.Properties["acollectionname2"].Items[0].Id },
+                                    { "anattributename3", 25 }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 }

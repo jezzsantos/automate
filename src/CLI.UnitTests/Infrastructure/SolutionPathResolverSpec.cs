@@ -87,6 +87,23 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
+        public void WhenResolveAndCollectionItemExpressionExists_ThenReturnsElement()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var collection = new Element("acollectionname", isCollection: true);
+            var element = new Element("anelementname", cardinality: ElementCardinality.Single);
+            collection.Elements.Add(element);
+            pattern.Elements.Add(collection);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var collectionInstance = solution.Model.Properties["acollectionname"].MaterialiseCollectionItem();
+            var elementInstance = collectionInstance.Properties["anelementname"].Materialise();
+
+            var result = this.resolver.ResolveItem(solution, $"{{apatternname.acollectionname.{collectionInstance.Id}.anelementname}}");
+
+            result.Id.Should().Be(elementInstance.Id);
+        }
+
+        [Fact]
         public void WhenResolveAndFullyQualifiedElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");

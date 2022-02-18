@@ -93,16 +93,16 @@ For each file that contains a fragment of the pattern, they execute this command
 
 `automate edit add-codetemplate "<file-path>"`
 
-> This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically name like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`
+> This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically named like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`
 
-For this codebase, this will be four similar commands:
+For this codebase, we will need four similar commands:
 
 * `automate edit add-codetemplate "backend/controllers/BookingController.cs"`
 * `automate edit add-codetemplate "backend/services/BookingService.cs"`
 * `automate edit add-codetemplate "backend/controllers/IBookingService.cs"`
 * `automate edit add-codetemplate "backend/data/Bookings.cs"`
 
-> This means now that conceptually, the pattern called `AcmeAPI` has a root element (called `AcmeAPI`) with four code templates called `CodeTemplate1` `CodeTemplate2`, `CodeTemplate3` and `CodeTemplate4`.
+> This means now that conceptually, the pattern called `AcmeAPI` has a root element (called `AcmeAPI`) with four code templates called `CodeTemplate1` `CodeTemplate2`, `CodeTemplate3` and `CodeTemplate4`, each containing code that we will later templatise for our pattern.
 
 So far, we don't have much, just a new pattern called `AcmeAPI`, and four code templates. 
 
@@ -114,11 +114,13 @@ Conceptually, it would look like this, if we drew it as a logical structure.
 
 ### Step 2 - Define some attributes of the pattern
 
-Now that the tech lead has defined a new *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor on their team customize this specific API to be useful in a new product like the `RoadRunner` API their team will be building. 
+Before getting in the code, we need to step back and determine a conceptual model of the code. 
 
-Obviously, a contributor (on the `RoadRunner` team) is going to need to define their own API's for the `RoadRunner` product, and they are not going to want to copy and paste the `Booking` API that was extracted from the `Coyote` codebase, and now lives in the 3 code templates. These code templates are not yet reusable.
+Now that the tech lead has defined a new *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor (on their team) customize this specific pattern to be useful in a new product like the `RoadRunner` API their team will be building. 
 
-The tech lead now has to identify, **what will be different** between the `Booking` API of the `Coyote` codebase, and any new API being built in the next codebases.
+Obviously, a contributor (on the `RoadRunner` team) is going to need to define their own API's for the `RoadRunner` product (they are not likely to want a `Bookings` API), and they are not going to want to copy and paste the `Booking` API that was extracted from the `Coyote` codebase, and now lives in the 3x code templates. These code templates are not yet reusable.
+
+The tech lead has to identify, **what will be different** between the `Booking` API of the `Coyote` codebase, and any new API being built in the next codebases.
 
 > Clearly, a bunch of things will need to be different. 
 >
@@ -126,29 +128,29 @@ The tech lead now has to identify, **what will be different** between the `Booki
 > * (2) so will the actual code in those files. Including the names of code constructs like classes and methods in those files. 
 > * But also (3) there are also a whole bunch of technical details that can very between API's.
 
-The tech lead decides that the contributor will have to at least name the new API, (equivalent to `Bookings` from the `Coyote` API) because that name influences the file names of the logical `Controller`, `Service Interface` and `Service Implementation` files which are also classes that need to be created to contain the code specific to this new API. They also decide that they need a singular name for the resource of the API (e.g. `Booking` from the `Coyote` API) 
+The tech lead decides that the contributor will have to at least give a name for the new API, (equivalent to `Bookings` from the `Coyote` API) because that name influences the naming of the files of the logical `Controller`, `Service Interface` and `Service Implementation` files which are also classes that need to be created to contain the code specific to this new API. They also decide that they need a singular name for the resource of the API (e.g. `Booking` from the `Coyote` API) 
 
-So the tech lead defines an attribute on the pattern called `Name`
+So, in order to capture the name from the contributor, the tech lead defines a mandatory attribute on the pattern called: `Name`
 
 `automate edit add-attribute "Name" --isrequired`
 
-and then the `ResourceName` attribute:
+and then  a mandatory `ResourceName` attribute:
 
 `automate edit add-attribute "ResourceName" --isrequired`
 
-Now, the tech lead knows that every new API contains multiple "Service Operations" (according to existing coding patterns).
+Then, the tech lead knows that every new API logically contains multiple "Service Operations" (according to existing coding patterns).
 
-They now need to add a collection to the pattern to allow their contributors to define multiple service operations.
+So, they add a collection to the pattern to allow their contributors to define multiple service operations.
 
 `automate edit add-collection "ServiceOperation" --displayedas "Operations" --describedas "The service operations of the web API" `
 
-> Notice here that the tech lead decided to name this collection with a name of `ServiceOperation` and give it a meaningful display name and description.
+> Notice here that the tech lead decided to name this collection with a name of `ServiceOperation` and give it a meaningful display name and description. Those are simply used for display purposes.
 
 > The name of a collection or element cannot contain spaces, since it is an identifier.
 
-> Collections are created with a "Cardinality" of `ZeroOrMany` by default. Which means that they can have either zero or any number of instances of them in the collection. Elements have a cardinality of `Single`. Other cardinalities can be also used on collections to apply different constraints, i.e. `ZeroOrOne`, `OneOrMany`.
+> Collections are created with a "Cardinality" of `ZeroOrMany` by default. Which means that they can have any number of instances of them in the collection, and none at all. Elements have a cardinality of `Single` they must have an instance, and only one instance. Other cardinalities can be also used on collections to apply different constraints, i.e. `ZeroOrOne`, `OneOrMany`.
 
-And then the necessary attributes of a service operation:
+And now, they add the necessary attributes of a "service operation":
 
 `automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
@@ -156,11 +158,11 @@ And then the necessary attributes of a service operation:
 
 `automate edit add-attribute "Route" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
 
-`automate edit add-attribute "IsAuthorized" --isrequired --typeis "boolean" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "IsAuthorized" --isrequired --isoftype "bool" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
 
-> Note: The tech lead has deliberately ignored the optional properties of a service operation such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving as the `RoadRunner` product matures.
+> Note: The tech lead has deliberately ignored some of  the optional behaviours of a "service operation" such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving the pattern as the `RoadRunner` product matures.
 
-Now, a service operation (conceptually) has a Request DTO and a response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various attributes.
+Now, a service operation (conceptually) has a HTTP Request DTO and a HTTP Response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various attributes.
 
 First the request DTO:
 
@@ -172,7 +174,7 @@ First the request DTO:
 
 `automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
-`automate edit add-attribute "IsOptional" --isrequired --typeis "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "IsOptional" --isrequired --isoftype "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
 
 and similarly, for the Response DTO:
 
@@ -184,61 +186,67 @@ and similarly, for the Response DTO:
 
 `automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
 
-So far, we are starting to build up our conceptual model. It now looks like this:
+Okay, now that's a lot.
+
+So far, we are starting to build out our conceptual model. 
+
+It now looks like this:
 
 ```
 - AcmeAPI (root element) (attached with 4 code templates)
-	- Name (attribute) (string, required)
-	- ResourceName (attribute) (string, required)
-	- ServiceOperation (collection)
-		- Name (attribute) (string, required)
-		- Verb (attribute) (required, oneof: "POST;PUT;GET;PATCH;DELETE")
-		- Route (attribute) (string, required)
-		- IsAuthorized (attribute) (boolean, default: true)
-		- Request (element)
-			- Field (collection)
-				- Name (attribute) (string, required)
-				- DataType (attribute) (required, oneof "string;int;bool;DateTime")
-				- IsOptional (attribute) (boolean, default: false)
-		- Response (element)
-			- Field (collection)
-				- Name (attribute) (string, required)
-				- DataType (attribute) (required, oneof "string;int;bool;DateTime")
+    - Name (attribute) (string, required)
+    - ResourceName (attribute) (string, required)
+    - ServiceOperation (collection)
+            - Name (attribute) (string, required)
+            - Verb (attribute) (string, required, oneof: POST;PUT;GET;PATCH;DELETE)
+            - Route (attribute) (string, required)
+            - IsAuthorized (attribute) (bool, required, default:true)
+            - Request (element)
+                    - Field (collection)
+                            - Name (attribute) (string, required)
+                            - DataType (attribute) (string, required, oneof: string;int;bool;DateTime, default:string)
+                            - IsOptional (attribute) (bool, required, default:false)
+            - Response (element)
+                    - Field (collection)
+                            - Name (attribute) (string, required)
+                            - DataType (attribute) (string, required, oneof: string;int;bool;DateTime, default:string)
 ```
 
-Run this command view your own configuration:
+You can run this command to view your current configuration:
 
 `automate edit list-elements `
 
-So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `ServiceOperations` and its `Request` and `Response` DTO's.
+So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `Name` its `ServiceOperations` and its `Request` and `Response` DTO's.
 
-The code that needs to be written into the codebase (C# classes, enums, interfaces, etc) that are needed to contain the Controller, Service Interface, Service Implementation and DTOs can now be derived from this meta-model, and the file names, and directory structure for those classes can be derived from this meta-model too, with naming and structural conventions the tech lead can define.
+This is all we need for the pattern.
+
+The code that will be needed to be written into the codebase (C# classes, enums, interfaces, etc) that defines the Controller, the Service Interface, the Service Implementation and the DTOs can now be derived from this meta-model. Their file names, and directory structure can be derived from this meta-model too. With naming and structural conventions the tech lead will define next.
 
 ### Step 3 - Templatize the Code
 
-The next challenge is to modify the code templates of the existing code templates to read the meta-model above, and produce the appropriate code in the right places in the codebase.
+The next challenge is to templatise the code in the existing code templates to read the meta-model above, and produce the appropriate code in the right places in the codebase.
 
-For this, the tech lead will need to update the code templates that they have already captured (on the pattern element), which will now need to navigate the meta-model and combine the data from the meta-model with established coding patterns into generated code.
+For this, the tech lead will need to update the code templates that they have already captured.
 
-> Note: Each file that is generated from each of the code templates will eventually need to be named, and placed into the `RoadRunner` codebase in an appropriate directory, with an appropriate file name. That process will happen in the next step.
+> Note: Each file that will be generated from each of the code templates will eventually need to be named and placed into the `RoadRunner` codebase in an appropriate directory, with an appropriate filename. That process will happen in the next step.
 
-The tech lead, now needs to fire up their favourite text editor and modify all the code templates they harvested already.
+The tech lead, will now fire-up their favourite text editor and modify all the code templates they harvested already.
 
 The code template files have been renamed and can be found in the following location:
 
-`C:/projects/acme/roadrunner/src/automate/codetemplates`
+`C:\Projects\acme\roadrunner\src\automate\patterns\<PATTERNID>\CodeTemplates` where the `<PATTERID>` can be copied from a previous command the console output.
 
-Each code template has a unique name that was assigned to it when the `automate edit add --codetemplate "<filepath>"` command was run.
+Each code template in this directory, has had a unique filename given to it when you ran the `add --codetemplate"` commands above.
 
 Either look at the CLI output to find out the name of the template that was created. Or you can run this command to list them:
 
 `automate edit list-codetemplates`
 
-Open each of the template files in a text editor.
+Open each of the template files in your favourite text editor (like VS Code).
 
 Make the following changes to them:
 
-#### Template1 - Controller
+#### CodeTemplate1 - Controller
 
 ```
 using System;
@@ -318,7 +326,7 @@ namespace Acme.RoadRunner.Controllers
 }
 ```
 
-#### Template2 - Service Implementation
+#### CodeTemplate2 - Service Implementation
 
 ```
 using System;
@@ -338,7 +346,7 @@ namespace Acme.RoadRunner.Services
 }
 ```
 
-#### Template3 - Service Interface
+#### CodeTemplate3 - Service Interface
 
 ```
 using System;
@@ -354,7 +362,7 @@ namespace Acme.RoadRunner.Services
 }
 ```
 
-#### Template4 - Application DTOs
+#### CodeTemplate4 - Application DTOs
 
 ```
 using System;
@@ -382,23 +390,25 @@ namespace Acme.RoadRunner.DTOs
 
 > Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language. 
 >
-> Here, we are using a text templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax.
+> The language used in the templates is a text-templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax, similar to others (basically double-{{ }} statements over an snake_cased object model, starting with a root called:  `model`).
 
 ### Step 4 - Generate the Code
 
-Now that the tech lead has the all the code templates modified, the last step is to define *when* the code templates are rendered, and *where* the generated code is placed in the codebase of the new `RoadRunner` product.
+Now that the tech lead has the all the code templates modified, the last step is to define ***when*** the code templates are rendered, and ***where*** the generated code is placed in the codebase of the new `RoadRunner` product.
 
 The tech lead decides that they will use the same directory structure and naming convention as used in the previous product `Coyote`.
 
 However, the tech lead also knows that the `Service Implementation` class is likely to be written by hand by one of the contributors on the team. Whereas, the `Controller` class,  the `Service Interface` and the `DTO` classes can be generated in full.
 
-Therefore the `Service Implementation` class will only be generated if the file does not already exist, and once it is generated never generate again. Whereas the `Service Interface`, `Controller` and `DTO` files will always be generated and kept up to date as the pattern changes.
+Therefore the `Service Implementation` class will only be generated if the file does not already exist, and once it is generated, it wont never generate again, so custom code is not lost. Whereas the `Service Interface`, `Controller` and `DTO` files will always be generated and kept up to date as and when the pattern changes.
 
 The next thing to figure out, is how to generate the files.
 
-This can be done whenever some event on the meta-model is raised. For example, when new `Service Operations` are added (or changed) or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options). In either case, a *Launch Point* needs to be defined and added to the pattern to execute the code template rendering. 
+This can be done whenever some event on the meta-model is raised. For example, when new `Service Operations` are added (or changed) or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options). 
 
-These commands will decide **where** to render the files, and what filenames to use.
+In every case, a *Launch Point* needs to be defined and added to the pattern to execute the code template rendering. A Launch Point is just a user mechanism to execute actual automation commands that do the hard work.  
+
+These automation commands will decide **where** to render the files on disk, and what filenames to use.
 
 `automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{name}}Controller.gen.cs"`
 
@@ -408,27 +418,33 @@ These commands will decide **where** to render the files, and what filenames to 
 
 `automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{name}}.gen.cs"`
 
-> These commands adds new "Commands" for each template to the root pattern element (AcmeAPI). Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
+> These 4x automation commands add new "Commands" for each template to the root pattern element (AcmeAPI). 
 >
-> Notice that the filename for each uses an expression that includes the `name` attribute of the pattern. It is in lowercase here, as all attributes and element names are snake-cased when this template is executed.
+> Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
+>
+> Notice that the filename defined for each command uses an expression that includes the `name` attribute of the pattern. It is in lowercase here, as all attributes and element names will be snake_cased when this template is executed.
 >
 > Notice that for `CodeTemplate2` we use the option `--astearoff`  (and a slight variation on the file extension in the `--withpath` option) to indicate that this file will only be generated once, and only if the specified file does not exist at the specified location with the specified name.
 >
-> The `--withpath` option starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern. Which for this case is the current directory.
+> The `--withpath` option starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern. Which for this case, is the current directory.
 
 Now, that we have the four explicit commands to execute, we can define a single "Launch Point" that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
 
-`automate edit add-command-launchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --name "Generate"`
+`automate edit add-command-launchpoint "<CMDID1>;<CMDID2>;<CMDID3>;<CMDID4>" --name "Generate"` where `<CMDID1>` and others must be copied from the console
 
-> This command adds a "Launch Point" called `Generate` that can now be executed on the `AcmeAPI` element.
+> This command adds the "Launch Point" called `Generate` which will be executed on commands configured on the `AcmeAPI` element.
 
 ### Step 5 - Build the Toolkit, and Ship It
 
-Now the tech lead has a functioning pattern, it time to ship it to their team.
+That's it for defining the pattern.
 
-`automate build toolkit --version "auto"`
+Now the tech lead can build a toolkit from that pattern, and give it to their dev team.
+
+`automate build toolkit --versionas "auto"`
 
 > This command creates a standalone (cross-platform) package (`AcmeAPI.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
+>
+> This package will appear on your desktop, for you to install.
 
 ### Step 6 - Apply the Pattern
 
@@ -436,21 +452,23 @@ Navigate to the new `RoadRunner` codebase: `cd C:/projects/acme/roadrunner/src`
 
 Download and install the new toolkit:
 
-`automate install toolkit "C:/Downloads/AcmeAPI.toolkit"`
+`automate install toolkit "<PATHTOTOOLKIT>"` where `<PATHTOTOOLKIT>` can be found in the console output of the previous command.
 
-> This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/roadrunner/src/automate/toolkits/AcmeAPI/v1.0.0.0`
+> This command installs the `AcmeAPI.toolkit` into the current directory, which in this case is `C:/projects/acme/roadrunner/src/automate/toolkits/<TOOLKITID>`
 
 To list all the installed toolkits and versions of them:
 
 `automate run list-toolkits`
 
-> This commands lists all the installed toolkits in the current directory.
+> This commands lists all the installed toolkits, installed in the current directory.
 
-Now, a project contributor can define their own API with this newly installed toolkit.
+Now, it time to switch hats, and be a contributor on the tech leads team.
+
+Let's use this toolkit, and define a new API.
 
 #### Creating the New API
 
-For this example, lets call the new API that we want help building, the: `Orders` API, in the `RoadRunner` product/service.
+For this example, let's call the new API that we want help building, the: `Orders` API, in the `RoadRunner` product/service.
 
 * The new API will have one authorized POST operation called `CreateOrder` at `/orders`.
 * This HTTP request takes a `ProductId` as the only request parameter
@@ -462,7 +480,7 @@ To get started:
 
 > This command creates a new "solution" from the `AcmeAPI` toolkit, and returns its unique SOLUTIONID.
 
-To list all the solutions that have been created so far:
+You can list all the solutions that have been created so far, with this command:
 
 `automate run list-solutions`
 
@@ -474,12 +492,12 @@ Now, lets program one of the solutions:
 
 > This command defines the `Name` and the `ResourceName` attributes of the pattern
 
-`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperations}" --and-set "Name=CreateOrder" --and-set "Verb=Post" --and-set "Route=/orders" --and-set "IsAuthorized=true"`
+`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperation}" --and-set "Name=CreateOrder" --and-set "Verb=Post" --and-set "Route=/orders" --and-set "IsAuthorized=true"`
 
 > This command creates a new `ServiceOperation` instance and adds it to the `ServiceOperations` collection, and returns its unique OPERATIONID.
 >
 
-`automate using "<SOLUTIONID>" --add "{<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "Type=string" --and-set "IsOptional=false"`
+`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "Type=string" --and-set "IsOptional=false"`
 
 > This command creates a new `Field` in the Request DTO called `ProductId`
 
@@ -499,10 +517,13 @@ This command should print out a JSON object that looks like this:
 
 ```
 {
+	"id": "xxxxxxxx"
 	"name": "Orders",
 	"resource_name": "Order",
 	"service_operation": {
+		"id": "xxxxxxxx"
 		"items": [{
+				"id": "xxxxxxxx"
 				"name": "CreateOrder",
 				"verb": "Post",
 				"route": "/orders",
@@ -510,6 +531,7 @@ This command should print out a JSON object that looks like this:
 				"request": {
 					"field": {
 						"items": [{
+							"id": "xxxxxxxx"
 							"name": "ProductId",
 							"data_type": "string",
 							"is_optional": false
@@ -520,6 +542,7 @@ This command should print out a JSON object that looks like this:
 				"response": {
 					"field": {
 						"items": [{
+							"id": "xxxxxxxx"
 							"name": "ProductId",
 							"data_type": "string",
 							}
