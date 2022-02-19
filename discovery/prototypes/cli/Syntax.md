@@ -525,57 +525,58 @@ This command should print out a JSON object that looks just like this:
 
 ```
 {
-	"id": "xxxxxxxx"
-	"name": "Orders",
-	"resource_name": "Order",
-	"service_operation": {
-		"id": "xxxxxxxx"
-		"items": [{
-				"id": "xxxxxxxx"
-				"name": "CreateOrder",
-				"verb": "Post",
-				"route": "/orders",
-				"is_authorized": "true",
-				"request": {
-					"id": "xxxxxxxx"
-					"field": {
-						"id": "xxxxxxxx"
-						"items": [{
-							"id": "xxxxxxxx"
-							"name": "ProductId",
-							"data_type": "string",
-							"is_optional": "false"
-							}
-						], 
-					},
-				},
-				"response": {
-					"id": "xxxxxxxx"
-					"field": {
-						"id": "xxxxxxxx"
-						"items": [{
-							"id": "xxxxxxxx"
-							"name": "ProductId",
-							"data_type": "string",
-							}
-						] 
-					}
-				}
-			}
-		]
-	}
+    "id": "xxxxxxxx",
+    "name": "Orders",
+    "resource_name": "Order",
+    "service_operation": {
+        "id": "xxxxxxxx",
+        "items": [
+            {
+                "id": "xxxxxxxx",
+                "name": "CreateOrder",
+                "verb": "Post",
+                "route": "/orders",
+                "is_authorized": "true",
+                "request": {
+                    "id": "xxxxxxxx",
+                    "field": {
+                        "id": "xxxxxxxx",
+                        "items": [
+                            {
+                                "id": "xxxxxxxx",
+                                "data_type": "string",
+                                "is_optional": "false"
+                            }
+                        ]
+                    }
+                },
+                "response": {
+                    "id": "xxxxxxxx",
+                    "field": {
+                        "id": "xxxxxxxx",
+                        "items": [
+                            {
+                                "id": "xxxxxxxx",
+                                "data_type": "string"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
 }
 ```
 
-> Notice, that the names of elements and attributes in this solution have been changed to snake-case.
+> Notice, that the names of elements and attributes in this solution have been changed to snake_case.
 >
-> Notice, that the collections in the solution have `items` containing the sub-elements.
+> Notice, that the collections in the solution have `items` containing their sub-elements.
 
 A codebase contributor can now finally ask the toolkit to write the new API code for them!
 
 `automate execute "<SOLUTIONID>" --command "Generate"`
 
-> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured commands, that generates the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` projects at the configured locations.
+> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured code template commands, that in turn, each generate the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` project in the respective locations.
 
 > If any of the required properties (of attributes) are not set, or any required elements of collections are missing, then appropriate validation errors will be displayed explaining the problem. 
 >

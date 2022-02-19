@@ -169,11 +169,13 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndCollection_ThenMaterialises()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", true);
+            var collection = new Element("acollectionname", isCollection: true);
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            element.Attributes.Add(attribute);
+            var element = new Element("anelementname");
+            collection.Attributes.Add(attribute);
+            collection.Elements.Add(element);
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(collection)
                 .Materialise();
 
             result.Id.Should().NotBeNull();

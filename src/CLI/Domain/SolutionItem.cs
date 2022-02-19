@@ -124,7 +124,6 @@ namespace Automate.CLI.Domain
             if (IsCollection)
             {
                 Properties = new Dictionary<string, SolutionItem>();
-                ElementSchema.Elements.ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
                 Items = new List<SolutionItem>();
                 IsMaterialised = true;
             }
