@@ -277,6 +277,24 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
+        {
+            var testDirectory = Environment.CurrentDirectory;
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionValidationFailed
+                        .FormatTemplate(
+                            "1. {apattern.AProperty1} requires its value to be set\r\n" +
+                            "2. {apattern.AnElement1} requires at least one instance\r\n" +
+                            "3. {apattern.ACollection2} requires at least one instance\r\n\r\n"
+                        ));
+        }
+        
+        [Fact]
         public void WhenExecuteLaunchPoint_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
@@ -284,6 +302,8 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
 
             var artifactLink = this.setup.Solutions.Single().Model.ArtifactLinks.First().Path;

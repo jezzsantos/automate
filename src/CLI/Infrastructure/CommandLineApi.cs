@@ -440,7 +440,7 @@ namespace Automate.CLI.Infrastructure
 
                 if (errors.Count > 0)
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
                         FormatValidationErrors(errors));
                 }
                 else
@@ -453,8 +453,16 @@ namespace Automate.CLI.Infrastructure
                 IConsole console)
             {
                 var execution = Runtime.ExecuteCommand(solutionId, command);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,
-                    execution.CommandName, FormatExecutionLog(execution.Log));
+                if (execution.IsSuccess)
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,
+                        execution.CommandName, FormatExecutionLog(execution.Log));
+                }
+                else
+                {
+                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                        FormatValidationErrors(execution.Errors));
+                }
             }
 
             private static string FormatValidationErrors(ValidationResults results)
@@ -483,11 +491,21 @@ namespace Automate.CLI.Infrastructure
         public static void WriteOutput(this IConsole console, bool outputStructured, string messageTemplate,
             params object[] args)
         {
+            console.WriteLine(string.Empty);
             console.WriteLine(outputStructured
                 ? messageTemplate.FormatTemplateStructured(args)
                 : messageTemplate.FormatTemplate(args));
         }
 
+        public static void WriteOutputWarning(this IConsole console, bool outputStructured, string messageTemplate,
+            params object[] args)
+        {
+            console.WriteLine(string.Empty);
+            console.WriteOutput(outputStructured
+                ? messageTemplate.FormatTemplateStructured(args)
+                : messageTemplate.FormatTemplate(args), ConsoleColor.DarkYellow);
+        }
+        
         public static void WriteError(this IConsole console, string message, ConsoleColor color)
         {
             Console.ResetColor();
@@ -497,21 +515,27 @@ namespace Automate.CLI.Infrastructure
             Console.ResetColor();
         }
 
-        public static void WriteOutput(string message, ConsoleColor color)
-        {
-            Console.ResetColor();
-            Console.ForegroundColor = color;
-            Console.WriteLine(message);
-            Console.WriteLine();
-            Console.ResetColor();
-        }
-
         public static void WriteError(string message, ConsoleColor color)
         {
             Console.ResetColor();
             Console.ForegroundColor = color;
             Console.Error.WriteLine(message);
             Console.Error.WriteLine();
+            Console.ResetColor();
+        }
+
+        public static void WriteOutput(this IConsole console, string message, ConsoleColor color)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            console.WriteLine(message);
+            Console.ResetColor();
+        }
+        public static void WriteOutput(string message, ConsoleColor color)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
             Console.ResetColor();
         }
     }

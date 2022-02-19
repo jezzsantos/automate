@@ -230,6 +230,12 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
             }
 
+            var validationResults = solution.Model.Validate(new ValidationContext());
+            if (validationResults.Any())
+            {
+                return new CommandExecutionResult(name, validationResults);
+            }
+
             var result = solution.ExecuteCommand(name);
             this.solutionStore.Save(solution);
 

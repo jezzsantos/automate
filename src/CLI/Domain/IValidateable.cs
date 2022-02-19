@@ -26,7 +26,7 @@ namespace Automate.CLI.Domain
 
         public static ValidationResults None => new ValidationResults();
 
-        public IList<ValidationResult> Results => Items;
+        public List<ValidationResult> Results => Items.ToList();
 
         public void Add(ValidationContext context, string message)
         {
