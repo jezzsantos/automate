@@ -94,11 +94,15 @@ namespace Automate.CLI.Domain
                 log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(filename, absoluteFilePath));
             }
 
-            var link = ownerSolution.ArtifactLinks
+            var link = ownerSolution.ArtifactLinks.Safe()
                 .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
             if (link.NotExists())
             {
                 link = new ArtifactLink(Id, absoluteFilePath, filename);
+                if (ownerSolution.ArtifactLinks.NotExists())
+                {
+                    ownerSolution.ArtifactLinks = new List<ArtifactLink>();
+                }
                 ownerSolution.ArtifactLinks.Add(link);
                 if (IsTearOff)
                 {

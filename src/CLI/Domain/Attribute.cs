@@ -54,7 +54,7 @@ namespace Automate.CLI.Domain
             DataType = resolvedDataType;
             IsRequired = isRequired;
             DefaultValue = defaultValue;
-            Choices = choices ?? new List<string>();
+            Choices = choices;
         }
 
         /// <summary>

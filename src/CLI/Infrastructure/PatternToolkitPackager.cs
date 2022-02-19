@@ -80,13 +80,13 @@ namespace Automate.CLI.Infrastructure
 
         private void PackageAssets(ToolkitDefinition toolkit)
         {
-            if (toolkit.Pattern.CodeTemplates.NotExists())
+            if (toolkit.Pattern.CodeTemplates.HasNone())
             {
                 return;
             }
 
             toolkit.CodeTemplateFiles =
-                toolkit.Pattern.CodeTemplates
+                toolkit.Pattern.CodeTemplates.ToListSafe()
                     .Select(template => new CodeTemplateFile
                     {
                         Contents =

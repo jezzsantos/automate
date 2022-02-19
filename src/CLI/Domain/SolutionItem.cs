@@ -22,13 +22,13 @@ namespace Automate.CLI.Domain
             Items = null;
 
             Properties = new Dictionary<string, SolutionItem>();
-            pattern.Attributes
+            pattern.Attributes.ToListSafe()
                 .ForEach(attr =>
                 {
                     Properties.Add(attr.Name,
                         new SolutionItem(attr));
                 });
-            pattern.Elements
+            pattern.Elements.ToListSafe()
                 .ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
         }
 
@@ -118,7 +118,7 @@ namespace Automate.CLI.Domain
 
         public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
 
-        public List<ArtifactLink> ArtifactLinks { get; set; } = new List<ArtifactLink>();
+        public List<ArtifactLink> ArtifactLinks { get; set; }
 
         public SolutionItem Materialise(object value = null)
         {
@@ -131,9 +131,9 @@ namespace Automate.CLI.Domain
             if (IsElement)
             {
                 Properties = new Dictionary<string, SolutionItem>();
-                ElementSchema.Attributes.ForEach(
+                ElementSchema.Attributes.ToListSafe().ForEach(
                     attr => { Properties.Add(attr.Name, new SolutionItem(attr)); });
-                ElementSchema.Elements.ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
+                ElementSchema.Elements.ToListSafe().ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
                 Items = null;
                 IsMaterialised = true;
             }
@@ -185,11 +185,11 @@ namespace Automate.CLI.Domain
         {
             if (IsPattern)
             {
-                return PatternSchema.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(name));
+                return PatternSchema.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(name));
             }
             if (IsElement)
             {
-                return ElementSchema.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(name));
+                return ElementSchema.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(name));
             }
 
             return false;
@@ -371,9 +371,9 @@ namespace Automate.CLI.Domain
             this.item = item;
         }
 
-        public bool IsChoice => this.item.AttributeSchema.Choices.Any();
+        public bool IsChoice => this.item.AttributeSchema.Choices.HasAny();
 
-        public List<string> ChoiceValues => this.item.AttributeSchema.Choices;
+        public List<string> ChoiceValues => this.item.AttributeSchema.Choices.ToListSafe();
 
         public string DataType => this.item.AttributeSchema.DataType;
 
@@ -381,7 +381,7 @@ namespace Automate.CLI.Domain
 
         public bool HasChoice(string value)
         {
-            return this.item.AttributeSchema.Choices.Any(choice => choice.EqualsIgnoreCase(value));
+            return this.item.AttributeSchema.Choices.Safe().Any(choice => choice.EqualsIgnoreCase(value));
         }
 
         public bool DataTypeMatches(string value)

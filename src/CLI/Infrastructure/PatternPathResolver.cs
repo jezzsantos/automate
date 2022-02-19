@@ -43,7 +43,7 @@ namespace Automate.CLI.Infrastructure
             IPatternElement target = pattern;
             while (nextPart.Exists())
             {
-                var descendant = target.Elements
+                var descendant = target.Elements.Safe()
                     .FirstOrDefault(element => element.Name.EqualsIgnoreCase(nextPart));
                 if (descendant.NotExists())
                 {

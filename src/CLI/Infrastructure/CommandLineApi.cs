@@ -344,18 +344,18 @@ namespace Automate.CLI.Infrastructure
                     output.Append($"- {element.Name}");
                     output.Append(
                         $" ({(element is PatternDefinition ? "root element" : ((Element)element).IsCollection ? "collection" : "element")})");
-                    output.Append(element.CodeTemplates.Any()
-                        ? $" (attached with {element.CodeTemplates.Count} code templates)\n"
+                    output.Append(element.CodeTemplates.HasAny()
+                        ? $" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)\n"
                         : "\n");
-                    element.Attributes.ForEach(a => DisplayAttribute(a, indentLevel + 1));
-                    element.Elements.ForEach(e => DisplayElement(e, indentLevel + 1));
+                    element.Attributes.ToListSafe().ForEach(a => DisplayAttribute(a, indentLevel + 1));
+                    element.Elements.ToListSafe().ForEach(e => DisplayElement(e, indentLevel + 1));
                 }
 
                 void DisplayAttribute(Attribute attribute, int indentLevel)
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.Any() ? ", oneof: " + $"{attribute.Choices.Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
+                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
                 }
             }
         }

@@ -28,7 +28,7 @@ namespace Automate.CLI.Domain
         public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem ownerSolution)
         {
             var logs = new List<string>();
-            toolkit.Pattern.Automation
+            toolkit.Pattern.Automation.Safe()
                 .Where(auto => CommandIds.Contains(auto.Id))
                 .ToList()
                 .ForEach(cmd =>

@@ -15,6 +15,10 @@ namespace Automate.CLI.Domain
             Id = IdGenerator.Create();
             DisplayName = name;
             Description = null;
+            CodeTemplates = new List<CodeTemplate>();
+            Automation = new List<IAutomation>();
+            Attributes = new List<Attribute>();
+            Elements = new List<Element>();
         }
 
         /// <summary>
@@ -30,13 +34,13 @@ namespace Automate.CLI.Domain
 
         public string ToolkitVersion { get; set; }
 
-        public List<CodeTemplate> CodeTemplates { get; set; } = new List<CodeTemplate>();
+        public List<CodeTemplate> CodeTemplates { get; set; }
 
-        public List<IAutomation> Automation { get; set; } = new List<IAutomation>();
+        public List<IAutomation> Automation { get; set; }
 
-        public List<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public List<Attribute> Attributes { get; set; }
 
-        public List<Element> Elements { get; set; } = new List<Element>();
+        public List<Element> Elements { get; set; }
 
         public string Name { get; set; }
 

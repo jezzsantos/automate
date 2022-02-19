@@ -85,7 +85,7 @@ namespace Automate.CLI.Application
 
             var templateName = name.HasValue()
                 ? name
-                : $"CodeTemplate{pattern.CodeTemplates.Count + 1}";
+                : $"CodeTemplate{pattern.CodeTemplates.ToListSafe().Count + 1}";
             if (CodeTemplateExistsByName(target, templateName))
             {
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
@@ -107,7 +107,7 @@ namespace Automate.CLI.Application
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            return pattern.CodeTemplates;
+            return pattern.CodeTemplates.ToListSafe();
         }
 
         public (IPatternElement parent, Attribute child) AddAttribute(string name, string type, string defaultValue,
@@ -200,7 +200,7 @@ namespace Automate.CLI.Application
                 }
             }
 
-            var codeTemplate = pattern.CodeTemplates.FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
+            var codeTemplate = pattern.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(
@@ -208,7 +208,7 @@ namespace Automate.CLI.Application
             }
             var commandName = name.HasValue()
                 ? name
-                : $"CodeTemplateCommand{target.Automation.Count + 1}";
+                : $"CodeTemplateCommand{target.Automation.ToListSafe().Count + 1}";
             if (AutomationExistsByName(target, commandName))
             {
                 throw new AutomateException(
@@ -242,7 +242,7 @@ namespace Automate.CLI.Application
 
             var launchPointName = name.HasValue()
                 ? name
-                : $"LaunchPoint{target.Automation.Count + 1}";
+                : $"LaunchPoint{target.Automation.ToListSafe().Count + 1}";
             if (AutomationExistsByName(target, launchPointName))
             {
                 throw new AutomateException(
@@ -283,17 +283,17 @@ namespace Automate.CLI.Application
 
         private static bool AutomationExistsByName(IAutomationContainer element, string automationName)
         {
-            return element.Automation.Any(ele => ele.Name.EqualsIgnoreCase(automationName));
+            return element.Automation.Safe().Any(ele => ele.Name.EqualsIgnoreCase(automationName));
         }
 
         private static bool ElementExistsByName(IElementContainer element, string elementName)
         {
-            return element.Elements.Any(ele => ele.Name.EqualsIgnoreCase(elementName));
+            return element.Elements.Safe().Any(ele => ele.Name.EqualsIgnoreCase(elementName));
         }
 
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {
-            return element.Attributes.Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+            return element.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
         }
 
         private static bool AttributeNameIsReserved(string attributeName)
@@ -303,7 +303,7 @@ namespace Automate.CLI.Application
 
         private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)
         {
-            return element.CodeTemplates.Any(template => template.Name.EqualsIgnoreCase(templateName));
+            return element.CodeTemplates.Safe().Any(template => template.Name.EqualsIgnoreCase(templateName));
         }
     }
 }

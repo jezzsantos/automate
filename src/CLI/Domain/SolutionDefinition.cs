@@ -38,7 +38,7 @@ namespace Automate.CLI.Domain
         public CommandExecutionResult ExecuteCommand(string name)
         {
             var command =
-                Toolkit.Pattern.Automation.FirstOrDefault(
+                Toolkit.Pattern.Automation.Safe().FirstOrDefault(
                     automation => StringExtensions.EqualsIgnoreCase(automation.Name, name));
             if (command.NotExists())
             {
