@@ -90,9 +90,9 @@ namespace Automate.CLI.Domain {
         /// <summary>
         ///   Looks up a localized string similar to requires its value to be set.
         /// </summary>
-        internal static string Attribute_ValidationRule_RequiredValue {
+        internal static string Attribute_ValidationRule_RequiredAttributeValue {
             get {
-                return ResourceManager.GetString("Attribute_ValidationRule_RequiredValue", resourceCulture);
+                return ResourceManager.GetString("Attribute_ValidationRule_RequiredAttributeValue", resourceCulture);
             }
         }
         

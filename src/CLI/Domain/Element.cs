@@ -7,7 +7,7 @@ namespace Automate.CLI.Domain
     internal class Element : IPatternElement, IValidateable, ICloneable<Element>
     {
         public Element(string name, string displayName = null, string description = null, bool isCollection = false,
-            ElementCardinality cardinality = ElementCardinality.Single)
+            ElementCardinality? cardinality = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
@@ -18,7 +18,7 @@ namespace Automate.CLI.Domain
             DisplayName = displayName;
             Description = description;
             IsCollection = isCollection;
-            Cardinality = cardinality;
+            Cardinality = cardinality.HasValue ? cardinality.Value : isCollection ? ElementCardinality.OneOrMany : ElementCardinality.Single;
         }
 
         /// <summary>

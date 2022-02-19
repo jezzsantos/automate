@@ -7,6 +7,9 @@ namespace Automate.CLI.Domain
 {
     internal class SolutionItem : IIdentifiableEntity
     {
+        // ReSharper disable once InconsistentNaming
+        private object _value;
+
         public SolutionItem(PatternDefinition pattern)
         {
             Id = IdGenerator.Create();
@@ -81,7 +84,21 @@ namespace Automate.CLI.Domain
 
         public Attribute AttributeSchema { get; set; }
 
-        public object Value { get; set; }
+        public object Value
+        {
+            get => this._value;
+            set
+            {
+                if (IsAttribute)
+                {
+                    this._value = Attribute.SetValue(AttributeSchema.DataType, value);
+                }
+                else
+                {
+                    this._value = value;
+                }
+            }
+        }
 
         public Dictionary<string, SolutionItem> Properties { get; set; }
 
@@ -198,115 +215,7 @@ namespace Automate.CLI.Domain
         {
             context.GuardAgainstNull(nameof(context));
 
-            if (IsPattern)
-            {
-                var subContext = new ValidationContext(context);
-                subContext.Add($"{PatternSchema.Name}");
-                return new ValidationResults(
-                    Properties.SelectMany(prop => prop.Value.Validate(subContext).Results));
-            }
-
-            if (IsElement)
-            {
-                var subContext = new ValidationContext(context);
-                subContext.Add($"{ElementSchema.Name}");
-                var results = ValidationResults.None;
-
-                if (IsMaterialised)
-                {
-                    if (Properties.HasAny())
-                    {
-                        results.AddRange(
-                            Properties.SelectMany(prop => prop.Value.Validate(subContext).Results));
-                    }
-                }
-                else
-                {
-                    if (ElementSchema.HasCardinalityOfAtLeastOne())
-                    {
-                        results.Add(subContext,
-                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
-                                .Format(Name));
-                    }
-                    if (ElementSchema.HasCardinalityOfAtMostOne())
-                    {
-                        if (Items.HasAny() && Items.Count > 1)
-                        {
-                            results.Add(subContext,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
-                                    .Format(Name));
-                        }
-                    }
-                }
-
-                return results;
-            }
-
-            if (IsCollection)
-            {
-                var subContext = new ValidationContext(context);
-                subContext.Add($"{ElementSchema.Name}");
-                var results = ValidationResults.None;
-
-                if (IsMaterialised)
-                {
-                    if (ElementSchema.HasCardinalityOfAtLeastOne())
-                    {
-                        if (Items.HasNone())
-                        {
-                            results.Add(subContext,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
-                                    .Format(Name));
-                        }
-                    }
-                    if (ElementSchema.HasCardinalityOfAtMostOne())
-                    {
-                        if (Items.HasAny() && Items.Count > 1)
-                        {
-                            results.Add(subContext,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
-                                    .Format(Name));
-                        }
-                    }
-                    if (Items.HasAny())
-                    {
-                        results.AddRange(Items.SelectMany(item => item.Validate(subContext).Results));
-                    }
-                }
-                else
-                {
-                    if (ElementSchema.HasCardinalityOfAtLeastOne())
-                    {
-                        results.Add(subContext,
-                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
-                                .Format(Name));
-                    }
-                    if (ElementSchema.HasCardinalityOfAtMostOne())
-                    {
-                        if (Items.HasAny() && Items.Count > 1)
-                        {
-                            results.Add(subContext,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
-                                    .Format(Name));
-                        }
-                    }
-                }
-
-                return results;
-            }
-
-            if (IsAttribute)
-            {
-                var subContext = new ValidationContext(context);
-                subContext.Add($"{AttributeSchema.Name}");
-                var results = ValidationResults.None;
-
-                results.AddRange(AttributeSchema.Validate(subContext, Value));
-
-                return results;
-            }
-
-            return ValidationResults.None;
+            return ValidateInternal(context, false);
         }
 
         public Dictionary<string, object> GetConfiguration()
@@ -351,9 +260,100 @@ namespace Automate.CLI.Domain
 
         public string Id { get; set; }
 
+        private ValidationResults ValidateInternal(ValidationContext context, bool isItem)
+        {
+            if (IsPattern)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{PatternSchema.Name}");
+                return new ValidationResults(
+                    Properties.SelectMany(prop => prop.Value.ValidateInternal(subContext, false).Results));
+            }
+
+            if (IsElement || IsCollection)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add(isItem
+                    ? $"{Id}"
+                    : $"{ElementSchema.Name}");
+                var results = ValidationResults.None;
+
+                if (IsMaterialised)
+                {
+                    if (IsElement)
+                    {
+                        if (Properties.HasAny())
+                        {
+                            results.AddRange(
+                                Properties.SelectMany(prop => prop.Value.ValidateInternal(subContext, false).Results));
+                        }
+                    }
+
+                    if (IsCollection)
+                    {
+                        if (ElementSchema.HasCardinalityOfAtLeastOne())
+                        {
+                            if (Items.HasNone())
+                            {
+                                results.Add(subContext,
+                                    ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                        .Format(Name));
+                            }
+                        }
+                        if (ElementSchema.HasCardinalityOfAtMostOne())
+                        {
+                            if (Items.HasAny() && Items.Count > 1)
+                            {
+                                results.Add(subContext,
+                                    ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                        .Format(Name));
+                            }
+                        }
+                        if (Items.HasAny())
+                        {
+                            results.AddRange(Items.SelectMany(item => item.ValidateInternal(subContext, true).Results));
+                        }
+                    }
+                }
+                else
+                {
+                    if (ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        results.Add(subContext,
+                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                .Format(Name));
+                    }
+                    if (ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (Items.HasAny() && Items.Count > 1)
+                        {
+                            results.Add(subContext,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(Name));
+                        }
+                    }
+                }
+
+                return results;
+            }
+            
+            if (IsAttribute)
+            {
+                var subContext = new ValidationContext(context);
+                subContext.Add($"{AttributeSchema.Name}");
+                var results = ValidationResults.None;
+
+                results.AddRange(AttributeSchema.Validate(subContext, Value));
+
+                return results;
+            }
+
+            return ValidationResults.None;
+        }
+
         private void SetValue(object value, string dataType)
         {
-            Value = Attribute.SetValue(value, dataType);
+            Value = Attribute.SetValue(dataType, value);
         }
     }
 
@@ -391,7 +391,7 @@ namespace Automate.CLI.Domain
 
         public void SetProperty(object value)
         {
-            this.item.Value = Attribute.SetValue(value, DataType);
+            this.item.Value = Attribute.SetValue(DataType, value);
         }
     }
 }

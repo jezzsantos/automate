@@ -336,7 +336,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsPatternWithInvalidProperties_ThenReturnsErrors()
+        public void WhenValidateAndIsPatternWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var pattern = new PatternDefinition("apatternname");
             pattern.Attributes.Add(new Attribute("anattributename", isRequired: true));
@@ -344,8 +344,9 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(pattern)
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
             result.Results.Single().Message.Should()
-                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("anattributename"));
         }
 
         [Fact]
@@ -356,7 +357,8 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(element)
                 .Validate(new ValidationContext());
 
-            result.Results.First().Message.Should()
+            result.Results.Single().Context.Path.Should().Be("{anelementname}");
+            result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "anelementname"));
         }
@@ -369,13 +371,14 @@ namespace CLI.UnitTests.Domain
             var result = new SolutionItem(element)
                 .Validate(new ValidationContext());
 
-            result.Results.First().Message.Should()
+            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
+            result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "acollectionname"));
         }
 
         [Fact]
-        public void WhenValidateAndIsElementWithInvalidProperties_ThenReturnsErrors()
+        public void WhenValidateAndIsElementWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var element = new Element("anelementname");
             element.Attributes.Add(new Attribute("anattributename", isRequired: true));
@@ -384,12 +387,13 @@ namespace CLI.UnitTests.Domain
                 .Materialise()
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{anelementname.anattributename}");
             result.Results.Single().Message.Should()
-                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("anattributename"));
         }
 
         [Fact]
-        public void WhenValidateAndIsElementWithMissingItems_ThenReturnsErrors()
+        public void WhenValidateAndIsElementWithRequiredItems_ThenReturnsErrors()
         {
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
@@ -399,13 +403,14 @@ namespace CLI.UnitTests.Domain
                 .Materialise()
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{anelementname1.anelementname2}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "anelementname2"));
         }
 
         [Fact]
-        public void WhenValidateAndIsCollectionWithMissingItems_ThenReturnsErrors()
+        public void WhenValidateAndIsCollectionWithRequiredItems_ThenReturnsErrors()
         {
             var collection = new Element("acollectionname", isCollection: true,
                 cardinality: ElementCardinality.OneOrMany);
@@ -414,6 +419,7 @@ namespace CLI.UnitTests.Domain
                 .Materialise()
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "acollectionname"));
@@ -431,35 +437,58 @@ namespace CLI.UnitTests.Domain
 
             var result = solutionItem.Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance.Format(
                     "acollectionname"));
         }
 
         [Fact]
-        public void WhenValidateAndIsAttributeWithInvalidValue_ThenReturnsErrors()
+        public void WhenValidateAndIsDeepCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
+        {
+            var collection = new Element("acollectionname", isCollection: true);
+            var element = new Element("anelementname");
+            var attribute = new Attribute("anattributename", isRequired: true);
+            element.Attributes.Add(attribute);
+            collection.Elements.Add(element);
+
+            var solutionItem = new SolutionItem(collection);
+            solutionItem.MaterialiseCollectionItem();
+
+            var result = solutionItem.Validate(new ValidationContext());
+
+            result.Results.Single().Context.Path.Should().Be($"{{acollectionname.{solutionItem.Items.Single().Id}.anelementname}}");
+            result.Results.Single().Message.Should()
+                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
+        }
+
+        [Fact]
+        public void WhenValidateAndIsAttributeWithMissingRequiredValue_ThenReturnsErrors()
         {
             var attribute = new Attribute("anattributename", isRequired: true);
 
             var result = new SolutionItem(attribute)
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{anattributename}");
             result.Results.Single().Message.Should()
-                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("anattributename"));
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("anattributename"));
         }
 
         [Fact]
         public void WhenValidateAndIsAttributeWithWrongDataTypeValue_ThenReturnsErrors()
         {
-            var attribute = new Attribute("anattributename", "int");
+            var attribute = new Attribute("anattributename");
             var solutionItem = new SolutionItem(attribute)
             {
                 Value = "awrongvalue"
             };
+            attribute.DataType = "int"; //HACK, this should not be possible
 
             var result = solutionItem
                 .Validate(new ValidationContext());
 
+            result.Results.Single().Context.Path.Should().Be("{anattributename}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.Attribute_ValidationRule_WrongDataTypeValue.Format("awrongvalue", "int"));
         }

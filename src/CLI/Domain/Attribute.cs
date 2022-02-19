@@ -105,10 +105,15 @@ namespace Automate.CLI.Domain
 
         public static bool IsValidDataType(string dataType, object value)
         {
+            if (value.IsNull())
+            {
+                return true;
+            }
+
             switch (dataType)
             {
                 case "string":
-                    return value is string || value is null;
+                    return value is string;
 
                 case "bool":
                     return value is bool;
@@ -129,32 +134,29 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public static object SetValue(object value, string dataType)
+        public static object SetValue(string dataType, object value)
         {
+            if (value.IsNull())
+            {
+                return null;
+            }
+
             switch (dataType)
             {
                 case "string":
-                    return value.IsNull()
-                        ? null
-                        : value.ToString();
+                    return value.ToString();
 
                 case "bool":
-                    return value.IsNull()
-                        ? false
-                        : Convert.ToBoolean(value);
+                    return Convert.ToBoolean(value);
 
                 case "int":
-                    return value.IsNull()
-                        ? null
-                        : Convert.ToInt32(value);
+                    return Convert.ToInt32(value);
 
                 case "decimal":
-                    return value.IsNull() ? null : value.IsNull() ? false : Convert.ToDecimal(value);
+                    return Convert.ToDecimal(value);
 
                 case "DateTime":
-                    return value.IsNull()
-                        ? null
-                        : Convert.ToDateTime(value);
+                    return Convert.ToDateTime(value);
 
                 default:
                     throw new ArgumentOutOfRangeException(
@@ -175,7 +177,7 @@ namespace Automate.CLI.Domain
                 if (value.IsNull())
                 {
                     results.Add(new ValidationResult(context,
-                        ValidationMessages.Attribute_ValidationRule_RequiredValue.Format(Name)));
+                        ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format(Name)));
                 }
             }
 

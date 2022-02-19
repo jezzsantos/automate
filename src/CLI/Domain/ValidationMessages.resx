@@ -42,7 +42,7 @@
     <data name="Automation_InvalidCommandIds" xml:space="preserve">
         <value>The command identifiers '{0}' contain at least one invalid value</value>
     </data>
-    <data name="Attribute_ValidationRule_RequiredValue" xml:space="preserve">
+    <data name="Attribute_ValidationRule_RequiredAttributeValue" xml:space="preserve">
         <value>requires its value to be set</value>
     </data>
     <data name="Attribute_ValidationRule_WrongDataTypeValue" xml:space="preserve">

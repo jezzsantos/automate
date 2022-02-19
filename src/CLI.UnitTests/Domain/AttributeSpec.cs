@@ -118,7 +118,7 @@ namespace CLI.UnitTests.Domain
             var result = attribute.Validate(new ValidationContext("apath"), null);
 
             result.Results.Single().Message.Should()
-                .Be(ValidationMessages.Attribute_ValidationRule_RequiredValue.Format("aname"));
+                .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("aname"));
         }
 
         [Fact]
