@@ -28,7 +28,7 @@ At some point later, you will want to change the pattern. Refactor it, or modify
 2. They download and run the upgraded toolkit (CLI or IDE plugin) to upgrade their codebase.
 2. The toolkit detects the previous files/folders that were written before, and detects the previous attribute configuration that was used before. The toolkit re-applies the upgraded pattern (and again, the additional commands are rerun again).
 
-## What problem does it solve?
+### What problem does it solve?
 
 Often, for many software teams (that include individuals varying degrees of expertise from novice to expert) a Tech Lead/Lead Dev/Tech Consultant needs to make some key technical decisions about how things need to get done in that codebase. Architecturally , structurally or in the implementation - all these decisions are constraints on the codebase. Keeping things small, well defined, and consistent is often the key to managing complexity. So that contributors to this codebase can have a single, unified and simpler understanding of the codebase. A reasonable, shared mental model of the codebase, so that they can move freely across the codebase and not fear changing any part of it.
 
@@ -46,7 +46,7 @@ Today's, languages and development tools (IDEs) are so *general purpose* that th
 
 Tech Lead/Lead Dev/Tech Consultant could use a little help from their codebase specific tools.
 
-## Does this apply to you?
+### Does this apply to you?
 
 If these assumptions about your software team are **all true**, then you might consider taking a look at this tool.
 
@@ -60,22 +60,30 @@ If these assumptions about your software team are **all true**, then you might c
 
 If this sounds like your situation then maybe we can help you define (and enforce) some codebase specific coding patterns for your team to reuse.
 
-## Getting Started
+# Getting Started
+
+This project is in early prototype stage. Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
 
 1. Download and install the installer for
-    * CLI
-    * IDE (Visual Studio, Rider)
+    * CLI: [Latest](https://github.com/jezzsantos/automate/releases)
+    * ~~Visual Studio, Rider Plugins (coming later)~~
 
-1. Signup to an account for yourself.
+1. ~~Signup to an account for yourself. (coming later)~~
 
-1. Harvest your first pattern from a codebase.
+1. Harvest your first pattern from a codebase of yours.
 
-1. Add attributes to your pattern to make it programmable.
+    `automate create pattern "MyPattern1"`
+
+1. Add attributes  to your pattern to make it programmable.
+
+    `automate edit add-attribute "Name" --isrequired`
 
 1. Generate a toolkit/plugin for applying the pattern.
 
-1. Share the toolkit with your team/community to use.
+    `automate build toolkit`
+
+1. Share the built toolkit with your team/community to use.
 
 # Learn more
 
-At present we are in a validation stage. Validation, viability and research work is captured in the `docs` folder.
+At present we are in a validation stage. Validation, viability and research work is captured in the `docs` and `discovery` folders.

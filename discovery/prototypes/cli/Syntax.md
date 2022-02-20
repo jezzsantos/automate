@@ -1,6 +1,6 @@
 # CLI Syntax Example
 
-This is a paper prototype of a CLI that could be used to deliver the core capabilities of autōmate.
+This is a **paper prototype** of a CLI that could be used to deliver the core capabilities of autōmate.
 
 ## The Use Case
 
