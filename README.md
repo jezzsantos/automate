@@ -1,10 +1,12 @@
+[![.NET](https://github.com/jezzsantos/automate/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/dotnet.yml)
+
 # autōmate
 
 Templatize patterns from your own codebase, make them programmable, then share them with your team.
 
 ## What is it?
 
-It is a tool for Tech Leads, Lead Developers or Tech Consultants that need to pass on to others coding patterns to re-use in their software product or solution.
+It is a tool for Tech Leads, Lead Developers or Tech Consultants to give their fellow contributors tools that learn to apply the coding patterns in their codebases.
 
 It works like this:
 
@@ -62,19 +64,20 @@ If this sounds like your situation then maybe we can help you define (and enforc
 
 # Getting Started
 
-This project is in early prototype stage. Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
+This project is in early prototype stage. 
+Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
 
-1. Download and install the installer for
-    * CLI: [Latest](https://github.com/jezzsantos/automate/releases)
+1. Download the binaries:
+    * CLI: [Latest](https://github.com/jezzsantos/automate/releases) (set your path to whereever you save this binary) 
     * ~~Visual Studio, Rider Plugins (coming later)~~
 
 1. ~~Signup to an account for yourself. (coming later)~~
 
-1. Harvest your first pattern from a codebase of yours.
+1. Navigate to your codebase, and harvest your first pattern from it.
 
     `automate create pattern "MyPattern1"`
 
-1. Add attributes  to your pattern to make it programmable.
+1. Add attributes, elements and code templates, and make it programmable.
 
     `automate edit add-attribute "Name" --isrequired`
 
