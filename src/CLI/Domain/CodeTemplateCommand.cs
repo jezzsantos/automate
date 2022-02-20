@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Automate.CLI.Extensions;
@@ -79,7 +78,7 @@ namespace Automate.CLI.Domain
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
                     filePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
                 : filePath;
-            var filename = Path.GetFileName(absoluteFilePath);
+            var filename = this.filePathResolver.GetFilename(absoluteFilePath);
 
             var fileExists = this.fileSystemWriter.Exists(absoluteFilePath);
             var willGenerateFile = !IsTearOff || IsTearOff && !fileExists;

@@ -48,6 +48,7 @@ namespace Automate.CLI.Infrastructure
         private static void WriteState(string filename, LocalState state)
         {
             EnsurePathExists(filename);
+            
             using (var file = File.CreateText(filename))
             {
                 file.Write(state.ToJson());
@@ -61,10 +62,14 @@ namespace Automate.CLI.Infrastructure
 
         private static void EnsurePathExists(string filename)
         {
-            var directory = Directory.GetParent(filename)?.FullName ?? string.Empty;
-            if (!Directory.Exists(directory))
+            var fullPath = Directory.GetParent(filename)?.FullName ?? string.Empty;
+            if (fullPath.HasValue())
             {
-                Directory.CreateDirectory(directory);
+                var directory = new DirectoryInfo(fullPath);
+                if (!directory.Exists)
+                {
+                    directory.Create();
+                }
             }
         }
     }

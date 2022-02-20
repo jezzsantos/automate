@@ -25,7 +25,7 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructed_ThenNamed()
         {
             this.template.Name.Should().Be("aname");
-            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory, "CodeTemplateSpec\\afilepath.txt"));
+            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory, Path.Combine("CodeTemplateSpec", "afilepath.txt")));
             this.template.Metadata.OriginalFileExtension.Should().Be("txt");
         }
     }

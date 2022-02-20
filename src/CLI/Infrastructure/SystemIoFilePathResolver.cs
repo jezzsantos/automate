@@ -30,5 +30,10 @@ namespace Automate.CLI.Infrastructure
         {
             return new SystemIoFile(absolutePath);
         }
+
+        public string GetFilename(string absolutePath)
+        {
+            return Path.GetFileName(absolutePath);
+        }
     }
 }

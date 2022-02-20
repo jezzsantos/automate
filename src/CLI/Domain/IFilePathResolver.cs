@@ -18,5 +18,7 @@
         bool ExistsAtPath(string absolutePath);
 
         IFile GetFileAtPath(string absolutePath);
+
+        string GetFilename(string absolutePath);
     }
 }

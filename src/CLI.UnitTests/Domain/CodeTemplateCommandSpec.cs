@@ -66,6 +66,8 @@ namespace CLI.UnitTests.Domain
                 var filePathResolver = new Mock<IFilePathResolver>();
                 filePathResolver.Setup(fpr => fpr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))
                     .Returns("c:\\anabsolutepath\\afilename.cs");
+                filePathResolver.Setup(fpr => fpr.GetFilename(It.IsAny<string>()))
+                    .Returns("afilename.cs");
                 this.fileSystemWriter = new Mock<IFileSystemWriter>();
                 var solutionPathResolver = new Mock<ISolutionPathResolver>();
                 solutionPathResolver
@@ -243,6 +245,8 @@ namespace CLI.UnitTests.Domain
                 var filePathResolver = new Mock<IFilePathResolver>();
                 filePathResolver.Setup(fpr => fpr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))
                     .Returns("c:\\anabsolutepath\\afilename.cs");
+                filePathResolver.Setup(fpr => fpr.GetFilename(It.IsAny<string>()))
+                    .Returns("afilename.cs");
                 this.fileSystemWriter = new Mock<IFileSystemWriter>();
                 var solutionPathResolver = new Mock<ISolutionPathResolver>();
                 solutionPathResolver
