@@ -209,7 +209,7 @@ namespace CLI.UnitTests.Application
             attribute.DataType.Should().Be("string");
             attribute.DefaultValue.Should().Be("adefaultvalue");
             attribute.IsRequired.Should().BeFalse();
-            attribute.Choices.Should().BeEmpty();
+            attribute.Choices.Should().BeNull();
             result.parent.Id.Should().Be(this.store.GetCurrent().Id);
         }
 
@@ -225,7 +225,7 @@ namespace CLI.UnitTests.Application
             attribute.DataType.Should().Be("string");
             attribute.DefaultValue.Should().BeNull();
             attribute.IsRequired.Should().BeFalse();
-            attribute.Choices.Should().BeEmpty();
+            attribute.Choices.Should().BeNull();
         }
 
         [Fact]

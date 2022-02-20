@@ -466,7 +466,7 @@ Now, it time to switch hats, and be a contributor on the tech leads team.
 
 Let's use this toolkit, and define a new API.
 
-#### Creating the New API
+#### Creating a New API
 
 For this example, let's call the new API that we want help building, the: `Orders` API, in the `RoadRunner` product/service.
 
@@ -605,7 +605,7 @@ The `RoadRunner` codebase should now look like this:
 						- Orders.gen.cs
 ```
 
-A codebase contributor will need to manually complete write the missing code in the `OrdersService.cs` class, as this toolkit (as it is now) is not able to take that code any further.
+A codebase contributor will need to manually write the missing code in the `OrdersService.cs` class, as this toolkit (as it is now) is not able to take that code any further.
 
 The codebase contributor could change the configuration of the Orders API in whatever way they like, and execute the command to update the code. Or they can add more service operations.
 

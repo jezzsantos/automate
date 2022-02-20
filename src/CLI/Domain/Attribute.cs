@@ -54,7 +54,9 @@ namespace Automate.CLI.Domain
             DataType = resolvedDataType;
             IsRequired = isRequired;
             DefaultValue = defaultValue;
-            Choices = choices;
+            Choices = choices.HasAny()
+                ? choices
+                : null;
         }
 
         /// <summary>
