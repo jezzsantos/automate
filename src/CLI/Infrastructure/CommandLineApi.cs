@@ -505,7 +505,7 @@ namespace Automate.CLI.Infrastructure
                 ? messageTemplate.FormatTemplateStructured(args)
                 : messageTemplate.FormatTemplate(args), ConsoleColor.DarkYellow);
         }
-        
+
         public static void WriteError(this IConsole console, string message, ConsoleColor color)
         {
             Console.ResetColor();
@@ -531,6 +531,7 @@ namespace Automate.CLI.Infrastructure
             console.WriteLine(message);
             Console.ResetColor();
         }
+
         public static void WriteOutput(string message, ConsoleColor color)
         {
             Console.ResetColor();

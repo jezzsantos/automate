@@ -336,7 +336,7 @@ namespace Automate.CLI.Domain
 
                 return results;
             }
-            
+
             if (IsAttribute)
             {
                 var subContext = new ValidationContext(context);

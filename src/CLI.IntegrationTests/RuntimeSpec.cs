@@ -292,7 +292,7 @@ namespace CLI.IntegrationTests
                             "3. {apattern.ACollection2} requires at least one instance\r\n\r\n"
                         ));
         }
-        
+
         [Fact]
         public void WhenExecuteLaunchPoint_ThenDisplaysSuccess()
         {
