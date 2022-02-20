@@ -25,3 +25,7 @@ jobs:
       run: dotnet test --filter Category=Unit src/Automate.sln --no-build --verbosity normal
     - name: Integration Test
       run: dotnet test --filter Category=Integration src/Automate.sln --no-build --verbosity normal
+    - name: Package
+      run: dotnet publish --configuration:Release -p:PublishSingleFile=true --self-contained true --runtime osx.11.0-x64 src/Automate.sln
+      run: dotnet publish --configuration:Release -p:PublishSingleFile=true --self-contained true --runtime win-x64 src/Automate.sln
+
