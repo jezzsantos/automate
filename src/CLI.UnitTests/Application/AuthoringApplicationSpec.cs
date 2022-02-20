@@ -24,6 +24,8 @@ namespace CLI.UnitTests.Application
             this.filePathResolver = new Mock<IFilePathResolver>();
             this.filePathResolver.Setup(pr => pr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns("afullpath");
+            this.filePathResolver.Setup(pr => pr.GetFileExtension(It.IsAny<string>()))
+                .Returns("anextension");
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             var file = new Mock<IFile>();

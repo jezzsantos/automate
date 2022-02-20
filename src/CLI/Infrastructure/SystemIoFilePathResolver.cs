@@ -14,6 +14,11 @@ namespace Automate.CLI.Infrastructure
             return Path.GetFullPath(Path.Combine(rootPath, relativeOrAbsolutePath));
         }
 
+        public string GetFileExtension(string absolutePath)
+        {
+            return Path.GetExtension(absolutePath);
+        }
+
         public bool ExistsAtPath(string absolutePath)
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));

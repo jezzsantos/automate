@@ -10,7 +10,7 @@ namespace Automate.CLI.Infrastructure
     internal class JsonFileRepository : IPatternRepository, IToolkitRepository, ISolutionRepository,
         ILocalStateRepository
     {
-        private const string PatternDefinitionFilename = "MetaModel.json";
+        private const string PatternDefinitionFilename = "Pattern.json";
         private const string SolutionDefinitionFilename = "Solution.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
         private const string ToolkitInstallerFileExtension = ".toolkit";
@@ -102,8 +102,15 @@ namespace Automate.CLI.Infrastructure
 
         public void UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
         {
-            var uploadedFilePath = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, file.FullPath);
+            var extension = Path.GetExtension(file.FullPath);
+            var uploadedFilePath = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
             file.CopyTo(uploadedFilePath);
+        }
+
+        public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        {
+            var path = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
+            return new SystemIoFile(path).GetContents();
         }
 
         public void DestroyAll()
@@ -260,11 +267,11 @@ namespace Automate.CLI.Infrastructure
             return Path.Combine(PatternLocation, id);
         }
 
-        private string CreateFilenameForCodeTemplate(string id, string codeTemplateId, string templateFullPath)
+        private string CreateFilenameForCodeTemplate(string id, string codeTemplateId, string fileExtension)
         {
             var patternLocation = CreatePathForPattern(id);
             var templateLocation = Path.Combine(patternLocation, CodeTemplateDirectoryName);
-            var templateFilename = $"{codeTemplateId}{Path.GetExtension(templateFullPath)}";
+            var templateFilename = $"{codeTemplateId}{(fileExtension.StartsWith(".") ? "" : ".")}{fileExtension}";
 
             return Path.Combine(this.currentDirectory, Path.Combine(templateLocation, templateFilename));
         }

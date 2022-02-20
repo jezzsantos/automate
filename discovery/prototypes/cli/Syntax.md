@@ -392,7 +392,7 @@ namespace Acme.RoadRunner.DTOs
 >
 > The language used in the templates is a text-templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax, similar to others (basically double-{{ }} statements over an snake_cased object model, starting with a root called:  `model`).
 
-### Step 4 - Generate the Code
+### Step 4 - Add Code Generation Automation
 
 Now that the tech lead has the all the code templates modified, the last step is to define ***when*** the code templates are rendered, and ***where*** the generated code is placed in the codebase of the new `RoadRunner` product.
 

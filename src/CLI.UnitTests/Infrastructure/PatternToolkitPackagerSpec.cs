@@ -17,19 +17,18 @@ namespace CLI.UnitTests.Infrastructure
     public class PatternToolkitPackagerSpec
     {
         private readonly PatternToolkitPackager packager;
-        private readonly Mock<IFilePathResolver> resolver;
+        private readonly Mock<IPatternStore> patternStore;
         private readonly Mock<IToolkitStore> toolkitStore;
 
         public PatternToolkitPackagerSpec()
         {
-            var repo = new MemoryRepository();
-            var patternStore = new PatternStore(repo, repo);
+            this.patternStore = new Mock<IPatternStore>();
             this.toolkitStore = new Mock<IToolkitStore>();
             this.toolkitStore.Setup(store => store.Export(It.IsAny<ToolkitDefinition>()))
                 .Returns("alocation");
-            this.resolver = new Mock<IFilePathResolver>();
-            patternStore.Create("apatternname");
-            this.packager = new PatternToolkitPackager(patternStore, this.toolkitStore.Object, this.resolver.Object);
+            this.patternStore.Setup(ps => ps.GetCurrent())
+                .Returns(new PatternDefinition("apatternname"));
+            this.packager = new PatternToolkitPackager(this.patternStore.Object, this.toolkitStore.Object);
         }
 
         [Fact]
@@ -113,14 +112,14 @@ namespace CLI.UnitTests.Infrastructure
                 Id = "apatternid", Name = "apatternname", ToolkitVersion = "0.0.0",
                 CodeTemplates = new List<CodeTemplate>
                 {
-                    new CodeTemplate("acodetemplatename", "afullpath")
+                    new CodeTemplate("acodetemplatename", "afullpath", "anextension")
                 }
             };
             var fileContents = new byte[] { 0x01 };
-            var file = new Mock<IFile>();
-            file.Setup(f => f.GetContents()).Returns(fileContents);
-            this.resolver.Setup(res => res.GetFileAtPath(It.IsAny<string>()))
-                .Returns(file.Object);
+            this.patternStore.Setup(ps => ps.GetCurrent())
+                .Returns(pattern);
+            this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+                .Returns(fileContents);
 
             var result = this.packager.Pack(pattern, null);
 
@@ -131,6 +130,7 @@ namespace CLI.UnitTests.Infrastructure
                 && toolkit.CodeTemplateFiles.Single().Id == pattern.CodeTemplates.Single().Id
                 && toolkit.CodeTemplateFiles.Single().Contents == fileContents
             )));
+            this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.CodeTemplates.Single().Id));
         }
 
         [Fact]

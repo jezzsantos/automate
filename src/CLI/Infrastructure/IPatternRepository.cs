@@ -22,5 +22,7 @@ namespace Automate.CLI.Infrastructure
         PatternDefinition FindPatternById(string id);
 
         void UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile source);
+
+        byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension);
     }
 }

@@ -20,7 +20,7 @@ namespace Automate.CLI.Application
 
         private AuthoringApplication(string currentDirectory, IPatternStore store, IFilePathResolver fileResolver) :
             this(store, fileResolver, new PatternPathResolver(),
-                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory), fileResolver))
+                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory)))
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
@@ -64,13 +64,14 @@ namespace Automate.CLI.Application
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            var absolutePath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
-            if (!this.fileResolver.ExistsAtPath(absolutePath))
+            var fullPath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
+            if (!this.fileResolver.ExistsAtPath(fullPath))
             {
                 throw new AutomateException(
                     ExceptionMessages.AuthoringApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
                         relativeFilePath));
             }
+            var extension = this.fileResolver.GetFileExtension(fullPath);
 
             IPatternElement target = pattern;
             if (parentExpression.HasValue())
@@ -92,11 +93,11 @@ namespace Automate.CLI.Application
                     .Format(name));
             }
 
-            var codeTemplate = new CodeTemplate(templateName, absolutePath);
+            var codeTemplate = new CodeTemplate(templateName, fullPath, extension);
             pattern.CodeTemplates.Add(codeTemplate);
             this.store.Save(pattern);
 
-            var sourceFile = this.fileResolver.GetFileAtPath(absolutePath);
+            var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
             this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
             return codeTemplate;

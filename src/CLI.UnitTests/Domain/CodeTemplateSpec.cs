@@ -14,7 +14,7 @@ namespace CLI.UnitTests.Domain
         public CodeTemplateSpec()
         {
             var testDirectory = Path.Combine(Environment.CurrentDirectory, "CodeTemplateSpec");
-            this.template = new CodeTemplate("aname", Path.Combine(testDirectory, "afilepath.txt"));
+            this.template = new CodeTemplate("aname", Path.Combine(testDirectory, "afilepath.txt"), "txt");
             if (Directory.Exists(testDirectory))
             {
                 Directory.Delete(testDirectory, true);
@@ -25,6 +25,8 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructed_ThenNamed()
         {
             this.template.Name.Should().Be("aname");
+            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory, "CodeTemplateSpec\\afilepath.txt"));
+            this.template.Metadata.OriginalFileExtension.Should().Be("txt");
         }
     }
 }

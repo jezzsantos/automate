@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -105,6 +106,12 @@ namespace Automate.CLI.Infrastructure
         public void UploadCodeTemplate(PatternDefinition pattern, string templateId, IFile source)
         {
             this.patternRepository.UploadPatternCodeTemplate(pattern, templateId, source);
+        }
+
+        public byte[] DownloadCodeTemplate(PatternDefinition pattern, string codeTemplateId)
+        {
+            var codeTemplate = pattern.CodeTemplates.Safe().First(template => template.Id == codeTemplateId);
+            return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplateId, codeTemplate.Metadata.OriginalFileExtension);
         }
 
         private bool ExistsByName(string name)

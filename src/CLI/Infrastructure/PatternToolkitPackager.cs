@@ -12,20 +12,16 @@ namespace Automate.CLI.Infrastructure
         private const int VersionFieldCount = 3;
         public const string AutoIncrementInstruction = "auto";
         private static readonly Version DefaultVersionNumber = new Version(0, 0, 0);
-        private readonly IFilePathResolver filePathResolver;
         private readonly IPatternStore store;
         private readonly IToolkitStore toolkitStore;
 
-        public PatternToolkitPackager(IPatternStore store, IToolkitStore toolkitStore,
-            IFilePathResolver filePathResolver)
+        public PatternToolkitPackager(IPatternStore store, IToolkitStore toolkitStore)
         {
             store.GuardAgainstNull(nameof(store));
             toolkitStore.GuardAgainstNull(nameof(this.toolkitStore));
-            filePathResolver.GuardAgainstNull(nameof(filePathResolver));
 
             this.store = store;
             this.toolkitStore = toolkitStore;
-            this.filePathResolver = filePathResolver;
         }
 
         public PatternToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
@@ -87,11 +83,14 @@ namespace Automate.CLI.Infrastructure
 
             toolkit.CodeTemplateFiles =
                 toolkit.Pattern.CodeTemplates.ToListSafe()
-                    .Select(template => new CodeTemplateFile
+                    .Select(template =>
                     {
-                        Contents =
-                            this.filePathResolver.GetFileAtPath(template.Metadata.OriginalFilePath).GetContents(),
-                        Id = template.Id
+                        var contents = this.store.DownloadCodeTemplate(toolkit.Pattern, template.Id);
+                        return new CodeTemplateFile
+                        {
+                            Contents = contents,
+                            Id = template.Id
+                        };
                     })
                     .ToList();
         }

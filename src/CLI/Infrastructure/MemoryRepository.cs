@@ -86,6 +86,11 @@ namespace Automate.CLI.Infrastructure
             this.inMemoryCodeTemplates.Add(codeTemplateId, file.GetContents());
         }
 
+        public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        {
+            return this.inMemoryCodeTemplates[codeTemplateId];
+        }
+
         public string SolutionLocation => InMemoryLocation;
 
         public void NewSolution(SolutionDefinition solution)

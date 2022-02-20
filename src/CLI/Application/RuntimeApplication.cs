@@ -25,7 +25,7 @@ namespace Automate.CLI.Application
         private RuntimeApplication(string currentDirectory, IPatternStore patternStore, IToolkitStore toolkitStore,
             ISolutionStore solutionStore, IFilePathResolver fileResolver, ISolutionPathResolver solutionPathResolver) :
             this(toolkitStore, solutionStore, fileResolver,
-                new PatternToolkitPackager(patternStore, toolkitStore, fileResolver), solutionPathResolver)
+                new PatternToolkitPackager(patternStore, toolkitStore), solutionPathResolver)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }

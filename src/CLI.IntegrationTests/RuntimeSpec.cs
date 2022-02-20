@@ -279,7 +279,6 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
         {
-            var testDirectory = Environment.CurrentDirectory;
             var solution = BuildInstallAndCreateSolution();
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
 
