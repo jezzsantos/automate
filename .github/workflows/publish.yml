@@ -1,0 +1,35 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - "#v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Restore dependencies
+        run: dotnet restore src/Automate.sln
+      - name: Build
+        run: dotnet build src/Automate.sln --no-restore
+      - name: Set VERSION variable from tag
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+      - name: Package (NuGet Tool)
+        run: dotnet pack --configuration Release /p:Version=${VERSION} -no-build src/CLI/CLI.csproj
+      - name: Upload Package (NuGet Tool)
+        uses: actions/upload-artifact@v2
+        with:
+          name: Nuget
+          path: src/CLI/nupkg
+          if-no-files-found: error
+      - name: Publish (NuGet Tool)
+        env:
+          NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
+        run: dotnet nuget push src/CLI/nupkg/automate.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_APIKEY
