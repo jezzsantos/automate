@@ -12,6 +12,7 @@
         <PackageLicenseUrl>https://github.com/jezzsantos/automate/blob/main/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Company>jezzsantos</Company>
         <Product>automate</Product>
         <Copyright>Copyright 2022</Copyright>
