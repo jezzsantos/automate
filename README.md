@@ -1,4 +1,4 @@
-[![.NET](https://github.com/jezzsantos/automate/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/dotnet.yml)
+[![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
 
 # autōmate
 
@@ -67,11 +67,8 @@ If this sounds like your situation then maybe we can help you define (and enforc
 This project is in early prototype stage. 
 Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
 
-1. Download the binaries:
-    * CLI: [Latest](https://github.com/jezzsantos/automate/releases) (set your path to whereever you save this binary) 
-    * ~~Visual Studio, Rider Plugins (coming later)~~
-
-1. ~~Signup to an account for yourself. (coming later)~~
+1. Install the tool:
+    * `dotnet tool install --global automate --version 1.0.0`
 
 1. Navigate to your codebase, and harvest your first pattern from it.
 
