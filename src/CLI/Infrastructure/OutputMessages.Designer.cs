@@ -61,7 +61,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added attribute &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_AttributeAdded {
             get {
@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: {Name} has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install &quot;{FilePath}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install &quot;{FilePath}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_BuiltToolkit {
             get {
@@ -79,7 +79,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added code template command &apos;{Name}&apos; with ID: {CommandId}.
+        ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; with ID: {CommandId}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
             get {
@@ -88,7 +88,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added code template {Name} from: {FilePath}.
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; from: &apos;{FilePath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {
@@ -97,7 +97,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code templates:
+        ///   Looks up a localized string similar to Code Templates:
         ///{Templates}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatesListed {
@@ -107,7 +107,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added collection &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
             get {
@@ -116,7 +116,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command &apos;{Command}&apos; was executed successfully:
+        ///   Looks up a localized string similar to The Command:  &apos;{Command}&apos; executed successfully:
         ///{Log}.
         /// </summary>
         internal static string CommandLine_Output_CommandExecuted {
@@ -126,7 +126,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}.
+        ///   Looks up a localized string similar to Created a new Solution from toolkit: &apos;{ToolkitName}&apos;, with ID: {SolutionId}.
         /// </summary>
         internal static string CommandLine_Output_CreateSolutionFromToolkit {
             get {
@@ -135,7 +135,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added element &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
             get {
@@ -154,7 +154,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created solutions:
+        ///   Looks up a localized string similar to Created Solutions:
         ///{Solutions}.
         /// </summary>
         internal static string CommandLine_Output_InstalledSolutionsListed {
@@ -164,7 +164,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: {Name} (v.{Version}) has been installed and is ready to use with command: `automate toolkit create &quot;{Name}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command: `automate toolkit create &quot;{Name}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkit {
             get {
@@ -183,7 +183,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added launch point for commands with name: &apos;{Name}&apos;.
+        ///   Looks up a localized string similar to Added Launch Point for commands with name: &apos;{Name}&apos;.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
@@ -192,7 +192,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no code templates.
+        ///   Looks up a localized string similar to There are no Code Templates in the current pattern yet.
         /// </summary>
         internal static string CommandLine_Output_NoCodeTemplates {
             get {
@@ -201,7 +201,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no created solution.
+        ///   Looks up a localized string similar to There are no created Solutions yet.
         /// </summary>
         internal static string CommandLine_Output_NoInstalledSolutions {
             get {
@@ -210,7 +210,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no installed toolkits.
+        ///   Looks up a localized string similar to There are no installed Toolkits yet.
         /// </summary>
         internal static string CommandLine_Output_NoInstalledToolkits {
             get {
@@ -219,7 +219,9 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Pattern is in use. You must first run command: `automate pattern create &lt;Name&gt;` to create a pattern.
+        ///   Looks up a localized string similar to No Pattern is in use. You must first run one of these commands:
+        ///`automate pattern create &lt;Name&gt;` to create a new pattern, or
+        ///`automate pattern use &lt;Name&gt;` to switch to this existing pattern.
         /// </summary>
         internal static string CommandLine_Output_NoPatternSelected {
             get {
@@ -228,7 +230,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {Name} was created with ID: {PatternId}.
+        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
             get {
@@ -237,7 +239,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {Name} ({Version}) is in use.
+        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; (v.{Version}) is in use.
         /// </summary>
         internal static string CommandLine_Output_PatternInUse {
             get {
@@ -246,7 +248,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: {Name} is the default with ID: {PatternId}.
+        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; is the default with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternSwitched {
             get {
@@ -255,7 +257,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution is configured:
+        ///   Looks up a localized string similar to The Solution is configured:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfiguration {
@@ -265,7 +267,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution item &apos;{0}&apos; (ID: &apos;{1}&apos;) was configured successfully.
+        ///   Looks up a localized string similar to The Solution Item &apos;{Name}&apos; (ID: &apos;{SolutionItemId}&apos;) was configured successfully.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfigured {
             get {
@@ -274,7 +276,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution is not correctly configured in these ways:
+        ///   Looks up a localized string similar to The Solution is not correctly configured in these ways:
         ///{Errors}.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationFailed {
@@ -284,7 +286,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution is configured correctly.
+        ///   Looks up a localized string similar to The Solution is configured correctly.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationSuccess {
             get {

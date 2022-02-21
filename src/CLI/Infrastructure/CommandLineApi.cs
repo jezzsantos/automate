@@ -194,7 +194,7 @@ namespace Automate.CLI.Infrastructure
                 }
                 else
                 {
-                    ConsoleExtensions.WriteError(OutputMessages.CommandLine_Output_NoPatternSelected, ConsoleColor.DarkYellow);
+                    ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoPatternSelected);
                 }
             }
             if (IsRuntimeCommand(args))
@@ -515,12 +515,11 @@ namespace Automate.CLI.Infrastructure
             Console.ResetColor();
         }
 
-        public static void WriteError(string message, ConsoleColor color)
+        public static void WriteErrorWarning(string message)
         {
             Console.ResetColor();
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Error.WriteLine(message);
-            Console.Error.WriteLine();
             Console.ResetColor();
         }
 

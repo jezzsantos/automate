@@ -93,7 +93,9 @@ For each file that contains a fragment of the pattern, they execute this command
 
 `automate edit add-codetemplate "<file-path>"`
 
-> This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically named like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`
+> This command registers a "Code Template" on the `AcmeAPI` pattern, which will be automatically named like `CodeTemplate1`, which contains all the code from the file at the specified relative `<file-path>`.
+>
+> You can set the name of your choice with the `--name` parameter.
 
 For this codebase, we will need four similar commands:
 
@@ -152,13 +154,13 @@ So, they add a collection to the pattern to allow their contributors to define m
 
 And now, they add the necessary attributes of a "service operation":
 
-`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Name" --isrequired --aschildof "{AcmeAPI.ServiceOperation}"`
 
-`automate edit add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Verb" --isrequired --isoneof "POST;PUT;GET;PATCH;DELETE" --aschildof "{AcmeAPI.ServiceOperation}"`
 
-`automate edit add-attribute "Route" --isrequired --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "Route" --isrequired --aschildof "{AcmeAPI.ServiceOperation}"`
 
-`automate edit add-attribute "IsAuthorized" --isrequired --isoftype "bool" --defaultvalueis "true" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-attribute "IsAuthorized" --isrequired --isoftype "bool" --defaultvalueis "true" --aschildof "{AcmeAPI.ServiceOperation}"`
 
 > Note: The tech lead has deliberately ignored some of  the optional behaviours of a "service operation" such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving the pattern as the `RoadRunner` product matures.
 
@@ -166,25 +168,25 @@ Now, a service operation (conceptually) has a HTTP Request DTO and a HTTP Respon
 
 First the request DTO:
 
-`automate edit add-element "Request" --describedas "The HTTP request" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-element "Request" --describedas "The HTTP request" --aschildof "{AcmeAPI.ServiceOperation}"`
 
-`automate edit add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Request}`
+`automate edit add-collection "Field" --displayedas "Fields" --aschildof "{AcmeAPI.ServiceOperation.Request}"`
 
-`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "Name" --isrequired --aschildof "{AcmeAPI.ServiceOperation.Request.Field}"`
 
-`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;decimal,bool;DateTime" --defaultvalueis "string" --aschildof "{AcmeAPI.ServiceOperation.Request.Field}"`
 
-`automate edit add-attribute "IsOptional" --isrequired --isoftype "bool" --defaultvalueis "false" --aschildof {AcmeAPI.ServiceOperation.Request.Field}`
+`automate edit add-attribute "IsOptional" --isrequired --isoftype "bool" --defaultvalueis "false" --aschildof "{AcmeAPI.ServiceOperation.Request.Field}"`
 
 and similarly, for the Response DTO:
 
-`automate edit add-element "Response" --describedas "The HTTP response" --aschildof {AcmeAPI.ServiceOperation}`
+`automate edit add-element "Response" --describedas "The HTTP response" --aschildof "{AcmeAPI.ServiceOperation}"`
 
-`automate edit add-collection "Field" --displayedas "Fields" --aschildof {AcmeAPI.ServiceOperation.Response}`
+`automate edit add-collection "Field" --displayedas "Fields" --aschildof "{AcmeAPI.ServiceOperation.Response}"`
 
-`automate edit add-attribute "Name" --isrequired --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
+`automate edit add-attribute "Name" --isrequired --aschildof "{AcmeAPI.ServiceOperation.Response.Field}"`
 
-`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;bool;DateTime" --defaultvalueis "string" --aschildof {AcmeAPI.ServiceOperation.Response.Field}`
+`automate edit add-attribute "DataType" --isrequired --isoneof "string;int;decimal,bool;DateTime" --defaultvalueis "string" --aschildof "{AcmeAPI.ServiceOperation.Response.Field}"`
 
 Okay, now that's a lot.
 
@@ -204,12 +206,12 @@ It now looks like this:
             - Request (element)
                     - Field (collection)
                             - Name (attribute) (string, required)
-                            - DataType (attribute) (string, required, oneof: string;int;bool;DateTime, default:string)
+                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default:string)
                             - IsOptional (attribute) (bool, required, default:false)
             - Response (element)
                     - Field (collection)
                             - Name (attribute) (string, required)
-                            - DataType (attribute) (string, required, oneof: string;int;bool;DateTime, default:string)
+                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default:string)
 ```
 
 You can run this command to view your current configuration:

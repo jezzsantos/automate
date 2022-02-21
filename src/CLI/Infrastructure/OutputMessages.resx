@@ -25,25 +25,27 @@
         </value>
     </resheader>
     <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
-        <value>No Pattern is in use. You must first run command: `automate pattern create &lt;Name&gt;` to create a pattern</value>
+        <value>No Pattern is in use. You must first run one of these commands:
+`automate pattern create &lt;Name&gt;` to create a new pattern, or
+`automate pattern use &lt;Name&gt;` to switch to this existing pattern</value>
     </data>
     <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
-        <value>Pattern: {Name} ({Version}) is in use</value>
+        <value>Pattern: '{Name}' (v.{Version}) is in use</value>
     </data>
     <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
-        <value>Pattern: {Name} was created with ID: {PatternId}</value>
+        <value>Pattern: '{Name}' was created with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
-        <value>Pattern: {Name} is the default with ID: {PatternId}</value>
+        <value>Pattern: '{Name}' is the default with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added code template {Name} from: {FilePath}</value>
+        <value>Added Code Template: '{Name}' from: '{FilePath}'</value>
     </data>
     <data name="CommandLine_Output_NoCodeTemplates" xml:space="preserve">
-        <value>There are no code templates</value>
+        <value>There are no Code Templates in the current pattern yet</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatesListed" xml:space="preserve">
-        <value>Code templates:
+        <value>Code Templates:
 {Templates}</value>
     </data>
     <data name="CommandLine_Output_ElementsListed" xml:space="preserve">
@@ -51,59 +53,59 @@
 {Tree}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
-        <value>Added attribute '{Name}' to element {ParentId}, with ID: {Id}</value>
+        <value>Added Attribute: '{Name}' to element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
-        <value>Added element '{Name}' to element {ParentId}, with ID: {Id}</value>
+        <value>Added Element: '{Name}' to element '{ParentId}', with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
-        <value>Added collection '{Name}' to element {ParentId}, with ID: {Id}</value>
+        <value>Added Collection: '{Name}' to element '{ParentId}', with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
-        <value>Added code template command '{Name}' with ID: {CommandId}</value>
+        <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
-        <value>Added launch point for commands with name: '{Name}'</value>
+        <value>Added Launch Point for commands with name: '{Name}'</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: {Name} has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install "{FilePath}"`</value>
+        <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install "{FilePath}"`</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: {Name} (v.{Version}) has been installed and is ready to use with command: `automate toolkit create "{Name}"`</value>
+        <value>Toolkit for pattern: '{Name}' (v.{Version}) has been installed and is ready to use with command: `automate toolkit create "{Name}"`</value>
     </data>
     <data name="CommandLine_Output_CreateSolutionFromToolkit" xml:space="preserve">
-        <value>Created a new solution from toolkit {ToolkitName}, with ID: {SolutionId}</value>
+        <value>Created a new Solution from toolkit: '{ToolkitName}', with ID: {SolutionId}</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
-        <value>There are no installed toolkits</value>
+        <value>There are no installed Toolkits yet</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkitsListed" xml:space="preserve">
         <value>Installed toolkits:
 {Toolkits}</value>
     </data>
     <data name="CommandLine_Output_NoInstalledSolutions" xml:space="preserve">
-        <value>There are no created solution</value>
+        <value>There are no created Solutions yet</value>
     </data>
     <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
-        <value>Created solutions:
+        <value>Created Solutions:
 {Solutions}</value>
     </data>
     <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
-        <value>The solution item '{0}' (ID: '{1}') was configured successfully</value>
+        <value>The Solution Item '{Name}' (ID: '{SolutionItemId}') was configured successfully</value>
     </data>
     <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
-        <value>The solution is configured:
+        <value>The Solution is configured:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationFailed" xml:space="preserve">
-        <value>The solution is not correctly configured in these ways:
+        <value>The Solution is not correctly configured in these ways:
 {Errors}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
-        <value>The solution is configured correctly</value>
+        <value>The Solution is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecuted" xml:space="preserve">
-        <value>The command '{Command}' was executed successfully:
+        <value>The Command:  '{Command}' executed successfully:
 {Log}</value>
     </data>
 </root>
