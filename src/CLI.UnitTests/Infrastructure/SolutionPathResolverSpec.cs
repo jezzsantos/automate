@@ -175,10 +175,26 @@ namespace CLI.UnitTests.Infrastructure
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.Attributes.Add(attribute);
-            var solution = new SolutionItem(element);
-            solution.Materialise();
+            var solutionItem = new SolutionItem(element, null);
+            solutionItem.Materialise();
 
-            var result = this.resolver.ResolveExpression("anexpression{{anattributename}}anexpression", solution);
+            var result = this.resolver.ResolveExpression("anexpression{{anattributename}}anexpression", solutionItem);
+
+            result.Should().Be("anexpressionadefaultvalueanexpression");
+        }
+
+        [Fact]
+        public void WhenResolveExpressionAndExpressionContainsParentSyntax_ThenReturnsExpression()
+        {
+            var element = new Element("anelementname");
+            var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
+            element.Attributes.Add(attribute);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element);
+            var solutionItem = new SolutionItem(pattern);
+            solutionItem.Properties["anelementname"].Materialise();
+
+            var result = this.resolver.ResolveExpression("anexpression{{anelementname.parent.properties[\"anelementname\"].properties[\"anattributename\"].value}}anexpression", solutionItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

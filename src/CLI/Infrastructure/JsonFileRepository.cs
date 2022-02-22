@@ -134,6 +134,16 @@ namespace Automate.CLI.Infrastructure
                     .ForEach(directory => Directory.Delete(directory, true));
             }
 
+            var directory = new DirectoryInfo(GetExportedToolkitDirectory());
+            if (directory.Exists)
+            {
+                var toolkits = directory.GetFiles($"*{ToolkitInstallerFileExtension}");
+                foreach (var toolkit in toolkits)
+                {
+                    toolkit.Delete();
+                }
+            }
+
             this.localStateRepository.DestroyAll();
         }
 
@@ -163,7 +173,9 @@ namespace Automate.CLI.Infrastructure
                 throw new AutomateException(ExceptionMessages.JsonFileRepository_SolutionNotFound.Format(id));
             }
 
-            return File.ReadAllText(filename).FromJson<SolutionDefinition>();
+            var solution = File.ReadAllText(filename).FromJson<SolutionDefinition>();
+            solution.Model.PopulateAncestryAfterDeserialization();
+            return solution;
         }
 
         public List<SolutionDefinition> ListSolutions()
@@ -283,9 +295,14 @@ namespace Automate.CLI.Infrastructure
         private static string CreateFilenameForExportedToolkit(string name, string version)
         {
             var filename = Path.ChangeExtension($"{name}_{version}", ToolkitInstallerFileExtension);
-            var directory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var directory = GetExportedToolkitDirectory();
 
             return Path.Combine(directory, filename);
+        }
+
+        private static string GetExportedToolkitDirectory()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         }
 
         private string CreateFilenameForImportedToolkitById(string id)

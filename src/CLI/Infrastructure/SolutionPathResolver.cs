@@ -85,7 +85,8 @@ namespace Automate.CLI.Infrastructure
         {
             var engine = Template.Parse(template);
 
-            return engine.Render(solutionItem.GetConfiguration());
+            var configuration = solutionItem.GetConfiguration(true);
+            return engine.Render(configuration);
         }
     }
 }

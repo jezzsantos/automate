@@ -143,7 +143,7 @@ namespace CLI.UnitTests.Application
         public void WhenListCodeTemplatesAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ListCodeTemplates())
+                .Invoking(x => x.ListCodeTemplates(null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -156,7 +156,7 @@ namespace CLI.UnitTests.Application
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename2", null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename3", null);
 
-            var result = this.application.ListCodeTemplates();
+            var result = this.application.ListCodeTemplates(null);
 
             result.Should().Contain(template => template.Name == "atemplatename1");
             result.Should().Contain(template => template.Name == "atemplatename2");
@@ -419,12 +419,12 @@ namespace CLI.UnitTests.Application
         public void WhenAddCodeTemplateCommandAndParentIsElement_ThenAddsAutomationToElement()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
             var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.aparentelementname}");
+            this.application.AddElement("aparentelementname", null, null, false, ElementCardinality.Single, null);
 
             var result = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
                 "{apatternname.aparentelementname}");

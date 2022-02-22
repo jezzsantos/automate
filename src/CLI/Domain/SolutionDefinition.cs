@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Automate.CLI.Extensions;
-using StringExtensions = ServiceStack.StringExtensions;
+﻿using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
@@ -32,21 +30,7 @@ namespace Automate.CLI.Domain
 
         public string GetConfiguration()
         {
-            return Model.GetConfiguration().ToJson();
-        }
-
-        public CommandExecutionResult ExecuteCommand(string name)
-        {
-            var command =
-                Toolkit.Pattern.Automation.Safe().FirstOrDefault(
-                    automation => StringExtensions.EqualsIgnoreCase(automation.Name, name));
-            if (command.NotExists())
-            {
-                throw new AutomateException(
-                    ExceptionMessages.SolutionDefinition_UnknownCommand.Format(name, PatternName));
-            }
-
-            return command.Execute(Toolkit, Model);
+            return Model.GetConfiguration(false).ToJson();
         }
 
         private void InitialiseSchema()

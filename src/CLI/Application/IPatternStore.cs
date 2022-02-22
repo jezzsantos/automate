@@ -16,6 +16,6 @@ namespace Automate.CLI.Application
 
         void UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file);
 
-        byte[] DownloadCodeTemplate(PatternDefinition pattern, string codeTemplateId);
+        byte[] DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate);
     }
 }

@@ -105,7 +105,7 @@
     <data name="RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
         <value>Tried to configure solution ID: '{1}' but contains invalid assignment: '{0}'</value>
     </data>
-    <data name="RuntimeApplication_ConfigureSolution_AddToExpressionNotFound" xml:space="preserve">
+    <data name="RuntimeApplication_ElementExpressionNotFound" xml:space="preserve">
         <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddElementExists" xml:space="preserve">
@@ -141,10 +141,13 @@
     <data name="SolutionItem_NotAnAttribute" xml:space="preserve">
         <value>The property: '{0}' is not an attribute</value>
     </data>
-    <data name="SolutionDefinition_UnknownCommand" xml:space="preserve">
-        <value>Command: '{0}' does not exist on pattern: '{1}'</value>
+    <data name="SolutionItem_UnknownAutomation" xml:space="preserve">
+        <value>Command: '{0}' does not exist on this element</value>
+    </data>
+    <data name="SolutionItem_HasNoAutomations" xml:space="preserve">
+        <value>This element does not support automation</value>
     </data>
     <data name="CodeTemplateCommand_TemplateNotExists" xml:space="preserve">
-        <value>The code template with ID: '{0}' does not exist in the  toolkit</value>
+        <value>The code template with ID: '{0}' does not exist in the toolkit</value>
     </data>
 </root>

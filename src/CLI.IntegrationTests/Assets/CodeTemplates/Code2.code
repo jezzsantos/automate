@@ -1,0 +1,3 @@
+﻿{{model.a_property3}}
+{{model.parent.a_property1}}
+{{model.parent.an_element1.a_property3}}

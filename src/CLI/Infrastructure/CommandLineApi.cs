@@ -53,6 +53,11 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
                 new Command("list-codetemplates", "Lists the code templates for this pattern")
+                    {
+                        new Option("--aschildof", "The expression of the element/collection",
+                            typeof(string),
+                            arity: ArgumentArity.ZeroOrOne)
+                    }
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListCodeTemplate)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
@@ -159,12 +164,14 @@ namespace Automate.CLI.Infrastructure
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
-                new Argument("SolutionId", "The identifier of the current solution that you are validating")
+                new Argument("SolutionId", "The identifier of the current solution that you are validating"),
+                new Option("--on", "The expression of the element/collection to validate", arity: ArgumentArity.ZeroOrOne)
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate));
             var executeCommands = new Command(ExecuteCommandName, "Executing commands on patterns from toolkits")
             {
                 new Argument("SolutionId", "The identifier of the current solution containing the command"),
-                new Option("--command", "The command name to execute", arity: ArgumentArity.ExactlyOne)
+                new Option("--command", "The command name to execute", arity: ArgumentArity.ExactlyOne),
+                new Option("--on", "The expression of the element/collection containing the command to execute", arity: ArgumentArity.ZeroOrOne)
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand));
 
             var command =
@@ -205,10 +212,12 @@ namespace Automate.CLI.Infrastructure
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) =>
                 {
-                    Console.Error.WriteLine();
-                    context.Console.WriteError(ex.InnerException.Exists()
+                    var message = ex.InnerException.Exists()
                         ? ex.InnerException.Message
-                        : ex.Message, ConsoleColor.Red);
+                        : ex.Message;
+                    Console.Error.WriteLine();
+                    context.Console.WriteError($"Failed Unexpectedly. Reason: {message}", ConsoleColor.Red);
+                    throw ex;
                 }, 1)
                 .Build();
 
@@ -314,9 +323,9 @@ namespace Automate.CLI.Infrastructure
                     template.Metadata.OriginalFilePath);
             }
 
-            internal static void HandleListCodeTemplate(bool outputStructured, IConsole console)
+            internal static void HandleListCodeTemplate(string asChildOf, bool outputStructured, IConsole console)
             {
-                var templates = Authoring.ListCodeTemplates();
+                var templates = Authoring.ListCodeTemplates(asChildOf);
                 if (templates.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplatesListed,
@@ -433,10 +442,10 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleValidate(string solutionId,
+            internal static void HandleValidate(string solutionId, string on,
                 bool outputStructured, IConsole console)
             {
-                var errors = Runtime.ValidateSolution(solutionId);
+                var errors = Runtime.Validate(solutionId, on);
 
                 if (errors.Count > 0)
                 {
@@ -449,10 +458,10 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleExecuteCommand(string solutionId, string command, bool outputStructured,
+            internal static void HandleExecuteCommand(string solutionId, string command, string on, bool outputStructured,
                 IConsole console)
             {
-                var execution = Runtime.ExecuteCommand(solutionId, command);
+                var execution = Runtime.ExecuteCommand(solutionId, command, on);
                 if (execution.IsSuccess)
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,

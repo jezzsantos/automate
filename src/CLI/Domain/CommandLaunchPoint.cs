@@ -25,15 +25,17 @@ namespace Automate.CLI.Domain
 
         public List<string> CommandIds { get; set; }
 
-        public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem ownerSolution)
+        public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem item)
         {
             var logs = new List<string>();
-            toolkit.Pattern.Automation.Safe()
+
+            var automations = item.GetAutomation();
+            automations
                 .Where(auto => CommandIds.Contains(auto.Id))
                 .ToList()
                 .ForEach(cmd =>
                 {
-                    var result = cmd.Execute(toolkit, ownerSolution);
+                    var result = cmd.Execute(toolkit, item);
                     logs.AddRange(result.Log);
                 });
 

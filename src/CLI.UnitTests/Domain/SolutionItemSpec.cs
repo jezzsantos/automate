@@ -12,16 +12,6 @@ namespace CLI.UnitTests.Domain
     public class SolutionItemSpec
     {
         [Fact]
-        public void WhenConstructedWithValue_ThenValueAssigned()
-        {
-            var result = new SolutionItem("avalue", Attribute.DefaultType);
-
-            result.Id.Should().NotBeNull();
-            result.IsMaterialised.Should().BeTrue();
-            result.Value.Should().Be("avalue");
-        }
-
-        [Fact]
         public void WhenConstructedWithPattern_ThenPatternAssigned()
         {
             var pattern = new PatternDefinition("apatternname")
@@ -35,6 +25,19 @@ namespace CLI.UnitTests.Domain
             result.Should().NotBeNull();
             result.Value.Should().BeNull();
             result.IsMaterialised.Should().BeTrue();
+            result.Parent.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenConstructedWithValue_ThenValueAssigned()
+        {
+            var parent = new SolutionItem();
+            var result = new SolutionItem("avalue", Attribute.DefaultType, parent);
+
+            result.Id.Should().NotBeNull();
+            result.IsMaterialised.Should().BeTrue();
+            result.Value.Should().Be("avalue");
+            result.Parent.Should().Be(parent);
         }
 
         [Fact]
@@ -134,7 +137,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndValue_ThenThrows()
         {
-            new SolutionItem(25, "int")
+            new SolutionItem(25, "int", null)
                 .Invoking(x => x.Materialise(99))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
@@ -156,7 +159,7 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .Materialise();
 
             result.Id.Should().NotBeNull();
@@ -175,7 +178,7 @@ namespace CLI.UnitTests.Domain
             collection.Attributes.Add(attribute);
             collection.Elements.Add(element);
 
-            var result = new SolutionItem(collection)
+            var result = new SolutionItem(collection, null)
                 .Materialise();
 
             result.Id.Should().NotBeNull();
@@ -190,7 +193,7 @@ namespace CLI.UnitTests.Domain
         {
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
 
-            var result = new SolutionItem(attribute)
+            var result = new SolutionItem(attribute, null)
                 .Materialise("avalue");
 
             result.Id.Should().NotBeNull();
@@ -203,7 +206,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
 
-            new SolutionItem(element)
+            new SolutionItem(element, null)
                 .Invoking(x => x.MaterialiseCollectionItem())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
@@ -215,7 +218,7 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname", "adisplayname", "adescription", true);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element);
+            var solutionItem = new SolutionItem(element, null);
 
             var result = solutionItem.MaterialiseCollectionItem();
 
@@ -251,7 +254,7 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeTrue();
@@ -262,7 +265,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -271,7 +274,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndAttribute_ThenReturnsFalse()
         {
-            var result = new SolutionItem(new Attribute("anattributename", null))
+            var result = new SolutionItem(new Attribute("anattributename", null), null)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -280,7 +283,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndValue_ThenReturnsFalse()
         {
-            var result = new SolutionItem("avalue", Attribute.DefaultType)
+            var result = new SolutionItem("avalue", Attribute.DefaultType, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -289,7 +292,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenGetPropertyAndNotExists_ThenThrows()
         {
-            new SolutionItem("avalue", Attribute.DefaultType)
+            new SolutionItem("avalue", Attribute.DefaultType, null)
                 .Invoking(x => x.GetProperty("anunknownname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_NotAProperty.Format("anunknownname"));
@@ -315,7 +318,7 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
-            new SolutionItem(element)
+            new SolutionItem(element, null)
                 .Invoking(x => x.GetProperty("anattributename"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_NotMaterialised);
@@ -328,7 +331,7 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.Attributes.Add(attribute);
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .Materialise()
                 .GetProperty("anattributename");
 
@@ -354,7 +357,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname");
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{anelementname}");
@@ -368,7 +371,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("acollectionname", isCollection: true, cardinality: ElementCardinality.OneOrMany);
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{acollectionname}");
@@ -383,7 +386,7 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname");
             element.Attributes.Add(new Attribute("anattributename", isRequired: true));
 
-            var result = new SolutionItem(element)
+            var result = new SolutionItem(element, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -399,7 +402,7 @@ namespace CLI.UnitTests.Domain
             var element2 = new Element("anelementname2");
             element1.Elements.Add(element2);
 
-            var result = new SolutionItem(element1)
+            var result = new SolutionItem(element1, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -415,7 +418,7 @@ namespace CLI.UnitTests.Domain
             var collection = new Element("acollectionname", isCollection: true,
                 cardinality: ElementCardinality.OneOrMany);
 
-            var result = new SolutionItem(collection)
+            var result = new SolutionItem(collection, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -431,7 +434,7 @@ namespace CLI.UnitTests.Domain
             var collection = new Element("acollectionname", isCollection: true,
                 cardinality: ElementCardinality.Single);
 
-            var solutionItem = new SolutionItem(collection);
+            var solutionItem = new SolutionItem(collection, null);
             solutionItem.MaterialiseCollectionItem();
             solutionItem.MaterialiseCollectionItem();
 
@@ -452,7 +455,7 @@ namespace CLI.UnitTests.Domain
             element.Attributes.Add(attribute);
             collection.Elements.Add(element);
 
-            var solutionItem = new SolutionItem(collection);
+            var solutionItem = new SolutionItem(collection, null);
             solutionItem.MaterialiseCollectionItem();
 
             var result = solutionItem.Validate(new ValidationContext());
@@ -467,7 +470,7 @@ namespace CLI.UnitTests.Domain
         {
             var attribute = new Attribute("anattributename", isRequired: true);
 
-            var result = new SolutionItem(attribute)
+            var result = new SolutionItem(attribute, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{anattributename}");
@@ -479,7 +482,7 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsAttributeWithWrongDataTypeValue_ThenReturnsErrors()
         {
             var attribute = new Attribute("anattributename");
-            var solutionItem = new SolutionItem(attribute)
+            var solutionItem = new SolutionItem(attribute, null)
             {
                 Value = "awrongvalue"
             };
@@ -515,7 +518,7 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solutionItem.Properties["acollectionname2"].MaterialiseCollectionItem();
 
-            var result = solutionItem.GetConfiguration();
+            var result = solutionItem.GetConfiguration(false);
 
             result.Should().BeEquivalentTo(new Dictionary<string, object>
             {

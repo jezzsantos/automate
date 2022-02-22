@@ -142,7 +142,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The code template with ID: &apos;{0}&apos; does not exist in the  toolkit.
+        ///   Looks up a localized string similar to The code template with ID: &apos;{0}&apos; does not exist in the toolkit.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateNotExists {
             get {
@@ -259,15 +259,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
-        /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_AddToExpressionNotFound {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddToExpressionNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_ElementPropertyNotExists {
@@ -313,6 +304,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
+        /// </summary>
+        internal static string RuntimeApplication_ElementExpressionNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ElementExpressionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No solution with ID: &apos;{0}&apos; has been created..
         /// </summary>
         internal static string RuntimeApplication_SolutionNotFound {
@@ -340,11 +340,11 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command: &apos;{0}&apos; does not exist on pattern: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to This element does not support automation.
         /// </summary>
-        internal static string SolutionDefinition_UnknownCommand {
+        internal static string SolutionItem_HasNoAutomations {
             get {
-                return ResourceManager.GetString("SolutionDefinition_UnknownCommand", resourceCulture);
+                return ResourceManager.GetString("SolutionItem_HasNoAutomations", resourceCulture);
             }
         }
         
@@ -390,6 +390,15 @@ namespace Automate.CLI {
         internal static string SolutionItem_PatternAlreadyMaterialised {
             get {
                 return ResourceManager.GetString("SolutionItem_PatternAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command: &apos;{0}&apos; does not exist on this element.
+        /// </summary>
+        internal static string SolutionItem_UnknownAutomation {
+            get {
+                return ResourceManager.GetString("SolutionItem_UnknownAutomation", resourceCulture);
             }
         }
         

@@ -34,6 +34,20 @@ namespace Automate.CLI.Domain
 
         public string ToolkitVersion { get; set; }
 
+        public List<CodeTemplate> GetAllCodeTemplates()
+        {
+            var templates = new List<CodeTemplate>();
+            AggregateTemplates(this);
+
+            void AggregateTemplates(IPatternElement element)
+            {
+                element.CodeTemplates.ToListSafe().ForEach(tem => templates.Add(tem));
+                element.Elements.ToListSafe().ForEach(AggregateTemplates);
+            }
+
+            return templates;
+        }
+
         public List<CodeTemplate> CodeTemplates { get; set; }
 
         public List<IAutomation> Automation { get; set; }

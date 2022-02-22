@@ -8,9 +8,11 @@ namespace Automate.CLI.Infrastructure
         public string Transform(string template, SolutionItem solutionItem)
         {
             var engine = Template.Parse(template);
+
+            var configuration = solutionItem.GetConfiguration(true);
             return engine.Render(new
             {
-                Model = solutionItem.GetConfiguration()
+                Model = configuration
             });
         }
     }

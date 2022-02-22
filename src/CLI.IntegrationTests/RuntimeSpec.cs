@@ -52,7 +52,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "1.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "1.0.0"));
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "1.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "1.0.0"));
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var locationV2 = Path.Combine(desktopFolder, "apattern_2.0.toolkit");
+            var locationV2 = Path.Combine(desktopFolder, "APattern_2.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
@@ -81,7 +81,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("apattern", "2.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "2.0.0"));
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             var solution = this.setup.Solutions.Single();
 
@@ -143,7 +143,7 @@ namespace CLI.IntegrationTests
         public void WhenListCreatedSolutionsAndOne_ThenDisplaysOne()
         {
             BuildAndInstallToolkit();
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-solutions");
 
@@ -166,7 +166,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Solutions.Single().Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("apattern", item.Id));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("APattern", item.Id));
             item.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
@@ -195,7 +195,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
-            item.Properties["AProperty4"].Value.Should().Be("adefaultvalue4");
+            item.Properties["AProperty4"].Value.Should().Be("ADefaultValue4");
         }
 
         [Fact]
@@ -234,7 +234,7 @@ namespace CLI.IntegrationTests
                                 new
                                 {
                                     id = solution.Model.Properties["ACollection2"].Items.Single().Id,
-                                    a_property4 = "adefaultvalue4"
+                                    a_property4 = "ADefaultValue4"
                                 }
                             }
                         }
@@ -253,9 +253,9 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
                         .FormatTemplate(
-                            "1. {apattern.AProperty1} requires its value to be set\r\n" +
-                            "2. {apattern.AnElement1} requires at least one instance\r\n" +
-                            "3. {apattern.ACollection2} requires at least one instance\r\n\r\n"
+                            "1. {APattern.AProperty1} requires its value to be set\r\n" +
+                            "2. {APattern.AnElement1} requires at least one instance\r\n" +
+                            "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
                         ));
         }
 
@@ -280,21 +280,21 @@ namespace CLI.IntegrationTests
         public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
         {
             var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint1");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
                         .FormatTemplate(
-                            "1. {apattern.AProperty1} requires its value to be set\r\n" +
-                            "2. {apattern.AnElement1} requires at least one instance\r\n" +
-                            "3. {apattern.ACollection2} requires at least one instance\r\n\r\n"
+                            "1. {APattern.AProperty1} requires its value to be set\r\n" +
+                            "2. {APattern.AnElement1} requires at least one instance\r\n" +
+                            "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
                         ));
         }
 
         [Fact]
-        public void WhenExecuteLaunchPoint_ThenDisplaysSuccess()
+        public void WhenExecuteLaunchPointOnSolution_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
             var solution = BuildInstallAndCreateSolution();
@@ -303,17 +303,42 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command alaunchpoint");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint1");
 
             var artifactLink = this.setup.Solutions.Single().Model.ArtifactLinks.First().Path;
+            var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("alaunchpoint",
-                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bfile.cs",
-                        Path.Combine(testDirectory, @"code\Bfile.cs")) +
-                    "\r\n"));
-            artifactLink.Should()
-                .Be(Path.Combine(testDirectory, @"code\Bfile.cs"));
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("ALaunchPoint1",
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs",
+                        path) + "\r\n"));
+            artifactLink.Should().Be(path);
+            var contents = File.ReadAllText(path);
+            contents.Should().Be("some code");
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointOnElement_ThenDisplaysSuccess()
+        {
+            var testDirectory = Environment.CurrentDirectory;
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint2 --on {{AnElement1}}");
+
+            var artifactLink = this.setup.Solutions.Single().Model.Properties["AnElement1"].ArtifactLinks.First().Path;
+            var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("ALaunchPoint2",
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("parentsubstitutiontest.cs",
+                        path) + "\r\n"));
+            artifactLink.Should().Be(path);
+            var contents = File.ReadAllText(path);
+            contents.Should().Be("B\r\navalue1\r\nB");
         }
 
         private static void DeleteCodeFolder()
@@ -328,37 +353,46 @@ namespace CLI.IntegrationTests
         private SolutionDefinition BuildInstallAndCreateSolution()
         {
             BuildAndInstallToolkit();
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit apattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             return this.setup.Solutions.Single();
         }
 
         private string BuildAndInstallToolkit()
         {
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "apattern_1.0.toolkit");
-            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern apattern");
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\"");
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"CodeTemplate1\" --withpath \"~/code/{{{{an_element1.a_property3}}}}file.cs\"");
-            var commandId = this.setup.Patterns.Single().Automation.Single().Id;
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.a_property3}}}}namingtest.cs\"");
+            var commandId1 = this.setup.Patterns.Single().Automation.Single().Id;
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId} --name alaunchpoint");
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{apattern.AnElement1}} --isoneof \"A;B;C\"");
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{apattern.AnElement1}}");
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ACodeTemplate2 --aschildof {{APattern.AnElement1}}");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{apattern}} --ality OneOrMany");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate2\" --withpath \"~/code/parentsubstitutiontest.cs\" --aschildof {{APattern.AnElement1}}");
+            var commandId2 = this.setup.Patterns.Single().Elements.First().Automation.Single().Id;
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{apattern.ACollection2}} --defaultvalueis adefaultvalue4");
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId2} --name ALaunchPoint2 --aschildof {{APattern.AnElement1}}");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --ality OneOrMany");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.ACollection2}} --defaultvalueis ADefaultValue4");
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "APattern_1.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();

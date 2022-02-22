@@ -86,7 +86,7 @@ namespace Automate.CLI.Application
 
             var templateName = name.HasValue()
                 ? name
-                : $"CodeTemplate{pattern.CodeTemplates.ToListSafe().Count + 1}";
+                : $"CodeTemplate{target.CodeTemplates.ToListSafe().Count + 1}";
             if (CodeTemplateExistsByName(target, templateName))
             {
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
@@ -94,7 +94,7 @@ namespace Automate.CLI.Application
             }
 
             var codeTemplate = new CodeTemplate(templateName, fullPath, extension);
-            pattern.CodeTemplates.Add(codeTemplate);
+            target.CodeTemplates.Add(codeTemplate);
             this.store.Save(pattern);
 
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
@@ -103,12 +103,23 @@ namespace Automate.CLI.Application
             return codeTemplate;
         }
 
-        public List<CodeTemplate> ListCodeTemplates()
+        public List<CodeTemplate> ListCodeTemplates(string parentExpression)
         {
             VerifyCurrentPatternExists();
             var pattern = this.store.GetCurrent();
 
-            return pattern.CodeTemplates.ToListSafe();
+            IPatternElement target = pattern;
+            if (parentExpression.HasValue())
+            {
+                target = this.patternResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
+                }
+            }
+
+            return target.CodeTemplates.ToListSafe();
         }
 
         public (IPatternElement parent, Attribute child) AddAttribute(string name, string type, string defaultValue,
@@ -201,7 +212,7 @@ namespace Automate.CLI.Application
                 }
             }
 
-            var codeTemplate = pattern.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
+            var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(

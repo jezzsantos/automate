@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Automate.CLI.Extensions;
 using StringExtensions = ServiceStack.StringExtensions;
 
@@ -26,13 +27,14 @@ namespace Automate.CLI.Domain
                 .ForEach(attr =>
                 {
                     Properties.Add(attr.Name,
-                        new SolutionItem(attr));
+                        new SolutionItem(attr, this));
                 });
             pattern.Elements.ToListSafe()
-                .ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
+                .ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele, this)); });
+            Parent = null;
         }
 
-        public SolutionItem(Attribute attribute)
+        public SolutionItem(Attribute attribute, SolutionItem parent)
         {
             Id = IdGenerator.Create();
             Name = attribute.Name;
@@ -43,9 +45,10 @@ namespace Automate.CLI.Domain
             SetValue(attribute.DefaultValue, attribute.DataType);
             Properties = null;
             Items = null;
+            Parent = parent;
         }
 
-        public SolutionItem(Element element)
+        public SolutionItem(Element element, SolutionItem parent)
         {
             Id = IdGenerator.Create();
             Name = element.Name;
@@ -56,9 +59,10 @@ namespace Automate.CLI.Domain
             Value = null;
             Properties = null;
             Items = null;
+            Parent = parent;
         }
 
-        public SolutionItem(object value, string dataType)
+        public SolutionItem(object value, string dataType, SolutionItem parent)
         {
             Id = IdGenerator.Create();
             Name = null;
@@ -69,6 +73,7 @@ namespace Automate.CLI.Domain
             SetValue(value, dataType);
             Properties = null;
             Items = null;
+            Parent = parent;
         }
 
         /// <summary>
@@ -77,6 +82,9 @@ namespace Automate.CLI.Domain
         public SolutionItem()
         {
         }
+
+        [IgnoreDataMember]
+        public SolutionItem Parent { get; set; }
 
         public PatternDefinition PatternSchema { get; set; }
 
@@ -132,8 +140,8 @@ namespace Automate.CLI.Domain
             {
                 Properties = new Dictionary<string, SolutionItem>();
                 ElementSchema.Attributes.ToListSafe().ForEach(
-                    attr => { Properties.Add(attr.Name, new SolutionItem(attr)); });
-                ElementSchema.Elements.ToListSafe().ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele)); });
+                    attr => { Properties.Add(attr.Name, new SolutionItem(attr, this)); });
+                ElementSchema.Elements.ToListSafe().ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele, this)); });
                 Items = null;
                 IsMaterialised = true;
             }
@@ -174,7 +182,7 @@ namespace Automate.CLI.Domain
             var collectedElement = ElementSchema.Clone();
             collectedElement.IsCollection = false;
             collectedElement.Cardinality = ElementCardinality.Single;
-            var childItem = new SolutionItem(collectedElement);
+            var childItem = new SolutionItem(collectedElement, this);
             childItem.Materialise();
             Items.Add(childItem);
 
@@ -218,13 +226,17 @@ namespace Automate.CLI.Domain
             return ValidateInternal(context, false);
         }
 
-        public Dictionary<string, object> GetConfiguration()
+        public Dictionary<string, object> GetConfiguration(bool includeAncestry)
         {
             var properties = new Dictionary<string, object>();
-            FilterConfiguration(this, properties);
+
+            var root = Parent.Exists()
+                ? FilterConfiguration(Parent, null, new Dictionary<string, object>())
+                : null;
+            FilterConfiguration(this, root, properties);
             return properties;
 
-            object FilterConfiguration(SolutionItem solutionItem, IDictionary<string, object> props)
+            object FilterConfiguration(SolutionItem solutionItem, object parent, IDictionary<string, object> props)
             {
                 if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
@@ -233,18 +245,25 @@ namespace Automate.CLI.Domain
                 if (solutionItem.IsPattern || solutionItem.IsElement || solutionItem.IsCollection)
                 {
                     props.Add(ConvertName(nameof(Id)), solutionItem.Id);
+                    if (includeAncestry)
+                    {
+                        if (parent.Exists())
+                        {
+                            props.Add(ConvertName(nameof(Parent)), parent);
+                        }
+                    }
                     if (solutionItem.Properties.HasAny())
                     {
                         foreach (var (key, value) in solutionItem.Properties)
                         {
-                            props.Add(ConvertName(key), FilterConfiguration(value, new Dictionary<string, object>()));
+                            props.Add(ConvertName(key), FilterConfiguration(value, solutionItem, new Dictionary<string, object>()));
                         }
                     }
                     if (solutionItem.Items.HasAny())
                     {
                         var items = new List<object>();
                         solutionItem.Items.ForEach(item =>
-                            items.Add(FilterConfiguration(item, new Dictionary<string, object>())));
+                            items.Add(FilterConfiguration(item, solutionItem, new Dictionary<string, object>())));
                         props.Add(ConvertName(nameof(Items)), items);
                     }
                 }
@@ -255,6 +274,65 @@ namespace Automate.CLI.Domain
             string ConvertName(string name)
             {
                 return StringExtensions.ToLowercaseUnderscore(name);
+            }
+        }
+
+        public CommandExecutionResult ExecuteCommand(ToolkitDefinition toolkit, string name)
+        {
+            var automations = GetAutomation();
+            var command =
+                automations.FirstOrDefault(
+                    automation => StringExtensions.EqualsIgnoreCase(automation.Name, name));
+            if (command.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.SolutionItem_UnknownAutomation.Format(name));
+            }
+
+            return command.Execute(toolkit, this);
+        }
+
+        public List<IAutomation> GetAutomation()
+        {
+            List<IAutomation> automations;
+            if (IsPattern)
+            {
+                automations = PatternSchema.Automation.ToListSafe();
+            }
+            else if (IsElement || IsCollection)
+            {
+                automations = ElementSchema.Automation.ToListSafe();
+            }
+            else
+            {
+                throw new AutomateException(ExceptionMessages.SolutionItem_HasNoAutomations);
+            }
+
+            return automations;
+        }
+
+        public void PopulateAncestryAfterDeserialization()
+        {
+            if (!IsPattern)
+            {
+                return;
+            }
+
+            PopulateParent(this, null);
+
+            void PopulateParent(SolutionItem solutionItem, SolutionItem parent)
+            {
+                solutionItem.Parent = parent;
+                var properties = solutionItem.Properties.Safe();
+                foreach (var property in properties)
+                {
+                    PopulateParent(property.Value, solutionItem);
+                }
+                var items = solutionItem.Items.Safe();
+                foreach (var item in items)
+                {
+                    PopulateParent(item, solutionItem);
+                }
             }
         }
 

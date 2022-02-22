@@ -37,7 +37,7 @@ namespace CLI.UnitTests.Infrastructure
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.Attributes.Add(attribute);
-            var solution = new SolutionItem(element);
+            var solution = new SolutionItem(element, null);
             solution.Materialise();
 
             var result = this.engine.Transform("{{model.anattributename}}", solution);

@@ -76,16 +76,18 @@ namespace Automate.CLI.Infrastructure
 
         private void PackageAssets(ToolkitDefinition toolkit)
         {
-            if (toolkit.Pattern.CodeTemplates.HasNone())
+            var codeTemplates = toolkit.Pattern.GetAllCodeTemplates();
+            if (codeTemplates.HasNone())
             {
+                toolkit.CodeTemplateFiles = null;
                 return;
             }
 
             toolkit.CodeTemplateFiles =
-                toolkit.Pattern.CodeTemplates.ToListSafe()
+                codeTemplates
                     .Select(template =>
                     {
-                        var contents = this.store.DownloadCodeTemplate(toolkit.Pattern, template.Id);
+                        var contents = this.store.DownloadCodeTemplate(toolkit.Pattern, template);
                         return new CodeTemplateFile
                         {
                             Contents = contents,

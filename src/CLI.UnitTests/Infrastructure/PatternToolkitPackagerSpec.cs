@@ -112,13 +112,23 @@ namespace CLI.UnitTests.Infrastructure
                 Id = "apatternid", Name = "apatternname", ToolkitVersion = "0.0.0",
                 CodeTemplates = new List<CodeTemplate>
                 {
-                    new CodeTemplate("acodetemplatename", "afullpath", "anextension")
+                    new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1")
+                },
+                Elements = new List<Element>
+                {
+                    new Element("anelementname")
+                    {
+                        CodeTemplates = new List<CodeTemplate>
+                        {
+                            new CodeTemplate("acodetemplatename2", "afullpath2", "anextension2")
+                        }
+                    }
                 }
             };
             var fileContents = new byte[] { 0x01 };
             this.patternStore.Setup(ps => ps.GetCurrent())
                 .Returns(pattern);
-            this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+            this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
                 .Returns(fileContents);
 
             var result = this.packager.Pack(pattern, null);
@@ -127,10 +137,14 @@ namespace CLI.UnitTests.Infrastructure
                 ctf.Id == pattern.CodeTemplates.Single().Id && ctf.Contents == fileContents);
             this.toolkitStore.Verify(repo => repo.Export(It.Is<ToolkitDefinition>(toolkit =>
                 toolkit.Version == "1.0.0"
-                && toolkit.CodeTemplateFiles.Single().Id == pattern.CodeTemplates.Single().Id
-                && toolkit.CodeTemplateFiles.Single().Contents == fileContents
+                && toolkit.CodeTemplateFiles.Count == 2
+                && toolkit.CodeTemplateFiles[0].Id == pattern.CodeTemplates.Single().Id
+                && toolkit.CodeTemplateFiles[0].Contents == fileContents
+                && toolkit.CodeTemplateFiles[1].Id == pattern.Elements.Single().CodeTemplates.Single().Id
+                && toolkit.CodeTemplateFiles[1].Contents == fileContents
             )));
-            this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.CodeTemplates.Single().Id));
+            this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.CodeTemplates.Single()));
+            this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.Elements.Single().CodeTemplates.Single()));
         }
 
         [Fact]

@@ -57,7 +57,6 @@ namespace CLI.UnitTests.Domain
             var commandId = IdGenerator.Create();
             var launchPoint =
                 new CommandLaunchPoint("alaunchpointname", new List<string> { commandId });
-            var ownerSolution = new SolutionItem();
             var automation = new Mock<IAutomation>();
             automation.Setup(aut => aut.Id)
                 .Returns(commandId);
@@ -71,12 +70,13 @@ namespace CLI.UnitTests.Domain
                 }
             };
             var toolkit = new ToolkitDefinition(pattern, "1.0");
+            var solutionItem = new SolutionItem(pattern);
 
-            var result = launchPoint.Execute(toolkit, ownerSolution);
+            var result = launchPoint.Execute(toolkit, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("alogentry");
-            automation.Verify(aut => aut.Execute(toolkit, ownerSolution));
+            automation.Verify(aut => aut.Execute(toolkit, solutionItem));
         }
     }
 }

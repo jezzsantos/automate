@@ -181,7 +181,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddToExpressionNotFound.Format(
+                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
                         "apatternname", "anelementexpression"));
         }
 
@@ -226,7 +226,7 @@ namespace CLI.UnitTests.Application
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(solution);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname")));
+                .Returns(new SolutionItem(new Element("anelementname"), null));
 
             var result = this.application.ConfigureSolution("asolutionid", "apatternname.anelement", null, null);
 
@@ -246,7 +246,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.ConfigureSolution("asolutionid", null, "acollectionexpression", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddToExpressionNotFound.Format(
+                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
                         "apatternname", "acollectionexpression"));
         }
 
@@ -256,7 +256,7 @@ namespace CLI.UnitTests.Application
             var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(solution);
-            var solutionItem = new SolutionItem(new Element("acollectionname", null, null, true));
+            var solutionItem = new SolutionItem(new Element("acollectionname", null, null, true), null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -272,7 +272,7 @@ namespace CLI.UnitTests.Application
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname")));
+                .Returns(new SolutionItem(new Element("anelementname"), null));
 
             this.application
                 .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null,
@@ -294,7 +294,7 @@ namespace CLI.UnitTests.Application
             };
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element);
+            var solutionItem = new SolutionItem(element, null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -315,7 +315,7 @@ namespace CLI.UnitTests.Application
             var attribute = new Attribute("anattributename", "int");
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element);
+            var solutionItem = new SolutionItem(element, null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -341,7 +341,7 @@ namespace CLI.UnitTests.Application
             };
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element);
+            var solutionItem = new SolutionItem(element, null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -363,7 +363,7 @@ namespace CLI.UnitTests.Application
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element);
+            var solutionItem = new SolutionItem(element, null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -432,9 +432,45 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionDefinition)null);
 
             this.application
-                .Invoking(x => x.ValidateSolution("asolutionid"))
+                .Invoking(x => x.Validate("asolutionid", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format("asolutionid"));
+        }
+
+        [Fact]
+        public void WhenValidateSolutionAndElementNotExist_ThenThrows()
+        {
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns((SolutionItem)null);
+
+            this.application
+                .Invoking(x => x.Validate("asolutionid", "anelementexpression"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format("apatternname", "anelementexpression"));
+        }
+
+        [Fact]
+        public void WhenValidateElement_ThenReturnsResults()
+        {
+            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
+            var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element1);
+            pattern.Elements.Add(element2);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(solution);
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solution.Model.Properties["anelementname1"]);
+
+            var result = this.application.Validate("asolutionid", "{anelementname}");
+
+            result.Results.Count.Should().Be(1);
+            result.Results.Should().Contain(r => r.Context.Path == "{anelementname1}" &&
+                                                 r.Message == ValidationMessages
+                                                     .SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
 
         [Fact]
@@ -450,13 +486,13 @@ namespace CLI.UnitTests.Application
             pattern.Attributes.Add(attribute1);
             pattern.Elements.Add(element1);
             pattern.Elements.Add(collection2);
-
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
-
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(solution);
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solution.Model);
 
-            var result = this.application.ValidateSolution("asolutionid");
+            var result = this.application.Validate("asolutionid", null);
 
             result.Results.Count.Should().Be(2);
             result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&
@@ -474,13 +510,51 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionDefinition)null);
 
             this.application
-                .Invoking(x => x.ExecuteCommand("asolutionid", "acommandname"))
+                .Invoking(x => x.ExecuteCommand("asolutionid", "acommandname", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format("asolutionid"));
         }
 
         [Fact]
-        public void WhenExecuteCommand_ThenReturnsResult()
+        public void WhenExecuteCommandAndElementNotExist_ThenThrows()
+        {
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns((SolutionItem)null);
+
+            this.application
+                .Invoking(x => x.ExecuteCommand("asolutionid", "acommandname", "anelementexpression"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format("apatternname", "anelementexpression"));
+        }
+
+        [Fact]
+        public void WhenExecuteCommandOnElement_ThenReturnsResult()
+        {
+            var element = new Element("anelementname", "adisplayname", "adescription");
+            var automation = new Mock<IAutomation>();
+            automation.Setup(auto => auto.Name)
+                .Returns("acommandname");
+            automation.Setup(auto => auto.Execute(It.IsAny<ToolkitDefinition>(), It.IsAny<SolutionItem>()))
+                .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
+            element.Automation.Add(automation.Object);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(solution);
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solution.Model.Properties["anelementname"].Materialise());
+
+            var result = this.application.ExecuteCommand("asolutionid", "acommandname", "anelementname");
+
+            result.CommandName.Should().Be("acommandname");
+            result.Log.Should().ContainSingle("alogentry");
+        }
+
+        [Fact]
+        public void WhenExecuteCommandOnSolution_ThenReturnsResult()
         {
             var pattern = new PatternDefinition("apatternname");
             var automation = new Mock<IAutomation>();
@@ -490,11 +564,12 @@ namespace CLI.UnitTests.Application
                 .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
             pattern.Automation.Add(automation.Object);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
-
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
-                .Returns(solution);
+                .Returns(new SolutionDefinition(new ToolkitDefinition(pattern, "1.0")));
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solution.Model);
 
-            var result = this.application.ExecuteCommand("asolutionid", "acommandname");
+            var result = this.application.ExecuteCommand("asolutionid", "acommandname", null);
 
             result.CommandName.Should().Be("acommandname");
             result.Log.Should().ContainSingle("alogentry");

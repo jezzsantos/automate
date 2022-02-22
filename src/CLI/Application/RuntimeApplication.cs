@@ -118,14 +118,14 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
             }
 
-            var newItem = solution.Model;
+            var target = solution.Model;
             if (addElementExpression.HasValue())
             {
                 var solutionItem = this.solutionPathResolver.ResolveItem(solution, addElementExpression);
                 if (solutionItem.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ConfigureSolution_AddToExpressionNotFound.Format(
+                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
                             solution.PatternName,
                             addElementExpression));
                 }
@@ -137,7 +137,7 @@ namespace Automate.CLI.Application
                             addElementExpression));
                 }
 
-                newItem = solutionItem.Materialise();
+                target = solutionItem.Materialise();
             }
 
             if (addToCollectionExpression.HasValue())
@@ -146,12 +146,12 @@ namespace Automate.CLI.Application
                 if (collection.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ConfigureSolution_AddToExpressionNotFound.Format(
+                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
                             solution.PatternName,
                             addToCollectionExpression));
                 }
 
-                newItem = collection.MaterialiseCollectionItem();
+                target = collection.MaterialiseCollectionItem();
             }
 
             if (propertyAssignments.Safe().Any())
@@ -162,14 +162,14 @@ namespace Automate.CLI.Application
                         .ToDictionary(pair => pair.Name, pair => pair.Value);
                 foreach (var (name, value) in nameValues)
                 {
-                    if (!newItem!.HasAttribute(name))
+                    if (!target!.HasAttribute(name))
                     {
                         throw new AutomateException(
                             ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyNotExists.Format(
-                                newItem.Name, name));
+                                target.Name, name));
                     }
 
-                    var property = newItem.GetProperty(name);
+                    var property = target.GetProperty(name);
                     if (property.IsChoice)
                     {
                         if (!property.HasChoice(value))
@@ -177,7 +177,7 @@ namespace Automate.CLI.Application
                             throw new AutomateException(
                                 ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf
                                     .Format(
-                                        newItem.Name, name, property.ChoiceValues.Join(";"), value));
+                                        target.Name, name, property.ChoiceValues.Join(";"), value));
                         }
                     }
                     else
@@ -187,7 +187,7 @@ namespace Automate.CLI.Application
                             throw new AutomateException(
                                 ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible
                                     .Format(
-                                        newItem.Name, name, property.DataType, value));
+                                        target.Name, name, property.DataType, value));
                         }
                     }
 
@@ -197,7 +197,7 @@ namespace Automate.CLI.Application
 
             this.solutionStore.Save(solution);
 
-            return newItem;
+            return target;
         }
 
         public string GetSolutionConfiguration(string solutionId)
@@ -211,7 +211,7 @@ namespace Automate.CLI.Application
             return solution.GetConfiguration();
         }
 
-        public ValidationResults ValidateSolution(string solutionId)
+        public ValidationResults Validate(string solutionId, string elementExpression)
         {
             var solution = this.solutionStore.FindById(solutionId);
             if (solution.NotExists())
@@ -219,15 +219,41 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
             }
 
-            return solution.Model.Validate(new ValidationContext());
+            var target = solution.Model;
+            if (elementExpression.HasValue())
+            {
+                var solutionItem = this.solutionPathResolver.ResolveItem(solution, elementExpression);
+                if (solutionItem.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(solution.PatternName,
+                            elementExpression));
+                }
+                target = solutionItem;
+            }
+
+            return target.Validate(new ValidationContext());
         }
 
-        public CommandExecutionResult ExecuteCommand(string solutionId, string name)
+        public CommandExecutionResult ExecuteCommand(string solutionId, string name, string elementExpression)
         {
             var solution = this.solutionStore.FindById(solutionId);
             if (solution.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
+            }
+
+            var target = solution.Model;
+            if (elementExpression.HasValue())
+            {
+                var solutionItem = this.solutionPathResolver.ResolveItem(solution, elementExpression);
+                if (solutionItem.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(solution.PatternName,
+                            elementExpression));
+                }
+                target = solutionItem;
             }
 
             var validationResults = solution.Model.Validate(new ValidationContext());
@@ -236,7 +262,7 @@ namespace Automate.CLI.Application
                 return new CommandExecutionResult(name, validationResults);
             }
 
-            var result = solution.ExecuteCommand(name);
+            var result = target.ExecuteCommand(solution.Toolkit, name);
             this.solutionStore.Save(solution);
 
             return result;
