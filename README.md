@@ -64,23 +64,22 @@ If this sounds like your situation then maybe we can help you define (and enforc
 
 # Getting Started
 
-This project is in early prototype stage. 
-Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
+This project is in early prototype stage. Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
 
 1. Install the tool:
-    * `dotnet tool install --global automate --version 1.0.0`
+    * `dotnet tool install --global automate`
 
 1. Navigate to your codebase, and harvest your first pattern from it.
 
-    `automate create pattern "MyPattern1"`
+   `automate create pattern "MyPattern1"`
 
 1. Add attributes, elements and code templates, and make it programmable.
 
-    `automate edit add-attribute "Name" --isrequired`
+   `automate edit add-attribute "Name" --isrequired`
 
 1. Generate a toolkit/plugin for applying the pattern.
 
-    `automate build toolkit`
+   `automate build toolkit`
 
 1. Share the built toolkit with your team/community to use.
 
