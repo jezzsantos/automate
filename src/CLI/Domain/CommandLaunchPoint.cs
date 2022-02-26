@@ -25,19 +25,34 @@ namespace Automate.CLI.Domain
 
         public List<string> CommandIds { get; set; }
 
-        public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem item)
+        public override CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
         {
             var logs = new List<string>();
 
-            var automations = item.GetAutomation();
-            automations
-                .Where(auto => CommandIds.Contains(auto.Id))
-                .ToList()
-                .ForEach(cmd =>
+            CommandIds.ToListSafe().ForEach(cmdId =>
+            {
+                var (command, solutionItem) = solution.FindAutomation(cmdId);
+                if (command.NotExists())
                 {
-                    var result = cmd.Execute(toolkit, item);
+                    throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
+                }
+
+                if (solutionItem.IsCollection)
+                {
+                    solutionItem.Items
+                        .ToListSafe()
+                        .ForEach(item =>
+                        {
+                            var result = command.Execute(solution, item);
+                            logs.AddRange(result.Log);
+                        });
+                }
+                else
+                {
+                    var result = command.Execute(solution, solutionItem);
                     logs.AddRange(result.Log);
-                });
+                }
+            });
 
             return new CommandExecutionResult(Name, logs);
         }

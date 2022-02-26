@@ -95,7 +95,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepElementExpressionNotExist_ThenReturnsNull()
+        public void WhenResolveAndDescendantElementExpressionNotExist_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
             var elementLevel1 = new Element("anelementname1");
@@ -109,7 +109,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepElementExpressionExists_ThenReturnsElement()
+        public void WhenResolveAndDescendantElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
             var elementLevel1 = new Element("anelementname1");
@@ -137,7 +137,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepCollectionExpressionNotExist_ThenReturnsNull()
+        public void WhenResolveAndDescendantCollectionExpressionNotExist_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
             var collectionLevel1 = new Element("acollectionname1", null, null, true);
@@ -152,7 +152,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepCollectionExpressionExists_ThenReturnsElement()
+        public void WhenResolveAndDescendantCollectionExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
             var collectionLevel1 = new Element("acollectionname1", null, null, true);

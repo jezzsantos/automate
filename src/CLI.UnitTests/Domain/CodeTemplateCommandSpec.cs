@@ -83,7 +83,7 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndNoArtifactLinkAndFileNotExist_ThenGeneratesFileAndAddsArtifactLink()
             {
-                var ownerSolution = new SolutionItem();
+                var target = new SolutionItem();
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
                 {
                     CodeTemplateFiles = new List<CodeTemplateFile>
@@ -95,21 +95,22 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 };
+                var solution = new SolutionDefinition(toolkit);
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(false);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, target);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", ownerSolution));
+                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", target));
                 this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                ownerSolution.ArtifactLinks.Should().ContainSingle(link =>
+                target.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
@@ -134,8 +135,9 @@ namespace CLI.UnitTests.Domain
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
+                var solution = new SolutionDefinition(toolkit);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, ownerSolution);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
@@ -175,8 +177,9 @@ namespace CLI.UnitTests.Domain
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(false);
+                var solution = new SolutionDefinition(toolkit);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, ownerSolution);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
@@ -216,8 +219,9 @@ namespace CLI.UnitTests.Domain
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
+                var solution = new SolutionDefinition(toolkit);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, ownerSolution);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
@@ -276,8 +280,9 @@ namespace CLI.UnitTests.Domain
                 };
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
+                var solution = new SolutionDefinition(toolkit);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, ownerSolution);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
@@ -317,8 +322,9 @@ namespace CLI.UnitTests.Domain
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
+                var solution = new SolutionDefinition(toolkit);
 
-                var result = this.command.Execute(toolkit, ownerSolution);
+                var result = this.command.Execute(solution, ownerSolution);
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should().BeEmpty();

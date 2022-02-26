@@ -461,7 +461,7 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleExecuteCommand(string solutionId, string command, string on, bool outputStructured,
                 IConsole console)
             {
-                var execution = Runtime.ExecuteCommand(solutionId, command, on);
+                var execution = Runtime.ExecuteLaunchPoint(solutionId, command, on);
                 if (execution.IsSuccess)
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,

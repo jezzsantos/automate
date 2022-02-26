@@ -109,7 +109,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenConstructedWithDeepSchema_ThenDeepElementsAssigned()
+        public void WhenConstructedWithDescendantSchema_ThenDescendantElementsAssigned()
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3", "adisplayname3", "adescription3", true);
@@ -447,7 +447,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsDeepCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
+        public void WhenValidateAndIsDescendantCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var collection = new Element("acollectionname", isCollection: true);
             var element = new Element("anelementname");
@@ -554,6 +554,35 @@ namespace CLI.UnitTests.Domain
                     }
                 }
             });
+        }
+
+        [Fact]
+        public void WhenExecuteCommandAndAutomationNotExists_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(pattern, "1.0")), "acommandname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_UnknownAutomation.Format("acommandname"));
+        }
+
+        [Fact]
+        public void WhenExecuteCommand_ThenReturnsResult()
+        {
+            var automation = new TestAutomation("anautomationid");
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Automation.Add(automation);
+            var solutionItem = new SolutionItem(pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+
+            var result = solutionItem.ExecuteCommand(solution, "anautomationname");
+
+            result.CommandName.Should().Be("anautomationname");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().ContainSingle("alogentry");
+            result.Errors.Should().BeEmpty();
         }
     }
 }

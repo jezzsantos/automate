@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
+using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace Automate.CLI.Application
 {
@@ -261,7 +263,16 @@ namespace Automate.CLI.Application
                     ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(launchPointName));
             }
 
-            var commandIdentifiers = commandIds.SafeSplit(";").ToList();
+            var commandIdentifiers = commandIds.SafeSplit(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+            commandIdentifiers.ForEach(cmdId =>
+            {
+                var codeTemplate = pattern.FindAutomation(cmdId);
+                if (codeTemplate.NotExists())
+                {
+                    throw new AutomateException(ExceptionMessages.AuthoringApplication_CommandIdNotFound.Format(cmdId));
+                }
+            });
+
             var automation = new CommandLaunchPoint(launchPointName, commandIdentifiers);
             target.Automation.Add(automation);
             this.store.Save(pattern);

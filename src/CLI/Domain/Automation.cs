@@ -23,7 +23,7 @@ namespace Automate.CLI.Domain
 
         public string Name { get; set; }
 
-        public abstract CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem item);
+        public abstract CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target);
 
         public string Id { get; set; }
     }

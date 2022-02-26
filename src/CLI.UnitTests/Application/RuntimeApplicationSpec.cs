@@ -504,19 +504,19 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenExecuteCommandAndSolutionNotExist_ThenThrows()
+        public void WhenExecuteLaunchPointAndSolutionNotExist_ThenThrows()
         {
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns((SolutionDefinition)null);
 
             this.application
-                .Invoking(x => x.ExecuteCommand("asolutionid", "acommandname", null))
+                .Invoking(x => x.ExecuteLaunchPoint("asolutionid", "acommandname", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format("asolutionid"));
         }
 
         [Fact]
-        public void WhenExecuteCommandAndElementNotExist_ThenThrows()
+        public void WhenExecuteLaunchPointAndElementNotExist_ThenThrows()
         {
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
@@ -524,19 +524,19 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionItem)null);
 
             this.application
-                .Invoking(x => x.ExecuteCommand("asolutionid", "acommandname", "anelementexpression"))
+                .Invoking(x => x.ExecuteLaunchPoint("asolutionid", "acommandname", "anelementexpression"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format("apatternname", "anelementexpression"));
         }
 
         [Fact]
-        public void WhenExecuteCommandOnElement_ThenReturnsResult()
+        public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
             var automation = new Mock<IAutomation>();
             automation.Setup(auto => auto.Name)
                 .Returns("acommandname");
-            automation.Setup(auto => auto.Execute(It.IsAny<ToolkitDefinition>(), It.IsAny<SolutionItem>()))
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), It.IsAny<SolutionItem>()))
                 .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
             element.Automation.Add(automation.Object);
             var pattern = new PatternDefinition("apatternname");
@@ -547,20 +547,20 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model.Properties["anelementname"].Materialise());
 
-            var result = this.application.ExecuteCommand("asolutionid", "acommandname", "anelementname");
+            var result = this.application.ExecuteLaunchPoint("asolutionid", "acommandname", "anelementname");
 
             result.CommandName.Should().Be("acommandname");
             result.Log.Should().ContainSingle("alogentry");
         }
 
         [Fact]
-        public void WhenExecuteCommandOnSolution_ThenReturnsResult()
+        public void WhenExecuteLaunchPointOnSolution_ThenReturnsResult()
         {
             var pattern = new PatternDefinition("apatternname");
             var automation = new Mock<IAutomation>();
             automation.Setup(auto => auto.Name)
                 .Returns("acommandname");
-            automation.Setup(auto => auto.Execute(It.IsAny<ToolkitDefinition>(), It.IsAny<SolutionItem>()))
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), It.IsAny<SolutionItem>()))
                 .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
             pattern.Automation.Add(automation.Object);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
@@ -569,7 +569,7 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model);
 
-            var result = this.application.ExecuteCommand("asolutionid", "acommandname", null);
+            var result = this.application.ExecuteLaunchPoint("asolutionid", "acommandname", null);
 
             result.CommandName.Should().Be("acommandname");
             result.Log.Should().ContainSingle("alogentry");

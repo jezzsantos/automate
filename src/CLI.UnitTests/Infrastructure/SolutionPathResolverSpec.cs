@@ -117,7 +117,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepElementExpressionNotMaterialised_ThenReturnsNull()
+        public void WhenResolveAndDescendantElementExpressionNotMaterialised_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
@@ -135,7 +135,7 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenResolveAndDeepElementExpressionExists_ThenReturnsElement()
+        public void WhenResolveAndDescendantElementExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");

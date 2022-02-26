@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
@@ -11,6 +13,14 @@ namespace CLI.UnitTests.Domain
     [Trait("Category", "Unit")]
     public class CommandLaunchPointSpec
     {
+        private readonly CommandLaunchPoint launchPoint;
+
+        public CommandLaunchPointSpec()
+        {
+            this.launchPoint =
+                new CommandLaunchPoint("alaunchpointname", new List<string> { IdGenerator.Create() });
+        }
+
         [Fact]
         public void WhenConstructedAndNameIsMissing_ThenThrows()
         {
@@ -52,31 +62,92 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenExecute_ThenExecutesAutomation()
+        public void WhenExecuteAndCommandNotFound_ThenThrows()
         {
-            var commandId = IdGenerator.Create();
-            var launchPoint =
-                new CommandLaunchPoint("alaunchpointname", new List<string> { commandId });
-            var automation = new Mock<IAutomation>();
-            automation.Setup(aut => aut.Id)
-                .Returns(commandId);
-            automation.Setup(aut => aut.Execute(It.IsAny<ToolkitDefinition>(), It.IsAny<SolutionItem>()))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry" }));
-            var pattern = new PatternDefinition("apatternname")
-            {
-                Automation = new List<IAutomation>
-                {
-                    automation.Object
-                }
-            };
-            var toolkit = new ToolkitDefinition(pattern, "1.0");
-            var solutionItem = new SolutionItem(pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
+            var solutionItem = solution.Model;
 
-            var result = launchPoint.Execute(toolkit, solutionItem);
+            this.launchPoint
+                .Invoking(x => x.Execute(solution, solutionItem))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(this.launchPoint.CommandIds.First()));
+        }
+
+        [Fact]
+        public void WhenExecuteAndCommandOnPattern_ThenExecutesCommandOnSingleElement()
+        {
+            var automation = new Mock<IAutomation>();
+            automation.Setup(auto => auto.Id)
+                .Returns(this.launchPoint.CommandIds.First());
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Automation.Add(automation.Object);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solutionItem = solution.Model;
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), solutionItem))
+                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry" }));
+
+            var result = this.launchPoint.Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("alogentry");
-            automation.Verify(aut => aut.Execute(toolkit, solutionItem));
+            automation.Verify(aut => aut.Execute(solution, solutionItem));
+        }
+
+        [Fact]
+        public void WhenExecuteAndCommandOnDescendantElement_ThenExecutesCommandOnSingleElement()
+        {
+            var automation = new Mock<IAutomation>();
+            automation.Setup(auto => auto.Id)
+                .Returns(this.launchPoint.CommandIds.First());
+            var element1 = new Element("anelementname1");
+            var element2 = new Element("anelementname2");
+            element2.Automation.Add(automation.Object);
+            element1.Elements.Add(element2);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element1);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solutionItem = solution.Model
+                .Properties["anelementname1"].Materialise()
+                .Properties["anelementname2"].Materialise();
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), solutionItem))
+                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry" }));
+
+            var result = this.launchPoint.Execute(solution, solutionItem);
+
+            result.CommandName.Should().Be("alaunchpointname");
+            result.Log.Should().ContainSingle("alogentry");
+            automation.Verify(aut => aut.Execute(solution, solutionItem));
+        }
+
+        [Fact]
+        public void WhenExecuteAndCommandOnDescendantCollection_ThenExecutesCommandOnEachItem()
+        {
+            var automation = new Mock<IAutomation>();
+            automation.Setup(auto => auto.Id)
+                .Returns(this.launchPoint.CommandIds.First());
+            var element1 = new Element("anelementname1");
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            collection1.Automation.Add(automation.Object);
+            element1.Elements.Add(collection1);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element1);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solutionItem = solution.Model
+                .Properties["anelementname1"].Materialise()
+                .Properties["acollectionname1"].Materialise();
+            var collectionItem1 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            var collectionItem2 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem1))
+                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry1" }));
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem2))
+                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry2" }));
+
+            var result = this.launchPoint.Execute(solution, solutionItem);
+
+            result.CommandName.Should().Be("alaunchpointname");
+            result.Log.Should().Contain("alogentry1", "alogentry2");
+            automation.Verify(aut => aut.Execute(solution, collectionItem1));
+            automation.Verify(aut => aut.Execute(solution, collectionItem2));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Automate.CLI.Extensions;
+﻿using System.Linq;
+using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
@@ -31,6 +32,44 @@ namespace Automate.CLI.Domain
         public string GetConfiguration()
         {
             return Model.GetConfiguration(false).ToJson();
+        }
+
+        public (IAutomation Automation, SolutionItem SolutionItem) FindAutomation(string automationId)
+        {
+            return FindDescendantAutomation(Model);
+
+            (IAutomation Automation, SolutionItem SolutionItem) FindDescendantAutomation(SolutionItem item)
+            {
+                if (item.IsPattern)
+                {
+                    var automation = item.PatternSchema.Automation.Safe()
+                        .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
+                    if (automation.Exists())
+                    {
+                        return (automation, item);
+                    }
+                }
+                if (item.IsElement || item.IsCollection)
+                {
+                    var automation = item.ElementSchema.Automation.Safe()
+                        .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
+                    if (automation.Exists())
+                    {
+                        return (automation, item);
+                    }
+                }
+
+                foreach (var (_, value) in item.Properties.Safe())
+                {
+                    var result = FindDescendantAutomation(value);
+                    if (result.Automation.Exists())
+                    {
+                        return result;
+                    }
+                }
+
+                return default;
+            }
         }
 
         private void InitialiseSchema()

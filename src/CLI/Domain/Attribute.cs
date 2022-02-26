@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Automate.CLI.Extensions;
-using StringExtensions = ServiceStack.StringExtensions;
 
 namespace Automate.CLI.Domain
 {
@@ -37,7 +36,7 @@ namespace Automate.CLI.Domain
                 if (choices.HasAny())
                 {
                     defaultValue.GuardAgainstInvalid(choices.Contains, nameof(defaultValue),
-                        ValidationMessages.Attribute_DefaultValueIsNotAChoice, StringExtensions.Join(choices, "; "));
+                        ValidationMessages.Attribute_DefaultValueIsNotAChoice, choices.SafeJoin("; "));
                 }
             }
 

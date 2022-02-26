@@ -235,7 +235,7 @@ namespace Automate.CLI.Application
             return target.Validate(new ValidationContext());
         }
 
-        public CommandExecutionResult ExecuteCommand(string solutionId, string name, string elementExpression)
+        public CommandExecutionResult ExecuteLaunchPoint(string solutionId, string name, string elementExpression)
         {
             var solution = this.solutionStore.FindById(solutionId);
             if (solution.NotExists())
@@ -262,7 +262,7 @@ namespace Automate.CLI.Application
                 return new CommandExecutionResult(name, validationResults);
             }
 
-            var result = target.ExecuteCommand(solution.Toolkit, name);
+            var result = target.ExecuteCommand(solution, name);
             this.solutionStore.Save(solution);
 
             return result;

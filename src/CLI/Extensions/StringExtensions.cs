@@ -73,6 +73,11 @@ namespace Automate.CLI.Extensions
             return Convert.ToBoolean(value);
         }
 
+        public static string ToSnakeCase(this string value)
+        {
+            return ServiceStack.StringExtensions.ToLowercaseUnderscore(value);
+        }
+
         private static string FormatStructuredMessage(string messageTemplate, params object[] args)
         {
             messageTemplate.GuardAgainstNullOrEmpty(nameof(messageTemplate));

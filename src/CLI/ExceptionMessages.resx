@@ -69,6 +69,9 @@
     <data name="AuthoringApplication_CodeTemplateNotExists" xml:space="preserve">
         <value>A CodeTemplate with name: '{0}' does not exist</value>
     </data>
+    <data name="AuthoringApplication_CommandIdNotFound" xml:space="preserve">
+        <value>A Command with ID: '{0}' does not exist anywhere on this pattern</value>
+    </data>
     <data name="RuntimeApplication_ToolkitInstallerNotFound" xml:space="preserve">
         <value>The installer could not be found at: '{0}'</value>
     </data>
@@ -149,5 +152,8 @@
     </data>
     <data name="CodeTemplateCommand_TemplateNotExists" xml:space="preserve">
         <value>The code template with ID: '{0}' does not exist in the toolkit</value>
+    </data>
+    <data name="CommandLaunchPoint_CommandIdNotFound" xml:space="preserve">
+        <value>The command with ID: '{0}' could not be found on any element in this pattern</value>
     </data>
 </root>

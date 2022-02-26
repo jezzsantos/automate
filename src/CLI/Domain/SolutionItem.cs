@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using Automate.CLI.Extensions;
-using StringExtensions = ServiceStack.StringExtensions;
 
 namespace Automate.CLI.Domain
 {
@@ -191,6 +190,8 @@ namespace Automate.CLI.Domain
 
         public bool HasAttribute(string name)
         {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
             if (IsPattern)
             {
                 return PatternSchema.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(name));
@@ -205,6 +206,8 @@ namespace Automate.CLI.Domain
 
         public SolutionItemProperty GetProperty(string name)
         {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
             if (!IsMaterialised)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_NotMaterialised);
@@ -223,7 +226,7 @@ namespace Automate.CLI.Domain
         {
             context.GuardAgainstNull(nameof(context));
 
-            return ValidateInternal(context, false);
+            return ValidateDescendants(context, false);
         }
 
         public Dictionary<string, object> GetConfiguration(bool includeAncestry)
@@ -231,12 +234,12 @@ namespace Automate.CLI.Domain
             var properties = new Dictionary<string, object>();
 
             var root = Parent.Exists()
-                ? FilterConfiguration(Parent, null, new Dictionary<string, object>())
+                ? FilterDescendantConfiguration(Parent, null, new Dictionary<string, object>())
                 : null;
-            FilterConfiguration(this, root, properties);
+            FilterDescendantConfiguration(this, root, properties);
             return properties;
 
-            object FilterConfiguration(SolutionItem solutionItem, object parent, IDictionary<string, object> props)
+            object FilterDescendantConfiguration(SolutionItem solutionItem, object parent, IDictionary<string, object> props)
             {
                 if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
@@ -256,14 +259,14 @@ namespace Automate.CLI.Domain
                     {
                         foreach (var (key, value) in solutionItem.Properties)
                         {
-                            props.Add(ConvertName(key), FilterConfiguration(value, solutionItem, new Dictionary<string, object>()));
+                            props.Add(ConvertName(key), FilterDescendantConfiguration(value, solutionItem, new Dictionary<string, object>()));
                         }
                     }
                     if (solutionItem.Items.HasAny())
                     {
                         var items = new List<object>();
                         solutionItem.Items.ForEach(item =>
-                            items.Add(FilterConfiguration(item, solutionItem, new Dictionary<string, object>())));
+                            items.Add(FilterDescendantConfiguration(item, solutionItem, new Dictionary<string, object>())));
                         props.Add(ConvertName(nameof(Items)), items);
                     }
                 }
@@ -273,26 +276,53 @@ namespace Automate.CLI.Domain
 
             string ConvertName(string name)
             {
-                return StringExtensions.ToLowercaseUnderscore(name);
+                return name.ToSnakeCase();
             }
         }
 
-        public CommandExecutionResult ExecuteCommand(ToolkitDefinition toolkit, string name)
+        public CommandExecutionResult ExecuteCommand(SolutionDefinition solution, string name)
         {
-            var automations = GetAutomation();
-            var command =
-                automations.FirstOrDefault(
-                    automation => StringExtensions.EqualsIgnoreCase(automation.Name, name));
+            solution.GuardAgainstNull(nameof(solution));
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var command = GetAutomationByName(name);
             if (command.NotExists())
             {
                 throw new AutomateException(
                     ExceptionMessages.SolutionItem_UnknownAutomation.Format(name));
             }
 
-            return command.Execute(toolkit, this);
+            return command.Execute(solution, this);
         }
 
-        public List<IAutomation> GetAutomation()
+        public void PopulateAncestryAfterDeserialization()
+        {
+            if (!IsPattern)
+            {
+                return;
+            }
+
+            PopulateDescendantParents(this, null);
+
+            void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
+            {
+                solutionItem.Parent = parent;
+                var properties = solutionItem.Properties.Safe();
+                foreach (var property in properties)
+                {
+                    PopulateDescendantParents(property.Value, solutionItem);
+                }
+                var items = solutionItem.Items.Safe();
+                foreach (var item in items)
+                {
+                    PopulateDescendantParents(item, solutionItem);
+                }
+            }
+        }
+
+        public string Id { get; set; }
+
+        private IAutomation GetAutomationByName(string name)
         {
             List<IAutomation> automations;
             if (IsPattern)
@@ -308,44 +338,17 @@ namespace Automate.CLI.Domain
                 throw new AutomateException(ExceptionMessages.SolutionItem_HasNoAutomations);
             }
 
-            return automations;
+            return automations.FirstOrDefault(auto => auto.Name.EqualsIgnoreCase(name));
         }
 
-        public void PopulateAncestryAfterDeserialization()
-        {
-            if (!IsPattern)
-            {
-                return;
-            }
-
-            PopulateParent(this, null);
-
-            void PopulateParent(SolutionItem solutionItem, SolutionItem parent)
-            {
-                solutionItem.Parent = parent;
-                var properties = solutionItem.Properties.Safe();
-                foreach (var property in properties)
-                {
-                    PopulateParent(property.Value, solutionItem);
-                }
-                var items = solutionItem.Items.Safe();
-                foreach (var item in items)
-                {
-                    PopulateParent(item, solutionItem);
-                }
-            }
-        }
-
-        public string Id { get; set; }
-
-        private ValidationResults ValidateInternal(ValidationContext context, bool isItem)
+        private ValidationResults ValidateDescendants(ValidationContext context, bool isItem)
         {
             if (IsPattern)
             {
                 var subContext = new ValidationContext(context);
                 subContext.Add($"{PatternSchema.Name}");
                 return new ValidationResults(
-                    Properties.SelectMany(prop => prop.Value.ValidateInternal(subContext, false).Results));
+                    Properties.SelectMany(prop => prop.Value.ValidateDescendants(subContext, false).Results));
             }
 
             if (IsElement || IsCollection)
@@ -363,7 +366,7 @@ namespace Automate.CLI.Domain
                         if (Properties.HasAny())
                         {
                             results.AddRange(
-                                Properties.SelectMany(prop => prop.Value.ValidateInternal(subContext, false).Results));
+                                Properties.SelectMany(prop => prop.Value.ValidateDescendants(subContext, false).Results));
                         }
                     }
 
@@ -389,7 +392,7 @@ namespace Automate.CLI.Domain
                         }
                         if (Items.HasAny())
                         {
-                            results.AddRange(Items.SelectMany(item => item.ValidateInternal(subContext, true).Results));
+                            results.AddRange(Items.SelectMany(item => item.ValidateDescendants(subContext, true).Results));
                         }
                     }
                 }

@@ -62,18 +62,18 @@ namespace Automate.CLI.Domain
 
         public bool IsTearOff { get; set; }
 
-        public override CommandExecutionResult Execute(ToolkitDefinition toolkit, SolutionItem item)
+        public override CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
         {
             var log = new List<string>();
 
-            var codeTemplate = toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
+            var codeTemplate = solution.Toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(
                     ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Format(CodeTemplateId));
             }
 
-            var filePath = this.solutionPathResolver.ResolveExpression(FilePath, item);
+            var filePath = this.solutionPathResolver.ResolveExpression(FilePath, target);
             var absoluteFilePath = filePath.StartsWith(CurrentDirectoryPrefix)
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
                     filePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
@@ -87,22 +87,22 @@ namespace Automate.CLI.Domain
                 var contents = codeTemplate.Contents.Exists()
                     ? Encoding.UTF8.GetString(codeTemplate.Contents)
                     : string.Empty;
-                var generatedCode = this.textTemplatingEngine.Transform(contents, item);
+                var generatedCode = this.textTemplatingEngine.Transform(contents, target);
 
                 this.fileSystemWriter.Write(generatedCode, absoluteFilePath);
                 log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(filename, absoluteFilePath));
             }
 
-            var link = item.ArtifactLinks.Safe()
+            var link = target.ArtifactLinks.Safe()
                 .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
             if (link.NotExists())
             {
                 link = new ArtifactLink(Id, absoluteFilePath, filename);
-                if (item.ArtifactLinks.NotExists())
+                if (target.ArtifactLinks.NotExists())
                 {
-                    item.ArtifactLinks = new List<ArtifactLink>();
+                    target.ArtifactLinks = new List<ArtifactLink>();
                 }
-                item.ArtifactLinks.Add(link);
+                target.ArtifactLinks.Add(link);
                 if (IsTearOff)
                 {
                     log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(filename, absoluteFilePath));

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
@@ -37,15 +38,33 @@ namespace Automate.CLI.Domain
         public List<CodeTemplate> GetAllCodeTemplates()
         {
             var templates = new List<CodeTemplate>();
-            AggregateTemplates(this);
+            AggregateDescendantTemplates(this);
 
-            void AggregateTemplates(IPatternElement element)
+            void AggregateDescendantTemplates(IPatternElement element)
             {
                 element.CodeTemplates.ToListSafe().ForEach(tem => templates.Add(tem));
-                element.Elements.ToListSafe().ForEach(AggregateTemplates);
+                element.Elements.ToListSafe().ForEach(AggregateDescendantTemplates);
             }
 
             return templates;
+        }
+
+        public IAutomation FindAutomation(string commandId)
+        {
+            return FindDescendantAutomation(this);
+
+            IAutomation FindDescendantAutomation(IPatternElement element)
+            {
+                var automation = element.Automation.Safe()
+                    .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(commandId));
+                if (automation.Exists())
+                {
+                    return automation;
+                }
+                return element.Elements.Safe()
+                    .Select(FindDescendantAutomation)
+                    .FirstOrDefault(auto => auto.Exists());
+            }
         }
 
         public List<CodeTemplate> CodeTemplates { get; set; }

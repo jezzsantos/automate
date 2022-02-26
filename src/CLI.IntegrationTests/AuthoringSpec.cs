@@ -220,7 +220,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenAddAttributeAsChildOfDeepElement_ThenAddsAttribute()
+        public void WhenAddAttributeAsChildOfDescendantElement_ThenAddsAttribute()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
@@ -260,7 +260,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenAddElementAsChildOfDeepElement_ThenAddsElement()
+        public void WhenAddElementAsChildOfDescendantElement_ThenAddsElement()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");

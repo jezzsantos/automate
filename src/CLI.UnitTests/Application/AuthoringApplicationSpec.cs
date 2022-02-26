@@ -446,10 +446,12 @@ namespace CLI.UnitTests.Application
         public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname");
-            this.application.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname", null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
+            this.application.AddCommandLaunchPoint(command.Id, "alaunchpointname", null);
 
             this.application
-                .Invoking(x => x.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname", null))
+                .Invoking(x => x.AddCommandLaunchPoint(command.Id, "alaunchpointname", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("alaunchpointname"));
         }
@@ -471,20 +473,33 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenAddCommandLaunchPoint_TheAddsAutomationToPattern()
+        public void WhenAddCommandLaunchPointAndCommandNotExists_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname");
 
-            var commandId1 = IdGenerator.Create();
-            var commandId2 = IdGenerator.Create();
-            var commandId3 = IdGenerator.Create();
+            this.application
+                .Invoking(x =>
+                    x.AddCommandLaunchPoint("acmdid", null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_CommandIdNotFound.Format("acmdid"));
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPoint_TheAddsAutomationToPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
+            var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
+
             var result =
-                this.application.AddCommandLaunchPoint(new[] { commandId1, commandId2, commandId3 }.SafeJoin(";"),
+                this.application.AddCommandLaunchPoint(new[] { command1.Id, command2.Id }.SafeJoin(";"),
                     "alaunchpointname", null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<CommandLaunchPoint>();
+            var automation = this.store.GetCurrent().Automation.Last().As<CommandLaunchPoint>();
             automation.Name.Should().Be("alaunchpointname");
-            automation.CommandIds.Should().ContainInOrder(commandId1, commandId2, commandId3);
+            automation.CommandIds.Should().ContainInOrder(command1.Id, command2.Id);
             result.Id.Should().Be(automation.Id);
         }
 
@@ -497,9 +512,11 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.aparentelementname}"))
                 .Returns(parentElement);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
 
             var result =
-                this.application.AddCommandLaunchPoint(IdGenerator.Create(), "alaunchpointname",
+                this.application.AddCommandLaunchPoint(command.Id, "alaunchpointname",
                     "{apatternname.aparentelementname}");
 
             result.Name.Should().Be("alaunchpointname");
@@ -510,13 +527,14 @@ namespace CLI.UnitTests.Application
         public void WhenAddCommandLaunchPointAndNoName_TheAddsAutomationWithDefaultName()
         {
             this.application.CreateNewPattern("apatternname");
-            var commandId = IdGenerator.Create();
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
 
-            var result = this.application.AddCommandLaunchPoint(commandId, null, null);
+            var result = this.application.AddCommandLaunchPoint(command.Id, null, null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<CommandLaunchPoint>();
-            automation.Name.Should().Be("LaunchPoint1");
-            automation.CommandIds.Should().ContainSingle(commandId);
+            var automation = this.store.GetCurrent().Automation.Last().As<CommandLaunchPoint>();
+            automation.Name.Should().Be("LaunchPoint2");
+            automation.CommandIds.Should().ContainSingle(command.Id);
             result.Id.Should().Be(automation.Id);
         }
 

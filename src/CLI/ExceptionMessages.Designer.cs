@@ -115,6 +115,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A Command with ID: &apos;{0}&apos; does not exist anywhere on this pattern.
+        /// </summary>
+        internal static string AuthoringApplication_CommandIdNotFound {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CommandIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An element with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string AuthoringApplication_ElementByNameExists {
@@ -147,6 +156,15 @@ namespace Automate.CLI {
         internal static string CodeTemplateCommand_TemplateNotExists {
             get {
                 return ResourceManager.GetString("CodeTemplateCommand_TemplateNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command with ID: &apos;{0}&apos; could not be found on any element in this pattern.
+        /// </summary>
+        internal static string CommandLaunchPoint_CommandIdNotFound {
+            get {
+                return ResourceManager.GetString("CommandLaunchPoint_CommandIdNotFound", resourceCulture);
             }
         }
         
