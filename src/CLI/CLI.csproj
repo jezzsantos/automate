@@ -17,6 +17,7 @@
         <Product>automate</Product>
         <Copyright>Copyright 2022</Copyright>
         <Title>automate</Title>
+        <PackageVersion>0.1.2-preview</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup>

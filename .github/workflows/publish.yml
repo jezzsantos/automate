@@ -3,7 +3,7 @@ name: Publish NuGet
 on:
   push:
     tags:
-      - "#v[0-9]+.[0-9]+.[0-9]+(-preview)?"
+      - 'v[0-9]+.[0-9]+.[0-9]+(-preview)?'
 
 jobs:
   publish:
@@ -22,7 +22,7 @@ jobs:
       - name: Set VERSION variable from tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
       - name: Package (NuGet Tool)
-        run: dotnet pack --configuration Release /p:Version=${VERSION} -no-build src/CLI/CLI.csproj
+        run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build src/CLI/CLI.csproj
       - name: Upload Package (NuGet Tool)
         uses: actions/upload-artifact@v2
         with:
