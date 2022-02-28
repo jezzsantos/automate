@@ -140,35 +140,6 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenListCodeTemplatesAndNone_ThenDisplaysNone()
-        {
-            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} list-codetemplates");
-
-            this.setup.Should().DisplayNoError();
-            this.setup.Should().DisplayMessage(OutputMessages.CommandLine_Output_NoCodeTemplates);
-        }
-
-        [Fact]
-        public void WhenListCodeTemplatesAndOne_ThenDisplaysOne()
-        {
-            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
-
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} list-codetemplates");
-
-            var template = this.setup.Patterns.Single().CodeTemplates.Single();
-
-            this.setup.Should().DisplayNoError();
-            this.setup.Should()
-                .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplatesListed.FormatTemplate(
-                        $"{{\"Name\": \"ATemplateName\", \"ID\": \"{template.Id}\"}}"));
-        }
-
-        [Fact]
         public void WhenAddAttributeAndNoCurrentPattern_ThenDisplaysError()
         {
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty");
@@ -361,16 +332,16 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenListElementsAndNoCurrentPattern_ThenDisplaysError()
+        public void WhenViewPatternAndNoCurrentPattern_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} list-elements");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
 
         [Fact]
-        public void WhenListElements_ThenDisplaysTree()
+        public void WhenViewPatternWithoutAutomation_ThenDisplaysTree()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -383,7 +354,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.ACollection}}");
 
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} list-elements");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -395,6 +366,53 @@ namespace CLI.IntegrationTests
                         "\t\t- AProperty (attribute) (string)\n" +
                         "\t- ACollection (collection)\n" +
                         "\t\t- AProperty (attribute) (string)\n"
+                        ,
+                        this.setup.Patterns.Single().Id));
+        }
+
+        [Fact]
+        public void WhenViewPatternWithFullDetails_ThenDisplaysTree()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACodeTemplateCommand1 --withpath ~/afilepath");
+            var commandId = this.setup.Patterns.Single().Automation.Single().Id;
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId} --name ALaunchPoint");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.AnElement}}");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-collection ACollection");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.ACollection}}");
+
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern --full");
+
+            var pattern = this.setup.Patterns.Single();
+            var codeTemplatePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                        $"- APattern [{pattern.Id}] (root element)\n" +
+                        "\t- CodeTemplates:\n" +
+                        $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code)\n" +
+                        "\t- Automation:\n" +
+                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath)\n" +
+                        $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (ids: {commandId})\n" +
+                        "\t- Attributes:\n" +
+                        "\t\t- AProperty (string)\n" +
+                        "\t- Elements:\n" +
+                        $"\t\t- AnElement [{pattern.Elements.First().Id}] (element)\n" +
+                        "\t\t\t- Attributes:\n" +
+                        "\t\t\t\t- AProperty (string)\n" +
+                        $"\t\t- ACollection [{pattern.Elements.Last().Id}] (collection)\n" +
+                        "\t\t\t- Attributes:\n" +
+                        "\t\t\t\t- AProperty (string)\n"
                         ,
                         this.setup.Patterns.Single().Id));
         }

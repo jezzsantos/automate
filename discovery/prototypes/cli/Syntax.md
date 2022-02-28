@@ -4,7 +4,7 @@ This is a **paper prototype** of a CLI that could be used to deliver the core ca
 
 ## The Use Case
 
-A software team is about to embark on building a new SaaS API product/service for their company `Acme`. 
+A software team is about to embark on building a new SaaS API product/service for their company `Acme`.
 
 The new product/service is called `RoadRunner`.
 
@@ -22,9 +22,9 @@ The Tech Lead knows that the code in those existing codebases is largely what th
 
 How can the tech lead *quickly and easily* capture the coding patterns they think should be re-used in the new codebase, and *make it easy* for the contributors in their new team to use them reliably and consistently. So that they all (tech lead and contributors) *can focus on* where the real learning needs to be in the new `RoadRunner` product/service?
 
->  We will use the word *Conceptual* to describe the idea in your mind.
+> We will use the word *Conceptual* to describe the idea in your mind.
 
->  We will use the word *Logical* to describe the realised model of the idea (in practice, with practical constraints considered). 
+> We will use the word *Logical* to describe the realised model of the idea (in practice, with practical constraints considered).
 
 ## The New Process
 
@@ -34,7 +34,7 @@ This is how that tech lead (on the `RoadRunner` team) could go about using the *
 
 Assumptions about `Acme` APIs:
 
-* An API at `Acme` is implemented with common conventions and patterns developed that have already been evolving at `Acme`. 
+* An API at `Acme` is implemented with common conventions and patterns developed that have already been evolving at `Acme`.
 * The spoken/written language that describes how API's are designed/constructed, is common (enough) across the engineering teams building them.
 * At `Acme` API products/services are usually built with patterns that loosely follow a ports and adapters architecture (Hexagonal/Onion/Clean architecture), uses CQRS-like patterns, and uses some domain driven design at its core.
 
@@ -66,11 +66,11 @@ On the command line, navigate to the source code directory of the new product ca
 
 > This command registers a new pattern called `AcmeAPI` in the current directory. It saves a bunch of files defining the pattern, which could be added to source control in the `C:/projects/acme/roadrunner/src/automate` directory.
 
-Now, the tech lead will want to extract coding patterns that exists in the existing codebases. For example, the last codebase they worked on, which is rooted at: `C:/projects/acme/coyote/src/`. 
+Now, the tech lead will want to extract coding patterns that exists in the existing codebases. For example, the last codebase they worked on, which is rooted at: `C:/projects/acme/coyote/src/`.
 
 These patterns may exist in one file, or they may exist across several files in multiple directories. We will assume here that the pattern is spread across multiple files, in different directories.
 
-The tech lead identifies all the files (that each contain a fragment of the pattern). At this stage, the tech lead has an idea of the complete pattern in their head, and uses their editing tools to view it as a whole. 
+The tech lead identifies all the files (that each contain a fragment of the pattern). At this stage, the tech lead has an idea of the complete pattern in their head, and uses their editing tools to view it as a whole.
 
 All they need to know at this point, is which set of files the pattern exists within.
 
@@ -106,7 +106,7 @@ For this codebase, we will need four similar commands:
 
 > This means now that conceptually, the pattern called `AcmeAPI` has a root element (called `AcmeAPI`) with four code templates called `CodeTemplate1` `CodeTemplate2`, `CodeTemplate3` and `CodeTemplate4`, each containing code that we will later templatise for our pattern.
 
-So far, we don't have much, just a new pattern called `AcmeAPI`, and four code templates. 
+So far, we don't have much, just a new pattern called `AcmeAPI`, and four code templates.
 
 Conceptually, it would look like this, if we drew it as a logical structure.
 
@@ -116,27 +116,27 @@ Conceptually, it would look like this, if we drew it as a logical structure.
 
 ### Step 2 - Define some attributes of the pattern
 
-Before getting in the code, we need to step back and determine a conceptual model of the code. 
+Before getting in the code, we need to step back and determine a conceptual model of the code.
 
-Now that the tech lead has defined a new *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor (on their team) customize this specific pattern to be useful in a new product like the `RoadRunner` API their team will be building. 
+Now that the tech lead has defined a new *pattern* to conceptually represent building a new API (for new products at `Acme`), the tech lead now needs to figure out how to allow a contributor (on their team) customize this specific pattern to be useful in a new product like the `RoadRunner` API their team will be building.
 
 Obviously, a contributor (on the `RoadRunner` team) is going to need to define their own API's for the `RoadRunner` product (they are not likely to want a `Bookings` API), and they are not going to want to copy and paste the `Booking` API that was extracted from the `Coyote` codebase, and now lives in the 3x code templates. These code templates are not yet reusable.
 
 The tech lead has to identify, **what will be different** between the `Booking` API of the `Coyote` codebase, and any new API being built in the next codebases.
 
-> Clearly, a bunch of things will need to be different. 
+> Clearly, a bunch of things will need to be different.
 >
-> * (1) The names of the files (and possibly directories) produced from this pattern will need to be different, and 
-> * (2) so will the actual code in those files. Including the names of code constructs like classes and methods in those files. 
+> * (1) The names of the files (and possibly directories) produced from this pattern will need to be different, and
+> * (2) so will the actual code in those files. Including the names of code constructs like classes and methods in those files.
 > * But also (3) there are also a whole bunch of technical details that can very between API's.
 
-The tech lead decides that the contributor will have to at least give a name for the new API, (equivalent to `Bookings` from the `Coyote` API) because that name influences the naming of the files of the logical `Controller`, `Service Interface` and `Service Implementation` files which are also classes that need to be created to contain the code specific to this new API. They also decide that they need a singular name for the resource of the API (e.g. `Booking` from the `Coyote` API) 
+The tech lead decides that the contributor will have to at least give a name for the new API, (equivalent to `Bookings` from the `Coyote` API) because that name influences the naming of the files of the logical `Controller`, `Service Interface` and `Service Implementation` files which are also classes that need to be created to contain the code specific to this new API. They also decide that they need a singular name for the resource of the API (e.g. `Booking` from the `Coyote` API)
 
 So, in order to capture the name from the contributor, the tech lead defines a mandatory attribute on the pattern called: `Name`
 
 `automate edit add-attribute "Name" --isrequired`
 
-and then  a mandatory `ResourceName` attribute:
+and then a mandatory `ResourceName` attribute:
 
 `automate edit add-attribute "ResourceName" --isrequired`
 
@@ -190,7 +190,7 @@ and similarly, for the Response DTO:
 
 Okay, now that's a lot.
 
-So far, we are starting to build out our conceptual model. 
+So far, we are starting to build out our conceptual model.
 
 It now looks like this:
 
@@ -216,7 +216,7 @@ It now looks like this:
 
 You can run this command to view your current configuration:
 
-`automate edit list-elements `
+`automate edit view-pattern`
 
 So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `Name` its `ServiceOperations` and its `Request` and `Response` DTO's.
 
@@ -390,7 +390,7 @@ namespace Acme.RoadRunner.DTOs
 }
 ```
 
-> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language. 
+> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language.
 >
 > The language used in the templates is a text-templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax, similar to others (basically double-{{ }} statements over an snake_cased object model, starting with a root called:  `model`).
 
@@ -400,15 +400,15 @@ Now that the tech lead has the all the code templates modified, the last step is
 
 The tech lead decides that they will use the same directory structure and naming convention as used in the previous product `Coyote`.
 
-However, the tech lead also knows that the `Service Implementation` class is likely to be written by hand by one of the contributors on the team. Whereas, the `Controller` class,  the `Service Interface` and the `DTO` classes can be generated in full.
+However, the tech lead also knows that the `Service Implementation` class is likely to be written by hand by one of the contributors on the team. Whereas, the `Controller` class, the `Service Interface` and the `DTO` classes can be generated in full.
 
 Therefore the `Service Implementation` class will only be generated if the file does not already exist, and once it is generated, it wont never generate again, so custom code is not lost. Whereas the `Service Interface`, `Controller` and `DTO` files will always be generated and kept up to date as and when the pattern changes.
 
 The next thing to figure out, is how to generate the files.
 
-This can be done whenever some event on the meta-model is raised. For example, when new `Service Operations` are added (or changed) or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options). 
+This can be done whenever some event on the meta-model is raised. For example, when new `Service Operations` are added (or changed) or perhaps when the codebase is compiled, or it can be done at any time by executing a command explicitly (or in fact all of those options).
 
-In every case, a *Launch Point* needs to be defined and added to the pattern to execute the code template rendering. A Launch Point is just a user mechanism to execute actual automation commands that do the hard work.  
+In every case, a *Launch Point* needs to be defined and added to the pattern to execute the code template rendering. A Launch Point is just a user mechanism to execute actual automation commands that do the hard work.
 
 These automation commands will decide **where** to render the files on disk, and what filenames to use.
 
@@ -420,7 +420,7 @@ These automation commands will decide **where** to render the files on disk, and
 
 `automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{name}}.gen.cs"`
 
-> These 4x automation commands add new "Commands" for each template to the root pattern element (AcmeAPI). 
+> These 4x automation commands add new "Commands" for each template to the root pattern element (AcmeAPI).
 >
 > Each of these commands returns the Command ID (CMDID) of the command, which we will need in the next step.
 >
@@ -501,7 +501,7 @@ Now, lets program one of the solutions:
 
 `automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Request}"`
 
-> This command creates a new `Request` first 
+> This command creates a new `Request` first
 
 `automate using "<SOLUTIONID>" --add-one-to "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "DataType=string" --and-set "IsOptional=false"`
 
@@ -509,7 +509,7 @@ Now, lets program one of the solutions:
 
 `automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Response}"`
 
-> This command creates a new `Response` 
+> This command creates a new `Response`
 
 `automate using "<SOLUTIONID>" --add-one-to "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "DataType=string"`
 
@@ -582,11 +582,11 @@ A codebase contributor can now finally ask the toolkit to write the new API code
 
 > This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured code template commands, that in turn, each generate the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` project in the respective locations.
 
-> If any of the required properties (of attributes) are not set correctly, or any required elements of collections are missing, then appropriate validation errors will be displayed explaining the problem. 
+> If any of the required properties (of attributes) are not set correctly, or any required elements of collections are missing, then appropriate validation errors will be displayed explaining the problem.
 
-You can also manually validate the solution at any time, with this command: 
+You can also manually validate the solution at any time, with this command:
 
-`automate validate "<SOLUTIONID>"` 
+`automate validate "<SOLUTIONID>"`
 
 The `RoadRunner` codebase should now look like this:
 

@@ -37,8 +37,11 @@ namespace Automate.CLI.Infrastructure
             };
             var editCommands = new Command(EditCommandName, "Editing patterns")
             {
-                new Command("list-elements", "Lists all elements for this pattern")
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListElements)),
+                new Command("view-pattern", "Views the current configuration of this pattern")
+                    {
+                        new Option("--full", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                    }
+                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
                 new Command("use", "Uses an existing pattern")
                 {
                     new Argument("Name", "The name of the existing pattern to use")
@@ -52,13 +55,6 @@ namespace Automate.CLI.Infrastructure
                         typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
-                new Command("list-codetemplates", "Lists the code templates for this pattern")
-                    {
-                        new Option("--aschildof", "The expression of the element/collection",
-                            typeof(string),
-                            arity: ArgumentArity.ZeroOrOne)
-                    }
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListCodeTemplate)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -103,7 +99,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--name", "A name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--astearoff",
-                        "Only if you only want to generate the file once, and not overwrite if already exists",
+                        "Only if you only want to generate the file once, and not overwrite the file if it already exists",
                         typeof(bool),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
@@ -114,7 +110,7 @@ namespace Automate.CLI.Infrastructure
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
-                    new Argument("CommandIdentifiers", "The identifiers of the commands to launch"),
+                    new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch"),
                     new Option("--name", "A name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
@@ -298,12 +294,12 @@ namespace Automate.CLI.Infrastructure
                     OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
             }
 
-            internal static void HandleListElements(bool outputStructured, IConsole console)
+            internal static void HandleViewPattern(bool full, bool outputStructured, IConsole console)
             {
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternSchema(pattern));
+                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(pattern, full));
             }
 
             internal static void HandleUse(string name, bool outputStructured, IConsole console)
@@ -323,48 +319,117 @@ namespace Automate.CLI.Infrastructure
                     template.Metadata.OriginalFilePath);
             }
 
-            internal static void HandleListCodeTemplate(string asChildOf, bool outputStructured, IConsole console)
-            {
-                var templates = Authoring.ListCodeTemplates(asChildOf);
-                if (templates.Any())
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplatesListed,
-                        templates.Select(template =>
-                            $"{{\"Name\": \"{template.Name}\", \"ID\": \"{template.Id}\"}}\n").Join());
-                }
-                else
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoCodeTemplates);
-                }
-            }
-
-            private static string FormatPatternSchema(PatternDefinition pattern)
+            private static string FormatPatternConfiguration(PatternDefinition pattern, bool includeAll)
             {
                 var output = new StringBuilder();
+                DisplayDescendantConfiguration(pattern, 0);
 
-                DisplayElement(pattern, 0);
                 return output.ToString();
 
-                void DisplayElement(IPatternElement element, int indentLevel)
+                void DisplayDescendantConfiguration(IPatternElement element, int indentLevel)
                 {
                     output.Append(indentLevel > 0
                         ? new string('\t', indentLevel)
                         : "");
+                    DisplayElement(element, indentLevel);
+                }
+
+                void DisplayElement(IPatternElement element, int indentLevel)
+                {
+                    var subHeadingLevel = indentLevel + 1;
+                    var subItemLevel = indentLevel + (includeAll
+                        ? 2
+                        : 1);
+
                     output.Append($"- {element.Name}");
+                    if (includeAll)
+                    {
+                        output.Append($" [{element.Id}]");
+                    }
                     output.Append(
                         $" ({(element is PatternDefinition ? "root element" : ((Element)element).IsCollection ? "collection" : "element")})");
-                    output.Append(element.CodeTemplates.HasAny()
-                        ? $" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)\n"
-                        : "\n");
-                    element.Attributes.ToListSafe().ForEach(a => DisplayAttribute(a, indentLevel + 1));
-                    element.Elements.ToListSafe().ForEach(e => DisplayElement(e, indentLevel + 1));
+
+                    if (element.CodeTemplates.HasAny())
+                    {
+                        if (includeAll)
+                        {
+                            output.Append("\n");
+                            output.Append(new string('\t', subHeadingLevel));
+                            output.Append("- CodeTemplates:\n");
+                            element.CodeTemplates.ToListSafe().ForEach(ct => DisplayCodeTemplate(ct, subItemLevel));
+                        }
+                        else
+                        {
+                            output.Append($" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)\n");
+                        }
+                    }
+                    else
+                    {
+                        output.Append("\n");
+                    }
+
+                    if (element.Automation.HasAny())
+                    {
+                        if (includeAll)
+                        {
+                            output.Append(new string('\t', subHeadingLevel));
+                            output.Append("- Automation:\n");
+                            element.Automation.ToListSafe().ForEach(auto => DisplayAutomation(auto, subItemLevel));
+                        }
+                    }
+
+                    if (element.Attributes.HasAny())
+                    {
+                        if (includeAll)
+                        {
+                            output.Append(new string('\t', subHeadingLevel));
+                            output.Append("- Attributes:\n");
+                        }
+                        element.Attributes.ToListSafe().ForEach(a => DisplayAttribute(a, subItemLevel));
+                    }
+                    if (element.Elements.HasAny())
+                    {
+                        if (includeAll)
+                        {
+                            output.Append(new string('\t', subHeadingLevel));
+                            output.Append("- Elements:\n");
+                        }
+                        element.Elements.ToListSafe()
+                            .ForEach(e => DisplayDescendantConfiguration(e, subItemLevel));
+                    }
                 }
 
                 void DisplayAttribute(Attribute attribute, int indentLevel)
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {attribute.Name} (attribute) ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
+                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
+                }
+
+                void DisplayCodeTemplate(CodeTemplate template, int indentLevel)
+                {
+                    output.Append(new string('\t', indentLevel));
+                    output.Append(
+                        $"- {template.Name} [{template.Id}] (file: {template.Metadata.OriginalFilePath}, ext: {template.Metadata.OriginalFileExtension})\n");
+                }
+
+                void DisplayAutomation(IAutomation automation, int indentLevel)
+                {
+                    output.Append(new string('\t', indentLevel));
+                    output.Append(
+                        $"- {automation.Name} [{automation.Id}]");
+                    if (automation is CodeTemplateCommand command)
+                    {
+                        output.Append($" (template: {command.CodeTemplateId}, tearOff: {command.IsTearOff.ToString().ToLower()}, path: {command.FilePath})\n");
+                    }
+                    else if (automation is CommandLaunchPoint launchPoint)
+                    {
+                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin("; ")})\n");
+                    }
+                    else
+                    {
+                        output.Append("\n");
+                    }
                 }
             }
         }
