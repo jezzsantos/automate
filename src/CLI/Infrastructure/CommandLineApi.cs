@@ -299,7 +299,7 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(pattern, full));
+                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(outputStructured, pattern, full));
             }
 
             internal static void HandleUse(string name, bool outputStructured, IConsole console)
@@ -319,8 +319,13 @@ namespace Automate.CLI.Infrastructure
                     template.Metadata.OriginalFilePath);
             }
 
-            private static string FormatPatternConfiguration(PatternDefinition pattern, bool includeAll)
+            private static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)
             {
+                if (outputStructured)
+                {
+                    return pattern.ToJson();
+                }
+
                 var output = new StringBuilder();
                 DisplayDescendantConfiguration(pattern, 0);
 
