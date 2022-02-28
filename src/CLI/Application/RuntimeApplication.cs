@@ -87,22 +87,36 @@ namespace Automate.CLI.Application
         }
 
         public SolutionItem ConfigureSolution(string solutionId, string addElementExpression,
-            string addToCollectionExpression, List<string> propertyAssignments)
+            string addToCollectionExpression, string onElementExpression, List<string> propertyAssignments)
         {
-            if (addElementExpression.HasValue() && addToCollectionExpression.HasValue())
-            {
-                addElementExpression.GuardAgainstInvalid(expr => false,
-                    nameof(addElementExpression),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
-                        solutionId, addElementExpression, addToCollectionExpression));
-            }
-
             if (!addElementExpression.HasValue() && !addToCollectionExpression.HasValue()
+                                                 && !onElementExpression.HasValue()
                                                  && propertyAssignments.HasNone())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
                         solutionId));
+            }
+
+            if (addElementExpression.HasValue() && addToCollectionExpression.HasValue())
+            {
+                throw new ArgumentOutOfRangeException(nameof(addElementExpression),
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
+                        solutionId, addElementExpression, addToCollectionExpression));
+            }
+
+            if (onElementExpression.HasValue() && addElementExpression.HasValue())
+            {
+                throw new ArgumentOutOfRangeException(nameof(onElementExpression),
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAdd.Format(
+                        solutionId, onElementExpression, addElementExpression));
+            }
+
+            if (onElementExpression.HasValue() && addToCollectionExpression.HasValue())
+            {
+                throw new ArgumentOutOfRangeException(nameof(onElementExpression),
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAddTo.Format(
+                        solutionId, onElementExpression, addToCollectionExpression));
             }
 
             if (propertyAssignments.Safe().Any())
@@ -152,6 +166,27 @@ namespace Automate.CLI.Application
                 }
 
                 target = collection.MaterialiseCollectionItem();
+            }
+
+            if (onElementExpression.HasValue())
+            {
+                var solutionItem = this.solutionPathResolver.ResolveItem(solution, onElementExpression);
+                if (solutionItem.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                            solution.PatternName,
+                            onElementExpression));
+                }
+
+                if (!solutionItem.IsMaterialised)
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.RuntimeApplication_ConfigureSolution_OnElementNotExists.Format(
+                            onElementExpression));
+                }
+
+                target = solutionItem;
             }
 
             if (propertyAssignments.Safe().Any())

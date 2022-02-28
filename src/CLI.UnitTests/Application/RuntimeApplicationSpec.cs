@@ -122,10 +122,10 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndNoAddToElementOrCollectionAndNoAssignments_ThenThrows()
+        public void WhenConfigureSolutionAndNoAddElementNorAddToCollectionNorOnElementNorAnyAssignments_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", null, null, null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", null, null, null, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
@@ -133,21 +133,43 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndBothAddToElementAndCollection_ThenThrows()
+        public void WhenConfigureSolutionAndBothAddElementAndAddToCollection_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", "acollectionexpression", null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", "acollectionexpression", null, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
                         "asolutionid", "anelementexpression", "acollectionexpression") + "*");
         }
-
+        
         [Fact]
-        public void WhenConfigureSolutionAndPropertyAssigmentInvalid_ThenThrows()
+        public void WhenConfigureSolutionAndBothAddElementAndOnElement_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, new List<string>
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, "anelementexpression", null))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAdd.Format(
+                        "asolutionid", "anelementexpression", "anelementexpression") + "*");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndBothAddToCollectionAndOnElement_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.ConfigureSolution("asolutionid", null, "acollectionexpression", "anelementexpression", null))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAddTo.Format(
+                        "asolutionid", "anelementexpression", "acollectionexpression") + "*");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndAnyPropertyAssigmentInvalid_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null, new List<string>
                 {
                     "notavalidpropertyassignment"
                 }))
@@ -164,7 +186,7 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionDefinition)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format("asolutionid"));
         }
@@ -178,7 +200,7 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionItem)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
@@ -194,7 +216,7 @@ namespace CLI.UnitTests.Application
                 .Returns(new SolutionItem { IsMaterialised = true });
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_AddElementExists.Format(
@@ -211,7 +233,7 @@ namespace CLI.UnitTests.Application
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
                 .Returns(solution);
 
-            var result = this.application.ConfigureSolution("asolutionid", null, null,
+            var result = this.application.ConfigureSolution("asolutionid", null, null, null,
                 new List<string> { "anattributename=avalue" });
 
             result.Id.Should().NotBeNull();
@@ -228,7 +250,7 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(new SolutionItem(new Element("anelementname"), null));
 
-            var result = this.application.ConfigureSolution("asolutionid", "apatternname.anelement", null, null);
+            var result = this.application.ConfigureSolution("asolutionid", "apatternname.anelement", null, null, null);
 
             result.Id.Should().NotBeNull();
             this.solutionStore.Verify(ss => ss.Save(solution));
@@ -243,7 +265,7 @@ namespace CLI.UnitTests.Application
                 .Returns((SolutionItem)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", null, "acollectionexpression", null))
+                .Invoking(x => x.ConfigureSolution("asolutionid", null, "acollectionexpression", null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
@@ -260,10 +282,42 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
-            var result = this.application.ConfigureSolution("asolutionid", null, "apatternname.acollectionname", null);
+            var result = this.application.ConfigureSolution("asolutionid", null, "apatternname.acollectionname", null, null);
 
             result.Id.Should().Be(solutionItem.Items.Single().Id);
             this.solutionStore.Verify(ss => ss.Save(solution));
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndOnElementButUnknown_ThenThrows()
+        {
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns((SolutionItem)null);
+
+            this.application
+                .Invoking(x => x.ConfigureSolution("asolutionid", null, null, "anelementexpression", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                        "apatternname", "anelementexpression"));
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndOnElementAndNotMaterialised_ThenThrows()
+        {
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")));
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(new SolutionItem { IsMaterialised = false });
+
+            this.application
+                .Invoking(x => x.ConfigureSolution("asolutionid", null, null, "anelementexpression", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnElementNotExists.Format(
+                        "anelementexpression"));
         }
 
         [Fact]
@@ -275,7 +329,7 @@ namespace CLI.UnitTests.Application
                 .Returns(new SolutionItem(new Element("anelementname"), null));
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null,
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null,
                     new List<string> { "anunknownname=avalue" }))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
@@ -299,7 +353,7 @@ namespace CLI.UnitTests.Application
                 .Returns(solutionItem);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null,
+                .Invoking(x => x.ConfigureSolution("asolutionid", "anelementexpression", null, null,
                     new List<string> { "anattributename=awrongvalue" }))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
@@ -321,7 +375,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.ConfigureSolution("asolutionid", "anelementexpression", null,
+                    x.ConfigureSolution("asolutionid", "anelementexpression", null, null,
                         new List<string> { "anattributename=astring" }))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
@@ -345,7 +399,7 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
-            var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null,
+            var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null, null,
                 new List<string> { "anattributename=avalue" });
 
             result.Id.Should().Be(solutionItem.Id);
@@ -354,7 +408,7 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithNewElementAndProperty_ThenReturnsSolution()
+        public void WhenConfigureSolutionWithAddElementAndProperty_ThenReturnsSolution()
         {
             var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
             this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
@@ -367,7 +421,29 @@ namespace CLI.UnitTests.Application
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
-            var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null,
+            var result = this.application.ConfigureSolution("asolutionid", "anelementexpression", null, null,
+                new List<string> { "anattributename=avalue" });
+
+            result.Id.Should().Be(solutionItem.Id);
+            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
+            this.solutionStore.Verify(ss => ss.Save(solution));
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionWithOnElementAndProperty_ThenReturnsSolution()
+        {
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
+            this.solutionStore.Setup(ss => ss.FindById(It.IsAny<string>()))
+                .Returns(solution);
+
+            var attribute = new Attribute("anattributename");
+            var element = new Element("anelementname");
+            element.Attributes.Add(attribute);
+            var solutionItem = new SolutionItem(element, null).Materialise();
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solutionItem);
+
+            var result = this.application.ConfigureSolution("asolutionid", null, null, "anelementexpression",
                 new List<string> { "anattributename=avalue" });
 
             result.Id.Should().Be(solutionItem.Id);

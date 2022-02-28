@@ -100,10 +100,16 @@
         <value>No solution with ID: '{0}' has been created.</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddAndAddTo" xml:space="preserve">
-        <value>Tried to configure solution ID: '{0}' to add both a new element with Name: '{1}', and to a new collection with Name: '{2}'</value>
+        <value>Tried to configure solution ID: '{0}' to add both a new element with Name: '{1}', and to a new collection with Name: '{2}'. You can only do one or the other</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_OnAndAdd" xml:space="preserve">
+        <value>Tried to configure solution ID: '{0}' to update the element '{1}', and add a new element with Name: '{2}'. You can only do one or the other</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_OnAndAddTo" xml:space="preserve">
+        <value>Tried to configure solution ID: '{0}' to update the element '{1}', and add to a collection with Name: '{2}'. You can only do one or the other</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_NoChanges" xml:space="preserve">
-        <value>Tried to configure solution ID: '{0}' without any changes</value>
+        <value>Tried to configure solution ID: '{0}' without any changes to any elements or collections</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
         <value>Tried to configure solution ID: '{1}' but contains invalid assignment: '{0}'</value>
@@ -113,6 +119,9 @@
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddElementExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') already exists, and cannot be added again</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_OnElementNotExists" xml:space="preserve">
+        <value>The element (referenced by: '{0}') has not been created yet, and cannot be configured</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') does not have a property called: '{1}'</value>

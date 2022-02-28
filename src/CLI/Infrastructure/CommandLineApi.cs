@@ -155,6 +155,7 @@ namespace Automate.CLI.Infrastructure
                 new Option("--set", "A name=value pair of properties to assign", arity: ArgumentArity.ZeroOrOne),
                 new Option("--and-set", "A name=value pair of properties to assign",
                     arity: ArgumentArity.ZeroOrMore),
+                new Option("--on", "The expression of the element/collection to assign properties to", arity: ArgumentArity.ZeroOrOne),
                 new Option("--view-configuration", "View the current configuration of this solution", typeof(bool),
                     () => false, ArgumentArity.ZeroOrOne)
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
@@ -488,7 +489,7 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void HandleUsing(string solutionId, string add, string addOneTo, string set,
-                string[] andSet, bool viewConfiguration,
+                string[] andSet, string on, bool viewConfiguration,
                 bool outputStructured, IConsole console)
             {
                 if (!viewConfiguration)
@@ -503,7 +504,7 @@ namespace Automate.CLI.Infrastructure
                         sets.AddRange(andSet);
                     }
 
-                    var solutionItem = Runtime.ConfigureSolution(solutionId, add, addOneTo, sets);
+                    var solutionItem = Runtime.ConfigureSolution(solutionId, add, addOneTo, on, sets);
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
                 }
                 else

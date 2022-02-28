@@ -171,7 +171,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnElement_ThenDisplaysSuccess()
+        public void WhenConfigureSolutionAndSetPropertyOnNewElement_ThenDisplaysSuccess()
         {
             var solution = BuildInstallAndCreateSolution();
 
@@ -185,17 +185,63 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnCollection_ThenDisplaysSuccess()
+        public void WhenConfigureSolutionAndSetPropertyOnExistingElement_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}}");
+
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{AnElement1}} --set \"AProperty3=C\"");
+
+            var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+            item.Properties["AProperty3"].Value.Should().Be("C");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --set \"AProperty3=B\"");
+
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{AnElement1}} --set \"AProperty3=C\"");
+
+            var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+            item.Properties["AProperty3"].Value.Should().Be("C");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndSetPropertyOnNewCollectionItem_ThenDisplaysSuccess()
         {
             var solution = BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
 
             var item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
-            item.Properties["AProperty4"].Value.Should().Be("ADefaultValue4");
+            item.Properties["AProperty4"].Value.Should().Be("anewvalue");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
+        {
+            var solution = BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
+            var item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
+
+            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{ACollection2.{item.Id}}} --set \"AProperty4=anewvalue\"");
+
+            item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+            item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]

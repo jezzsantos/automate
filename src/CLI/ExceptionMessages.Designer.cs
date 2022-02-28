@@ -259,7 +259,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;.
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;. You can only do one or the other.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_AddAndAddTo {
             get {
@@ -304,11 +304,38 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes.
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes to any elements or collections.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_NoChanges {
             get {
                 return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_NoChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add a new element with Name: &apos;{2}&apos;. You can only do one or the other.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_OnAndAdd {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnAndAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add to a collection with Name: &apos;{2}&apos;. You can only do one or the other.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_OnAndAddTo {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnAndAddTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) has not been created yet, and cannot be configured.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_OnElementNotExists {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnElementNotExists", resourceCulture);
             }
         }
         
