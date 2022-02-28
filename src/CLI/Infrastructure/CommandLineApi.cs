@@ -212,8 +212,10 @@ namespace Automate.CLI.Infrastructure
                         ? ex.InnerException.Message
                         : ex.Message;
                     Console.Error.WriteLine();
-                    context.Console.WriteError($"Failed Unexpectedly. Reason: {message}", ConsoleColor.Red);
+                    context.Console.WriteError($"Failed Unexpectedly, reason: {message}", ConsoleColor.Red);
+#if DEBUG
                     throw ex;
+#endif
                 }, 1)
                 .Build();
 
