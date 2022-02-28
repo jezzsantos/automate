@@ -117,6 +117,19 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
+        public void WhenResolveAndPartiallyQualifiedElementExpressionExists_ThenReturnsElement()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element = new Element("anelementname");
+            pattern.Elements.Add(element);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+
+            var result = this.resolver.ResolveItem(solution, "{anelementname}");
+
+            result.ElementSchema.Should().Be(element);
+        }
+
+        [Fact]
         public void WhenResolveAndDescendantElementExpressionNotMaterialised_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
