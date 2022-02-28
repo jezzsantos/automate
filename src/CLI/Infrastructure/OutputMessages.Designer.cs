@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command: `automate toolkit install &quot;{FilePath}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command: `automate install toolkit &quot;{FilePath}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_BuiltToolkit {
             get {

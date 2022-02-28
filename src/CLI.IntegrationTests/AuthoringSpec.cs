@@ -402,8 +402,8 @@ namespace CLI.IntegrationTests
                         "\t- CodeTemplates:\n" +
                         $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code)\n" +
                         "\t- Automation:\n" +
-                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath)\n" +
-                        $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (ids: {commandId})\n" +
+                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath)\n" +
+                        $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {commandId})\n" +
                         "\t- Attributes:\n" +
                         "\t\t- AProperty (string)\n" +
                         "\t- Elements:\n" +

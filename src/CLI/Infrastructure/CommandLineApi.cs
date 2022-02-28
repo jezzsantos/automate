@@ -148,7 +148,7 @@ namespace Automate.CLI.Infrastructure
             };
             var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
             {
-                new Argument("SolutionId", "The identifier of the current solution that you are using"),
+                new Argument("SolutionID", "The identifier of the current solution that you are using"),
                 new Option("--add", "The expression of the element to add", arity: ArgumentArity.ZeroOrOne),
                 new Option("--add-one-to", "The expression of the collection to add a new element to",
                     arity: ArgumentArity.ZeroOrOne),
@@ -160,19 +160,19 @@ namespace Automate.CLI.Infrastructure
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
-                new Argument("SolutionId", "The identifier of the current solution that you are validating"),
+                new Argument("SolutionID", "The identifier of the current solution that you are validating"),
                 new Option("--on", "The expression of the element/collection to validate", arity: ArgumentArity.ZeroOrOne)
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate));
             var executeCommands = new Command(ExecuteCommandName, "Executing commands on patterns from toolkits")
             {
-                new Argument("SolutionId", "The identifier of the current solution containing the command"),
+                new Argument("SolutionID", "The identifier of the current solution containing the command"),
                 new Option("--command", "The command name to execute", arity: ArgumentArity.ExactlyOne),
                 new Option("--on", "The expression of the element/collection containing the command to execute", arity: ArgumentArity.ZeroOrOne)
             }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand));
 
             var command =
                 new RootCommand(
-                    "Templatise patterns from your own codebase, make them programmable, then share them with your team")
+                    "Templatize patterns from your own codebase, make them programmable, then share them with your team")
                 {
                     createCommands,
                     editCommands,
@@ -417,14 +417,14 @@ namespace Automate.CLI.Infrastructure
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {automation.Name} [{automation.Id}]");
+                        $"- {automation.Name} [{automation.Id}] ({automation.GetType().Name})");
                     if (automation is CodeTemplateCommand command)
                     {
                         output.Append($" (template: {command.CodeTemplateId}, tearOff: {command.IsTearOff.ToString().ToLower()}, path: {command.FilePath})\n");
                     }
                     else if (automation is CommandLaunchPoint launchPoint)
                     {
-                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin("; ")})\n");
+                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin(";")})\n");
                     }
                     else
                     {
