@@ -20,6 +20,7 @@ namespace Automate.CLI.Infrastructure
         public const string BuildCommandName = "build";
         public const string InstallCommandName = "install";
         public const string RunCommandName = "run";
+        public const string ListCommandName = "list";
         public const string ConfigureCommandName = "configure";
         public const string ValidateCommandName = "validate";
         public const string ExecuteCommandName = "execute";
@@ -133,14 +134,10 @@ namespace Automate.CLI.Infrastructure
             };
             var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
             {
-                new Command("list-toolkits", "Lists all installed toolkits")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
                 new Command("toolkit", "Creates a new solution from a toolkit")
                 {
                     new Argument("PatternName", "The name of the pattern in the toolkit that you want to use")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
-                new Command("list-solutions", "Lists all created solutions")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions)),
                 new Command("switch", "Switches to configuring another solution")
                 {
                     new Argument("SolutionId", "The id of the existing solution to configure")
@@ -191,12 +188,20 @@ namespace Automate.CLI.Infrastructure
                 new Command("solution", "View the configuration of the solution")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewConfiguration))
             };
+            var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
+            {
+                new Command("toolkits", "Lists all installed toolkits")
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
+                new Command("solutions", "Lists all created solutions")
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
+            };
 
             var command =
                 new RootCommand(
                     "Templatize patterns from your own codebase, make them programmable, then share them with your team")
                 {
                     viewCommands,
+                    listCommands,
                     createCommands,
                     editCommands,
                     buildCommands,
@@ -225,7 +230,7 @@ namespace Automate.CLI.Infrastructure
             }
             if (IsRuntimeCommand(args))
             {
-                if (!IsRuntimeInstallCommand(args))
+                if (IsRuntimeSolutionCommand(args))
                 {
                     if (Runtime.CurrentSolutionId.Exists())
                     {
@@ -260,17 +265,22 @@ namespace Automate.CLI.Infrastructure
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
             var isViewSolutionCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "solution";
+            var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
+            var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
 
             return args.Count > 0
                    && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
                        || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
-                       || isViewSolutionCommand);
+                       || isViewSolutionCommand || isListToolkitsCommand || isListSolutionsCommand);
         }
 
-        private static bool IsRuntimeInstallCommand(IReadOnlyList<string> args)
+        private static bool IsRuntimeSolutionCommand(IReadOnlyList<string> args)
         {
+            var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
+            var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
+
             return args.Count > 0
-                   && (args[0] == InstallCommandName || args[0] == RunCommandName);
+                   && args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand && !isListSolutionsCommand;
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)

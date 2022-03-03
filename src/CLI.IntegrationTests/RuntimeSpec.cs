@@ -87,7 +87,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListInstalledToolkitsAndNone_ThenDisplaysNone()
         {
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-toolkits");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} toolkits");
 
             this.setup.Should()
                 .DisplayMessage(
@@ -99,7 +99,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-toolkits");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} toolkits");
 
             var toolkit = this.setup.Toolkits.Single();
 
@@ -131,7 +131,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-solutions");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -145,7 +145,7 @@ namespace CLI.IntegrationTests
             BuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} list-solutions");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
 
             var solution = this.setup.Solutions.Single();
 

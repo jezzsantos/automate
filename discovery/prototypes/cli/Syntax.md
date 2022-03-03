@@ -460,7 +460,7 @@ Download and install the new toolkit:
 
 To list all the installed toolkits and versions of them:
 
-`automate run list-toolkits`
+`automate list toolkits`
 
 > This commands lists all the installed toolkits, installed in the current directory.
 
@@ -484,7 +484,7 @@ To get started:
 
 You can list all the solutions that have been created so far, with this command:
 
-`automate run list-solutions`
+`automate list solutions`
 
 > This commands lists all the solutions created from toolkits in the current directory.
 
