@@ -16,5 +16,7 @@ namespace Automate.CLI.Application
         ToolkitDefinition FindByName(string name);
 
         List<ToolkitDefinition> ListAll();
+
+        void DestroyAll();
     }
 }

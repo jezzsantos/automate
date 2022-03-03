@@ -46,6 +46,8 @@ namespace Automate.CLI.Application
             this.solutionPathResolver = solutionPathResolver;
         }
 
+        public string CurrentSolutionId => this.solutionStore.GetCurrent()?.Id;
+
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
             if (!this.fileResolver.ExistsAtPath(installerLocation))
@@ -57,7 +59,7 @@ namespace Automate.CLI.Application
             var installer = this.fileResolver.GetFileAtPath(installerLocation);
             var toolkit = this.packager.UnPack(installer);
 
-            this.toolkitStore.ChangeCurrent(toolkit.Id);
+            this.toolkitStore.Import(toolkit);
 
             return toolkit;
         }
@@ -70,10 +72,7 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
-            var solution = new SolutionDefinition(toolkit);
-            this.solutionStore.Save(solution);
-
-            return solution;
+            return this.solutionStore.Create(toolkit);
         }
 
         public List<ToolkitDefinition> ListInstalledToolkits()
@@ -86,51 +85,61 @@ namespace Automate.CLI.Application
             return this.solutionStore.ListAll();
         }
 
-        public SolutionItem ConfigureSolution(string solutionId, string addElementExpression,
+        public void SwitchCurrentSolution(string solutionId)
+        {
+            solutionId.GuardAgainstNullOrEmpty(nameof(solutionId));
+            this.solutionStore.ChangeCurrent(solutionId);
+        }
+
+        public SolutionItem ConfigureSolution(string addElementExpression,
             string addToCollectionExpression, string onElementExpression, List<string> propertyAssignments)
         {
+            VerifyCurrentSolutionExists();
+            var solution = this.solutionStore.GetCurrent();
+
             if (!addElementExpression.HasValue() && !addToCollectionExpression.HasValue()
                                                  && !onElementExpression.HasValue()
                                                  && propertyAssignments.HasNone())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
-                        solutionId));
+                        solution.Id));
             }
 
             if (addElementExpression.HasValue() && addToCollectionExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
-                        solutionId, addElementExpression, addToCollectionExpression));
+                        solution.Id, addElementExpression, addToCollectionExpression));
             }
 
             if (onElementExpression.HasValue() && addElementExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(onElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAdd.Format(
-                        solutionId, onElementExpression, addElementExpression));
+                        solution.Id, onElementExpression, addElementExpression));
             }
 
             if (onElementExpression.HasValue() && addToCollectionExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(onElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAddTo.Format(
-                        solutionId, onElementExpression, addToCollectionExpression));
+                        solution.Id, onElementExpression, addToCollectionExpression));
             }
 
             if (propertyAssignments.Safe().Any())
             {
                 propertyAssignments.ForEach(pa => pa.GuardAgainstInvalid(IsValidAssignment,
                     nameof(propertyAssignments),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid, solutionId));
+                    ExceptionMessages.RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid, solution.Id));
             }
 
-            var solution = this.solutionStore.FindById(solutionId);
-            if (solution.NotExists())
-            {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
-            }
+            //
+            // var solution = this.solutionStore.FindById(solution.Id);
+            // if (solution.NotExists())
+            // {
+            //     throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solution.Id));
+            // }
 
             var target = solution.Model;
             if (addElementExpression.HasValue())
@@ -235,24 +244,18 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        public string GetSolutionConfiguration(string solutionId)
+        public string GetConfiguration()
         {
-            var solution = this.solutionStore.FindById(solutionId);
-            if (solution.NotExists())
-            {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
-            }
+            VerifyCurrentSolutionExists();
+            var solution = this.solutionStore.GetCurrent();
 
             return solution.GetConfiguration();
         }
 
-        public ValidationResults Validate(string solutionId, string elementExpression)
+        public ValidationResults Validate(string elementExpression)
         {
-            var solution = this.solutionStore.FindById(solutionId);
-            if (solution.NotExists())
-            {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
-            }
+            VerifyCurrentSolutionExists();
+            var solution = this.solutionStore.GetCurrent();
 
             var target = solution.Model;
             if (elementExpression.HasValue())
@@ -270,13 +273,10 @@ namespace Automate.CLI.Application
             return target.Validate(new ValidationContext());
         }
 
-        public CommandExecutionResult ExecuteLaunchPoint(string solutionId, string name, string elementExpression)
+        public CommandExecutionResult ExecuteLaunchPoint(string name, string elementExpression)
         {
-            var solution = this.solutionStore.FindById(solutionId);
-            if (solution.NotExists())
-            {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solutionId));
-            }
+            VerifyCurrentSolutionExists();
+            var solution = this.solutionStore.GetCurrent();
 
             var target = solution.Model;
             if (elementExpression.HasValue())
@@ -301,6 +301,14 @@ namespace Automate.CLI.Application
             this.solutionStore.Save(solution);
 
             return result;
+        }
+
+        private void VerifyCurrentSolutionExists()
+        {
+            if (this.solutionStore.GetCurrent().NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+            }
         }
 
         private static bool IsValidAssignment(string assignment)

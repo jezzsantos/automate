@@ -358,6 +358,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Solution does not yet exist.
+        /// </summary>
+        internal static string RuntimeApplication_NoCurrentSolution {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_NoCurrentSolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No solution with ID: &apos;{0}&apos; has been created..
         /// </summary>
         internal static string RuntimeApplication_SolutionNotFound {
@@ -462,6 +471,15 @@ namespace Automate.CLI {
         internal static string SolutionPathResolver_InvalidExpression {
             get {
                 return ResourceManager.GetString("SolutionPathResolver_InvalidExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A solution with id: &apos;{0}&apos; cannot be found in the solution store at location: &apos;{1}&apos;.
+        /// </summary>
+        internal static string SolutionStore_NotFoundAtLocationWithId {
+            get {
+                return ResourceManager.GetString("SolutionStore_NotFoundAtLocationWithId", resourceCulture);
             }
         }
         

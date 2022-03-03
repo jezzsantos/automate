@@ -6,5 +6,7 @@ namespace Automate.CLI.Domain
         public string CurrentPattern { get; set; } = null!;
 
         public string CurrentToolkit { get; set; } = null!;
+
+        public string CurrentSolution { get; set; } = null!;
     }
 }

@@ -40,9 +40,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenUsingNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName}");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName}");
 
-            this.setup.Should().DisplayErrorForMissingArgument(CommandLineApi.UsingCommandName);
+            this.setup.Should().DisplayErrorForMissingCommand();
         }
 
         [Fact]
@@ -159,9 +159,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnPattern_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
+            BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue\"");
 
             var item = this.setup.Solutions.Single().Model;
             this.setup.Should().DisplayNoError();
@@ -173,9 +173,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnNewElement_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
+            BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
             var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
@@ -187,10 +187,10 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}}");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}}");
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{AnElement1}} --set \"AProperty3=C\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
             var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
@@ -202,10 +202,10 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --set \"AProperty3=B\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{AnElement1}} --set \"AProperty3=C\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
             var item = this.setup.Solutions.Single().Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
@@ -217,9 +217,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnNewCollectionItem_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
+            BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
 
             var item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
@@ -231,11 +231,11 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
             var item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --on {{ACollection2.{item.Id}}} --set \"AProperty4=anewvalue\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{item.Id}}} --and-set \"AProperty4=anewvalue\"");
 
             item = this.setup.Solutions.Single().Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
@@ -245,17 +245,17 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewConfiguration_ThenDisplaysConfiguration()
+        public void WhenViewSolution_ThenDisplaysConfiguration()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --view-configuration");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} solution");
 
-            solution = this.setup.Solutions.Single();
+            var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
@@ -290,9 +290,9 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenValidateAndErrors_ThenDisplaysErrors()
         {
-            var solution = BuildInstallAndCreateSolution();
+            BuildInstallAndCreateSolution();
 
-            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} {solution.Id}");
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -308,13 +308,13 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenValidateAndNoErrors_ThenDisplaysSuccess()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=A\"");
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} {solution.Id}");
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -325,8 +325,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
         {
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint1");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -343,13 +343,13 @@ namespace CLI.IntegrationTests
         public void WhenExecuteLaunchPointOnSolution_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint1");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
             var artifactLink = this.setup.Solutions.Single().Model.ArtifactLinks.First().Path;
             var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
@@ -367,13 +367,13 @@ namespace CLI.IntegrationTests
         public void WhenExecuteLaunchPointOnElement_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
-            var solution = BuildInstallAndCreateSolution();
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --set \"AProperty1=avalue1\"");
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.UsingCommandName} {solution.Id} --add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.UsingCommandName} {solution.Id} --add-one-to {{ACollection2}}");
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} {solution.Id} --command ALaunchPoint2 --on {{AnElement1}}");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2 --on {{AnElement1}}");
 
             var artifactLink = this.setup.Solutions.Single().Model.Properties["AnElement1"].ArtifactLinks.First().Path;
             var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
@@ -396,12 +396,10 @@ namespace CLI.IntegrationTests
             }
         }
 
-        private SolutionDefinition BuildInstallAndCreateSolution()
+        private void BuildInstallAndCreateSolution()
         {
             BuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
-
-            return this.setup.Solutions.Single();
         }
 
         private string BuildAndInstallToolkit()

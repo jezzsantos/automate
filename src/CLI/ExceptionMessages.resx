@@ -30,6 +30,9 @@
     <data name="PatternStore_FoundNamed" xml:space="preserve">
         <value>A pattern with the name: '{0}' already exists</value>
     </data>
+    <data name="SolutionStore_NotFoundAtLocationWithId" xml:space="preserve">
+        <value>A solution with id: '{0}' cannot be found in the solution store at location: '{1}'</value>
+    </data>
     <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
         <value>The pattern definition could not be found for: '{0}'</value>
     </data>
@@ -95,6 +98,9 @@
     </data>
     <data name="ToolkitStore_NotFoundAtLocationWithId" xml:space="preserve">
         <value>A toolkit with id: '{0}' cannot be found in the toolkit store at location: '{1}'</value>
+    </data>
+    <data name="RuntimeApplication_NoCurrentSolution" xml:space="preserve">
+        <value>Solution does not yet exist</value>
     </data>
     <data name="RuntimeApplication_SolutionNotFound" xml:space="preserve">
         <value>No solution with ID: '{0}' has been created.</value>

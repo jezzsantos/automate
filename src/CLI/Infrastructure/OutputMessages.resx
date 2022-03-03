@@ -25,18 +25,18 @@
         </value>
     </resheader>
     <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
-        <value>No Pattern is in use. You must first run one of these commands:
+        <value>No Pattern is being edited. You must first run one of these commands:
 `automate pattern create &lt;Name&gt;` to create a new pattern, or
 `automate pattern use &lt;Name&gt;` to switch to this existing pattern</value>
     </data>
-    <data name="CommandLine_Output_PatternInUse" xml:space="preserve">
-        <value>Pattern: '{Name}' (v.{Version}) is in use</value>
-    </data>
-    <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
-        <value>Pattern: '{Name}' was created with ID: {PatternId}</value>
+    <data name="CommandLine_Output_CurrentPatternInUse" xml:space="preserve">
+        <value>The Pattern: '{Name}' (v.{Version}) is now being edited</value>
     </data>
     <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
-        <value>Pattern: '{Name}' is the default with ID: {PatternId}</value>
+        <value>The Pattern: '{Name}' (ID: '{PatternId}') is now the default</value>
+    </data>
+    <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
+        <value>The Pattern: '{Name}' was created with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
         <value>Added Code Template: '{Name}' from: '{FilePath}'</value>
@@ -89,6 +89,17 @@
     <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
         <value>Created Solutions:
 {Solutions}</value>
+    </data>
+    <data name="CommandLine_Output_NoSolutionSelected" xml:space="preserve">
+        <value>No Solution is being configured. You must first run one of these commands:
+`automate run toolkit &lt;PatternName&gt;` to create a new solution from an existing toolkit, or
+`automate run switch &lt;SolutionID&gt;` to switch to this existing solution</value>
+    </data>
+    <data name="CommandLine_Output_CurrentSolutionInUse" xml:space="preserve">
+        <value>The Solution: '{SolutionId}' is now being configured</value>
+    </data>
+    <data name="CommandLine_Output_SolutionSwitched" xml:space="preserve">
+        <value>The Solution: '{SolutionId}' is now the default</value>
     </data>
     <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
         <value>The Solution Item '{Name}' (ID: '{SolutionItemId}') was configured successfully</value>

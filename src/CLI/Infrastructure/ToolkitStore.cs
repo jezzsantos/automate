@@ -40,6 +40,7 @@ namespace Automate.CLI.Infrastructure
         public void Import(ToolkitDefinition toolkit)
         {
             this.toolkitRepository.ImportToolkit(toolkit);
+            ChangeCurrent(toolkit.Id);
         }
 
         public ToolkitDefinition GetCurrent()

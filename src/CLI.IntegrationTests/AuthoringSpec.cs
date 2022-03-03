@@ -71,27 +71,27 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenUseWithoutName_ThenDisplaysError()
+        public void WhenSwitchWithoutName_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} use");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} switch");
 
-            this.setup.Should().DisplayErrorForMissingArgument("use");
+            this.setup.Should().DisplayErrorForMissingArgument("switch");
         }
 
         [Fact]
-        public void WhenUseWithNameAndNotExists_ThenDisplaysError()
+        public void WhenSwitchWithNameAndNotExists_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} use APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} switch APattern");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.PatternStore_NotFoundAtLocationWithId, "APattern", this.setup.Location);
         }
 
         [Fact]
-        public void WhenUseWithNameAndExists_ThenUsesPattern()
+        public void WhenSwitchWithNameAndExists_ThenUsesPattern()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} use APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} switch APattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Patterns.Single().Id);
@@ -334,7 +334,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenViewPatternAndNoCurrentPattern_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} pattern");
 
             this.setup.Should()
                 .DisplayError(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
@@ -354,7 +354,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.ACollection}}");
 
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} pattern");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -371,7 +371,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewPatternWithFullDetails_ThenDisplaysTree()
+        public void WhenViewPatternWithAllDetails_ThenDisplaysTree()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -389,7 +389,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.ACollection}}");
 
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} view-pattern --full");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} pattern --all");
 
             var pattern = this.setup.Patterns.Single();
             var codeTemplatePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));

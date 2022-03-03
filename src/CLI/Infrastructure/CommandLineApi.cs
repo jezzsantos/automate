@@ -20,9 +20,10 @@ namespace Automate.CLI.Infrastructure
         public const string BuildCommandName = "build";
         public const string InstallCommandName = "install";
         public const string RunCommandName = "run";
-        public const string UsingCommandName = "using";
+        public const string ConfigureCommandName = "configure";
         public const string ValidateCommandName = "validate";
         public const string ExecuteCommandName = "execute";
+        public const string ViewCommandName = "view";
         private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
         private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
@@ -37,15 +38,10 @@ namespace Automate.CLI.Infrastructure
             };
             var editCommands = new Command(EditCommandName, "Editing patterns")
             {
-                new Command("view-pattern", "Views the current configuration of this pattern")
-                    {
-                        new Option("--full", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                    }
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
-                new Command("use", "Uses an existing pattern")
+                new Command("switch", "Switches to configuring another pattern")
                 {
-                    new Argument("Name", "The name of the existing pattern to use")
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUse)),
+                    new Argument("Name", "The name of the existing pattern to edit")
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleSwitch)),
                 new Command("add-codetemplate", "Adds a code template to an element")
                 {
                     new Argument("FilePath", "A relative path to the code file, from the current directory"),
@@ -141,46 +137,72 @@ namespace Automate.CLI.Infrastructure
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
                 new Command("toolkit", "Creates a new solution from a toolkit")
                 {
-                    new Argument("Name", "The name of the toolkit that you want to use")
+                    new Argument("PatternName", "The name of the pattern in the toolkit that you want to use")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
                 new Command("list-solutions", "Lists all created solutions")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions)),
+                new Command("switch", "Switches to configuring another solution")
+                {
+                    new Argument("SolutionId", "The id of the existing solution to configure")
+                }.WithHandler<AuthoringHandlers>(nameof(RuntimeHandlers.HandleSwitch))
             };
-            var usingCommands = new Command(UsingCommandName, "Using patterns from toolkits")
+            var configureCommands = new Command(ConfigureCommandName, "Configuring solutions to patterns from toolkits")
             {
-                new Argument("SolutionID", "The identifier of the current solution that you are using"),
-                new Option("--add", "The expression of the element to add", arity: ArgumentArity.ZeroOrOne),
-                new Option("--add-one-to", "The expression of the collection to add a new element to",
-                    arity: ArgumentArity.ZeroOrOne),
-                new Option("--set", "A name=value pair of properties to assign", arity: ArgumentArity.ZeroOrOne),
-                new Option("--and-set", "A name=value pair of properties to assign",
-                    arity: ArgumentArity.ZeroOrMore),
-                new Option("--on", "The expression of the element/collection to assign properties to", arity: ArgumentArity.ZeroOrOne),
-                new Option("--view-configuration", "View the current configuration of this solution", typeof(bool),
-                    () => false, ArgumentArity.ZeroOrOne)
-            }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleUsing));
+                new Command("add", "Configure an element in the solution")
+                {
+                    new Argument("Expression", "The expression of the element to configure"),
+                    new Option("--and-set", "A Name=Value pair of a property assignment",
+                        arity: ArgumentArity.ZeroOrMore)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleAddTo)),
+                new Command("add-one-to", "Add a new item to a collection in the solution")
+                {
+                    new Argument("Expression", "The expression of the element/collection to add to"),
+                    new Option("--and-set", "Additional Name=Value pair of a property assignment",
+                        arity: ArgumentArity.ZeroOrMore)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleAddOneTo)),
+                new Command("on", "Set the properties of an existing item in the solution")
+                {
+                    new Argument("Expression", "The expression of the element/collection to assign to"),
+                    new Option("--and-set", "Additional Name=Value pair of a property assignment",
+                        arity: ArgumentArity.ZeroOrMore)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSet))
+            };
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
-                new Argument("SolutionID", "The identifier of the current solution that you are validating"),
-                new Option("--on", "The expression of the element/collection to validate", arity: ArgumentArity.ZeroOrOne)
-            }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate));
-            var executeCommands = new Command(ExecuteCommandName, "Executing commands on patterns from toolkits")
+                new Command("solution", "Validate the current solution")
+                {
+                    new Option("--on", "The expression of the element/collection to validate", arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate))
+            };
+            var executeCommands = new Command(ExecuteCommandName, "Executing automation on patterns from toolkits")
             {
-                new Argument("SolutionID", "The identifier of the current solution containing the command"),
-                new Option("--command", "The command name to execute", arity: ArgumentArity.ExactlyOne),
-                new Option("--on", "The expression of the element/collection containing the command to execute", arity: ArgumentArity.ZeroOrOne)
-            }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand));
+                new Command("command", "Executes the command on the solution")
+                {
+                    new Argument("Name", "The name of the command to execute"),
+                    new Option("--on", "The expression of the element/collection containing the command to execute", arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand))
+            };
+            var viewCommands = new Command(ViewCommandName, "Viewing patterns and solutions")
+            {
+                new Command("pattern", "View the configuration of the pattern")
+                {
+                    new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
+                new Command("solution", "View the configuration of the solution")
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewConfiguration))
+            };
 
             var command =
                 new RootCommand(
                     "Templatize patterns from your own codebase, make them programmable, then share them with your team")
                 {
+                    viewCommands,
                     createCommands,
                     editCommands,
                     buildCommands,
                     installCommands,
                     runCommands,
-                    usingCommands,
+                    configureCommands,
                     validateCommands,
                     executeCommands
                 };
@@ -193,7 +215,7 @@ namespace Automate.CLI.Infrastructure
                 if (Authoring.CurrentPatternId.Exists())
                 {
                     ConsoleExtensions.WriteOutput(
-                        OutputMessages.CommandLine_Output_PatternInUse.FormatTemplate(Authoring.CurrentPatternName,
+                        OutputMessages.CommandLine_Output_CurrentPatternInUse.FormatTemplate(Authoring.CurrentPatternName,
                             Authoring.CurrentPatternId), ConsoleColor.Gray);
                 }
                 else
@@ -203,6 +225,18 @@ namespace Automate.CLI.Infrastructure
             }
             if (IsRuntimeCommand(args))
             {
+                if (!IsRuntimeInstallCommand(args))
+                {
+                    if (Runtime.CurrentSolutionId.Exists())
+                    {
+                        ConsoleExtensions.WriteOutput(
+                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(Runtime.CurrentSolutionId), ConsoleColor.Gray);
+                    }
+                    else
+                    {
+                        ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoSolutionSelected);
+                    }
+                }
             }
 
             var parser = new CommandLineBuilder(command)
@@ -225,15 +259,27 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
+            var isViewSolutionCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "solution";
+
             return args.Count > 0
-                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == UsingCommandName
-                       || args[0] == ValidateCommandName || args[0] == ExecuteCommandName);
+                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
+                       || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
+                       || isViewSolutionCommand);
+        }
+
+        private static bool IsRuntimeInstallCommand(IReadOnlyList<string> args)
+        {
+            return args.Count > 0
+                   && (args[0] == InstallCommandName || args[0] == RunCommandName);
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
         {
+            var isViewPatternCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "pattern";
+
             return args.Count > 0
-                   && (args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName);
+                   && (args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
+                       || isViewPatternCommand);
         }
 
         private class AuthoringHandlers
@@ -297,15 +343,15 @@ namespace Automate.CLI.Infrastructure
                     OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
             }
 
-            internal static void HandleViewPattern(bool full, bool outputStructured, IConsole console)
+            internal static void HandleViewPattern(bool all, bool outputStructured, IConsole console)
             {
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(outputStructured, pattern, full));
+                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
-            internal static void HandleUse(string name, bool outputStructured, IConsole console)
+            internal static void HandleSwitch(string name, bool outputStructured, IConsole console)
             {
                 Authoring.SwitchCurrentPattern(name);
                 console.WriteOutput(outputStructured,
@@ -466,9 +512,9 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleNewSolution(string name, bool outputStructured, IConsole console)
+            internal static void HandleNewSolution(string patternName, bool outputStructured, IConsole console)
             {
-                var solution = Runtime.CreateSolution(name);
+                var solution = Runtime.CreateSolution(patternName);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit
                     , solution.PatternName, solution.Id);
             }
@@ -488,37 +534,60 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleUsing(string solutionId, string add, string addOneTo, string set,
-                string[] andSet, string on, bool viewConfiguration,
-                bool outputStructured, IConsole console)
+            internal static void HandleSwitch(string solutionId, bool outputStructured, IConsole console)
             {
-                if (!viewConfiguration)
-                {
-                    var sets = new List<string>();
-                    if (set.HasValue())
-                    {
-                        sets.Add(set);
-                    }
-                    if (andSet.HasAny())
-                    {
-                        sets.AddRange(andSet);
-                    }
-
-                    var solutionItem = Runtime.ConfigureSolution(solutionId, add, addOneTo, on, sets);
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
-                }
-                else
-                {
-                    var configuration = Runtime.GetSolutionConfiguration(solutionId);
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
-                        configuration);
-                }
+                Runtime.SwitchCurrentSolution(solutionId);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_SolutionSwitched, solutionId, Runtime.CurrentSolutionId);
             }
 
-            internal static void HandleValidate(string solutionId, string on,
+            internal static void HandleAddTo(string expression, string[] andSet, bool outputStructured, IConsole console)
+            {
+                var sets = new List<string>();
+                if (andSet.HasAny())
+                {
+                    sets.AddRange(andSet);
+                }
+
+                var solutionItem = Runtime.ConfigureSolution(expression, null, null, sets);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleAddOneTo(string expression, string[] andSet, bool outputStructured, IConsole console)
+            {
+                var sets = new List<string>();
+                if (andSet.HasAny())
+                {
+                    sets.AddRange(andSet);
+                }
+
+                var solutionItem = Runtime.ConfigureSolution(null, expression, null, sets);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleSet(string expression, string[] andSet, bool outputStructured, IConsole console)
+            {
+                var sets = new List<string>();
+                if (andSet.HasAny())
+                {
+                    sets.AddRange(andSet);
+                }
+
+                var solutionItem = Runtime.ConfigureSolution(null, null, expression, sets);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleViewConfiguration(bool outputStructured, IConsole console)
+            {
+                var configuration = Runtime.GetConfiguration();
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
+                    configuration);
+            }
+
+            internal static void HandleValidate(string on,
                 bool outputStructured, IConsole console)
             {
-                var errors = Runtime.Validate(solutionId, on);
+                var errors = Runtime.Validate(on);
 
                 if (errors.Count > 0)
                 {
@@ -531,10 +600,10 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleExecuteCommand(string solutionId, string command, string on, bool outputStructured,
+            internal static void HandleExecuteCommand(string name, string on, bool outputStructured,
                 IConsole console)
             {
-                var execution = Runtime.ExecuteLaunchPoint(solutionId, command, on);
+                var execution = Runtime.ExecuteLaunchPoint(name, on);
                 if (execution.IsSuccess)
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,

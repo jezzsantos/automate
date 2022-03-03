@@ -216,7 +216,7 @@ It now looks like this:
 
 You can run this command to view your current configuration:
 
-`automate edit view-pattern`
+`automate view pattern`
 
 So, with this conceptual *meta-model* of an API, a contributor on the `RoadRunner` product can now define any API in the `RoadRunner` product in terms of its `Name` its `ServiceOperations` and its `Request` and `Response` DTO's.
 
@@ -490,28 +490,28 @@ You can list all the solutions that have been created so far, with this command:
 
 Now, lets program one of the solutions:
 
-`automate using "<SOLUTIONID>" --set "Name=Orders" --and-set "ResourceName=Order"`
+`automate configure on "{AcmeAPI}" --and-set "Name=Orders" --and-set "ResourceName=Order"`
 
 > This command defines the `Name` and the `ResourceName` attributes of the pattern
 
-`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperation}" --and-set "Name=CreateOrder" --and-set "Verb=Post" --and-set "Route=/orders" --and-set "IsAuthorized=true"`
+`automate configure add-one-to "{ServiceOperation}" --and-set "Name=CreateOrder" --and-set "Verb=Post" --and-set "Route=/orders" --and-set "IsAuthorized=true"`
 
 > This command creates a new `ServiceOperation` instance and adds it to the `ServiceOperations` collection, and returns its unique OPERATIONID.
 >
 
-`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Request}"`
+`automate configure add "{ServiceOperation.<OPERATIONID>.Request}"`
 
 > This command creates a new `Request` first
 
-`automate using "<SOLUTIONID>" --add-one-to "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "DataType=string" --and-set "IsOptional=false"`
+`automate configure add-one-to "{ServiceOperation.<OPERATIONID>.Request.Field}" --and-set "Name=ProductId" --and-set "DataType=string" --and-set "IsOptional=false"`
 
 > This command creates a new `Field` in the Request DTO called `ProductId`
 
-`automate using "<SOLUTIONID>" --add "{ServiceOperation.<OPERATIONID>.Response}"`
+`automate configure add "{ServiceOperation.<OPERATIONID>.Response}"`
 
 > This command creates a new `Response`
 
-`automate using "<SOLUTIONID>" --add-one-to "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "DataType=string"`
+`automate configure add-one-to "{<OPERATIONID>.Response.Field}" --and-set "Name=Id" --and-set "DataType=string"`
 
 > This command creates a new `Field` in the Response DTO called `Id`
 
@@ -521,7 +521,7 @@ After this set of commands, the solution is fully configured.
 
 You can see the actual configuration of the solution, with this command:
 
-`automate using "<SOLUTIONID>" --view-configuration`
+`automate view solution`
 
 This command should print out a JSON object that looks just like this:
 
@@ -578,7 +578,7 @@ This command should print out a JSON object that looks just like this:
 
 A codebase contributor can now finally ask the toolkit to write the new API code for them!
 
-`automate execute "<SOLUTIONID>" --command "Generate"`
+`automate execute command "Generate"`
 
 > This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured code template commands, that in turn, each generate the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` project in the respective locations.
 
@@ -586,7 +586,7 @@ A codebase contributor can now finally ask the toolkit to write the new API code
 
 You can also manually validate the solution at any time, with this command:
 
-`automate validate "<SOLUTIONID>"`
+`automate validate solution`
 
 The `RoadRunner` codebase should now look like this:
 

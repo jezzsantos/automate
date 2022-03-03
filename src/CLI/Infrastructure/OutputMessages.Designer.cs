@@ -135,6 +135,24 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) is now being edited.
+        /// </summary>
+        internal static string CommandLine_Output_CurrentPatternInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CurrentPatternInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Solution: &apos;{SolutionId}&apos; is now being configured.
+        /// </summary>
+        internal static string CommandLine_Output_CurrentSolutionInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CurrentSolutionInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
@@ -219,7 +237,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Pattern is in use. You must first run one of these commands:
+        ///   Looks up a localized string similar to No Pattern is being edited. You must first run one of these commands:
         ///`automate pattern create &lt;Name&gt;` to create a new pattern, or
         ///`automate pattern use &lt;Name&gt;` to switch to this existing pattern.
         /// </summary>
@@ -230,7 +248,18 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; was created with ID: {PatternId}.
+        ///   Looks up a localized string similar to No Solution is being configured. You must first run one of these commands:
+        ///`automate run toolkit &lt;PatternName&gt;` to create a new solution from an existing toolkit, or
+        ///`automate run switch &lt;SolutionID&gt;` to switch to this existing solution.
+        /// </summary>
+        internal static string CommandLine_Output_NoSolutionSelected {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoSolutionSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
             get {
@@ -239,16 +268,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; (v.{Version}) is in use.
-        /// </summary>
-        internal static string CommandLine_Output_PatternInUse {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern: &apos;{Name}&apos; is the default with ID: {PatternId}.
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_PatternSwitched {
             get {
@@ -272,6 +292,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_SolutionConfigured {
             get {
                 return ResourceManager.GetString("CommandLine_Output_SolutionConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Solution: &apos;{SolutionId}&apos; is now the default.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionSwitched {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionSwitched", resourceCulture);
             }
         }
         

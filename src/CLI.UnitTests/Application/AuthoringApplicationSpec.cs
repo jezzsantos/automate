@@ -82,7 +82,7 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenSwitchCurrentPatternAndExists_ThenCurrentIsChanged()
+        public void WhenSwitchCurrentPattern_ThenCurrentIsChanged()
         {
             this.application.CreateNewPattern("aname1");
             this.application.CreateNewPattern("aname2");
