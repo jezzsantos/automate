@@ -276,32 +276,44 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
         {
+            if (args.Count < 1)
+            {
+                return false;
+            }
+
             var isViewSolutionCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "solution";
             var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
             var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
 
-            return args.Count > 0
-                   && (args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
-                       || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
-                       || isViewSolutionCommand || isListToolkitsCommand || isListSolutionsCommand);
+            return args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
+                   || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
+                   || isViewSolutionCommand || isListToolkitsCommand || isListSolutionsCommand;
         }
 
         private static bool IsRuntimeSolutionCommand(IReadOnlyList<string> args)
         {
+            if (args.Count < 1)
+            {
+                return false;
+            }
+
             var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
             var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
 
-            return args.Count > 0
-                   && args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand && !isListSolutionsCommand;
+            return args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand && !isListSolutionsCommand;
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
         {
+            if (args.Count < 1)
+            {
+                return false;
+            }
+
             var isViewPatternCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "pattern";
 
-            return args.Count > 0
-                   && (args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
-                       || args[0] == TestCommandName || isViewPatternCommand);
+            return args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
+                   || args[0] == TestCommandName || isViewPatternCommand;
         }
 
         private class AuthoringHandlers

@@ -21,6 +21,14 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenNoCommands_ThenDisplaysError()
+        {
+            this.setup.RunCommand("");
+
+            this.setup.Should().DisplayErrorForMissingCommand();
+        }
+
+        [Fact]
         public void WhenCreateAndNoCommands_ThenDisplaysError()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName}");
