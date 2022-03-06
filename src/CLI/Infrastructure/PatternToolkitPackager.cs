@@ -10,7 +10,6 @@ namespace Automate.CLI.Infrastructure
     {
         private const int VersionFieldCount = 3;
         public const string AutoIncrementInstruction = "auto";
-        private static readonly Version DefaultVersionNumber = new Version(0, 0, 0);
         private readonly IPatternStore store;
         private readonly IToolkitStore toolkitStore;
 
@@ -100,7 +99,7 @@ namespace Automate.CLI.Infrastructure
         {
             var currentVersion = Version.Parse(pattern.ToolkitVersion.HasValue()
                 ? pattern.ToolkitVersion
-                : DefaultVersionNumber.ToString(VersionFieldCount));
+                : PatternDefinition.DefaultVersionNumber.ToString(VersionFieldCount));
             var newVersion = CalculatePackageVersion(currentVersion, versionInstruction).ToString(VersionFieldCount);
 
             pattern.ToolkitVersion = newVersion;

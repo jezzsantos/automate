@@ -47,6 +47,8 @@ namespace Automate.CLI.Application
 
         public string CurrentPatternName => this.store.GetCurrent()?.Name;
 
+        public string CurrentPatternVersion => this.store.GetCurrent()?.ToolkitVersion;
+
         public void CreateNewPattern(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));

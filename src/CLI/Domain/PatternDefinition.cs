@@ -7,6 +7,8 @@ namespace Automate.CLI.Domain
 {
     internal class PatternDefinition : IPatternElement, IValidateable
     {
+        internal static readonly Version DefaultVersionNumber = new Version(0, 0, 0);
+
         public PatternDefinition(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -21,6 +23,7 @@ namespace Automate.CLI.Domain
             Automation = new List<IAutomation>();
             Attributes = new List<Attribute>();
             Elements = new List<Element>();
+            ToolkitVersion = DefaultVersionNumber.ToString(2);
         }
 
         /// <summary>

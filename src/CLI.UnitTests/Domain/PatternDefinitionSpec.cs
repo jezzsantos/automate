@@ -23,6 +23,7 @@ namespace CLI.UnitTests.Domain
         {
             this.pattern.Name.Should().Be("aname");
             this.pattern.Id.Should().NotBeEmpty();
+            this.pattern.ToolkitVersion.Should().Be("0.0");
         }
 
         [Fact]

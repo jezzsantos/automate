@@ -239,7 +239,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     ConsoleExtensions.WriteOutput(
                         OutputMessages.CommandLine_Output_CurrentPatternInUse.FormatTemplate(Authoring.CurrentPatternName,
-                            Authoring.CurrentPatternId), ConsoleColor.Gray);
+                            Authoring.CurrentPatternVersion), ConsoleColor.Gray);
                 }
                 else
                 {
@@ -266,6 +266,7 @@ namespace Automate.CLI.Infrastructure
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) =>
                 {
+                    // ReSharper disable once RedundantAssignment
                     var isDebugBuild = false;
 
 #if DEBUG
