@@ -306,6 +306,79 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenViewSolutionWithTodo_ThenDisplaysConfigurationSchemaAndValidation()
+        {
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} solution --todo");
+
+            var solution = this.setup.Solutions.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
+                    new
+                    {
+                        id = solution.Model.Id,
+                        a_property1 = "avalue1",
+                        an_element1 = new
+                        {
+                            id = solution.Model.Properties["AnElement1"].Id
+                        },
+                        a_collection2 = new
+                        {
+                            id = solution.Model.Properties["ACollection2"].Id,
+                            items = new[]
+                            {
+                                new
+                                {
+                                    id = solution.Model.Properties["ACollection2"].Items.Single().Id,
+                                    a_property4 = "ADefaultValue4"
+                                }
+                            }
+                        }
+                    }.ToJson<dynamic>()));
+            var pattern = this.setup.Patterns.Single();
+            var codeTemplatePath1 = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
+            var codeTemplatePath2 = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code2.code"));
+            var element1 = this.setup.Patterns.Single().Elements.First();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                        $"- APattern [{pattern.Id}] (root element)\n" +
+                        "\t- CodeTemplates:\n" +
+                        $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code)\n" +
+                        "\t- Automation:\n" +
+                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.a_property3}}}}namingtest.cs)\n" +
+                        $"\t\t- ALaunchPoint1 [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {pattern.Automation.First().Id})\n" +
+                        "\t- Attributes:\n" +
+                        "\t\t- AProperty1 (string, required)\n" +
+                        "\t- Elements:\n" +
+                        $"\t\t- AnElement1 [{element1.Id}] (element)\n" +
+                        "\t\t\t- CodeTemplates:\n" +
+                        $"\t\t\t\t- ACodeTemplate2 [{element1.CodeTemplates.Single().Id}] (file: {codeTemplatePath2}, ext: .code)\n" +
+                        "\t\t\t- Automation:\n" +
+                        $"\t\t\t\t- CodeTemplateCommand1 [{element1.Automation.First().Id}] (CodeTemplateCommand) (template: {element1.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/parentsubstitutiontest.cs)\n" +
+                        $"\t\t\t\t- ALaunchPoint2 [{element1.Automation.Last().Id}] (CommandLaunchPoint) (ids: {element1.Automation.First().Id})\n" +
+                        "\t\t\t- Attributes:\n" +
+                        "\t\t\t\t- AProperty3 (string, oneof: A;B;C)\n" +
+                        "\t\t\t- Elements:\n" +
+                        $"\t\t\t\t- ACollection1 [{element1.Elements.First().Id}] (collection)\n" +
+                        $"\t\t- ACollection2 [{pattern.Elements.Last().Id}] (collection)\n" +
+                        "\t\t\t- Attributes:\n" +
+                        "\t\t\t\t- AProperty4 (string, default: ADefaultValue4)\n"
+                        ,
+                        this.setup.Patterns.Single().Id));
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionValidationFailed
+                        .FormatTemplate(
+                            "1. {APattern.AnElement1} requires at least one instance\r\n\r\n"
+                        ));
+        }
+
+        [Fact]
         public void WhenValidateAndErrors_ThenDisplaysErrors()
         {
             BuildInstallAndCreateSolution();

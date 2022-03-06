@@ -244,12 +244,18 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        public string GetConfiguration()
+        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation) GetConfiguration(bool includeSchema, bool includeValidationResults)
         {
             VerifyCurrentSolutionExists();
             var solution = this.solutionStore.GetCurrent();
+            var validation = includeValidationResults
+                ? Validate(null)
+                : ValidationResults.None;
+            var schema = includeSchema
+                ? solution.Toolkit.Pattern
+                : null;
 
-            return solution.GetConfiguration();
+            return (solution.GetConfiguration(), schema, validation);
         }
 
         public ValidationResults Validate(string elementExpression)

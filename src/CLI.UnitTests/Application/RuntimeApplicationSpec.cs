@@ -469,7 +469,7 @@ namespace CLI.UnitTests.Application
         public void WhenGetConfigurationAndCurrentSolutionNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.GetConfiguration())
+                .Invoking(x => x.GetConfiguration(false, false))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
         }
@@ -493,9 +493,50 @@ namespace CLI.UnitTests.Application
 
             this.solutionStore.Save(solution);
 
-            var result = this.application.GetConfiguration();
+            var result = this.application.GetConfiguration(false, false);
 
-            result.Should().Be(JsonConversions.ToJson<dynamic>(new
+            result.Pattern.Should().BeNull();
+            result.Validation.Should().BeEquivalentTo(ValidationResults.None);
+            result.Configuration.Should().Be(JsonConversions.ToJson<dynamic>(new
+            {
+                id = solution.Model.Id,
+                anattributename1 = "adefaultvalue1",
+                anelementname1 = new
+                {
+                    id = solution.Model.Properties["anelementname1"].Id,
+                    anelementname2 = new
+                    {
+                        id = solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                        anattributename2 = "adefaultvalue2"
+                    }
+                }
+            }));
+        }
+
+        [Fact]
+        public void WhenGetConfigurationWithSchemaAndValidation_ThenReturnsConfiguration()
+        {
+            var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
+            var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
+            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
+            var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            element2.Attributes.Add(attribute2);
+            element1.Elements.Add(element2);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Attributes.Add(attribute1);
+            pattern.Elements.Add(element1);
+            UpdateToolkit(pattern);
+            var solution = this.application.CreateSolution("apatternname");
+            solution.Model.Properties["anelementname1"].Materialise();
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+
+            this.solutionStore.Save(solution);
+
+            var result = this.application.GetConfiguration(true, true);
+
+            result.Pattern.Should().Be(pattern);
+            result.Validation.Results.Should().BeEmpty();
+            result.Configuration.Should().Be(JsonConversions.ToJson<dynamic>(new
             {
                 id = solution.Model.Id,
                 anattributename1 = "adefaultvalue1",

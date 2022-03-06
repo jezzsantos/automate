@@ -197,7 +197,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
                 new Command("solution", "View the configuration of the solution")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewConfiguration))
+                {
+                    new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewConfiguration))
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
             {
@@ -408,7 +410,7 @@ namespace Automate.CLI.Infrastructure
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, output);
             }
 
-            private static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)
+            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)
             {
                 if (outputStructured)
                 {
@@ -497,7 +499,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default:" + $"{attribute.DefaultValue}" : "")})\n");
+                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})\n");
                 }
 
                 void DisplayCodeTemplate(CodeTemplate template, int indentLevel)
@@ -617,22 +619,44 @@ namespace Automate.CLI.Infrastructure
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
             }
 
-            internal static void HandleViewConfiguration(bool outputStructured, IConsole console)
+            internal static void HandleViewConfiguration(bool todo, bool outputStructured, IConsole console)
             {
-                var configuration = Runtime.GetConfiguration();
+                var (configuration, pattern, validation) = Runtime.GetConfiguration(todo, todo);
+
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
                     configuration);
+
+                if (todo)
+                {
+                    console.WriteOutputLine();
+                    console.WriteOutput(outputStructured,
+                        OutputMessages.CommandLine_Output_ElementsListed, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                }
+
+                if (todo)
+                {
+                    console.WriteOutputLine();
+                    if (validation.HasAny())
+                    {
+                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                            FormatValidationErrors(validation));
+                    }
+                    else
+                    {
+                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+                    }
+                }
             }
 
             internal static void HandleValidate(string on,
                 bool outputStructured, IConsole console)
             {
-                var errors = Runtime.Validate(on);
+                var results = Runtime.Validate(on);
 
-                if (errors.Count > 0)
+                if (results.HasAny())
                 {
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        FormatValidationErrors(errors));
+                        FormatValidationErrors(results));
                 }
                 else
                 {
@@ -712,6 +736,12 @@ namespace Automate.CLI.Infrastructure
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Error.WriteLine(message);
             Console.ResetColor();
+        }
+
+        public static void WriteOutputLine(this IConsole console)
+        {
+            Console.ResetColor();
+            console.WriteLine(string.Empty);
         }
 
         public static void WriteOutput(this IConsole console, string message, ConsoleColor color)

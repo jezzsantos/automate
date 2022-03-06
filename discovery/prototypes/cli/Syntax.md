@@ -202,16 +202,16 @@ It now looks like this:
             - Name (attribute) (string, required)
             - Verb (attribute) (string, required, oneof: POST;PUT;GET;PATCH;DELETE)
             - Route (attribute) (string, required)
-            - IsAuthorized (attribute) (bool, required, default:true)
+            - IsAuthorized (attribute) (bool, required, default: true)
             - Request (element)
                     - Field (collection)
                             - Name (attribute) (string, required)
-                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default:string)
-                            - IsOptional (attribute) (bool, required, default:false)
+                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default: string)
+                            - IsOptional (attribute) (bool, required, default: false)
             - Response (element)
                     - Field (collection)
                             - Name (attribute) (string, required)
-                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default:string)
+                            - DataType (attribute) (string, required, oneof: string;int;decimal,bool;DateTime, default: string)
 ```
 
 You can run this command to view your current configuration:
