@@ -384,7 +384,7 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ElementsListed, FormatPatternConfiguration(outputStructured, pattern, all));
+                    OutputMessages.CommandLine_Output_PatternTree, FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
             internal static void HandleSwitch(string name, bool outputStructured, IConsole console)
@@ -623,14 +623,15 @@ namespace Automate.CLI.Infrastructure
             {
                 var (configuration, pattern, validation) = Runtime.GetConfiguration(todo, todo);
 
+                var solutionId = Runtime.CurrentSolutionId;
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
-                    configuration);
+                    solutionId, configuration);
 
                 if (todo)
                 {
                     console.WriteOutputLine();
                     console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_ElementsListed, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                        OutputMessages.CommandLine_Output_PatternTree, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
                 }
 
                 if (todo)
@@ -639,11 +640,11 @@ namespace Automate.CLI.Infrastructure
                     if (validation.HasAny())
                     {
                         console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                            FormatValidationErrors(validation));
+                            solutionId, FormatValidationErrors(validation));
                     }
                     else
                     {
-                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionId);
                     }
                 }
             }
@@ -653,14 +654,15 @@ namespace Automate.CLI.Infrastructure
             {
                 var results = Runtime.Validate(on);
 
+                var solutionId = Runtime.CurrentSolutionId;
                 if (results.HasAny())
                 {
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        FormatValidationErrors(results));
+                        solutionId, FormatValidationErrors(results));
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionId);
                 }
             }
 
@@ -675,8 +677,9 @@ namespace Automate.CLI.Infrastructure
                 }
                 else
                 {
+                    var solutionId = Runtime.CurrentSolutionId;
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        FormatValidationErrors(execution.Errors));
+                        solutionId, FormatValidationErrors(execution.Errors));
                 }
             }
 

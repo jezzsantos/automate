@@ -367,7 +367,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                    OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
                         "- APattern (root element) (attached with 1 code templates)\n" +
                         "\t- AProperty (attribute) (string)\n" +
                         "\t- AnElement (element)\n" +
@@ -405,7 +405,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                    OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
                         $"- APattern [{pattern.Id}] (root element)\n" +
                         "\t- CodeTemplates:\n" +
                         $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code)\n" +

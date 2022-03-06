@@ -52,8 +52,8 @@
         <value>Code Template '{Name}' renders:
 {Output}</value>
     </data>
-    <data name="CommandLine_Output_ElementsListed" xml:space="preserve">
-        <value>Pattern:
+    <data name="CommandLine_Output_PatternTree" xml:space="preserve">
+        <value>Pattern is configured as:
 {Tree}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
@@ -109,18 +109,18 @@
         <value>The Solution Item '{Name}' (ID: '{SolutionItemId}') was configured successfully</value>
     </data>
     <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
-        <value>The Solution is configured:
+        <value>Solution ({SolutionId}) is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationFailed" xml:space="preserve">
-        <value>The Solution is not correctly configured in these ways:
+        <value>Solution ({SolutionId}) is not correctly configured in these ways:
 {Errors}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
-        <value>The Solution is configured correctly</value>
+        <value>Solution ({SolutionId}) is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecuted" xml:space="preserve">
-        <value>The Command:  '{Command}' executed successfully:
+        <value>The Command: '{Command}' executed successfully:
 {Log}</value>
     </data>
 </root>

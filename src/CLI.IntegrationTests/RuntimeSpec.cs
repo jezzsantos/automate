@@ -276,7 +276,7 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Id,
                     new
                     {
                         id = solution.Model.Id,
@@ -317,7 +317,7 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Id,
                     new
                     {
                         id = solution.Model.Id,
@@ -345,7 +345,7 @@ namespace CLI.IntegrationTests
             var element1 = this.setup.Patterns.Single().Elements.First();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_ElementsListed.FormatTemplate(
+                    OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
                         $"- APattern [{pattern.Id}] (root element)\n" +
                         "\t- CodeTemplates:\n" +
                         $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code)\n" +
@@ -373,7 +373,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(
+                        .FormatTemplate(solution.Id,
                             "1. {APattern.AnElement1} requires at least one instance\r\n\r\n"
                         ));
         }
@@ -385,11 +385,12 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
 
+            var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(
+                        .FormatTemplate(solution.Id,
                             "1. {APattern.AProperty1} requires its value to be set\r\n" +
                             "2. {APattern.AnElement1} requires at least one instance\r\n" +
                             "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
@@ -407,10 +408,11 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
 
+            var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationSuccess);
+                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Id));
         }
 
         [Fact]
@@ -419,11 +421,12 @@ namespace CLI.IntegrationTests
             BuildInstallAndCreateSolution();
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
+            var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(
+                        .FormatTemplate(solution.Id,
                             "1. {APattern.AProperty1} requires its value to be set\r\n" +
                             "2. {APattern.AnElement1} requires at least one instance\r\n" +
                             "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"

@@ -126,7 +126,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Command:  &apos;{Command}&apos; executed successfully:
+        ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; executed successfully:
         ///{Log}.
         /// </summary>
         internal static string CommandLine_Output_CommandExecuted {
@@ -168,16 +168,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_ElementAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ElementAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern:
-        ///{Tree}.
-        /// </summary>
-        internal static string CommandLine_Output_ElementsListed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_ElementsListed", resourceCulture);
             }
         }
         
@@ -287,7 +277,17 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution is configured:
+        ///   Looks up a localized string similar to Pattern is configured as:
+        ///{Tree}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternTree {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternTree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solution ({SolutionId}) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfiguration {
@@ -315,7 +315,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution is not correctly configured in these ways:
+        ///   Looks up a localized string similar to Solution ({SolutionId}) is not correctly configured in these ways:
         ///{Errors}.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationFailed {
@@ -325,7 +325,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution is configured correctly.
+        ///   Looks up a localized string similar to Solution ({SolutionId}) is configured correctly.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationSuccess {
             get {
