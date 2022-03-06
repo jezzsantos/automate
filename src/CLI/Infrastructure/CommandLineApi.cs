@@ -152,7 +152,7 @@ namespace Automate.CLI.Infrastructure
                 new Command("switch", "Switches to configuring another solution")
                 {
                     new Argument("SolutionId", "The id of the existing solution to configure")
-                }.WithHandler<AuthoringHandlers>(nameof(RuntimeHandlers.HandleSwitch))
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSwitch))
             };
             var configureCommands = new Command(ConfigureCommandName, "Configuring solutions to patterns from toolkits")
             {

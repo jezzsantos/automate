@@ -127,6 +127,24 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenSwitchSolution_ThenSwitchesSolution()
+        {
+            BuildAndInstallToolkit();
+
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
+
+            var solution1 = this.setup.Solutions.First();
+
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{solution1.Id}\"");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionSwitched.FormatTemplate(solution1.Id));
+        }
+
+        [Fact]
         public void WhenListInstalledSolutionsAndNone_ThenDisplaysNone()
         {
             BuildAndInstallToolkit();
