@@ -336,7 +336,11 @@ namespace Automate.CLI.Application
             }
 
             var solution = pattern.CreateTestSolution();
-            var solutionItem = solution.FindCodeTemplate(codeTemplate.Id);
+            var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
+            if (solutionItem.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution.Format(codeTemplate.Id));
+            }
             var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
             var contents = CodeTemplateFile.Encoding.GetString(byteContents);
             var generatedCode = this.textTemplatingEngine.Transform(contents, solutionItem);

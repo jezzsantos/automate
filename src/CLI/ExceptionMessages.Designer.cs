@@ -133,6 +133,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate with ID: &apos;{0}&apos; cannot be found on the test solution.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateNotExistsTestSolution {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExistsTestSolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A Command with ID: &apos;{0}&apos; does not exist anywhere on this pattern.
         /// </summary>
         internal static string AuthoringApplication_CommandIdNotFound {

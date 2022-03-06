@@ -81,6 +81,9 @@
     <data name="AuthoringApplication_CodeTemplateNotExistsElement" xml:space="preserve">
         <value>A CodeTemplate with name: '{0}' does not exist on element referenced by: '{1}'</value>
     </data>
+    <data name="AuthoringApplication_CodeTemplateNotExistsTestSolution" xml:space="preserve">
+        <value>A CodeTemplate with ID: '{0}' cannot be found on the test solution</value>
+    </data>
     <data name="AuthoringApplication_CommandIdNotFound" xml:space="preserve">
         <value>A Command with ID: '{0}' does not exist anywhere on this pattern</value>
     </data>

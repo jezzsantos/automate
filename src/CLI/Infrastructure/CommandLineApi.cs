@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Builder;
+using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Linq;
@@ -228,6 +229,9 @@ namespace Automate.CLI.Infrastructure
             command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
                 typeof(bool), () => false,
                 ArgumentArity.ZeroOrOne));
+            command.AddGlobalOption(new Option("--debug", "Show more error details when there is an exception",
+                typeof(bool), () => false,
+                ArgumentArity.ZeroOrOne));
 
             if (IsAuthoringCommand(args))
             {
@@ -262,18 +266,37 @@ namespace Automate.CLI.Infrastructure
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) =>
                 {
-                    var message = ex.InnerException.Exists()
-                        ? ex.InnerException.Message
-                        : ex.Message;
-                    Console.Error.WriteLine();
-                    context.Console.WriteError($"Failed Unexpectedly, reason: {message}", ConsoleColor.Red);
+                    var isDebugBuild = false;
+
 #if DEBUG
-                    throw ex;
+                    isDebugBuild = true;
 #endif
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    var isDebug = IsDebugging(context, ex) || isDebugBuild;
+
+                    var message = ex.InnerException.Exists()
+                        ? isDebug ? ex.InnerException.ToString() : ex.InnerException.Message
+                        : isDebug
+                            ? ex.ToString()
+                            : ex.Message;
+                    Console.Error.WriteLine();
+                    context.Console.WriteError($"Failed Unexpectedly, with: {message}", ConsoleColor.Red);
                 }, 1)
                 .Build();
 
             return parser.Invoke(args);
+        }
+
+        private static bool IsDebugging(InvocationContext context, Exception ex)
+        {
+            var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
+            if (debugOption.Exists())
+            {
+                return context.ParseResult.GetValueForOption<bool>(debugOption);
+            }
+
+            return false;
         }
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)

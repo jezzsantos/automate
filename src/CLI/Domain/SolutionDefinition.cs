@@ -34,7 +34,7 @@ namespace Automate.CLI.Domain
             return Model.GetConfiguration(false).ToJson();
         }
 
-        public (IAutomation Automation, SolutionItem SolutionItem) FindAutomation(string automationId)
+        public (IAutomation Automation, SolutionItem SolutionItem) FindByAutomation(string automationId)
         {
             return FindDescendantAutomation(Model);
 
@@ -58,6 +58,9 @@ namespace Automate.CLI.Domain
                         return (automation, item);
                     }
                 }
+                if (item.IsAttribute || item.IsValue)
+                {
+                }
 
                 foreach (var (_, value) in item.Properties.Safe())
                 {
@@ -72,7 +75,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public SolutionItem FindCodeTemplate(string codeTemplateId)
+        public SolutionItem FindByCodeTemplate(string codeTemplateId)
         {
             return FindDescendantCodeTemplate(Model);
 
@@ -95,6 +98,9 @@ namespace Automate.CLI.Domain
                     {
                         return item;
                     }
+                }
+                if (item.IsAttribute || item.IsValue)
+                {
                 }
 
                 foreach (var (_, value) in item.Properties.Safe())

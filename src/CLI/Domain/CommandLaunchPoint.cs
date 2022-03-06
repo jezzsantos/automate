@@ -31,7 +31,7 @@ namespace Automate.CLI.Domain
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
-                var (command, solutionItem) = solution.FindAutomation(cmdId);
+                var (command, solutionItem) = solution.FindByAutomation(cmdId);
                 if (command.NotExists())
                 {
                     throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
