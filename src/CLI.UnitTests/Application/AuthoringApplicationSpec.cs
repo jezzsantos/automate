@@ -201,6 +201,20 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenAddAttributeWithExistingNameOfElementOrCollection_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+
+            this.application
+                .Invoking(x => x.AddAttribute("anelementname", null, null, false, null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_AttributeByNameExistsAsElement.Format(
+                        "anelementname"));
+        }
+
+        [Fact]
         public void WhenAddAttribute_TheAddsAttributeToPattern()
         {
             this.application.CreateNewPattern("apatternname");
@@ -284,6 +298,18 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.AddElement("anelementname", null, null, false, ElementCardinality.Single, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format("anelementname"));
+        }
+
+        [Fact]
+        public void WhenAddElementWithExistingNameOfAttribute_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddAttribute("anattributename", null, null, false, null, null);
+
+            this.application
+                .Invoking(x => x.AddElement("anattributename", null, null, false, ElementCardinality.Single, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_ElementByNameExistsAsAttribute.Format("anattributename"));
         }
 
         [Fact]

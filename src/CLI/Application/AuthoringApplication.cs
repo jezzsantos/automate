@@ -156,6 +156,11 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
             }
 
+            if (ElementExistsByName(target, name))
+            {
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExistsAsElement.Format(name));
+            }
+
             var choices = isOneOf.SafeSplit(";").ToList();
             var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
             target.Attributes.Add(attribute);
@@ -187,6 +192,11 @@ namespace Automate.CLI.Application
             if (ElementExistsByName(target, name))
             {
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
+            }
+
+            if (AttributeExistsByName(target, name))
+            {
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExistsAsAttribute.Format(name));
             }
 
             var element = new Element(name, displayName, description, isCollection, cardinality);

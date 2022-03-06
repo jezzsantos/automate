@@ -60,11 +60,17 @@
     <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name must be unique</value>
     </data>
+    <data name="AuthoringApplication_AttributeByNameExistsAsElement" xml:space="preserve">
+        <value>An element/collection with name: '{0}' already exists. The name cannot be the same as any element/collection</value>
+    </data>
     <data name="AuthoringApplication_NodeExpressionNotFound" xml:space="preserve">
         <value>The expression: '{0}' does not resolve to an element in this pattern</value>
     </data>
     <data name="AuthoringApplication_ElementByNameExists" xml:space="preserve">
         <value>An element with name: '{0}' already exists. The name must be unique</value>
+    </data>
+    <data name="AuthoringApplication_ElementByNameExistsAsAttribute" xml:space="preserve">
+        <value>An attribute with name: '{0}' already exists. The name cannot be the same as any attribute</value>
     </data>
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name: '{0}' already exists. The name must be unique</value>

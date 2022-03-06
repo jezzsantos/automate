@@ -70,6 +70,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An element/collection with name: &apos;{0}&apos; already exists. The name cannot be the same as any element/collection.
+        /// </summary>
+        internal static string AuthoringApplication_AttributeByNameExistsAsElement {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_AttributeByNameExistsAsElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
         /// </summary>
         internal static string AuthoringApplication_AttributeNameReserved {
@@ -138,6 +147,15 @@ namespace Automate.CLI {
         internal static string AuthoringApplication_ElementByNameExists {
             get {
                 return ResourceManager.GetString("AuthoringApplication_ElementByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name cannot be the same as any attribute.
+        /// </summary>
+        internal static string AuthoringApplication_ElementByNameExistsAsAttribute {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_ElementByNameExistsAsAttribute", resourceCulture);
             }
         }
         
