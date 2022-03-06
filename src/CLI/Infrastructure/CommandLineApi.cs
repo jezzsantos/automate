@@ -122,6 +122,8 @@ namespace Automate.CLI.Infrastructure
                 new Command("codetemplate", "Tests the code template")
                 {
                     new Argument("Name", "The name of the code template"),
+                    new Option("--data", "Show the test data used to render the template",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the code template exists",
                         typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
@@ -428,9 +430,14 @@ namespace Automate.CLI.Infrastructure
                     template.Metadata.OriginalFilePath);
             }
 
-            internal static void HandleTestCodeTemplate(string name, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleTestCodeTemplate(string name, bool data, string asChildOf, bool outputStructured, IConsole console)
             {
-                var output = Authoring.TestCodeTemplate(name, asChildOf);
+                var (output, input) = Authoring.TestCodeTemplate(name, asChildOf);
+                if (data)
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestedInput, name, input.ToJson());
+                    console.WriteOutputLine();
+                }
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, output);
             }
 

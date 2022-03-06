@@ -36,7 +36,7 @@ namespace CLI.UnitTests.Application
                 .Returns((PatternDefinition model, string _) => model);
             this.textTemplatingEngine = new Mock<ITextTemplatingEngine>();
             this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
-                .Returns("acode");
+                .Returns("anoutput");
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
@@ -619,9 +619,10 @@ namespace CLI.UnitTests.Application
             this.application.CreateNewPattern("apatternname");
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
-            var result = this.application.TestCodeTemplate("atemplatename", null);
+            var (output, input) = this.application.TestCodeTemplate("atemplatename", null);
 
-            result.Should().Be("acode");
+            output.Should().Be("anoutput");
+            input.Should().NotBeNull();
             this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<SolutionItem>(si =>
                 si.Name == "apatternname")));
         }
@@ -638,9 +639,10 @@ namespace CLI.UnitTests.Application
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
 
-            var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}");
+            var (output, input) = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}");
 
-            result.Should().Be("acode");
+            output.Should().Be("anoutput");
+            input.Should().NotBeNull();
             this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<SolutionItem>(si =>
                 si.Name == "anelementname")));
         }

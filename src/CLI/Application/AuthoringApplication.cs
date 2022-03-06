@@ -311,7 +311,7 @@ namespace Automate.CLI.Application
             return this.store.GetCurrent();
         }
 
-        public string TestCodeTemplate(string codeTemplateName, string parentExpression)
+        public (string Output, Dictionary<string, object> Input) TestCodeTemplate(string codeTemplateName, string parentExpression)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
 
@@ -347,7 +347,7 @@ namespace Automate.CLI.Application
             var contents = CodeTemplateFile.Encoding.GetString(byteContents);
             var generatedCode = this.textTemplatingEngine.Transform(contents, solutionItem);
 
-            return generatedCode;
+            return (generatedCode, solutionItem.GetConfiguration(true));
         }
 
         private void VerifyCurrentPatternExists()
