@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Automate.CLI;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
@@ -210,7 +209,7 @@ namespace CLI.UnitTests.Infrastructure
             installer.Setup(f => f.FullPath)
                 .Returns("afullpath");
             installer.Setup(f => f.GetContents())
-                .Returns(Encoding.UTF8.GetBytes(toolkit.ToJson()));
+                .Returns(CodeTemplateFile.Encoding.GetBytes(toolkit.ToJson()));
 
             var result = this.packager.UnPack(installer.Object);
 

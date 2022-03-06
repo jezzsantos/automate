@@ -238,11 +238,11 @@ The code template files have been renamed and can be found in the following loca
 
 `C:\Projects\acme\roadrunner\src\automate\patterns\<PATTERNID>\CodeTemplates` where the `<PATTERID>` can be copied from a previous command the console output.
 
-Each code template in this directory, has had a unique filename given to it when you ran the `add --codetemplate"` commands above.
+Each code template in this directory, has had a unique filename given to it when you ran the `edit add-codetemplate"` commands above.
 
 Either look at the CLI output to find out the name of the template that was created. Or you can run this command to list them:
 
-`automate edit list-codetemplates`
+`automate view pattern`
 
 Open each of the template files in your favourite text editor (like VS Code).
 
@@ -390,9 +390,10 @@ namespace Acme.RoadRunner.DTOs
 }
 ```
 
-> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language.
+> Note: The actual code generated from these templates is just an example of how to write coding patterns using a text template language. The language used in the templates is a text-templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax, similar to others (basically double-{{ }} statements over an snake_cased object model, starting with a root called:  `model`).
 >
-> The language used in the templates is a text-templating technology called [scriban](https://github.com/scriban/scriban) which has its own templating language and syntax, similar to others (basically double-{{ }} statements over an snake_cased object model, starting with a root called:  `model`).
+
+As a tech lead develops these code templates they can test them by running some test data over them, and see the results. To do this they run the command like this: `automate test codetemplate "CodeTemplate1"`
 
 ### Step 4 - Add Code Generation Automation
 

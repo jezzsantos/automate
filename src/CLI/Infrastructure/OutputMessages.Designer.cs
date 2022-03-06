@@ -107,6 +107,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; renders:
+        ///{Output}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateTested {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateTested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {

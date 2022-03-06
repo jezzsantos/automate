@@ -20,6 +20,7 @@ namespace Automate.CLI.Infrastructure
         public const string BuildCommandName = "build";
         public const string InstallCommandName = "install";
         public const string RunCommandName = "run";
+        public const string TestCommandName = "test";
         public const string ListCommandName = "list";
         public const string ConfigureCommandName = "configure";
         public const string ValidateCommandName = "validate";
@@ -115,6 +116,16 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
             };
+            var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
+            {
+                new Command("codetemplate", "Tests the code template")
+                {
+                    new Argument("Name", "The name of the code template"),
+                    new Option("--aschildof", "The expression of the element/collection on which the code template exists",
+                        typeof(string),
+                        arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplate))
+            };
             var buildCommands = new Command(BuildCommandName, "Building toolkits from patterns")
             {
                 new Command("toolkit", "Builds a pattern into a toolkit")
@@ -204,6 +215,7 @@ namespace Automate.CLI.Infrastructure
                     listCommands,
                     createCommands,
                     editCommands,
+                    testCommands,
                     buildCommands,
                     installCommands,
                     runCommands,
@@ -289,7 +301,7 @@ namespace Automate.CLI.Infrastructure
 
             return args.Count > 0
                    && (args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
-                       || isViewPatternCommand);
+                       || args[0] == TestCommandName || isViewPatternCommand);
         }
 
         private class AuthoringHandlers
@@ -376,6 +388,12 @@ namespace Automate.CLI.Infrastructure
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
                     template.Metadata.OriginalFilePath);
+            }
+
+            internal static void HandleTestCodeTemplate(string name, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var output = Authoring.TestCodeTemplate(name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, output);
             }
 
             private static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)

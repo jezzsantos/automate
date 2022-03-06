@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -55,7 +54,7 @@ namespace Automate.CLI.Infrastructure
 
             try
             {
-                toolkit = Encoding.UTF8.GetString(contents).FromJson<ToolkitDefinition>();
+                toolkit = SystemIoFileConstants.Encoding.GetString(contents).FromJson<ToolkitDefinition>();
             }
             catch (Exception ex)
             {

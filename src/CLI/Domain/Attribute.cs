@@ -157,7 +157,7 @@ namespace Automate.CLI.Domain
                     return Convert.ToDecimal(value);
 
                 case "DateTime":
-                    return Convert.ToDateTime(value);
+                    return Convert.ToDateTime(value).ToUniversalTime();
 
                 default:
                     throw new ArgumentOutOfRangeException(

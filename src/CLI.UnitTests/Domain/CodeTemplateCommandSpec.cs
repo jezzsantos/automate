@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
@@ -91,7 +90,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };
@@ -127,7 +126,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };
@@ -169,7 +168,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };
@@ -211,7 +210,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };
@@ -274,7 +273,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };
@@ -314,7 +313,7 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateFile
                         {
                             Id = "acodetemplateid",
-                            Contents = Encoding.UTF8.GetBytes("atemplate")
+                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
                         }
                     }
                 };

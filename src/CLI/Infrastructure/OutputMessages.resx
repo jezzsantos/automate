@@ -48,6 +48,10 @@
         <value>Code Templates:
 {Templates}</value>
     </data>
+    <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
+        <value>Code Template '{Name}' renders:
+{Output}</value>
+    </data>
     <data name="CommandLine_Output_ElementsListed" xml:space="preserve">
         <value>Pattern:
 {Tree}</value>

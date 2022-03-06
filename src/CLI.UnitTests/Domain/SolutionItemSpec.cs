@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
 using Xunit;
+using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace CLI.UnitTests.Domain
 {
@@ -69,6 +71,23 @@ namespace CLI.UnitTests.Domain
             result.Id.Should().NotBeNull();
             result.Properties["aname"].AttributeSchema.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(attribute.DefaultValue);
+            result.Properties["aname"].IsMaterialised.Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenConstructedWithAttributeWithDateTimeDefaultValue_ThenAttributeAssignedUtcDateTime()
+        {
+            var date = DateTime.UtcNow;
+            var pattern = new PatternDefinition("apatternname");
+            var attribute = new Attribute("aname", "DateTime", false, date.ToIso8601());
+            pattern.Attributes.Add(attribute);
+
+            var result = new SolutionItem(pattern);
+
+            result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
+            result.Properties["aname"].AttributeSchema.Should().Be(attribute);
+            result.Properties["aname"].Value.Should().Be(date);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
         }
 

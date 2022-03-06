@@ -69,8 +69,11 @@
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name: '{0}' already exists. The name must be unique</value>
     </data>
-    <data name="AuthoringApplication_CodeTemplateNotExists" xml:space="preserve">
-        <value>A CodeTemplate with name: '{0}' does not exist</value>
+    <data name="AuthoringApplication_CodeTemplateNotExistsRoot" xml:space="preserve">
+        <value>A CodeTemplate with name: '{0}' does not exist on the pattern</value>
+    </data>
+    <data name="AuthoringApplication_CodeTemplateNotExistsElement" xml:space="preserve">
+        <value>A CodeTemplate with name: '{0}' does not exist on element referenced by: '{1}'</value>
     </data>
     <data name="AuthoringApplication_CommandIdNotFound" xml:space="preserve">
         <value>A Command with ID: '{0}' does not exist anywhere on this pattern</value>

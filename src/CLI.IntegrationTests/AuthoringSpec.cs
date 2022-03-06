@@ -416,5 +416,28 @@ namespace CLI.IntegrationTests
                         ,
                         this.setup.Patterns.Single().Id));
         }
+
+        [Fact]
+        public void WhenAddTestTemplate_ThenDisplaysRenderedTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestCommandName} codetemplate ATemplateName --aschildof {{APattern.AnElement1}}");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName",
+                        "A\r\n" +
+                        "aproperty11\r\n" +
+                        "A\r\n"));
+        }
     }
 }

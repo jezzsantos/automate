@@ -72,6 +72,44 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public SolutionItem FindCodeTemplate(string codeTemplateId)
+        {
+            return FindDescendantCodeTemplate(Model);
+
+            SolutionItem FindDescendantCodeTemplate(SolutionItem item)
+            {
+                if (item.IsPattern)
+                {
+                    var codeTemplate = item.PatternSchema.CodeTemplates.Safe()
+                        .FirstOrDefault(temp => temp.Id.EqualsIgnoreCase(codeTemplateId));
+                    if (codeTemplate.Exists())
+                    {
+                        return item;
+                    }
+                }
+                if (item.IsElement || item.IsCollection)
+                {
+                    var codeTemplate = item.ElementSchema.CodeTemplates.Safe()
+                        .FirstOrDefault(tem => tem.Id.EqualsIgnoreCase(codeTemplateId));
+                    if (codeTemplate.Exists())
+                    {
+                        return item;
+                    }
+                }
+
+                foreach (var (_, value) in item.Properties.Safe())
+                {
+                    var result = FindDescendantCodeTemplate(value);
+                    if (result.Exists())
+                    {
+                        return result;
+                    }
+                }
+
+                return default;
+            }
+        }
+
         private void InitialiseSchema()
         {
             Model = new SolutionItem(Toolkit.Pattern);

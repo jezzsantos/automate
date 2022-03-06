@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
 
@@ -85,7 +84,7 @@ namespace Automate.CLI.Domain
             if (willGenerateFile)
             {
                 var contents = codeTemplate.Contents.Exists()
-                    ? Encoding.UTF8.GetString(codeTemplate.Contents)
+                    ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents)
                     : string.Empty;
                 var generatedCode = this.textTemplatingEngine.Transform(contents, target);
 

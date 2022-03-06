@@ -8,6 +8,8 @@ namespace Automate.CLI.Extensions
         {
             using (var scope = JsConfig.BeginScope())
             {
+                scope.AssumeUtc = true;
+                scope.AlwaysUseUtc = true;
                 scope.Indent = true;
                 return ServiceStack.StringExtensions.ToJson(instance);
             }
@@ -15,8 +17,10 @@ namespace Automate.CLI.Extensions
 
         public static T FromJson<T>(this string json) where T : new()
         {
-            using (JsConfig.BeginScope())
+            using (var scope = JsConfig.BeginScope())
             {
+                scope.AssumeUtc = true;
+                scope.AlwaysUseUtc = true;
                 return ServiceStack.StringExtensions.FromJson<T>(json);
             }
         }

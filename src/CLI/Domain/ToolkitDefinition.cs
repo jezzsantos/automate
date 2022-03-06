@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
@@ -35,6 +36,8 @@ namespace Automate.CLI.Domain
 
     internal class CodeTemplateFile
     {
+        public static readonly Encoding Encoding = Encoding.UTF8;
+
         public string Id { get; set; }
 
         public byte[] Contents { get; set; }

@@ -106,11 +106,20 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist.
+        ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist on element referenced by: &apos;{1}&apos;.
         /// </summary>
-        internal static string AuthoringApplication_CodeTemplateNotExists {
+        internal static string AuthoringApplication_CodeTemplateNotExistsElement {
             get {
-                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExists", resourceCulture);
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExistsElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist on the pattern.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateNotExistsRoot {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExistsRoot", resourceCulture);
             }
         }
         

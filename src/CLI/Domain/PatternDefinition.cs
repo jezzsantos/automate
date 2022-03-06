@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Extensions;
 
@@ -64,6 +65,83 @@ namespace Automate.CLI.Domain
                 return element.Elements.Safe()
                     .Select(FindDescendantAutomation)
                     .FirstOrDefault(auto => auto.Exists());
+            }
+        }
+
+        public SolutionDefinition CreateTestSolution()
+        {
+            const int maxNumberInstances = 3;
+            var solution = new SolutionDefinition(new ToolkitDefinition(this, "0.0"));
+
+            PopulateDescendants(solution.Model, 1);
+
+            void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
+            {
+                if (solutionItem.IsPattern)
+                {
+                    PopulateParent(solutionItem, solutionItem.PatternSchema, instanceCountAtThisLevel);
+                }
+                if (solutionItem.IsElement)
+                {
+                    if (!solutionItem.IsMaterialised)
+                    {
+                        solutionItem.Materialise();
+                    }
+                    PopulateParent(solutionItem, solutionItem.ElementSchema, instanceCountAtThisLevel);
+                }
+                if (solutionItem.IsCollection)
+                {
+                    var existingCount = solutionItem.Items.Safe().Count();
+                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
+                    {
+                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, maxNumberInstances - existingCount);
+                    }
+
+                    var counter = 0;
+                    solutionItem.Items.ToListSafe().ForEach(itm => { PopulateDescendants(itm, ++counter); });
+                }
+            }
+
+            return solution;
+
+            void PopulateParent(SolutionItem solutionItem, IPatternElement element, int instanceCountAtThisLevel)
+            {
+                element.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
+                element.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
+            }
+
+            void PopulateAttribute(SolutionItem solutionItem, Attribute attribute, int instanceCountAtThisLevel)
+            {
+                var hasProperty = solutionItem.Properties.ContainsKey(attribute.Name);
+                if (!hasProperty || !solutionItem.Properties[attribute.Name].IsAttribute)
+                {
+                    solutionItem.Properties.Add(attribute.Name,
+                        new SolutionItem(attribute, solutionItem));
+                }
+
+                if (!attribute.DefaultValue.HasValue())
+                {
+                    object testValue;
+                    if (attribute.Choices.HasAny())
+                    {
+                        var choiceIndex = (instanceCountAtThisLevel - 1) % attribute.Choices.Count;
+                        testValue = attribute.Choices[choiceIndex];
+                    }
+                    else
+                    {
+                        testValue = attribute.DataType switch
+                        {
+                            Attribute.DefaultType => $"{attribute.Name.ToLower()}{instanceCountAtThisLevel}",
+                            "bool" => instanceCountAtThisLevel % 2 != 0,
+                            "int" => instanceCountAtThisLevel,
+                            "decimal" => Convert.ToDecimal($"{instanceCountAtThisLevel}.{instanceCountAtThisLevel}"),
+                            "DateTime" => DateTime.Today.AddHours(instanceCountAtThisLevel).ToUniversalTime(),
+                            _ => null
+                        };
+                    }
+
+                    solutionItem.Properties[attribute.Name].Value = testValue;
+                }
             }
         }
 
