@@ -102,7 +102,7 @@ namespace Automate.CLI.Infrastructure
 
         public void UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
         {
-            var extension = Path.GetExtension(file.FullPath);
+            var extension = file.Extension;
             var uploadedFilePath = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
             file.CopyTo(uploadedFilePath);
         }

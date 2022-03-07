@@ -4,6 +4,8 @@
     {
         string FullPath { get; }
 
+        string Extension { get; }
+
         void CopyTo(string destination);
 
         byte[] GetContents();
@@ -20,5 +22,7 @@
         IFile GetFileAtPath(string absolutePath);
 
         string GetFilename(string absolutePath);
+
+        void CreateFileAtPath(string absolutePath, byte[] contents);
     }
 }

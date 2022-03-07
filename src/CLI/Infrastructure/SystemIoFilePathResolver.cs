@@ -35,5 +35,10 @@ namespace Automate.CLI.Infrastructure
         {
             return Path.GetFileName(absolutePath);
         }
+
+        public void CreateFileAtPath(string absolutePath, byte[] contents)
+        {
+            File.WriteAllBytes(absolutePath, contents);
+        }
     }
 }

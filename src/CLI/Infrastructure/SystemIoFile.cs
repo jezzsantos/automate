@@ -16,6 +16,8 @@ namespace Automate.CLI.Infrastructure
 
         public string FullPath { get; }
 
+        public string Extension => Path.GetExtension(FullPath);
+
         public void CopyTo(string destination)
         {
             var directoryName = Path.GetDirectoryName(destination) ?? string.Empty;

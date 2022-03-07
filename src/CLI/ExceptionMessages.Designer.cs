@@ -187,6 +187,33 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The exported test data could not be written to: &apos;{0}, error was: &apos;{1}&apos;.
+        /// </summary>
+        internal static string AuthoringApplication_TestDataExport_NotValidFile {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_TestDataExport_NotValidFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The imported test data could not be found at location: &apos;{0}&apos;.
+        /// </summary>
+        internal static string AuthoringApplication_TestDataImport_NotFoundAtLocation {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_TestDataImport_NotFoundAtLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The imported test data is not valid JSON.
+        /// </summary>
+        internal static string AuthoringApplication_TestDataImport_NotValidJson {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_TestDataImport_NotValidJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The code template with ID: &apos;{0}&apos; does not exist in the toolkit.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateNotExists {

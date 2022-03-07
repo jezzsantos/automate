@@ -311,7 +311,7 @@ namespace Automate.CLI.Application
             return this.store.GetCurrent();
         }
 
-        public (string Output, Dictionary<string, object> Input) TestCodeTemplate(string codeTemplateName, string parentExpression)
+        public string TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
 
@@ -337,17 +337,65 @@ namespace Automate.CLI.Application
                     : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
             }
 
-            var solution = pattern.CreateTestSolution();
-            var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
-            if (solutionItem.NotExists())
+            if (importedRelativeFilePath.HasValue())
             {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution.Format(codeTemplate.Id));
-            }
-            var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
-            var contents = CodeTemplateFile.Encoding.GetString(byteContents);
-            var generatedCode = this.textTemplatingEngine.Transform(contents, solutionItem);
+                var fullPath = this.fileResolver.CreatePath(rootPath, importedRelativeFilePath);
+                if (!this.fileResolver.ExistsAtPath(fullPath))
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format(fullPath));
+                }
 
-            return (generatedCode, solutionItem.GetConfiguration(true));
+                var importedJson = this.fileResolver.GetFileAtPath(fullPath);
+                Dictionary<string, object> importedData;
+                try
+                {
+                    var json = SystemIoFileConstants.Encoding.GetString(importedJson.GetContents());
+                    importedData = json.FromJson();
+                }
+                catch (Exception ex)
+                {
+                    throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataImport_NotValidJson, ex);
+                }
+
+                var contents = GetTemplateContent();
+                return this.textTemplatingEngine.Transform(contents, importedData);
+            }
+            else
+            {
+                var solution = pattern.CreateTestSolution();
+                var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
+                if (solutionItem.NotExists())
+                {
+                    throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution.Format(codeTemplate.Id));
+                }
+                var generatedData = solutionItem.GetConfiguration(true);
+
+                var contents = GetTemplateContent();
+                var generatedCode = this.textTemplatingEngine.Transform(contents, generatedData);
+
+                if (exportedRelativeFilePath.HasValue())
+                {
+                    var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
+                    try
+                    {
+                        this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(generatedData.ToJson()));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format(fullPath, ex.Message));
+                    }
+                }
+
+                return generatedCode;
+            }
+
+            string GetTemplateContent()
+            {
+                var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
+                var contents = CodeTemplateFile.Encoding.GetString(byteContents);
+                return contents;
+            }
         }
 
         private void VerifyCurrentPatternExists()

@@ -122,11 +122,13 @@ namespace Automate.CLI.Infrastructure
                 new Command("codetemplate", "Tests the code template")
                 {
                     new Argument("Name", "The name of the code template"),
-                    new Option("--data", "Show the test data used to render the template",
-                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the code template exists",
                         typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--import-data", "Import the specified data for the test. A relative path to the JSON file, from the current directory",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--export-data", "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplate))
             };
             var buildCommands = new Command(BuildCommandName, "Building toolkits from patterns")
@@ -268,15 +270,7 @@ namespace Automate.CLI.Infrastructure
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) =>
                 {
-                    // ReSharper disable once RedundantAssignment
-                    var isDebugBuild = false;
-
-#if DEBUG
-                    isDebugBuild = true;
-#endif
-
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    var isDebug = IsDebugging(context, ex) || isDebugBuild;
+                    var isDebug = IsDebugging(context, ex);
 
                     var message = ex.InnerException.Exists()
                         ? isDebug ? ex.InnerException.ToString() : ex.InnerException.Message
@@ -293,6 +287,19 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
         {
+            var isDebugBuild = false;
+
+#if DEBUG
+            isDebugBuild = true;
+#endif
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (isDebugBuild)
+            {
+                return true;
+            }
+
+            // ReSharper disable once HeuristicUnreachableCode
             var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
             {
@@ -430,14 +437,22 @@ namespace Automate.CLI.Infrastructure
                     template.Metadata.OriginalFilePath);
             }
 
-            internal static void HandleTestCodeTemplate(string name, bool data, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData, string exportData, bool outputStructured, IConsole console)
             {
-                var (output, input) = Authoring.TestCodeTemplate(name, asChildOf);
-                if (data)
+                var currentDirectory = Environment.CurrentDirectory;
+                var output = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
+                if (exportData.HasValue())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestedInput, name, input.ToJson());
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported, name, exportData);
                     console.WriteOutputLine();
                 }
+
+                if (importData.HasValue())
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported, name, importData);
+                    console.WriteOutputLine();
+                }
+
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, output);
             }
 

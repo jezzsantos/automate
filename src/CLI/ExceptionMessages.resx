@@ -87,6 +87,15 @@
     <data name="AuthoringApplication_CommandIdNotFound" xml:space="preserve">
         <value>A Command with ID: '{0}' does not exist anywhere on this pattern</value>
     </data>
+    <data name="AuthoringApplication_TestDataImport_NotFoundAtLocation" xml:space="preserve">
+        <value>The imported test data could not be found at location: '{0}'</value>
+    </data>
+    <data name="AuthoringApplication_TestDataImport_NotValidJson" xml:space="preserve">
+        <value>The imported test data is not valid JSON</value>
+    </data>
+    <data name="AuthoringApplication_TestDataExport_NotValidFile" xml:space="preserve">
+        <value>The exported test data could not be written to: '{0}, error was: '{1}'</value>
+    </data>
     <data name="RuntimeApplication_ToolkitInstallerNotFound" xml:space="preserve">
         <value>The installer could not be found at: '{0}'</value>
     </data>

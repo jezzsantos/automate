@@ -24,14 +24,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Assets\CodeTemplates\Code.1code"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="Assets\CodeTemplates\Code1.code">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Assets\CodeTemplates\Code2.code">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\TestData\data1.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

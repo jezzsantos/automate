@@ -1,0 +1,12 @@
+{
+  "id": "eE5Fh1bc",
+  "parent": {
+    "id": "wJyTGRx0",
+    "a_property1": "aproperty11",
+    "an_element1": {
+      "id": "eE5Fh1bc",
+      "a_property3": "A"
+    }
+  },
+  "a_property3": "A"
+}

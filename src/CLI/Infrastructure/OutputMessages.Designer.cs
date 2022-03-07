@@ -117,12 +117,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; tested with:
-        ///{Input}.
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; data for this test exported to: &apos;{Exported}&apos;.
         /// </summary>
-        internal static string CommandLine_Output_CodeTemplateTestedInput {
+        internal static string CommandLine_Output_CodeTemplateTestExported {
             get {
-                return ResourceManager.GetString("CommandLine_Output_CodeTemplateTestedInput", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateTestExported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; tested with data from: &apos;{Imported}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateTestImported {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateTestImported", resourceCulture);
             }
         }
         

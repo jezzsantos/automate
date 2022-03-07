@@ -52,9 +52,11 @@
         <value>Code Template '{Name}' outputs:
 {Output}</value>
     </data>
-    <data name="CommandLine_Output_CodeTemplateTestedInput" xml:space="preserve">
-        <value>Code Template '{Name}' tested with:
-{Input}</value>
+    <data name="CommandLine_Output_CodeTemplateTestImported" xml:space="preserve">
+        <value>Code Template '{Name}' tested with data from: '{Imported}'</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateTestExported" xml:space="preserve">
+        <value>Code Template '{Name}' data for this test exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_PatternTree" xml:space="preserve">
         <value>Pattern is configured as:
