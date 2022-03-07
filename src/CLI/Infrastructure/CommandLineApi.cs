@@ -152,7 +152,9 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("toolkit", "Creates a new solution from a toolkit")
                 {
-                    new Argument("PatternName", "The name of the pattern in the toolkit that you want to use")
+                    new Argument("PatternName", "The name of the pattern in the toolkit that you want to use"),
+                    new Option("--name", "A name for the solution",
+                        arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
                 new Command("switch", "Switches to configuring another solution")
                 {
@@ -257,7 +259,7 @@ namespace Automate.CLI.Infrastructure
                     if (Runtime.CurrentSolutionId.Exists())
                     {
                         ConsoleExtensions.WriteOutput(
-                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(Runtime.CurrentSolutionId), ConsoleColor.Gray);
+                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(Runtime.CurrentSolutionName, Runtime.CurrentSolutionId), ConsoleColor.Gray);
                     }
                     else
                     {
@@ -600,11 +602,10 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleNewSolution(string patternName, bool outputStructured, IConsole console)
+            internal static void HandleNewSolution(string patternName, string name, bool outputStructured, IConsole console)
             {
-                var solution = Runtime.CreateSolution(patternName);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit
-                    , solution.PatternName, solution.Id);
+                var solution = Runtime.CreateSolution(patternName, name);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit, solution.PatternName, solution.Name, solution.Id);
             }
 
             internal static void HandleListSolutions(bool outputStructured, IConsole console)
@@ -614,7 +615,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
                         solutions.Select(solution =>
-                            $"{{\"Name\": \"{solution.PatternName}\", \"ID\": \"{solution.Id}\"}}\n").Join());
+                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}\n").Join());
                 }
                 else
                 {
@@ -626,7 +627,7 @@ namespace Automate.CLI.Infrastructure
             {
                 Runtime.SwitchCurrentSolution(solutionId);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_SolutionSwitched, solutionId, Runtime.CurrentSolutionId);
+                    OutputMessages.CommandLine_Output_SolutionSwitched, Runtime.CurrentSolutionName, Runtime.CurrentSolutionId);
             }
 
             internal static void HandleAddTo(string expression, string[] andSet, bool outputStructured, IConsole console)
@@ -670,8 +671,9 @@ namespace Automate.CLI.Infrastructure
                 var (configuration, pattern, validation) = Runtime.GetConfiguration(todo, todo);
 
                 var solutionId = Runtime.CurrentSolutionId;
+                var solutionName = Runtime.CurrentSolutionName;
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
-                    solutionId, configuration);
+                    solutionName, solutionId, configuration);
 
                 if (todo)
                 {
@@ -686,11 +688,11 @@ namespace Automate.CLI.Infrastructure
                     if (validation.HasAny())
                     {
                         console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                            solutionId, FormatValidationErrors(validation));
+                            solutionName, solutionId, FormatValidationErrors(validation));
                     }
                     else
                     {
-                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionId);
+                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
                     }
                 }
             }
@@ -701,14 +703,15 @@ namespace Automate.CLI.Infrastructure
                 var results = Runtime.Validate(on);
 
                 var solutionId = Runtime.CurrentSolutionId;
+                var solutionName = Runtime.CurrentSolutionName;
                 if (results.HasAny())
                 {
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        solutionId, FormatValidationErrors(results));
+                        solutionName, solutionId, FormatValidationErrors(results));
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionId);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
                 }
             }
 
@@ -723,9 +726,8 @@ namespace Automate.CLI.Infrastructure
                 }
                 else
                 {
-                    var solutionId = Runtime.CurrentSolutionId;
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        solutionId, FormatValidationErrors(execution.Errors));
+                        Runtime.CurrentSolutionName, Runtime.CurrentSolutionId, FormatValidationErrors(execution.Errors));
                 }
             }
 

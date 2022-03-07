@@ -24,6 +24,7 @@ namespace CLI.UnitTests.Domain
 
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
+            solution.Name.Should().Match("apatternname???");
             solution.Model.Should().NotBeNull();
             var solutionElement1 = solution.Model.Properties["anelementname1"];
             solutionElement1.ElementSchema.Should().Be(element1);

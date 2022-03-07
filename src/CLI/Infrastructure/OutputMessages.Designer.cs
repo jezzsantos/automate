@@ -97,16 +97,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Templates:
-        ///{Templates}.
-        /// </summary>
-        internal static string CommandLine_Output_CodeTemplatesListed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CodeTemplatesListed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; outputs:
         ///{Output}.
         /// </summary>
@@ -154,7 +144,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Solution from toolkit: &apos;{ToolkitName}&apos;, with ID: {SolutionId}.
+        ///   Looks up a localized string similar to Created a new Solution from toolkit: &apos;{PatternName}&apos;, with &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;).
         /// </summary>
         internal static string CommandLine_Output_CreateSolutionFromToolkit {
             get {
@@ -172,7 +162,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{SolutionId}&apos; is now being configured.
+        ///   Looks up a localized string similar to The Solution: &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is now being configured.
         /// </summary>
         internal static string CommandLine_Output_CurrentSolutionInUse {
             get {
@@ -224,15 +214,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_LaunchPointAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are no Code Templates in the current pattern yet.
-        /// </summary>
-        internal static string CommandLine_Output_NoCodeTemplates {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoCodeTemplates", resourceCulture);
             }
         }
         
@@ -305,7 +286,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution ({SolutionId}) is configured as:
+        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfiguration {
@@ -324,7 +305,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{SolutionId}&apos; is now the default.
+        ///   Looks up a localized string similar to The Solution: &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_SolutionSwitched {
             get {
@@ -333,7 +314,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution ({SolutionId}) is not correctly configured in these ways:
+        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is not correctly configured in these ways:
         ///{Errors}.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationFailed {
@@ -343,7 +324,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution ({SolutionId}) is configured correctly.
+        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is configured correctly.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationSuccess {
             get {

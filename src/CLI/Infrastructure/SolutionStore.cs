@@ -41,11 +41,11 @@ namespace Automate.CLI.Infrastructure
             this.localStateRepository.DestroyAll();
         }
 
-        public SolutionDefinition Create(ToolkitDefinition toolkit)
+        public SolutionDefinition Create(ToolkitDefinition toolkit, string name)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
 
-            var solution = new SolutionDefinition(toolkit);
+            var solution = new SolutionDefinition(toolkit, name);
             this.solutionRepository.NewSolution(solution);
 
             var state = this.localStateRepository.GetLocalState();

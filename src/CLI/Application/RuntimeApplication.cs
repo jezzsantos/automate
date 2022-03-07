@@ -48,6 +48,8 @@ namespace Automate.CLI.Application
 
         public string CurrentSolutionId => this.solutionStore.GetCurrent()?.Id;
 
+        public string CurrentSolutionName => this.solutionStore.GetCurrent()?.Name;
+
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
             if (!this.fileResolver.ExistsAtPath(installerLocation))
@@ -64,7 +66,7 @@ namespace Automate.CLI.Application
             return toolkit;
         }
 
-        public SolutionDefinition CreateSolution(string toolkitName)
+        public SolutionDefinition CreateSolution(string toolkitName, string solutionName)
         {
             var toolkit = this.toolkitStore.FindByName(toolkitName);
             if (toolkit.NotExists())
@@ -72,7 +74,7 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
-            return this.solutionStore.Create(toolkit);
+            return this.solutionStore.Create(toolkit, solutionName);
         }
 
         public List<ToolkitDefinition> ListInstalledToolkits()

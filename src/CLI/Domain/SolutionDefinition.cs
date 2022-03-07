@@ -1,17 +1,27 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionDefinition
+    internal class SolutionDefinition : INamedEntity
     {
-        public SolutionDefinition(ToolkitDefinition toolkit)
+        public SolutionDefinition(ToolkitDefinition toolkit, string name = null)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
 
             Id = IdGenerator.Create();
+            Name = name.HasValue()
+                ? name
+                : $"{toolkit.PatternName}{GetRandomNumber()}";
             Toolkit = toolkit;
             InitialiseSchema();
+        }
+
+        private string GetRandomNumber()
+        {
+            var number = DateTime.Now.Ticks.ToString();
+            return number.Substring(number.Length - 3);
         }
 
         /// <summary>
@@ -26,6 +36,8 @@ namespace Automate.CLI.Domain
         public string PatternName => Toolkit.Pattern?.Name;
 
         public string Id { get; set; }
+
+        public string Name { get; set; }
 
         public SolutionItem Model { get; set; }
 

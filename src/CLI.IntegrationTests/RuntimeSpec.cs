@@ -123,7 +123,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.PatternName,
-                        solution.Id));
+                        solution.Name, solution.Id));
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionSwitched.FormatTemplate(solution1.Id));
+                    OutputMessages.CommandLine_Output_SolutionSwitched.FormatTemplate(solution1.Name, solution1.Id));
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledSolutionsListed.FormatTemplate(
-                        $"{{\"Name\": \"{solution.PatternName}\", \"ID\": \"{solution.Id}\"}}"));
+                        $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}"));
         }
 
         [Fact]
@@ -276,7 +276,7 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
                     new
                     {
                         id = solution.Model.Id,
@@ -317,7 +317,7 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
                     new
                     {
                         id = solution.Model.Id,
@@ -373,7 +373,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Id,
+                        .FormatTemplate(solution.Name, solution.Id,
                             "1. {APattern.AnElement1} requires at least one instance\r\n\r\n"
                         ));
         }
@@ -390,7 +390,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Id,
+                        .FormatTemplate(solution.Name, solution.Id,
                             "1. {APattern.AProperty1} requires its value to be set\r\n" +
                             "2. {APattern.AnElement1} requires at least one instance\r\n" +
                             "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
@@ -412,7 +412,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Id));
+                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Name, solution.Id));
         }
 
         [Fact]
@@ -426,7 +426,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Id,
+                        .FormatTemplate(solution.Name, solution.Id,
                             "1. {APattern.AProperty1} requires its value to be set\r\n" +
                             "2. {APattern.AnElement1} requires at least one instance\r\n" +
                             "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
