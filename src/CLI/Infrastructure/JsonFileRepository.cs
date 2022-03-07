@@ -11,6 +11,7 @@ namespace Automate.CLI.Infrastructure
         ILocalStateRepository
     {
         private const string PatternDefinitionFilename = "Pattern.json";
+        private const string ToolkitDefinitionFilename = "Toolkit.json";
         private const string SolutionDefinitionFilename = "Solution.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
         private const string ToolkitInstallerFileExtension = ".toolkit";
@@ -308,7 +309,7 @@ namespace Automate.CLI.Infrastructure
         private string CreateFilenameForImportedToolkitById(string id)
         {
             var location = CreatePathForToolkit(id);
-            return Path.Combine(location, PatternDefinitionFilename);
+            return Path.Combine(location, ToolkitDefinitionFilename);
         }
 
         private string CreatePathForToolkit(string id)
