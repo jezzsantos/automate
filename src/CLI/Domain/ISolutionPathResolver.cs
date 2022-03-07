@@ -4,6 +4,6 @@
     {
         SolutionItem ResolveItem(SolutionDefinition solution, string expression);
 
-        string ResolveExpression(string expression, SolutionItem solutionItem);
+        string ResolveExpression(string description, string expression, SolutionItem solutionItem);
     }
 }

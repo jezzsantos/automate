@@ -192,4 +192,8 @@
     <data name="CommandLaunchPoint_CommandIdNotFound" xml:space="preserve">
         <value>The command with ID: '{0}' could not be found on any element in this pattern</value>
     </data>
+    <data name="TextTemplatingExtensions_HasErrors" xml:space="preserve">
+        <value>Failed to transform: '{0}', errors were:
+{1}</value>
+    </data>
 </root>

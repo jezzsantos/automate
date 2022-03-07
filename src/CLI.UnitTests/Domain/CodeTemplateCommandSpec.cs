@@ -70,8 +70,8 @@ namespace CLI.UnitTests.Domain
                 this.fileSystemWriter = new Mock<IFileSystemWriter>();
                 var solutionPathResolver = new Mock<ISolutionPathResolver>();
                 solutionPathResolver
-                    .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<SolutionItem>()))
-                    .Returns((string expr, SolutionItem item) => expr);
+                    .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                    .Returns((string description, string expr, SolutionItem item) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
@@ -95,7 +95,7 @@ namespace CLI.UnitTests.Domain
                     }
                 };
                 var solution = new SolutionDefinition(toolkit);
-                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(false);
@@ -106,7 +106,7 @@ namespace CLI.UnitTests.Domain
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", target));
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", target));
                 this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
                 target.ArtifactLinks.Should().ContainSingle(link =>
@@ -130,7 +130,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 };
-                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
@@ -142,7 +142,7 @@ namespace CLI.UnitTests.Domain
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", ownerSolution));
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerSolution));
                 this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
                 ownerSolution.ArtifactLinks.Should().ContainSingle(link =>
@@ -172,7 +172,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 };
-                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(false);
@@ -184,7 +184,7 @@ namespace CLI.UnitTests.Domain
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", ownerSolution));
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerSolution));
                 this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
                 ownerSolution.ArtifactLinks.Should().ContainSingle(link =>
@@ -214,7 +214,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 };
-                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
@@ -226,7 +226,7 @@ namespace CLI.UnitTests.Domain
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform("atemplate", ownerSolution));
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerSolution));
                 this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
                 ownerSolution.ArtifactLinks.Should().ContainSingle(link =>
@@ -253,8 +253,8 @@ namespace CLI.UnitTests.Domain
                 this.fileSystemWriter = new Mock<IFileSystemWriter>();
                 var solutionPathResolver = new Mock<ISolutionPathResolver>();
                 solutionPathResolver
-                    .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<SolutionItem>()))
-                    .Returns((string expr, SolutionItem item) => expr);
+                    .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                    .Returns((string description, string expr, SolutionItem item) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
@@ -287,7 +287,7 @@ namespace CLI.UnitTests.Domain
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
-                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()),
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()),
                     Times.Never);
                 this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
                 ownerSolution.ArtifactLinks.Should().ContainSingle(link =>
@@ -317,7 +317,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 };
-                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
@@ -327,7 +327,7 @@ namespace CLI.UnitTests.Domain
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should().BeEmpty();
-                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()),
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()),
                     Times.Never);
                 this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
                 ownerSolution.ArtifactLinks.Should().ContainSingle(link =>

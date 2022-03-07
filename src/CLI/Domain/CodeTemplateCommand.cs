@@ -72,7 +72,7 @@ namespace Automate.CLI.Domain
                     ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Format(CodeTemplateId));
             }
 
-            var filePath = this.solutionPathResolver.ResolveExpression(FilePath, target);
+            var filePath = this.solutionPathResolver.ResolveExpression($"CodeTemplateCommand ({Id}) path expression", FilePath, target);
             var absoluteFilePath = filePath.StartsWith(CurrentDirectoryPrefix)
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
                     filePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
@@ -86,7 +86,7 @@ namespace Automate.CLI.Domain
                 var contents = codeTemplate.Contents.Exists()
                     ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents)
                     : string.Empty;
-                var generatedCode = this.textTemplatingEngine.Transform(contents, target);
+                var generatedCode = this.textTemplatingEngine.Transform($"CodeTemplate ({codeTemplate.Id}) template", contents, target);
 
                 this.fileSystemWriter.Write(generatedCode, absoluteFilePath);
                 log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(filename, absoluteFilePath));

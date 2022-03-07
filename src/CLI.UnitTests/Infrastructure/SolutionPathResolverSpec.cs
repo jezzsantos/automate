@@ -169,7 +169,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionIsNull_ThenReturnsNull()
         {
-            var result = this.resolver.ResolveExpression(null, new SolutionItem());
+            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem());
 
             result.Should().BeNull();
         }
@@ -177,7 +177,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsNoSyntax_ThenReturnsExpression()
         {
-            var result = this.resolver.ResolveExpression("anexpression", new SolutionItem());
+            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem());
 
             result.Should().Be("anexpression");
         }
@@ -191,7 +191,7 @@ namespace CLI.UnitTests.Infrastructure
             var solutionItem = new SolutionItem(element, null);
             solutionItem.Materialise();
 
-            var result = this.resolver.ResolveExpression("anexpression{{anattributename}}anexpression", solutionItem);
+            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression", solutionItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }
@@ -207,7 +207,7 @@ namespace CLI.UnitTests.Infrastructure
             var solutionItem = new SolutionItem(pattern);
             solutionItem.Properties["anelementname"].Materialise();
 
-            var result = this.resolver.ResolveExpression("anexpression{{anelementname.parent.properties[\"anelementname\"].properties[\"anattributename\"].value}}anexpression", solutionItem);
+            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anelementname.parent.properties[\"anelementname\"].properties[\"anattributename\"].value}}anexpression", solutionItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

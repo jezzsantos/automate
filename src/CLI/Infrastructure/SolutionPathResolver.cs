@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
-using Scriban;
 using CollectionExtensions = ServiceStack.CollectionExtensions;
 
 namespace Automate.CLI.Infrastructure
@@ -72,21 +71,21 @@ namespace Automate.CLI.Infrastructure
             return target;
         }
 
-        public string ResolveExpression(string expression, SolutionItem solutionItem)
+        public string ResolveExpression(string description, string expression, SolutionItem solutionItem)
         {
+            description.GuardAgainstNullOrEmpty(nameof(description));
+            
             if (!expression.HasValue())
             {
                 return null;
             }
-            return Transform(expression, solutionItem);
+            return Transform(expression, description, solutionItem);
         }
 
-        private static string Transform(string template, SolutionItem solutionItem)
+        private static string Transform(string template, string description, SolutionItem solutionItem)
         {
-            var engine = Template.Parse(template);
-
             var configuration = solutionItem.GetConfiguration(true);
-            return engine.Render(configuration);
+            return configuration.Transform(description, template);
         }
     }
 }

@@ -1,35 +1,27 @@
 ﻿using System.Collections.Generic;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
-using Scriban;
 
 namespace Automate.CLI.Infrastructure
 {
     internal class TextTemplatingEngine : ITextTemplatingEngine
     {
-        public string Transform(string template, SolutionItem solutionItem)
+        public string Transform(string description, string textTemplate, SolutionItem solutionItem)
         {
             solutionItem.GuardAgainstNull(nameof(solutionItem));
+            description.GuardAgainstNullOrEmpty(nameof(description));
 
             var configuration = solutionItem.GetConfiguration(true);
 
-            return TransformInternal(template, configuration);
+            return configuration.Transform(description, textTemplate, true);
         }
 
-        public string Transform(string template, Dictionary<string, object> values)
+        public string Transform(string description, string textTemplate, Dictionary<string, object> values)
         {
             values.GuardAgainstNull(nameof(values));
+            description.GuardAgainstNullOrEmpty(nameof(description));
 
-            return TransformInternal(template, values);
-        }
-
-        private static string TransformInternal(string template, Dictionary<string, object> configuration)
-        {
-            var engine = Template.Parse(template);
-            return engine.Render(new
-            {
-                Model = configuration
-            });
+            return values.Transform(description, textTemplate, true);
         }
     }
 }

@@ -556,6 +556,16 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to transform: &apos;{0}&apos;, errors were:
+        ///{1}.
+        /// </summary>
+        internal static string TextTemplatingExtensions_HasErrors {
+            get {
+                return ResourceManager.GetString("TextTemplatingExtensions_HasErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A toolkit with id: &apos;{0}&apos; cannot be found in the toolkit store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string ToolkitStore_NotFoundAtLocationWithId {

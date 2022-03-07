@@ -37,9 +37,9 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition model, string _) => model);
             this.textTemplatingEngine = new Mock<ITextTemplatingEngine>();
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<SolutionItem>()))
+            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                 .Returns("anoutput");
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>()))
+            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, object>>()))
                 .Returns("anoutput");
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
@@ -626,7 +626,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", null, null, null, null);
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<Dictionary<string, object>>(dic =>
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
                 dic.First().Key == "id")));
         }
 
@@ -645,7 +645,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}", null, null, null);
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<Dictionary<string, object>>(dic =>
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
                 dic.First().Key == "id")));
         }
 
@@ -694,7 +694,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", "animportpath", null);
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<Dictionary<string, object>>(dic =>
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
                 (string)dic["aname"] == "avalue")));
         }
 
@@ -725,7 +725,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath");
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform("atexttemplate", It.Is<Dictionary<string, object>>(dic =>
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
                 dic.First().Key == "id")));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }
