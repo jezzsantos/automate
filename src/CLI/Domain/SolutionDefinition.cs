@@ -134,11 +134,31 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public void PopulateAncestryAfterDeserialization()
+        {
+            PopulateDescendantParents(Model, null);
+
+            void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
+            {
+                solutionItem.Parent = parent;
+                var properties = solutionItem.Properties.Safe();
+                foreach (var property in properties)
+                {
+                    PopulateDescendantParents(property.Value, solutionItem);
+                }
+                var items = solutionItem.Items.Safe();
+                foreach (var item in items)
+                {
+                    PopulateDescendantParents(item, solutionItem);
+                }
+            }
+        }
+
         public string Id { get; set; }
 
         public string Name { get; set; }
 
-        private string GetRandomNumber()
+        private static string GetRandomNumber()
         {
             var number = DateTime.Now.Ticks.ToString();
             return number.Substring(number.Length - 3);

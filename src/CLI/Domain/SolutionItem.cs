@@ -300,31 +300,6 @@ namespace Automate.CLI.Domain
             return command.Execute(solution, this);
         }
 
-        public void PopulateAncestryAfterDeserialization()
-        {
-            if (!IsPattern)
-            {
-                return;
-            }
-
-            PopulateDescendantParents(this, null);
-
-            void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
-            {
-                solutionItem.Parent = parent;
-                var properties = solutionItem.Properties.Safe();
-                foreach (var property in properties)
-                {
-                    PopulateDescendantParents(property.Value, solutionItem);
-                }
-                var items = solutionItem.Items.Safe();
-                foreach (var item in items)
-                {
-                    PopulateDescendantParents(item, solutionItem);
-                }
-            }
-        }
-
         public string Id { get; set; }
 
         private IAutomation GetAutomationByName(string name)

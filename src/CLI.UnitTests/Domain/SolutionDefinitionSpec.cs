@@ -130,7 +130,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenFindByAutomationOnDescendantCollectionItem_ThenReturnsAutomation2()
+        public void WhenFindByAutomationOnDescendantCollectionItemElement_ThenReturnsAutomation()
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", isCollection: true);
@@ -169,6 +169,54 @@ namespace CLI.UnitTests.Domain
 
             automation.Should().BeNull();
             solutionItem.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenPopulateAncestryAfterDeserialization_ThenPopulatesParentOnDescendantCollectionItem()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var automation1 = new TestAutomation("anautomationid");
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            collection1.Automation.Add(automation1);
+            var element2 = new Element("anelementname2");
+            element2.Elements.Add(collection1);
+            var element1 = new Element("anelementname1");
+            element1.Elements.Add(element2);
+            pattern.Elements.Add(element1);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            solution.Model.Properties["anelementname1"].Materialise();
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].MaterialiseCollectionItem();
+
+            solution.PopulateAncestryAfterDeserialization();
+
+            solution.Model.Parent.Should().BeNull();
+            solution.Model.Properties["anelementname1"].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Parent.Should().Be(solution.Model.Properties["anelementname1"]);
+            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].Parent.Should().Be(solution.Model.Properties["anelementname1"].Properties["anelementname2"]);
+        }
+
+        [Fact]
+        public void WhenPopulateAncestryAfterDeserialization_ThenPopulatesParentOnDescendantCollectionItemElement()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            var automation1 = new TestAutomation("anautomationid");
+            var element1 = new Element("anelementname1");
+            element1.Automation.Add(automation1);
+            collection1.Elements.Add(element1);
+            pattern.Elements.Add(collection1);
+
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            solution.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
+            solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
+
+            solution.PopulateAncestryAfterDeserialization();
+
+            solution.Model.Parent.Should().BeNull();
+            solution.Model.Properties["acollectionname1"].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["acollectionname1"].Items[0].Parent.Should().Be(solution.Model.Properties["acollectionname1"]);
+            solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Parent.Should().Be(solution.Model.Properties["acollectionname1"].Items[0]);
         }
     }
 }
