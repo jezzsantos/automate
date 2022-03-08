@@ -289,29 +289,27 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
         {
-            // ReSharper disable once RedundantAssignment
+            // ReSharper disable All
             var isDebugBuild = false;
 
 #if DEBUG
             isDebugBuild = true;
 #endif
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (isDebugBuild)
             {
                 return true;
             }
 
-            // ReSharper disable once HeuristicUnreachableCode
             var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
-
-                // ReSharper disable once HeuristicUnreachableCode
             {
                 return context.ParseResult.GetValueForOption<bool>(debugOption);
             }
 
             return false;
+
+            // ReSharper restore All
         }
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)
@@ -608,7 +606,7 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleNewSolution(string patternName, string name, bool outputStructured, IConsole console)
             {
                 var solution = Runtime.CreateSolution(patternName, name);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit, solution.PatternName, solution.Name, solution.Id);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit, solution.Name, solution.Id, solution.PatternName);
             }
 
             internal static void HandleListSolutions(bool outputStructured, IConsole console)

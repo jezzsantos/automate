@@ -70,7 +70,8 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command: `automate install toolkit &quot;{FilePath}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command:
+        ///`automate install toolkit &quot;{&lt;FilePath&gt;}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_BuiltToolkit {
             get {
@@ -144,7 +145,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Solution from toolkit: &apos;{PatternName}&apos;, with &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;).
+        ///   Looks up a localized string similar to Created a new Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit: &apos;{PatternName}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CreateSolutionFromToolkit {
             get {
@@ -190,7 +191,8 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command: `automate toolkit create &quot;{Name}&quot;`.
+        ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command:
+        ///`automate run toolkit &lt;PatternName&gt; --name &quot;SolutionName&quot;`.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkit {
             get {
@@ -218,7 +220,8 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no created Solutions yet.
+        ///   Looks up a localized string similar to There are no Solutions yet. Use this command to create one:
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;.
         /// </summary>
         internal static string CommandLine_Output_NoInstalledSolutions {
             get {
@@ -248,7 +251,7 @@ namespace Automate.CLI.Infrastructure {
         
         /// <summary>
         ///   Looks up a localized string similar to No Solution is being configured. You must first run one of these commands:
-        ///`automate run toolkit &lt;PatternName&gt;` to create a new solution from an existing toolkit, or
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;` to create a new solution from an existing toolkit, or
         ///`automate run switch &lt;SolutionID&gt;` to switch to this existing solution.
         /// </summary>
         internal static string CommandLine_Output_NoSolutionSelected {

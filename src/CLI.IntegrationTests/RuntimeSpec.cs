@@ -122,8 +122,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.PatternName,
-                        solution.Name, solution.Id));
+                    OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.Name,
+                        solution.Id, solution.PatternName));
         }
 
         [Fact]

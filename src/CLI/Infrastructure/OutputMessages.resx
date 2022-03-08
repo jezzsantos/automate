@@ -71,13 +71,15 @@
         <value>Added Launch Point for commands with name: '{Name}'</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command: `automate install toolkit "{FilePath}"`</value>
+        <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:
+`automate install toolkit "{&lt;FilePath&gt;}"`</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
-        <value>Toolkit for pattern: '{Name}' (v.{Version}) has been installed and is ready to use with command: `automate toolkit create "{Name}"`</value>
+        <value>Toolkit for pattern: '{Name}' (v.{Version}) has been installed and is ready to use with command:
+`automate run toolkit &lt;PatternName&gt; --name "SolutionName"`</value>
     </data>
     <data name="CommandLine_Output_CreateSolutionFromToolkit" xml:space="preserve">
-        <value>Created a new Solution from toolkit: '{PatternName}', with '{Name}' (ID: '{SolutionId}')</value>
+        <value>Created a new Solution '{Name}' (ID: '{SolutionId}') from toolkit: '{PatternName}'</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
         <value>There are no installed Toolkits yet</value>
@@ -87,7 +89,8 @@
 {Toolkits}</value>
     </data>
     <data name="CommandLine_Output_NoInstalledSolutions" xml:space="preserve">
-        <value>There are no created Solutions yet</value>
+        <value>There are no Solutions yet. Use this command to create one:
+`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;</value>
     </data>
     <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
         <value>Created Solutions:
@@ -95,7 +98,7 @@
     </data>
     <data name="CommandLine_Output_NoSolutionSelected" xml:space="preserve">
         <value>No Solution is being configured. You must first run one of these commands:
-`automate run toolkit &lt;PatternName&gt;` to create a new solution from an existing toolkit, or
+`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;` to create a new solution from an existing toolkit, or
 `automate run switch &lt;SolutionID&gt;` to switch to this existing solution</value>
     </data>
     <data name="CommandLine_Output_CurrentSolutionInUse" xml:space="preserve">
