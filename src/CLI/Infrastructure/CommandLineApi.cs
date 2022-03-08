@@ -289,6 +289,7 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
         {
+            // ReSharper disable once RedundantAssignment
             var isDebugBuild = false;
 
 #if DEBUG
@@ -304,6 +305,8 @@ namespace Automate.CLI.Infrastructure
             // ReSharper disable once HeuristicUnreachableCode
             var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
+
+                // ReSharper disable once HeuristicUnreachableCode
             {
                 return context.ParseResult.GetValueForOption<bool>(debugOption);
             }

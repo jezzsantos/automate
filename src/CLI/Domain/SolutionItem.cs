@@ -115,14 +115,19 @@ namespace Automate.CLI.Domain
 
         public bool IsMaterialised { get; set; }
 
+        [IgnoreDataMember]
         public bool IsPattern => PatternSchema.Exists();
 
+        [IgnoreDataMember]
         public bool IsElement => ElementSchema.Exists() && !ElementSchema.IsCollection;
 
+        [IgnoreDataMember]
         public bool IsCollection => ElementSchema.Exists() && ElementSchema.IsCollection;
 
+        [IgnoreDataMember]
         public bool IsAttribute => AttributeSchema.Exists();
 
+        [IgnoreDataMember]
         public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
 
         public List<ArtifactLink> ArtifactLinks { get; set; }

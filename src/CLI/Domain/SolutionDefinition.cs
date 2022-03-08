@@ -18,12 +18,6 @@ namespace Automate.CLI.Domain
             InitialiseSchema();
         }
 
-        private string GetRandomNumber()
-        {
-            var number = DateTime.Now.Ticks.ToString();
-            return number.Substring(number.Length - 3);
-        }
-
         /// <summary>
         ///     For serialization
         /// </summary>
@@ -34,10 +28,6 @@ namespace Automate.CLI.Domain
         public ToolkitDefinition Toolkit { get; set; }
 
         public string PatternName => Toolkit.Pattern?.Name;
-
-        public string Id { get; set; }
-
-        public string Name { get; set; }
 
         public SolutionItem Model { get; set; }
 
@@ -50,33 +40,41 @@ namespace Automate.CLI.Domain
         {
             return FindDescendantAutomation(Model);
 
-            (IAutomation Automation, SolutionItem SolutionItem) FindDescendantAutomation(SolutionItem item)
+            (IAutomation Automation, SolutionItem SolutionItem) FindDescendantAutomation(SolutionItem solutionItem)
             {
-                if (item.IsPattern)
+                if (solutionItem.IsPattern)
                 {
-                    var automation = item.PatternSchema.Automation.Safe()
+                    var automation = solutionItem.PatternSchema.Automation.Safe()
                         .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
                     if (automation.Exists())
                     {
-                        return (automation, item);
+                        return (automation, solutionItem);
                     }
                 }
-                if (item.IsElement || item.IsCollection)
+                if (solutionItem.IsElement || solutionItem.IsCollection)
                 {
-                    var automation = item.ElementSchema.Automation.Safe()
+                    var automation = solutionItem.ElementSchema.Automation.Safe()
                         .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
                     if (automation.Exists())
                     {
-                        return (automation, item);
+                        return (automation, solutionItem);
                     }
                 }
-                if (item.IsAttribute || item.IsValue)
+                if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
                 }
 
-                foreach (var (_, value) in item.Properties.Safe())
+                foreach (var (_, value) in solutionItem.Properties.Safe())
                 {
                     var result = FindDescendantAutomation(value);
+                    if (result.Automation.Exists())
+                    {
+                        return result;
+                    }
+                }
+                foreach (var item in solutionItem.Items.Safe())
+                {
+                    var result = FindDescendantAutomation(item);
                     if (result.Automation.Exists())
                     {
                         return result;
@@ -91,33 +89,41 @@ namespace Automate.CLI.Domain
         {
             return FindDescendantCodeTemplate(Model);
 
-            SolutionItem FindDescendantCodeTemplate(SolutionItem item)
+            SolutionItem FindDescendantCodeTemplate(SolutionItem solutionItem)
             {
-                if (item.IsPattern)
+                if (solutionItem.IsPattern)
                 {
-                    var codeTemplate = item.PatternSchema.CodeTemplates.Safe()
+                    var codeTemplate = solutionItem.PatternSchema.CodeTemplates.Safe()
                         .FirstOrDefault(temp => temp.Id.EqualsIgnoreCase(codeTemplateId));
                     if (codeTemplate.Exists())
                     {
-                        return item;
+                        return solutionItem;
                     }
                 }
-                if (item.IsElement || item.IsCollection)
+                if (solutionItem.IsElement || solutionItem.IsCollection)
                 {
-                    var codeTemplate = item.ElementSchema.CodeTemplates.Safe()
+                    var codeTemplate = solutionItem.ElementSchema.CodeTemplates.Safe()
                         .FirstOrDefault(tem => tem.Id.EqualsIgnoreCase(codeTemplateId));
                     if (codeTemplate.Exists())
                     {
-                        return item;
+                        return solutionItem;
                     }
                 }
-                if (item.IsAttribute || item.IsValue)
+                if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
                 }
 
-                foreach (var (_, value) in item.Properties.Safe())
+                foreach (var (_, value) in solutionItem.Properties.Safe())
                 {
                     var result = FindDescendantCodeTemplate(value);
+                    if (result.Exists())
+                    {
+                        return result;
+                    }
+                }
+                foreach (var item in solutionItem.Items.Safe())
+                {
+                    var result = FindDescendantCodeTemplate(item);
                     if (result.Exists())
                     {
                         return result;
@@ -126,6 +132,16 @@ namespace Automate.CLI.Domain
 
                 return default;
             }
+        }
+
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        private string GetRandomNumber()
+        {
+            var number = DateTime.Now.Ticks.ToString();
+            return number.Substring(number.Length - 3);
         }
 
         private void InitialiseSchema()
