@@ -108,7 +108,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledToolkitsListed.FormatTemplate(
-                        $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}"));
+                        $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledSolutionsListed.FormatTemplate(
-                        $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}"));
+                        $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}"));
         }
 
         [Fact]

@@ -596,7 +596,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
                         toolkits.Select(toolkit =>
-                            $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}" + Environment.NewLine).Join());
+                            $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}" + Environment.NewLine).Join());
                 }
                 else
                 {
@@ -617,7 +617,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
                         solutions.Select(solution =>
-                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}" + Environment.NewLine).Join());
+                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}" + Environment.NewLine).Join());
                 }
                 else
                 {
