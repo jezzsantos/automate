@@ -5,6 +5,10 @@ namespace Automate.CLI.Domain
 {
     internal class CommandExecutionResult
     {
+        public CommandExecutionResult(string commandName) : this(commandName, new List<string>())
+        {
+        }
+
         public CommandExecutionResult(string commandName, List<string> log)
         {
             commandName.GuardAgainstNullOrEmpty(nameof(commandName));
@@ -13,7 +17,7 @@ namespace Automate.CLI.Domain
             IsSuccess = true;
             CommandName = commandName;
             Log = log;
-            Errors = new ValidationResults();
+            ValidationErrors = new ValidationResults();
         }
 
         public CommandExecutionResult(string commandName, ValidationResults validations)
@@ -24,15 +28,36 @@ namespace Automate.CLI.Domain
             IsSuccess = false;
             CommandName = commandName;
             Log = new List<string>();
-            Errors = validations;
+            ValidationErrors = validations;
         }
 
-        public bool IsSuccess { get; }
+        public bool IsSuccess { get; private set; }
 
         public string CommandName { get; }
 
         public List<string> Log { get; }
 
-        public ValidationResults Errors { get; }
+        public ValidationResults ValidationErrors { get; }
+
+        public bool IsInvalid => !IsSuccess && ValidationErrors.HasAny();
+
+        public void Fail()
+        {
+            IsSuccess = false;
+        }
+
+        public void Add(string message)
+        {
+            message.GuardAgainstNullOrEmpty(nameof(message));
+
+            Log.Add(message);
+        }
+
+        public void Add(List<string> messages)
+        {
+            messages.GuardAgainstNull(nameof(messages));
+
+            Log.AddRange(messages);
+        }
     }
 }

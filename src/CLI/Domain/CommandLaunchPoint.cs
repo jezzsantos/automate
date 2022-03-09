@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Extensions;
 
@@ -27,7 +28,7 @@ namespace Automate.CLI.Domain
 
         public override CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
         {
-            var logs = new List<string>();
+            var outcome = new CommandExecutionResult(Name);
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
@@ -41,20 +42,30 @@ namespace Automate.CLI.Domain
                 {
                     solutionItem.Items
                         .ToListSafe()
-                        .ForEach(item =>
-                        {
-                            var result = command.Execute(solution, item);
-                            logs.AddRange(result.Log);
-                        });
+                        .ForEach(item => ExecuteCommandSafely(command, item, cmdId));
                 }
                 else
                 {
-                    var result = command.Execute(solution, solutionItem);
-                    logs.AddRange(result.Log);
+                    ExecuteCommandSafely(command, solutionItem, cmdId);
                 }
             });
 
-            return new CommandExecutionResult(Name, logs);
+            return outcome;
+
+            void ExecuteCommandSafely(IAutomation command, SolutionItem solutionItem, string cmdId)
+            {
+                try
+                {
+                    var result = command.Execute(solution, solutionItem);
+                    outcome.Add(result.Log);
+                }
+                catch (Exception ex)
+                {
+                    var message = DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(cmdId, ex.ToMessages(true));
+                    outcome.Add(message);
+                    outcome.Fail();
+                }
+            }
         }
     }
 }

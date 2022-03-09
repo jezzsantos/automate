@@ -498,19 +498,19 @@ namespace Automate.CLI.Infrastructure
                     {
                         if (includeAll)
                         {
-                            output.Append("\n");
+                            output.Append(Environment.NewLine);
                             output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- CodeTemplates:\n");
+                            output.Append("- CodeTemplates:" + Environment.NewLine);
                             element.CodeTemplates.ToListSafe().ForEach(ct => DisplayCodeTemplate(ct, subItemLevel));
                         }
                         else
                         {
-                            output.Append($" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)\n");
+                            output.Append($" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)" + Environment.NewLine);
                         }
                     }
                     else
                     {
-                        output.Append("\n");
+                        output.Append(Environment.NewLine);
                     }
 
                     if (element.Automation.HasAny())
@@ -518,7 +518,7 @@ namespace Automate.CLI.Infrastructure
                         if (includeAll)
                         {
                             output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Automation:\n");
+                            output.Append("- Automation:" + Environment.NewLine);
                             element.Automation.ToListSafe().ForEach(auto => DisplayAutomation(auto, subItemLevel));
                         }
                     }
@@ -528,7 +528,7 @@ namespace Automate.CLI.Infrastructure
                         if (includeAll)
                         {
                             output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Attributes:\n");
+                            output.Append("- Attributes:" + Environment.NewLine);
                         }
                         element.Attributes.ToListSafe().ForEach(a => DisplayAttribute(a, subItemLevel));
                     }
@@ -537,7 +537,7 @@ namespace Automate.CLI.Infrastructure
                         if (includeAll)
                         {
                             output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Elements:\n");
+                            output.Append("- Elements:" + Environment.NewLine);
                         }
                         element.Elements.ToListSafe()
                             .ForEach(e => DisplayDescendantConfiguration(e, subItemLevel));
@@ -548,14 +548,15 @@ namespace Automate.CLI.Infrastructure
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})\n");
+                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})" +
+                        Environment.NewLine);
                 }
 
                 void DisplayCodeTemplate(CodeTemplate template, int indentLevel)
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {template.Name} [{template.Id}] (file: {template.Metadata.OriginalFilePath}, ext: {template.Metadata.OriginalFileExtension})\n");
+                        $"- {template.Name} [{template.Id}] (file: {template.Metadata.OriginalFilePath}, ext: {template.Metadata.OriginalFileExtension})" + Environment.NewLine);
                 }
 
                 void DisplayAutomation(IAutomation automation, int indentLevel)
@@ -565,15 +566,15 @@ namespace Automate.CLI.Infrastructure
                         $"- {automation.Name} [{automation.Id}] ({automation.GetType().Name})");
                     if (automation is CodeTemplateCommand command)
                     {
-                        output.Append($" (template: {command.CodeTemplateId}, tearOff: {command.IsTearOff.ToString().ToLower()}, path: {command.FilePath})\n");
+                        output.Append($" (template: {command.CodeTemplateId}, tearOff: {command.IsTearOff.ToString().ToLower()}, path: {command.FilePath})" + Environment.NewLine);
                     }
                     else if (automation is CommandLaunchPoint launchPoint)
                     {
-                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin(";")})\n");
+                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin(";")})" + Environment.NewLine);
                     }
                     else
                     {
-                        output.Append("\n");
+                        output.Append(Environment.NewLine);
                     }
                 }
             }
@@ -595,7 +596,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
                         toolkits.Select(toolkit =>
-                            $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}\n").Join());
+                            $"{{\"Name\": \"{toolkit.PatternName}\", \"ID\": \"{toolkit.Id}\"}}" + Environment.NewLine).Join());
                 }
                 else
                 {
@@ -616,7 +617,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
                         solutions.Select(solution =>
-                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}\n").Join());
+                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\"}}" + Environment.NewLine).Join());
                 }
                 else
                 {
@@ -722,13 +723,21 @@ namespace Automate.CLI.Infrastructure
                 var execution = Runtime.ExecuteLaunchPoint(name, on);
                 if (execution.IsSuccess)
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecuted,
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecutionSucceeded,
                         execution.CommandName, FormatExecutionLog(execution.Log));
                 }
                 else
                 {
-                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        Runtime.CurrentSolutionName, Runtime.CurrentSolutionId, FormatValidationErrors(execution.Errors));
+                    if (execution.IsInvalid)
+                    {
+                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                            Runtime.CurrentSolutionName, Runtime.CurrentSolutionId, FormatValidationErrors(execution.ValidationErrors));
+                    }
+                    else
+                    {
+                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_CommandExecutionFailed,
+                            execution.CommandName, FormatExecutionLog(execution.Log));
+                    }
                 }
             }
 

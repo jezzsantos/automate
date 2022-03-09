@@ -223,7 +223,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command with ID: &apos;{0}&apos; could not be found on any element in this pattern.
+        ///   Looks up a localized string similar to The command with ID: &apos;{0}&apos; could not be found on any element in this solution.
         /// </summary>
         internal static string CommandLaunchPoint_CommandIdNotFound {
             get {
@@ -556,12 +556,22 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to transform: &apos;{0}&apos;, errors were:
+        ///   Looks up a localized string similar to Template: &apos;{0}&apos; has errors:
         ///{1}.
         /// </summary>
-        internal static string TextTemplatingExtensions_HasErrors {
+        internal static string TextTemplatingExtensions_HasSyntaxErrors {
             get {
-                return ResourceManager.GetString("TextTemplatingExtensions_HasErrors", resourceCulture);
+                return ResourceManager.GetString("TextTemplatingExtensions_HasSyntaxErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to transform template: &apos;{0}&apos;, errors were:
+        ///{1}.
+        /// </summary>
+        internal static string TextTemplatingExtensions_TransformFailed {
+            get {
+                return ResourceManager.GetString("TextTemplatingExtensions_TransformFailed", resourceCulture);
             }
         }
         

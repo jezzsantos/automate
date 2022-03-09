@@ -601,7 +601,7 @@ namespace CLI.UnitTests.Domain
             result.CommandName.Should().Be("anautomationname");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().ContainSingle("alogentry");
-            result.Errors.Should().BeEmpty();
+            result.ValidationErrors.Should().BeEmpty();
         }
     }
 }

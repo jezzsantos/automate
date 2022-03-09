@@ -135,12 +135,22 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; did not completely succeed. Some commands failed:
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandExecutionFailed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandExecutionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; executed successfully:
         ///{Log}.
         /// </summary>
-        internal static string CommandLine_Output_CommandExecuted {
+        internal static string CommandLine_Output_CommandExecutionSucceeded {
             get {
-                return ResourceManager.GetString("CommandLine_Output_CommandExecuted", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_CommandExecutionSucceeded", resourceCulture);
             }
         }
         

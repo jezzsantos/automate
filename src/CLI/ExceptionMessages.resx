@@ -190,10 +190,14 @@
         <value>The code template with ID: '{0}' does not exist in the toolkit</value>
     </data>
     <data name="CommandLaunchPoint_CommandIdNotFound" xml:space="preserve">
-        <value>The command with ID: '{0}' could not be found on any element in this pattern</value>
+        <value>The command with ID: '{0}' could not be found on any element in this solution</value>
     </data>
-    <data name="TextTemplatingExtensions_HasErrors" xml:space="preserve">
-        <value>Failed to transform: '{0}', errors were:
+    <data name="TextTemplatingExtensions_HasSyntaxErrors" xml:space="preserve">
+        <value>Template: '{0}' has errors:
+{1}</value>
+    </data>
+    <data name="TextTemplatingExtensions_TransformFailed" xml:space="preserve">
+        <value>Failed to transform template: '{0}', errors were:
 {1}</value>
     </data>
 </root>

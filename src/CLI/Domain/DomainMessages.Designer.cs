@@ -61,6 +61,24 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        /// </summary>
+        internal static string AuthoringApplication_TestCodeTemplate_Description {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_TestCodeTemplate_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplateCommand ({0}) path expression.
+        /// </summary>
+        internal static string CodeTemplateCommand_FilePathExpression_Description {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_FilePathExpression_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generated file: &apos;{0}&apos; to: &apos;{1}&apos;.
         /// </summary>
         internal static string CodeTemplateCommand_Log_GeneratedFile {
@@ -75,6 +93,25 @@ namespace Automate.CLI.Domain {
         internal static string CodeTemplateCommand_Log_UpdatedLink {
             get {
                 return ResourceManager.GetString("CodeTemplateCommand_Log_UpdatedLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        /// </summary>
+        internal static string CodeTemplateCommand_TemplateContent_Description {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_TemplateContent_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command: &apos;{0}&apos; failed to execute. Errors were:
+        ///{1}.
+        /// </summary>
+        internal static string CommandLaunchPoint_CommandIdFailedExecution {
+            get {
+                return ResourceManager.GetString("CommandLaunchPoint_CommandIdFailedExecution", resourceCulture);
             }
         }
     }

@@ -359,7 +359,7 @@ namespace Automate.CLI.Application
                 }
 
                 var contents = GetTemplateContent();
-                return this.textTemplatingEngine.Transform($"CodeTemplate ({codeTemplate.Id}) template", contents, importedData);
+                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), contents, importedData);
             }
             else
             {
@@ -372,7 +372,7 @@ namespace Automate.CLI.Application
                 var generatedData = solutionItem.GetConfiguration(true);
 
                 var contents = GetTemplateContent();
-                var generatedCode = this.textTemplatingEngine.Transform($"CodeTemplate ({codeTemplate.Id}) template", contents, generatedData);
+                var generatedCode = this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), contents, generatedData);
 
                 if (exportedRelativeFilePath.HasValue())
                 {

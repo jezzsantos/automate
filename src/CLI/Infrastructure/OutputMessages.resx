@@ -121,8 +121,12 @@
     <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
         <value>Solution '{Name}' (ID: '{SolutionId}') is configured correctly</value>
     </data>
-    <data name="CommandLine_Output_CommandExecuted" xml:space="preserve">
+    <data name="CommandLine_Output_CommandExecutionSucceeded" xml:space="preserve">
         <value>The Command: '{Command}' executed successfully:
+{Log}</value>
+    </data>
+    <data name="CommandLine_Output_CommandExecutionFailed" xml:space="preserve">
+        <value>The Command: '{Command}' did not completely succeed. Some commands failed:
 {Log}</value>
     </data>
 </root>

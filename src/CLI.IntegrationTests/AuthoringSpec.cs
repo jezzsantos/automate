@@ -368,12 +368,12 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
-                        "- APattern (root element) (attached with 1 code templates)\n" +
-                        "\t- AProperty (attribute) (string)\n" +
-                        "\t- AnElement (element)\n" +
-                        "\t\t- AProperty (attribute) (string)\n" +
-                        "\t- ACollection (collection)\n" +
-                        "\t\t- AProperty (attribute) (string)\n"
+                        $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
+                        $"\t- AProperty (attribute) (string){Environment.NewLine}" +
+                        $"\t- AnElement (element){Environment.NewLine}" +
+                        $"\t\t- AProperty (attribute) (string){Environment.NewLine}" +
+                        $"\t- ACollection (collection){Environment.NewLine}" +
+                        $"\t\t- AProperty (attribute) (string){Environment.NewLine}"
                         ,
                         this.setup.Patterns.Single().Id));
         }
@@ -406,21 +406,21 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
-                        $"- APattern [{pattern.Id}] (root element)\n" +
-                        "\t- CodeTemplates:\n" +
-                        $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code)\n" +
-                        "\t- Automation:\n" +
-                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath)\n" +
-                        $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {commandId})\n" +
-                        "\t- Attributes:\n" +
-                        "\t\t- AProperty (string)\n" +
-                        "\t- Elements:\n" +
-                        $"\t\t- AnElement [{pattern.Elements.First().Id}] (element)\n" +
-                        "\t\t\t- Attributes:\n" +
-                        "\t\t\t\t- AProperty (string)\n" +
-                        $"\t\t- ACollection [{pattern.Elements.Last().Id}] (collection)\n" +
-                        "\t\t\t- Attributes:\n" +
-                        "\t\t\t\t- AProperty (string)\n"
+                        $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
+                        $"\t- CodeTemplates:{Environment.NewLine}" +
+                        $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code){Environment.NewLine}" +
+                        $"\t- Automation:{Environment.NewLine}" +
+                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath){Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {commandId}){Environment.NewLine}" +
+                        $"\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t- AProperty (string){Environment.NewLine}" +
+                        $"\t- Elements:{Environment.NewLine}" +
+                        $"\t\t- AnElement [{pattern.Elements.First().Id}] (element){Environment.NewLine}" +
+                        $"\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty (string){Environment.NewLine}" +
+                        $"\t\t- ACollection [{pattern.Elements.Last().Id}] (collection){Environment.NewLine}" +
+                        $"\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty (string){Environment.NewLine}"
                         ,
                         this.setup.Patterns.Single().Id));
         }
@@ -443,9 +443,9 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName",
-                        "A\r\n" +
-                        "aproperty11\r\n" +
-                        "A\r\n"));
+                        $"A{Environment.NewLine}" +
+                        $"aproperty11{Environment.NewLine}" +
+                        $"A{Environment.NewLine}"));
         }
 
         [Fact]
@@ -466,9 +466,9 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName",
-                        "A\r\n" +
-                        "aproperty11\r\n" +
-                        "A\r\n"));
+                        $"A{Environment.NewLine}" +
+                        $"aproperty11{Environment.NewLine}" +
+                        $"A{Environment.NewLine}"));
         }
     }
 }

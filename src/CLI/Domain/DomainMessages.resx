@@ -30,4 +30,17 @@
     <data name="CodeTemplateCommand_Log_UpdatedLink" xml:space="preserve">
         <value>Updated link to file: '{0}' at: '{1}'</value>
     </data>
+    <data name="CommandLaunchPoint_CommandIdFailedExecution" xml:space="preserve">
+        <value>Command: '{0}' failed to execute. Errors were:
+{1}</value>
+    </data>
+    <data name="CodeTemplateCommand_FilePathExpression_Description" xml:space="preserve">
+        <value>CodeTemplateCommand ({0}) path expression</value>
+    </data>
+    <data name="CodeTemplateCommand_TemplateContent_Description" xml:space="preserve">
+        <value>CodeTemplate ({0}) template</value>
+    </data>
+    <data name="AuthoringApplication_TestCodeTemplate_Description" xml:space="preserve">
+        <value>CodeTemplate ({0}) template</value>
+    </data>
 </root>

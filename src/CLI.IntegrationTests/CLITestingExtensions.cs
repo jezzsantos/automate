@@ -1,4 +1,5 @@
-﻿using Automate.CLI.Extensions;
+﻿using System;
+using Automate.CLI.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
@@ -42,7 +43,7 @@ namespace CLI.IntegrationTests
                 .FailWith("You can't assert an error is displayed without specifying the text of the error")
                 .Then
                 .Given(() => Subject.Error.Value)
-                .ForCondition(value => value.Trim('\r', '\n') == errorMessage || value.Contains(errorMessage))
+                .ForCondition(value => value.Trim(Environment.NewLine.ToCharArray()) == errorMessage || value.Contains(errorMessage))
                 .FailWith("Expected {context:output} to contain {0}{reason}, but found {1}.", errorText,
                     Subject.Error.Value);
 

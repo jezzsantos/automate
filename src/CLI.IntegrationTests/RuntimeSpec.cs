@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
@@ -346,35 +347,37 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
-                        $"- APattern [{pattern.Id}] (root element)\n" +
-                        "\t- CodeTemplates:\n" +
-                        $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code)\n" +
-                        "\t- Automation:\n" +
-                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.a_property3}}}}namingtest.cs)\n" +
-                        $"\t\t- ALaunchPoint1 [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {pattern.Automation.First().Id})\n" +
-                        "\t- Attributes:\n" +
-                        "\t\t- AProperty1 (string, required)\n" +
-                        "\t- Elements:\n" +
-                        $"\t\t- AnElement1 [{element1.Id}] (element)\n" +
-                        "\t\t\t- CodeTemplates:\n" +
-                        $"\t\t\t\t- ACodeTemplate2 [{element1.CodeTemplates.Single().Id}] (file: {codeTemplatePath2}, ext: .code)\n" +
-                        "\t\t\t- Automation:\n" +
-                        $"\t\t\t\t- CodeTemplateCommand1 [{element1.Automation.First().Id}] (CodeTemplateCommand) (template: {element1.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/parentsubstitutiontest.cs)\n" +
-                        $"\t\t\t\t- ALaunchPoint2 [{element1.Automation.Last().Id}] (CommandLaunchPoint) (ids: {element1.Automation.First().Id})\n" +
-                        "\t\t\t- Attributes:\n" +
-                        "\t\t\t\t- AProperty3 (string, oneof: A;B;C)\n" +
-                        "\t\t\t- Elements:\n" +
-                        $"\t\t\t\t- ACollection1 [{element1.Elements.First().Id}] (collection)\n" +
-                        $"\t\t- ACollection2 [{pattern.Elements.Last().Id}] (collection)\n" +
-                        "\t\t\t- Attributes:\n" +
-                        "\t\t\t\t- AProperty4 (string, default: ADefaultValue4)\n"
+                        $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
+                        $"\t- CodeTemplates:{Environment.NewLine}" +
+                        $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code){Environment.NewLine}" +
+                        $"\t- Automation:{Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.a_property3}}}}namingtest.cs){Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint1 [{pattern.Automation[1].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id}){Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.}}}}invalid.cs){Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint2 [{pattern.Automation[3].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id}){Environment.NewLine}" +
+                        $"\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t- AProperty1 (string, required){Environment.NewLine}" +
+                        $"\t- Elements:{Environment.NewLine}" +
+                        $"\t\t- AnElement1 [{element1.Id}] (element){Environment.NewLine}" +
+                        $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
+                        $"\t\t\t\t- ACodeTemplate2 [{element1.CodeTemplates.Single().Id}] (file: {codeTemplatePath2}, ext: .code){Environment.NewLine}" +
+                        $"\t\t\t- Automation:{Environment.NewLine}" +
+                        $"\t\t\t\t- CodeTemplateCommand1 [{element1.Automation.First().Id}] (CodeTemplateCommand) (template: {element1.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/parentsubstitutiontest.cs){Environment.NewLine}" +
+                        $"\t\t\t\t- ALaunchPoint3 [{element1.Automation.Last().Id}] (CommandLaunchPoint) (ids: {element1.Automation.First().Id}){Environment.NewLine}" +
+                        $"\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty3 (string, oneof: A;B;C){Environment.NewLine}" +
+                        $"\t\t\t- Elements:{Environment.NewLine}" +
+                        $"\t\t\t\t- ACollection1 [{element1.Elements.First().Id}] (collection){Environment.NewLine}" +
+                        $"\t\t- ACollection2 [{pattern.Elements.Last().Id}] (collection){Environment.NewLine}" +
+                        $"\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty4 (string, default: ADefaultValue4){Environment.NewLine}"
                         ,
                         this.setup.Patterns.Single().Id));
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
                         .FormatTemplate(solution.Name, solution.Id,
-                            "1. {APattern.AnElement1} requires at least one instance\r\n\r\n"
+                            $"1. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
                         ));
         }
 
@@ -391,9 +394,9 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
                         .FormatTemplate(solution.Name, solution.Id,
-                            "1. {APattern.AProperty1} requires its value to be set\r\n" +
-                            "2. {APattern.AnElement1} requires at least one instance\r\n" +
-                            "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
+                            $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
+                            $"2. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}" +
+                            $"3. {{APattern.ACollection2}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
                         ));
         }
 
@@ -427,10 +430,34 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_SolutionValidationFailed
                         .FormatTemplate(solution.Name, solution.Id,
-                            "1. {APattern.AProperty1} requires its value to be set\r\n" +
-                            "2. {APattern.AnElement1} requires at least one instance\r\n" +
-                            "3. {APattern.ACollection2} requires at least one instance\r\n\r\n"
+                            $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
+                            $"2. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}" +
+                            $"3. {{APattern.ACollection2}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
                         ));
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointAndHasFails_ThenDisplaysResults()
+        {
+            var testDirectory = Environment.CurrentDirectory;
+            BuildInstallAndCreateSolution();
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2");
+
+            var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
+            var commandId = this.setup.Patterns.Single().Automation[2].Id;
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionFailed.FormatTemplate("ALaunchPoint2",
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs", path) + $"{Environment.NewLine}" +
+                    "* " + DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(commandId,
+                        ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
+                            $"((21:0,21),(22:0,22)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
+                            $"((20:0,20),(20:0,20)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}{Environment.NewLine}"))));
         }
 
         [Fact]
@@ -449,9 +476,9 @@ namespace CLI.IntegrationTests
             var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("ALaunchPoint1",
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate("ALaunchPoint1",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs",
-                        path) + "\r\n"));
+                        path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
             contents.Should().Be("some code");
@@ -467,18 +494,18 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2 --on {{AnElement1}}");
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint3 --on {{AnElement1}}");
 
             var artifactLink = this.setup.Solutions.Single().Model.Properties["AnElement1"].ArtifactLinks.First().Path;
             var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecuted.FormatTemplate("ALaunchPoint2",
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate("ALaunchPoint3",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("parentsubstitutiontest.cs",
-                        path) + "\r\n"));
+                        path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
-            contents.Should().Be("B\r\navalue1\r\nB");
+            contents.Should().Be($"B{Environment.NewLine}avalue1{Environment.NewLine}B");
         }
 
         private static void DeleteCodeFolder()
@@ -503,9 +530,14 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.a_property3}}}}namingtest.cs\"");
-            var commandId1 = this.setup.Patterns.Single().Automation.Single().Id;
+            var commandId1 = this.setup.Patterns.Single().Automation[0].Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.}}}}invalid.cs\"");
+            var commandId2 = this.setup.Patterns.Single().Automation[2].Id;
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2} --name ALaunchPoint2");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
@@ -516,9 +548,9 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ACodeTemplate2 --aschildof {{APattern.AnElement1}}");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate2\" --withpath \"~/code/parentsubstitutiontest.cs\" --aschildof {{APattern.AnElement1}}");
-            var commandId2 = this.setup.Patterns.Single().Elements.First().Automation.Single().Id;
+            var commandId3 = this.setup.Patterns.Single().Elements.First().Automation.Single().Id;
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId2} --name ALaunchPoint2 --aschildof {{APattern.AnElement1}}");
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId3} --name ALaunchPoint3 --aschildof {{APattern.AnElement1}}");
 
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");

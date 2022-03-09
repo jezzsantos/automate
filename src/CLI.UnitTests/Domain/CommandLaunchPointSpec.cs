@@ -90,6 +90,7 @@ namespace CLI.UnitTests.Domain
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("alogentry");
+            result.IsSuccess.Should().BeTrue();
             automation.Verify(aut => aut.Execute(solution, solutionItem));
         }
 
@@ -116,6 +117,7 @@ namespace CLI.UnitTests.Domain
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("alogentry");
+            result.IsSuccess.Should().BeTrue();
             automation.Verify(aut => aut.Execute(solution, solutionItem));
         }
 
@@ -146,6 +148,39 @@ namespace CLI.UnitTests.Domain
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().Contain("alogentry1", "alogentry2");
+            result.IsSuccess.Should().BeTrue();
+            automation.Verify(aut => aut.Execute(solution, collectionItem1));
+            automation.Verify(aut => aut.Execute(solution, collectionItem2));
+        }
+
+        [Fact]
+        public void WhenExecuteAndCommandFails_ThenContinuesAndFails()
+        {
+            var automation = new Mock<IAutomation>();
+            automation.Setup(auto => auto.Id)
+                .Returns(this.launchPoint.CommandIds.First());
+            var element1 = new Element("anelementname1");
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            collection1.Automation.Add(automation.Object);
+            element1.Elements.Add(collection1);
+            var pattern = new PatternDefinition("apatternname");
+            pattern.Elements.Add(element1);
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solutionItem = solution.Model
+                .Properties["anelementname1"].Materialise()
+                .Properties["acollectionname1"].Materialise();
+            var collectionItem1 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            var collectionItem2 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem1))
+                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry1" }));
+            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem2))
+                .Throws(new Exception("anexceptionmessage"));
+
+            var result = this.launchPoint.Execute(solution, solutionItem);
+
+            result.CommandName.Should().Be("alaunchpointname");
+            result.Log.Should().Contain("alogentry1", DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(), "anexceptionmessage"));
+            result.IsSuccess.Should().BeFalse();
             automation.Verify(aut => aut.Execute(solution, collectionItem1));
             automation.Verify(aut => aut.Execute(solution, collectionItem2));
         }
