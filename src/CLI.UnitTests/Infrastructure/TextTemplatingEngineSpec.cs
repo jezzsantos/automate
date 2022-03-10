@@ -22,7 +22,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndEmptyTemplate_ThenReturnsEmptyString()
         {
-            var result = this.engine.Transform("adescription", string.Empty, new SolutionItem());
+            var result = this.engine.Transform("adescription", string.Empty, new SolutionItem(new Element("anelementname"), null));
 
             result.Should().BeEmpty();
         }
@@ -30,7 +30,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndTemplate_ThenReturnsTransformedTemplate()
         {
-            var result = this.engine.Transform("adescription", "atemplate", new SolutionItem());
+            var result = this.engine.Transform("adescription", "atemplate", new SolutionItem(new Element("anelementname"), null));
 
             result.Should().Be("atemplate");
         }
@@ -53,7 +53,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenTransformAndHasSyntaxErrors_ThenThrows()
         {
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.}}", new SolutionItem()))
+                .Invoking(x => x.Transform("adescription", "{{model.}}", new SolutionItem(new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format("adescription",
                     "((8:0,8),(9:0,9)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" + Environment.NewLine +
@@ -64,7 +64,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenTransformAndHasTransformationErrors_ThenThrows()
         {
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.parent.notexists}}", new SolutionItem()))
+                .Invoking(x => x.Transform("adescription", "{{model.parent.notexists}}", new SolutionItem(new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_TransformFailed.Format("adescription",
                     "<input>(1,16) : error : Cannot get the member model.parent.notexists for a null object." + Environment.NewLine));

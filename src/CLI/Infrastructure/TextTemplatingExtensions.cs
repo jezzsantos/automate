@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Extensions;
 using Scriban;
@@ -8,13 +7,13 @@ namespace Automate.CLI.Infrastructure
 {
     internal static class TextTemplatingExtensions
     {
-        public static string Transform(this Dictionary<string, object> source, string description, string textTemplate, bool modelPrefix = false)
+        public static string Transform(this object source, string description, string textTemplate, bool modelPrefix = false)
         {
             var engine = Template.Parse(textTemplate);
 
             var model = modelPrefix
                 ? new { Model = source }
-                : (object)source;
+                : source;
 
             if (engine.HasErrors)
             {

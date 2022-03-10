@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Extensions;
 
@@ -36,52 +37,64 @@ namespace Automate.CLI.Domain
             return Model.GetConfiguration(false).ToJson();
         }
 
-        public (IAutomation Automation, SolutionItem SolutionItem) FindByAutomation(string automationId)
+        public List<SolutionItemCommandPair> FindByAutomation(string automationId)
         {
             return FindDescendantAutomation(Model);
 
-            (IAutomation Automation, SolutionItem SolutionItem) FindDescendantAutomation(SolutionItem solutionItem)
+            List<SolutionItemCommandPair> FindDescendantAutomation(SolutionItem solutionItem)
             {
+                var pairs = new List<SolutionItemCommandPair>();
+                
                 if (solutionItem.IsPattern)
                 {
                     var automation = solutionItem.PatternSchema.Automation.Safe()
                         .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
                     if (automation.Exists())
                     {
-                        return (automation, solutionItem);
+                        pairs.Add(new SolutionItemCommandPair(automation, solutionItem));
                     }
                 }
-                if (solutionItem.IsElement || solutionItem.IsCollection)
+
+                if (solutionItem.IsElement)
                 {
                     var automation = solutionItem.ElementSchema.Automation.Safe()
                         .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
                     if (automation.Exists())
                     {
-                        return (automation, solutionItem);
+                        pairs.Add(new SolutionItemCommandPair(automation, solutionItem));
                     }
                 }
+
+                if (solutionItem.IsPattern || solutionItem.IsElement)
+                {
+                    foreach (var (_, value) in solutionItem.Properties.Safe())
+                    {
+                        var result = FindDescendantAutomation(value);
+                        if (result.HasAny())
+                        {
+                            pairs.AddRange(result);
+                        }
+                    }
+                }
+
+                if (solutionItem.IsCollection)
+                {
+                    foreach (var item in solutionItem.Items.Safe())
+                    {
+                        var result = FindDescendantAutomation(item);
+                        if (result.HasAny())
+                        {
+                            pairs.AddRange(result);
+                        }
+                    }
+                }
+
                 if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
+                    return new List<SolutionItemCommandPair>();
                 }
 
-                foreach (var (_, value) in solutionItem.Properties.Safe())
-                {
-                    var result = FindDescendantAutomation(value);
-                    if (result.Automation.Exists())
-                    {
-                        return result;
-                    }
-                }
-                foreach (var item in solutionItem.Items.Safe())
-                {
-                    var result = FindDescendantAutomation(item);
-                    if (result.Automation.Exists())
-                    {
-                        return result;
-                    }
-                }
-
-                return default;
+                return pairs;
             }
         }
 
@@ -100,7 +113,8 @@ namespace Automate.CLI.Domain
                         return solutionItem;
                     }
                 }
-                if (solutionItem.IsElement || solutionItem.IsCollection)
+
+                if (solutionItem.IsElement)
                 {
                     var codeTemplate = solutionItem.ElementSchema.CodeTemplates.Safe()
                         .FirstOrDefault(tem => tem.Id.EqualsIgnoreCase(codeTemplateId));
@@ -109,8 +123,9 @@ namespace Automate.CLI.Domain
                         return solutionItem;
                     }
                 }
-                if (solutionItem.IsAttribute || solutionItem.IsValue)
+                if (solutionItem.IsCollection || solutionItem.IsAttribute || solutionItem.IsValue)
                 {
+                    return default;
                 }
 
                 foreach (var (_, value) in solutionItem.Properties.Safe())
@@ -134,7 +149,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void PopulateAncestryAfterDeserialization()
+        public void PopulateAncestry()
         {
             PopulateDescendantParents(Model, null);
 
@@ -149,7 +164,8 @@ namespace Automate.CLI.Domain
                 var items = solutionItem.Items.Safe();
                 foreach (var item in items)
                 {
-                    PopulateDescendantParents(item, solutionItem);
+                    //NOTE: We skip the "ephemeral" collection element, to get it its parent instead
+                    PopulateDescendantParents(item, solutionItem.Parent);
                 }
             }
         }
@@ -168,5 +184,18 @@ namespace Automate.CLI.Domain
         {
             Model = new SolutionItem(Toolkit.Pattern);
         }
+    }
+
+    internal class SolutionItemCommandPair
+    {
+        public SolutionItemCommandPair(IAutomation automation, SolutionItem solutionItem)
+        {
+            Automation = automation;
+            SolutionItem = solutionItem;
+        }
+
+        public IAutomation Automation { get; }
+
+        public SolutionItem SolutionItem { get; }
     }
 }

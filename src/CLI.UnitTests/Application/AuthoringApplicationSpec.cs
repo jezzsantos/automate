@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace CLI.UnitTests.Application
             this.textTemplatingEngine = new Mock<ITextTemplatingEngine>();
             this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                 .Returns("anoutput");
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, object>>()))
+            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
                 .Returns("anoutput");
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
@@ -626,8 +627,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", null, null, null, null);
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
-                dic.First().Key == "id")));
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -645,8 +645,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}", null, null, null);
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
-                dic.First().Key == "id")));
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -725,8 +724,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath");
 
             result.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
-                dic.First().Key == "id")));
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }
     }

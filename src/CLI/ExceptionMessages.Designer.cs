@@ -457,6 +457,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot fetch configuration for a non-element.
+        /// </summary>
+        internal static string SolutionItem_ConfigurationForNonElement {
+            get {
+                return ResourceManager.GetString("SolutionItem_ConfigurationForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This element does not support automation.
         /// </summary>
         internal static string SolutionItem_HasNoAutomations {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 
 namespace Automate.CLI.Domain
 {
@@ -6,6 +6,6 @@ namespace Automate.CLI.Domain
     {
         string Transform(string description, string textTemplate, SolutionItem solutionItem);
 
-        string Transform(string description, string textTemplate, Dictionary<string, object> values);
+        string Transform(string description, string textTemplate, IDictionary values);
     }
 }

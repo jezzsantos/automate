@@ -177,7 +177,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsNoSyntax_ThenReturnsExpression()
         {
-            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem());
+            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem(new Element("anelementname"), null));
 
             result.Should().Be("anexpression");
         }
@@ -207,7 +207,7 @@ namespace CLI.UnitTests.Infrastructure
             var solutionItem = new SolutionItem(pattern);
             solutionItem.Properties["anelementname"].Materialise();
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anelementname.parent.properties[\"anelementname\"].properties[\"anattributename\"].value}}anexpression", solutionItem);
+            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anelementname.parent.anelementname.anattributename}}anexpression", solutionItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

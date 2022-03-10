@@ -200,4 +200,7 @@
         <value>Failed to transform template: '{0}', errors were:
 {1}</value>
     </data>
+    <data name="SolutionItem_ConfigurationForNonElement" xml:space="preserve">
+        <value>Cannot fetch configuration for a non-element</value>
+    </data>
 </root>

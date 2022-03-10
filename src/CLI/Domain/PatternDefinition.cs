@@ -74,7 +74,7 @@ namespace Automate.CLI.Domain
         public SolutionDefinition CreateTestSolution()
         {
             const int maxNumberInstances = 3;
-            var solution = new SolutionDefinition(new ToolkitDefinition(this, "0.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(this, new Version(0, 0, 0, 0).ToString(2)));
 
             PopulateDescendants(solution.Model, 1);
 
@@ -82,7 +82,7 @@ namespace Automate.CLI.Domain
             {
                 if (solutionItem.IsPattern)
                 {
-                    PopulateParent(solutionItem, solutionItem.PatternSchema, instanceCountAtThisLevel);
+                    PopulatePatternElement(solutionItem, solutionItem.PatternSchema, instanceCountAtThisLevel);
                 }
                 if (solutionItem.IsElement)
                 {
@@ -90,10 +90,11 @@ namespace Automate.CLI.Domain
                     {
                         solutionItem.Materialise();
                     }
-                    PopulateParent(solutionItem, solutionItem.ElementSchema, instanceCountAtThisLevel);
+                    PopulatePatternElement(solutionItem, solutionItem.ElementSchema, instanceCountAtThisLevel);
                 }
                 if (solutionItem.IsCollection)
                 {
+                    solutionItem.MaterialiseCollectionItem();
                     var existingCount = solutionItem.Items.Safe().Count();
                     if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
                     {
@@ -105,9 +106,10 @@ namespace Automate.CLI.Domain
                 }
             }
 
+            solution.PopulateAncestry();
             return solution;
 
-            void PopulateParent(SolutionItem solutionItem, IPatternElement element, int instanceCountAtThisLevel)
+            void PopulatePatternElement(SolutionItem solutionItem, IPatternElement element, int instanceCountAtThisLevel)
             {
                 element.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
                 element.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
@@ -115,24 +117,18 @@ namespace Automate.CLI.Domain
 
             void PopulateAttribute(SolutionItem solutionItem, Attribute attribute, int instanceCountAtThisLevel)
             {
-                var hasProperty = solutionItem.Properties.ContainsKey(attribute.Name);
-                if (!hasProperty || !solutionItem.Properties[attribute.Name].IsAttribute)
-                {
-                    solutionItem.Properties.Add(attribute.Name,
-                        new SolutionItem(attribute, solutionItem));
-                }
-
-                if (!attribute.DefaultValue.HasValue())
+                var prop = solutionItem.GetProperty(attribute.Name);
+                if (!prop.HasDefaultValue)
                 {
                     object testValue;
-                    if (attribute.Choices.HasAny())
+                    if (prop.ChoiceValues.HasAny())
                     {
                         var choiceIndex = (instanceCountAtThisLevel - 1) % attribute.Choices.Count;
-                        testValue = attribute.Choices[choiceIndex];
+                        testValue = prop.ChoiceValues[choiceIndex];
                     }
                     else
                     {
-                        testValue = attribute.DataType switch
+                        testValue = prop.DataType switch
                         {
                             Attribute.DefaultType => $"{attribute.Name.ToLower()}{instanceCountAtThisLevel}",
                             "bool" => instanceCountAtThisLevel % 2 != 0,
@@ -142,8 +138,7 @@ namespace Automate.CLI.Domain
                             _ => null
                         };
                     }
-
-                    solutionItem.Properties[attribute.Name].Value = testValue;
+                    prop.SetProperty(testValue);
                 }
             }
         }

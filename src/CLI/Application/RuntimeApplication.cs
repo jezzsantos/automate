@@ -136,13 +136,6 @@ namespace Automate.CLI.Application
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid, solution.Id));
             }
 
-            //
-            // var solution = this.solutionStore.FindById(solution.Id);
-            // if (solution.NotExists())
-            // {
-            //     throw new AutomateException(ExceptionMessages.RuntimeApplication_SolutionNotFound.Format(solution.Id));
-            // }
-
             var target = solution.Model;
             if (addElementExpression.HasValue())
             {

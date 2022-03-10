@@ -175,7 +175,7 @@ namespace Automate.CLI.Infrastructure
             }
 
             var solution = File.ReadAllText(filename).FromJson<SolutionDefinition>();
-            solution.PopulateAncestryAfterDeserialization();
+            solution.PopulateAncestry();
             return solution;
         }
 

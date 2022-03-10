@@ -7,6 +7,7 @@ using Automate.CLI.Extensions;
 using FluentAssertions;
 using Xunit;
 using Attribute = Automate.CLI.Domain.Attribute;
+using StringExtensions = ServiceStack.StringExtensions;
 
 namespace CLI.UnitTests.Domain
 {
@@ -234,16 +235,17 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItem_ThenMaterialisesNewElement()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription", true);
+            var collection = new Element("acollectionname", isCollection: true);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            element.Attributes.Add(attribute);
-            var solutionItem = new SolutionItem(element, null);
+            collection.Attributes.Add(attribute);
+            var solutionItem = new SolutionItem(collection, null);
 
             var result = solutionItem.MaterialiseCollectionItem();
 
             result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
             result.IsCollection.Should().BeFalse();
+            result.ElementSchema.Name.Should().Be("acollectionname");
             result.Value.Should().BeNull();
             result.Items.Should().BeNull();
             result.Properties.Should().ContainSingle(prop =>
@@ -251,6 +253,42 @@ namespace CLI.UnitTests.Domain
 
             solutionItem.IsMaterialised.Should().BeTrue();
             solutionItem.Items.Should().Contain(result);
+        }
+
+        [Fact]
+        public void WhenMaterialiseCollectionItemAndHasChildCollection_ThenMaterialisesNewElement()
+        {
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
+            collection1.Attributes.Add(attribute);
+            var collection2 = new Element("acollectionname2", isCollection: true);
+            collection1.Elements.Add(collection2);
+            var solutionItem = new SolutionItem(collection1, null);
+
+            var result1 = solutionItem.MaterialiseCollectionItem();
+
+            result1.Id.Should().NotBeNull();
+            result1.IsMaterialised.Should().BeTrue();
+            result1.IsCollection.Should().BeFalse();
+            result1.ElementSchema.Name.Should().Be("acollectionname1");
+            result1.Value.Should().BeNull();
+            result1.Items.Should().BeNull();
+            result1.Properties.Should().Contain(prop =>
+                prop.Key == "anattributename" && (string)prop.Value.Value == "adefaultvalue");
+            result1.Properties.Should().Contain(prop =>
+                prop.Key == "acollectionname2" && prop.Value.IsCollection == true);
+
+            var result2 = result1.Properties["acollectionname2"].MaterialiseCollectionItem();
+            result2.IsMaterialised.Should().BeTrue();
+            result2.IsCollection.Should().BeFalse();
+            result2.ElementSchema.Name.Should().Be("acollectionname2");
+            result2.Value.Should().BeNull();
+            result2.Items.Should().BeNull();
+            result2.Properties.Should().BeEmpty();
+
+            solutionItem.IsMaterialised.Should().BeTrue();
+            solutionItem.Items.Single().Should().Be(result1);
+            solutionItem.Items.Single().Properties["acollectionname2"].Items.Single().Should().Be(result2);
         }
 
         [Fact]
@@ -537,9 +575,9 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solutionItem.Properties["acollectionname2"].MaterialiseCollectionItem();
 
-            var result = solutionItem.GetConfiguration(false);
+            var result = StringExtensions.ToJson(solutionItem.GetConfiguration(false));
 
-            result.Should().BeEquivalentTo(new Dictionary<string, object>
+            result.Should().Be(StringExtensions.ToJson(new Dictionary<string, object>
             {
                 { "id", solutionItem.Id },
                 { "anattributename1", "adefaultvalue1" },
@@ -572,7 +610,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 }
-            });
+            }));
         }
 
         [Fact]

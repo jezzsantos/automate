@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 
@@ -16,7 +16,7 @@ namespace Automate.CLI.Infrastructure
             return configuration.Transform(description, textTemplate, true);
         }
 
-        public string Transform(string description, string textTemplate, Dictionary<string, object> values)
+        public string Transform(string description, string textTemplate, IDictionary values)
         {
             values.GuardAgainstNull(nameof(values));
             description.GuardAgainstNullOrEmpty(nameof(description));

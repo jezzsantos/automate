@@ -32,22 +32,13 @@ namespace Automate.CLI.Domain
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
-                var (command, solutionItem) = solution.FindByAutomation(cmdId);
-                if (command.NotExists())
+                var automation = solution.FindByAutomation(cmdId);
+                if (automation.HasNone())
                 {
                     throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
                 }
 
-                if (solutionItem.IsCollection)
-                {
-                    solutionItem.Items
-                        .ToListSafe()
-                        .ForEach(item => ExecuteCommandSafely(command, item, cmdId));
-                }
-                else
-                {
-                    ExecuteCommandSafely(command, solutionItem, cmdId);
-                }
+                automation.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
             });
 
             return outcome;
