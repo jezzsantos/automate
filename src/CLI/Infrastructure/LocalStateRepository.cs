@@ -48,7 +48,7 @@ namespace Automate.CLI.Infrastructure
         private static void WriteState(string filename, LocalState state)
         {
             EnsurePathExists(filename);
-            
+
             using (var file = File.CreateText(filename))
             {
                 file.Write(state.ToJson());

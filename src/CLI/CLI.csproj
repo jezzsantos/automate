@@ -9,7 +9,7 @@
         <Authors>jezzsantos</Authors>
         <Description>Templatise patterns from your own codebase, make them programmable, then share them with your team</Description>
         <PackageProjectUrl>https://github.com/jezzsantos/automate</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/jezzsantos/automate/blob/main/LICENSE</PackageLicenseUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>

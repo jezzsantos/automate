@@ -284,7 +284,11 @@ namespace Automate.CLI.Infrastructure
                 }, 1)
                 .Build();
 
-            return parser.Invoke(args);
+            var result = parser.Invoke(args);
+
+            Console.WriteLine();
+
+            return result;
         }
 
         private static bool IsDebugging(InvocationContext context, Exception ex)

@@ -74,7 +74,7 @@ namespace Automate.CLI.Infrastructure
         public string ResolveExpression(string description, string expression, SolutionItem solutionItem)
         {
             description.GuardAgainstNullOrEmpty(nameof(description));
-            
+
             if (!expression.HasValue())
             {
                 return null;

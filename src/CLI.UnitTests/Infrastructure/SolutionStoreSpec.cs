@@ -65,7 +65,7 @@ namespace CLI.UnitTests.Infrastructure
 
             result.Id.Should().Be(solution1.Id);
         }
-    
+
         [Fact]
         public void WhenCreate_ThenReturnsSolutionAsCurrent()
         {

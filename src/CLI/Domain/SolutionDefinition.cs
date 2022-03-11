@@ -44,7 +44,7 @@ namespace Automate.CLI.Domain
             List<SolutionItemCommandPair> FindDescendantAutomation(SolutionItem solutionItem)
             {
                 var pairs = new List<SolutionItemCommandPair>();
-                
+
                 if (solutionItem.IsPattern)
                 {
                     var automation = solutionItem.PatternSchema.Automation.Safe()
