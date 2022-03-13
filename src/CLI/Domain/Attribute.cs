@@ -4,7 +4,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class Attribute : INamedEntity, IValidateable
+    internal class Attribute : INamedEntity, IValidateable, IPersistable
     {
         public const string DefaultType = "string";
         public static readonly string[] SupportedDataTypes =
@@ -58,20 +58,41 @@ namespace Automate.CLI.Domain
                 : null;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public Attribute()
+        private Attribute(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            DataType = properties.Rehydrate<string>(factory, nameof(DataType));
+            IsRequired = properties.Rehydrate<bool>(factory, nameof(IsRequired));
+            DefaultValue = properties.Rehydrate<string>(factory, nameof(DefaultValue));
+            Choices = properties.Rehydrate<List<string>>(factory, nameof(Choices));
         }
 
-        public string DataType { get; set; }
+        public string DataType { get; private set; }
 
-        public bool IsRequired { get; set; }
+        public bool IsRequired { get; }
 
-        public string DefaultValue { get; set; }
+        public string DefaultValue { get; }
 
-        public List<string> Choices { get; set; }
+        public List<string> Choices { get; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(DataType), DataType);
+            properties.Dehydrate(nameof(IsRequired), IsRequired);
+            properties.Dehydrate(nameof(DefaultValue), DefaultValue);
+            properties.Dehydrate(nameof(Choices), Choices);
+
+            return properties;
+        }
+
+        public static Attribute Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new Attribute(properties, factory);
+        }
 
         public bool IsValidDataType(string value)
         {
@@ -166,9 +187,14 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public string Id { get; set; }
+        public void SetDataType(string dataType)
+        {
+            DataType = dataType;
+        }
 
-        public string Name { get; set; }
+        public string Id { get; }
+
+        public string Name { get; }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {

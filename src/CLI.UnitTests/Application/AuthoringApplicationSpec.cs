@@ -426,10 +426,10 @@ namespace CLI.UnitTests.Application
             var result =
                 this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<CodeTemplateCommand>();
+            var automation = this.store.GetCurrent().Automation.Single();
             automation.Name.Should().Be("acommandname");
-            automation.IsTearOff.Should().BeFalse();
-            automation.FilePath.Should().Be("~/apath");
+            automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
+            automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
             result.Id.Should().Be(automation.Id);
         }
 
@@ -442,10 +442,10 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.AddCodeTemplateCommand("atemplatename", null, false, "~/apath", null);
 
-            var automation = this.store.GetCurrent().Automation.Single().As<CodeTemplateCommand>();
+            var automation = this.store.GetCurrent().Automation.Single();
             automation.Name.Should().Be("CodeTemplateCommand1");
-            automation.IsTearOff.Should().BeFalse();
-            automation.FilePath.Should().Be("~/apath");
+            automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
+            automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
             result.Id.Should().Be(automation.Id);
         }
 
@@ -530,9 +530,9 @@ namespace CLI.UnitTests.Application
                 this.application.AddCommandLaunchPoint(new[] { command1.Id, command2.Id }.SafeJoin(";"),
                     "alaunchpointname", null);
 
-            var automation = this.store.GetCurrent().Automation.Last().As<CommandLaunchPoint>();
+            var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("alaunchpointname");
-            automation.CommandIds.Should().ContainInOrder(command1.Id, command2.Id);
+            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
             result.Id.Should().Be(automation.Id);
         }
 
@@ -565,9 +565,9 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.AddCommandLaunchPoint(command.Id, null, null);
 
-            var automation = this.store.GetCurrent().Automation.Last().As<CommandLaunchPoint>();
+            var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("LaunchPoint2");
-            automation.CommandIds.Should().ContainSingle(command.Id);
+            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command.Id}");
             result.Id.Should().Be(automation.Id);
         }
 

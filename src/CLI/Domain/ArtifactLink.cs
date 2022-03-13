@@ -2,7 +2,7 @@
 
 namespace Automate.CLI.Domain
 {
-    internal class ArtifactLink : IIdentifiableEntity
+    internal class ArtifactLink : IIdentifiableEntity, IPersistable
     {
         public ArtifactLink(string commandId, string path, string tag = null)
         {
@@ -14,18 +14,30 @@ namespace Automate.CLI.Domain
             Tag = tag;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public ArtifactLink()
+        private ArtifactLink(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Tag = properties.Rehydrate<string>(factory, nameof(Tag));
+            CommandId = properties.Rehydrate<string>(factory, nameof(CommandId));
+            Path = properties.Rehydrate<string>(factory, nameof(Path));
         }
 
-        public string Tag { get; set; }
+        public string Tag { get; private set; }
 
-        public string CommandId { get; set; }
+        public string CommandId { get; }
 
-        public string Path { get; set; }
+        public string Path { get; private set; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Tag), Tag);
+            properties.Dehydrate(nameof(CommandId), CommandId);
+            properties.Dehydrate(nameof(Path), Path);
+
+            return properties;
+        }
 
         public void UpdatePathAndTag(string path, string tag)
         {
@@ -34,6 +46,11 @@ namespace Automate.CLI.Domain
             Tag = tag;
         }
 
-        public string Id { get; set; }
+        public static ArtifactLink Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new ArtifactLink(properties, factory);
+        }
+
+        public string Id { get; }
     }
 }

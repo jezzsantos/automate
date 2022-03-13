@@ -4,7 +4,7 @@ using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
-    internal class Element : IPatternElement, IValidateable, ICloneable<Element>
+    internal class Element : IPatternElement, IValidateable, IPersistable
     {
         public Element(string name, string displayName = null, string description = null, bool isCollection = false,
             ElementCardinality? cardinality = null)
@@ -20,42 +20,77 @@ namespace Automate.CLI.Domain
             IsCollection = isCollection;
             Cardinality = cardinality.HasValue ? cardinality.Value : isCollection ? ElementCardinality.OneOrMany : ElementCardinality.Single;
             CodeTemplates = new List<CodeTemplate>();
-            Automation = new List<IAutomation>();
+            Automation = new List<Automation>();
             Attributes = new List<Attribute>();
             Elements = new List<Element>();
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public Element()
+        private Element(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
+            Description = properties.Rehydrate<string>(factory, nameof(Description));
+            IsCollection = properties.Rehydrate<bool>(factory, nameof(IsCollection));
+            Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality)).ToEnumOrDefault(ElementCardinality.Single);
+            Attributes = properties.Rehydrate<List<Attribute>>(factory, nameof(Attributes));
+            Elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
+            Automation = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
+            CodeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
         }
 
-        public ElementCardinality Cardinality { get; set; }
+        public ElementCardinality Cardinality { get; private set; }
 
-        public string DisplayName { get; set; }
+        public string DisplayName { get; }
 
-        public string Description { get; set; }
+        public string Description { get; }
 
-        public bool IsCollection { get; set; }
+        public bool IsCollection { get; private set; }
 
-        public Element Clone()
+        public PersistableProperties Dehydrate()
         {
-            return this.CreateCopy();
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(DisplayName), DisplayName);
+            properties.Dehydrate(nameof(Description), Description);
+            properties.Dehydrate(nameof(IsCollection), IsCollection);
+            properties.Dehydrate(nameof(Cardinality), Cardinality);
+            properties.Dehydrate(nameof(Attributes), Attributes);
+            properties.Dehydrate(nameof(Elements), Elements);
+            properties.Dehydrate(nameof(CodeTemplates), CodeTemplates);
+            properties.Dehydrate(nameof(Automation), Automation);
+
+            return properties;
         }
 
-        public List<CodeTemplate> CodeTemplates { get; set; }
+        public static Element Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new Element(properties, factory);
+        }
 
-        public List<IAutomation> Automation { get; set; }
+        public Element MakeStandalone()
+        {
+            var element = new Element(Name, DisplayName, Description, false, ElementCardinality.Single);
+            Elements.ForEach(ele => element.Elements.Add(ele));
+            Attributes.ForEach(attr => element.Attributes.Add(attr));
+            Automation.ForEach(auto => element.Automation.Add(auto));
+            CodeTemplates.ForEach(temp => element.CodeTemplates.Add(temp));
 
-        public List<Attribute> Attributes { get; set; }
+            return element;
+        }
 
-        public List<Element> Elements { get; set; }
+        public List<CodeTemplate> CodeTemplates { get; }
 
-        public string Id { get; set; }
+        public List<Automation> Automation { get; }
 
-        public string Name { get; set; }
+        public List<Attribute> Attributes { get; }
+
+        public List<Element> Elements { get; }
+
+        public string Id { get; }
+
+        public string Name { get; }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {

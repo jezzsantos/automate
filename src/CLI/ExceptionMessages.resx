@@ -203,4 +203,25 @@
     <data name="SolutionItem_ConfigurationForNonElement" xml:space="preserve">
         <value>Cannot fetch configuration for a non-element</value>
     </data>
+    <data name="PersistenceExtensions_GenericListNotGeneric" xml:space="preserve">
+        <value>is not a generic type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericListNoParameters" xml:space="preserve">
+        <value>{0} is a not a supported generic List type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericListTooManyParameters" xml:space="preserve">
+        <value>{0} is a not a supported generic List type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericDictionaryNotGeneric" xml:space="preserve">
+        <value>is not a generic type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericDictionaryNoParameters" xml:space="preserve">
+        <value>{0} is a not a supported generic Dictionary type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericDictionaryTooManyParameters" xml:space="preserve">
+        <value>{0} is a not a supported generic Dictionary type</value>
+    </data>
+    <data name="PersistenceExtensions_GenericDictionaryNotStringKey" xml:space="preserve">
+        <value>{0} is a not a supported generic Dictionary with a string key</value>
+    </data>
 </root>

@@ -23,18 +23,21 @@ namespace Automate.CLI.Infrastructure
             Path.Combine(InfrastructureConstants.RootPersistencePath, "solutions");
         private readonly string currentDirectory;
         private readonly ILocalStateRepository localStateRepository;
+        private readonly IPersistableFactory persistableFactory;
 
         public JsonFileRepository(string currentDirectory) : this(currentDirectory,
-            new LocalStateRepository(currentDirectory))
+            new LocalStateRepository(currentDirectory), new AutomatePersistableFactory())
         {
         }
 
-        private JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository)
+        private JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository, IPersistableFactory persistableFactory)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
             localStateRepository.GuardAgainstNull(nameof(localStateRepository));
+            persistableFactory.GuardAgainstNull(nameof(persistableFactory));
             this.currentDirectory = currentDirectory;
             this.localStateRepository = localStateRepository;
+            this.persistableFactory = persistableFactory;
         }
 
         public void SaveLocalState(LocalState state)
@@ -62,7 +65,7 @@ namespace Automate.CLI.Infrastructure
                 throw new AutomateException(ExceptionMessages.JsonFileRepository_PatternNotFound.Format(id));
             }
 
-            return File.ReadAllText(filename).FromJson<PatternDefinition>();
+            return File.ReadAllText(filename).FromJson<PatternDefinition>(this.persistableFactory);
         }
 
         public List<PatternDefinition> ListPatterns()
@@ -85,7 +88,7 @@ namespace Automate.CLI.Infrastructure
 
             using (var file = File.CreateText(filename))
             {
-                file.Write(pattern.ToJson());
+                file.Write(pattern.ToJson(this.persistableFactory));
             }
         }
 
@@ -162,7 +165,7 @@ namespace Automate.CLI.Infrastructure
 
             using (var file = File.CreateText(filename))
             {
-                file.Write(solution.ToJson());
+                file.Write(solution.ToJson(this.persistableFactory));
             }
         }
 
@@ -174,7 +177,7 @@ namespace Automate.CLI.Infrastructure
                 throw new AutomateException(ExceptionMessages.JsonFileRepository_SolutionNotFound.Format(id));
             }
 
-            var solution = File.ReadAllText(filename).FromJson<SolutionDefinition>();
+            var solution = File.ReadAllText(filename).FromJson<SolutionDefinition>(this.persistableFactory);
             solution.PopulateAncestry();
             return solution;
         }
@@ -218,7 +221,7 @@ namespace Automate.CLI.Infrastructure
 
             using (var file = File.CreateText(filename))
             {
-                file.Write(toolkit.ToJson());
+                file.Write(toolkit.ToJson(this.persistableFactory));
             }
 
             return filename;
@@ -231,7 +234,7 @@ namespace Automate.CLI.Infrastructure
 
             using (var file = File.CreateText(filename))
             {
-                file.Write(toolkit.ToJson());
+                file.Write(toolkit.ToJson(this.persistableFactory));
             }
         }
 
@@ -257,7 +260,7 @@ namespace Automate.CLI.Infrastructure
                 throw new AutomateException(ExceptionMessages.JsonFileRepository_ToolkitNotFound.Format(id));
             }
 
-            return File.ReadAllText(filename).FromJson<ToolkitDefinition>();
+            return File.ReadAllText(filename).FromJson<ToolkitDefinition>(this.persistableFactory);
         }
 
         private static void EnsurePathExists(string filename)

@@ -6,7 +6,7 @@ using Automate.CLI.Infrastructure;
 
 namespace Automate.CLI.Domain
 {
-    internal class CodeTemplateCommand : Automation
+    internal class CodeTemplateCommand : IAutomation
     {
         private const char CurrentDirectoryPrefix = '~';
         private readonly IFilePathResolver filePathResolver;
@@ -14,18 +14,30 @@ namespace Automate.CLI.Domain
         private readonly ISolutionPathResolver solutionPathResolver;
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
-        public CodeTemplateCommand(string name, string codeTemplateId, bool isTearOff, string filePath) : this(
+        public CodeTemplateCommand(string id, string name, string codeTemplateId, bool isTearOff, string filePath) : this(
             new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(),
-            new TextTemplatingEngine(), name, codeTemplateId, isTearOff, filePath)
+            new TextTemplatingEngine(), id, name, codeTemplateId, isTearOff, filePath)
         {
         }
 
-        public CodeTemplateCommand(IFilePathResolver filePathResolver,
+        public CodeTemplateCommand(string id, string name, Dictionary<string, object> metadata) : this(
+            new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(),
+            new TextTemplatingEngine(), id, name, metadata[nameof(CodeTemplateId)].ToString(), metadata[nameof(IsTearOff)].ToString().ToBool(), metadata[nameof(FilePath)].ToString())
+        {
+        }
+
+        internal CodeTemplateCommand(IFilePathResolver filePathResolver,
             IFileSystemWriter fileSystemWriter,
             ISolutionPathResolver solutionPathResolver,
             ITextTemplatingEngine textTemplatingEngine,
-            string name, string codeTemplateId, bool isTearOff, string filePath) : base(name)
+            string id, string name, string codeTemplateId, bool isTearOff, string filePath)
         {
+            id.GuardAgainstNullOrEmpty(nameof(id));
+            id.GuardAgainstInvalid(IdGenerator.IsValid, nameof(id),
+                ValidationMessages.InvalidIdentifier);
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
             fileSystemWriter.GuardAgainstNull(nameof(fileSystemWriter));
             solutionPathResolver.GuardAgainstNull(nameof(solutionPathResolver));
@@ -39,29 +51,24 @@ namespace Automate.CLI.Domain
             this.fileSystemWriter = fileSystemWriter;
             this.solutionPathResolver = solutionPathResolver;
             this.textTemplatingEngine = textTemplatingEngine;
+            Id = id;
+            Name = name;
             IsTearOff = isTearOff;
             FilePath = filePath;
             CodeTemplateId = codeTemplateId;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public CodeTemplateCommand()
-        {
-            this.filePathResolver = new SystemIoFilePathResolver();
-            this.fileSystemWriter = new SystemIoFileSystemWriter();
-            this.solutionPathResolver = new SolutionPathResolver();
-            this.textTemplatingEngine = new TextTemplatingEngine();
-        }
+        public string CodeTemplateId { get; }
 
-        public string CodeTemplateId { get; set; }
+        public string FilePath { get; }
 
-        public string FilePath { get; set; }
+        public bool IsTearOff { get; }
 
-        public bool IsTearOff { get; set; }
+        public string Id { get; }
 
-        public override CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
+        public string Name { get; }
+
+        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
         {
             var log = new List<string>();
 

@@ -208,7 +208,7 @@ namespace Automate.CLI.Application
             return (target, element);
         }
 
-        public CodeTemplateCommand AddCodeTemplateCommand(string codeTemplateName, string name, bool isTearOff,
+        public Automation AddCodeTemplateCommand(string codeTemplateName, string name, bool isTearOff,
             string filePath, string parentExpression)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
@@ -244,14 +244,19 @@ namespace Automate.CLI.Application
                     ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(commandName));
             }
 
-            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isTearOff, filePath);
+            var automation = new Automation(commandName, AutomationType.CodeTemplateCommand, new Dictionary<string, object>
+            {
+                { nameof(CodeTemplateCommand.CodeTemplateId), codeTemplate.Id },
+                { nameof(CodeTemplateCommand.IsTearOff), isTearOff },
+                { nameof(CodeTemplateCommand.FilePath), filePath }
+            });
             target.Automation.Add(automation);
             this.store.Save(pattern);
 
             return automation;
         }
 
-        public CommandLaunchPoint AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
+        public Automation AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
         {
             commandIds.GuardAgainstNullOrEmpty(nameof(commandIds));
 
@@ -288,7 +293,10 @@ namespace Automate.CLI.Application
                 }
             });
 
-            var automation = new CommandLaunchPoint(launchPointName, commandIdentifiers);
+            var automation = new Automation(launchPointName, AutomationType.CommandLaunchPoint, new Dictionary<string, object>
+            {
+                { nameof(CommandLaunchPoint.CommandIds), commandIdentifiers.Join(";") }
+            });
             target.Automation.Add(automation);
             this.store.Save(pattern);
 

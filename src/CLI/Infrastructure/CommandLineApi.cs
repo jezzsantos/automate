@@ -360,6 +360,8 @@ namespace Automate.CLI.Infrastructure
 
         private class AuthoringHandlers
         {
+            private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
+
             internal static void HandleBuild(string versionas, bool outputStructured, IConsole console)
             {
                 var package = Authoring.PackageToolkit(versionas);
@@ -467,7 +469,7 @@ namespace Automate.CLI.Infrastructure
             {
                 if (outputStructured)
                 {
-                    return pattern.ToJson();
+                    return pattern.ToJson(PersistenceFactory);
                 }
 
                 var output = new StringBuilder();
@@ -563,18 +565,20 @@ namespace Automate.CLI.Infrastructure
                         $"- {template.Name} [{template.Id}] (file: {template.Metadata.OriginalFilePath}, ext: {template.Metadata.OriginalFileExtension})" + Environment.NewLine);
                 }
 
-                void DisplayAutomation(IAutomation automation, int indentLevel)
+                void DisplayAutomation(Automation automation, int indentLevel)
                 {
                     output.Append(new string('\t', indentLevel));
                     output.Append(
-                        $"- {automation.Name} [{automation.Id}] ({automation.GetType().Name})");
-                    if (automation is CodeTemplateCommand command)
+                        $"- {automation.Name} [{automation.Id}] ({automation.Type})");
+                    if (automation.Type == AutomationType.CodeTemplateCommand)
                     {
-                        output.Append($" (template: {command.CodeTemplateId}, tearOff: {command.IsTearOff.ToString().ToLower()}, path: {command.FilePath})" + Environment.NewLine);
+                        output.Append(
+                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, tearOff: {automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})" +
+                            Environment.NewLine);
                     }
-                    else if (automation is CommandLaunchPoint launchPoint)
+                    else if (automation.Type == AutomationType.CommandLaunchPoint)
                     {
-                        output.Append($" (ids: {launchPoint.CommandIds.SafeJoin(";")})" + Environment.NewLine);
+                        output.Append($" (ids: {automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]})" + Environment.NewLine);
                     }
                     else
                     {

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class ToolkitDefinition : IIdentifiableEntity
+    internal class ToolkitDefinition : IIdentifiableEntity, IPersistable
     {
         public ToolkitDefinition(PatternDefinition pattern, string version)
         {
@@ -16,30 +15,43 @@ namespace Automate.CLI.Domain
             Version = version;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public ToolkitDefinition()
+        private ToolkitDefinition(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Version = properties.Rehydrate<string>(factory, nameof(Version));
+            Pattern = properties.Rehydrate<PatternDefinition>(factory, nameof(Pattern));
+            CodeTemplateFiles = properties.Rehydrate<List<CodeTemplateFile>>(factory, nameof(CodeTemplateFiles));
         }
 
-        public string Version { get; set; }
+        public string Version { get; }
 
         public string PatternName => Pattern.Name;
 
-        public PatternDefinition Pattern { get; set; }
+        public PatternDefinition Pattern { get; }
 
-        public List<CodeTemplateFile> CodeTemplateFiles { get; set; }
+        public List<CodeTemplateFile> CodeTemplateFiles { get; private set; }
 
-        public string Id { get; set; }
-    }
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Version), Version);
+            properties.Dehydrate(nameof(Pattern), Pattern);
+            properties.Dehydrate(nameof(CodeTemplateFiles), CodeTemplateFiles);
 
-    internal class CodeTemplateFile
-    {
-        public static readonly Encoding Encoding = Encoding.UTF8;
+            return properties;
+        }
 
-        public string Id { get; set; }
+        public static ToolkitDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new ToolkitDefinition(properties, factory);
+        }
 
-        public byte[] Contents { get; set; }
+        public void AddCodeTemplateFiles(List<CodeTemplateFile> files)
+        {
+            CodeTemplateFiles = files;
+        }
+
+        public string Id { get; }
     }
 }

@@ -5,7 +5,6 @@ using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace CLI.UnitTests.Domain
@@ -18,20 +17,20 @@ namespace CLI.UnitTests.Domain
         public CommandLaunchPointSpec()
         {
             this.launchPoint =
-                new CommandLaunchPoint("alaunchpointname", new List<string> { IdGenerator.Create() });
+                new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { IdGenerator.Create() });
         }
 
         [Fact]
         public void WhenConstructedAndNameIsMissing_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint(null, new List<string> { "acmdid" }))
+            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", null, new List<string> { "acmdid" }))
                 .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void WhenConstructedAndNameIsInvalid_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint("^aninvalidname^", new List<string> { "acmdid" }))
+            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "^aninvalidname^", new List<string> { "acmdid" }))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
         }
@@ -39,14 +38,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedAndCommandIdsMissing_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint("aname", null))
+            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", (List<string>)null))
                 .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void WhenConstructedAndCommandIdsEmpty_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint("aname", new List<string>()))
+            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", new List<string>()))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Automation_EmptyCommandIds + "*");
         }
@@ -55,7 +54,7 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructedAndCommandIdsInvalid_ThenThrows()
         {
             var cmdIds = new List<string> { IdGenerator.Create(), "aninvalidcmdid", IdGenerator.Create() };
-            FluentActions.Invoking(() => new CommandLaunchPoint("aname", cmdIds))
+            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", cmdIds))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Automation_InvalidCommandIds.Format(cmdIds.Join(", ")) +
                              "*");
@@ -76,33 +75,27 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndCommandOnPattern_ThenExecutesCommandOnSingleElement()
         {
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Id)
-                .Returns(this.launchPoint.CommandIds.First());
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
-            pattern.Automation.Add(automation.Object);
+            pattern.Automation.Add(automation);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var solutionItem = solution.Model;
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), solutionItem))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry" }));
 
-            var result = this.launchPoint.Execute(solution, solutionItem);
+            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+                .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
-            result.Log.Should().ContainSingle("alogentry");
+            result.Log.Should().ContainSingle("testingonly");
             result.IsSuccess.Should().BeTrue();
-            automation.Verify(aut => aut.Execute(solution, solutionItem));
         }
 
         [Fact]
         public void WhenExecuteAndCommandOnDescendantElement_ThenExecutesCommandOnSingleElement()
         {
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Id)
-                .Returns(this.launchPoint.CommandIds.First());
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element2.Automation.Add(automation.Object);
+            element2.Automation.Add(automation);
             element1.Elements.Add(element2);
             var pattern = new PatternDefinition("apatternname");
             pattern.Elements.Add(element1);
@@ -110,26 +103,22 @@ namespace CLI.UnitTests.Domain
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["anelementname2"].Materialise();
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), solutionItem))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry" }));
 
-            var result = this.launchPoint.Execute(solution, solutionItem);
+            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+                .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
-            result.Log.Should().ContainSingle("alogentry");
+            result.Log.Should().ContainSingle("testingonly");
             result.IsSuccess.Should().BeTrue();
-            automation.Verify(aut => aut.Execute(solution, solutionItem));
         }
 
         [Fact]
         public void WhenExecuteAndCommandOnDescendantCollection_ThenExecutesCommandOnEachItem()
         {
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Id)
-                .Returns(this.launchPoint.CommandIds.First());
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            collection1.Automation.Add(automation.Object);
+            collection1.Automation.Add(automation);
             element1.Elements.Add(collection1);
             var pattern = new PatternDefinition("apatternname");
             pattern.Elements.Add(element1);
@@ -137,31 +126,24 @@ namespace CLI.UnitTests.Domain
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
-            var collectionItem1 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            var collectionItem2 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem1))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry1" }));
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem2))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry2" }));
+            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
-            var result = this.launchPoint.Execute(solution, solutionItem);
+            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+                .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
-            result.Log.Should().Contain("alogentry1", "alogentry2");
+            result.Log.Should().Contain("testingonly", "testingonly");
             result.IsSuccess.Should().BeTrue();
-            automation.Verify(aut => aut.Execute(solution, collectionItem1));
-            automation.Verify(aut => aut.Execute(solution, collectionItem2));
         }
 
         [Fact]
-        public void WhenExecuteAndCommandFails_ThenContinuesAndFails()
+        public void WhenExecuteAndAutomationFails_ThenContinuesAndFails()
         {
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Id)
-                .Returns(this.launchPoint.CommandIds.First());
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object> { { "FailTurn", 2 } });
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            collection1.Automation.Add(automation.Object);
+            collection1.Automation.Add(automation);
             element1.Elements.Add(collection1);
             var pattern = new PatternDefinition("apatternname");
             pattern.Elements.Add(element1);
@@ -169,20 +151,15 @@ namespace CLI.UnitTests.Domain
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
-            var collectionItem1 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            var collectionItem2 = solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem1))
-                .Returns(new CommandExecutionResult("anautomationname", new List<string> { "alogentry1" }));
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), collectionItem2))
-                .Throws(new Exception("anexceptionmessage"));
+            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
-            var result = this.launchPoint.Execute(solution, solutionItem);
+            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+                .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
-            result.Log.Should().Contain("alogentry1", DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(), "anexceptionmessage"));
+            result.Log.Should().Contain("testingonly", DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(), "anexceptionmessage"));
             result.IsSuccess.Should().BeFalse();
-            automation.Verify(aut => aut.Execute(solution, collectionItem1));
-            automation.Verify(aut => aut.Execute(solution, collectionItem2));
         }
     }
 }

@@ -322,6 +322,69 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericDictionaryNoParameters {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNoParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is not a generic type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericDictionaryNotGeneric {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNotGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary with a string key.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericDictionaryNotStringKey {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNotStringKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericDictionaryTooManyParameters {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryTooManyParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is a not a supported generic List type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericListNoParameters {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericListNoParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is not a generic type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericListNotGeneric {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericListNotGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is a not a supported generic List type.
+        /// </summary>
+        internal static string PersistenceExtensions_GenericListTooManyParameters {
+            get {
+                return ResourceManager.GetString("PersistenceExtensions_GenericListTooManyParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;. You can only do one or the other.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_AddAndAddTo {

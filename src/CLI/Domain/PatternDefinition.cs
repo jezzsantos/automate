@@ -5,7 +5,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class PatternDefinition : IPatternElement, IValidateable
+    internal class PatternDefinition : IPatternElement, IValidateable, IPersistable
     {
         internal static readonly Version DefaultVersionNumber = new Version(0, 0, 0);
 
@@ -20,24 +20,51 @@ namespace Automate.CLI.Domain
             DisplayName = name;
             Description = null;
             CodeTemplates = new List<CodeTemplate>();
-            Automation = new List<IAutomation>();
+            Automation = new List<Automation>();
             Attributes = new List<Attribute>();
             Elements = new List<Element>();
             ToolkitVersion = DefaultVersionNumber.ToString(2);
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public PatternDefinition()
+        private PatternDefinition(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
+            Description = properties.Rehydrate<string>(factory, nameof(Description));
+            ToolkitVersion = properties.Rehydrate<string>(factory, nameof(ToolkitVersion));
+            Attributes = properties.Rehydrate<List<Attribute>>(factory, nameof(Attributes));
+            Elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
+            CodeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
+            Automation = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
         }
 
-        public string DisplayName { get; set; }
+        public string DisplayName { get; }
 
-        public string Description { get; set; }
+        public string Description { get; }
 
-        public string ToolkitVersion { get; set; }
+        public string ToolkitVersion { get; private set; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(DisplayName), DisplayName);
+            properties.Dehydrate(nameof(Description), Description);
+            properties.Dehydrate(nameof(ToolkitVersion), ToolkitVersion);
+            properties.Dehydrate(nameof(Attributes), Attributes);
+            properties.Dehydrate(nameof(Elements), Elements);
+            properties.Dehydrate(nameof(CodeTemplates), CodeTemplates);
+            properties.Dehydrate(nameof(Automation), Automation);
+
+            return properties;
+        }
+
+        public static PatternDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new PatternDefinition(properties, factory);
+        }
 
         public List<CodeTemplate> GetAllCodeTemplates()
         {
@@ -53,11 +80,11 @@ namespace Automate.CLI.Domain
             return templates;
         }
 
-        public IAutomation FindAutomation(string commandId)
+        public Automation FindAutomation(string commandId)
         {
             return FindDescendantAutomation(this);
 
-            IAutomation FindDescendantAutomation(IPatternElement element)
+            Automation FindDescendantAutomation(IPatternElement element)
             {
                 var automation = element.Automation.Safe()
                     .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(commandId));
@@ -143,17 +170,22 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public List<CodeTemplate> CodeTemplates { get; set; }
+        public void UpdateToolkitVersion(string version)
+        {
+            ToolkitVersion = version;
+        }
 
-        public List<IAutomation> Automation { get; set; }
+        public List<CodeTemplate> CodeTemplates { get; }
 
-        public List<Attribute> Attributes { get; set; }
+        public List<Automation> Automation { get; }
 
-        public List<Element> Elements { get; set; }
+        public List<Attribute> Attributes { get; }
 
-        public string Name { get; set; }
+        public List<Element> Elements { get; }
 
-        public string Id { get; set; }
+        public string Name { get; }
+
+        public string Id { get; }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {

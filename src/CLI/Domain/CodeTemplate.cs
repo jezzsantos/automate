@@ -1,8 +1,10 @@
-﻿using Automate.CLI.Extensions;
+﻿using System.Collections.Generic;
+using Automate.CLI.Extensions;
+using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
-    internal class CodeTemplate : INamedEntity
+    internal class CodeTemplate : INamedEntity, IPersistable
     {
         public CodeTemplate(string name, string fullPath, string fileExtension)
         {
@@ -20,18 +22,33 @@ namespace Automate.CLI.Domain
             };
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public CodeTemplate()
+        private CodeTemplate(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            Metadata = properties.Rehydrate<Dictionary<string, object>>(factory, nameof(Metadata)).FromObjectDictionary<CodeTemplateMetadata>();
         }
 
-        public CodeTemplateMetadata Metadata { get; set; }
+        public CodeTemplateMetadata Metadata { get; }
 
-        public string Id { get; set; }
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(Metadata), Metadata.ToObjectDictionary());
 
-        public string Name { get; set; }
+            return properties;
+        }
+
+        public static CodeTemplate Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new CodeTemplate(properties, factory);
+        }
+
+        public string Id { get; }
+
+        public string Name { get; }
     }
 
     internal class CodeTemplateMetadata

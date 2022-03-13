@@ -142,7 +142,16 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value &apos;{0}&apos; is not a valid identifier.
+        ///   Looks up a localized string similar to The Id &apos;{0}&apos; is not a valid identifier.
+        /// </summary>
+        internal static string InvalidIdentifier {
+            get {
+                return ResourceManager.GetString("InvalidIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; is not a valid naming identifier.
         /// </summary>
         internal static string InvalidNameIdentifier {
             get {

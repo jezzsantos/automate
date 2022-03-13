@@ -24,8 +24,11 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="InvalidIdentifier" xml:space="preserve">
+        <value>The Id '{0}' is not a valid identifier</value>
+    </data>
     <data name="InvalidNameIdentifier" xml:space="preserve">
-        <value>The value '{0}' is not a valid identifier</value>
+        <value>The value '{0}' is not a valid naming identifier</value>
     </data>
     <data name="Attribute_UnsupportedDataType" xml:space="preserve">
         <value>Unsupported attribute dataType: '{0}'. Must be one of these values: {1}</value>

@@ -22,6 +22,7 @@ namespace CLI.UnitTests.Application
         private readonly Mock<IPatternToolkitPackager> packager;
         private readonly Mock<ISolutionPathResolver> solutionPathResolver;
         private readonly ISolutionStore solutionStore;
+        private readonly ToolkitDefinition toolkit;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplicationSpec()
@@ -38,12 +39,8 @@ namespace CLI.UnitTests.Application
             this.application =
                 new RuntimeApplication(this.toolkitStore, this.solutionStore, this.fileResolver.Object,
                     this.packager.Object, this.solutionPathResolver.Object);
-
-            this.toolkitStore.Import(new ToolkitDefinition
-            {
-                Id = "atoolkitid",
-                Pattern = new PatternDefinition("apatternname")
-            });
+            this.toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+            this.toolkitStore.Import(this.toolkit);
         }
 
         [Fact]
@@ -69,14 +66,11 @@ namespace CLI.UnitTests.Application
         public void WhenInstallToolkit_ThenReturnsInstalledToolkit()
         {
             this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IFile>()))
-                .Returns(new ToolkitDefinition
-                {
-                    Id = "atoolkitid"
-                });
+                .Returns(this.toolkit);
 
             var result = this.application.InstallToolkit("aninstallerlocation");
 
-            result.Id.Should().Be("atoolkitid");
+            result.Id.Should().Be(this.toolkit.Id);
         }
 
         [Fact]
@@ -95,7 +89,7 @@ namespace CLI.UnitTests.Application
 
             result.Id.Should().NotBeNull();
             result.PatternName.Should().Be("apatternname");
-            result.Toolkit.Id.Should().Be("atoolkitid");
+            result.Toolkit.Id.Should().Be(this.toolkit.Id);
             this.application.CurrentSolutionId.Should().Be(result.Id);
         }
 
@@ -104,7 +98,7 @@ namespace CLI.UnitTests.Application
         {
             var result = this.application.ListInstalledToolkits();
 
-            result.Should().ContainSingle(toolkit => toolkit.Id == "atoolkitid");
+            result.Should().ContainSingle(tk => tk.Id == this.toolkit.Id);
         }
 
         [Fact]
@@ -237,7 +231,7 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem { IsMaterialised = true });
+                .Returns(new SolutionItem(new Element("anelementname"), null).Materialise());
 
             this.application
                 .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, null))
@@ -323,7 +317,7 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem { IsMaterialised = false });
+                .Returns(new SolutionItem(new Element("anelementname"), null));
 
             this.application
                 .Invoking(x => x.ConfigureSolution(null, null, "anelementexpression", null))
@@ -352,10 +346,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenConfigureSolutionWithWithPropertyOfWrongChoice_ThenThrows()
         {
-            var attribute = new Attribute("anattributename")
-            {
-                Choices = new List<string> { "avalue" }
-            };
+            var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
             var pattern = new PatternDefinition("apatternname");
@@ -402,10 +393,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenConfigureSolutionWithNewElementAndPropertyChoice_ThenReturnsSolution()
         {
-            var attribute = new Attribute("anattributename")
-            {
-                Choices = new List<string> { "avalue" }
-            };
+            var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
             var element = new Element("anelementname");
             element.Attributes.Add(attribute);
             var pattern = new PatternDefinition("apatternname");
@@ -650,12 +638,8 @@ namespace CLI.UnitTests.Application
         public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Name)
-                .Returns("acommandname");
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), It.IsAny<SolutionItem>()))
-                .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
-            element.Automation.Add(automation.Object);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            element.Automation.Add(automation);
             var pattern = new PatternDefinition("apatternname");
             pattern.Elements.Add(element);
             UpdateToolkit(pattern);
@@ -667,19 +651,15 @@ namespace CLI.UnitTests.Application
             var result = this.application.ExecuteLaunchPoint("acommandname", "anelementname");
 
             result.CommandName.Should().Be("acommandname");
-            result.Log.Should().ContainSingle("alogentry");
+            result.Log.Should().ContainSingle("testingonly");
         }
 
         [Fact]
         public void WhenExecuteLaunchPointOnSolution_ThenReturnsResult()
         {
             var pattern = new PatternDefinition("apatternname");
-            var automation = new Mock<IAutomation>();
-            automation.Setup(auto => auto.Name)
-                .Returns("acommandname");
-            automation.Setup(auto => auto.Execute(It.IsAny<SolutionDefinition>(), It.IsAny<SolutionItem>()))
-                .Returns(new CommandExecutionResult("acommandname", new List<string> { "alogentry" }));
-            pattern.Automation.Add(automation.Object);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            pattern.Automation.Add(automation);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -688,17 +668,13 @@ namespace CLI.UnitTests.Application
             var result = this.application.ExecuteLaunchPoint("acommandname", null);
 
             result.CommandName.Should().Be("acommandname");
-            result.Log.Should().ContainSingle("alogentry");
+            result.Log.Should().ContainSingle("testingonly");
         }
 
         private void UpdateToolkit(PatternDefinition pattern)
         {
             this.toolkitStore.DestroyAll();
-            this.toolkitStore.Import(new ToolkitDefinition
-            {
-                Id = "atoolkitid",
-                Pattern = pattern
-            });
+            this.toolkitStore.Import(new ToolkitDefinition(pattern, "1.0"));
         }
     }
 }

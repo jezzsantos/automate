@@ -16,7 +16,7 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenConstructedAndNameIsMissing_ThenThrows()
             {
-                FluentActions.Invoking(() => new CodeTemplateCommand(null, "acodetemplateid", false, "~/afilepath"))
+                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", null, "acodetemplateid", false, "~/afilepath"))
                     .Should().Throw<ArgumentNullException>();
             }
 
@@ -24,7 +24,7 @@ namespace CLI.UnitTests.Domain
             public void WhenConstructedAndNameIsInvalid_ThenThrows()
             {
                 FluentActions.Invoking(() =>
-                        new CodeTemplateCommand("^aninvalidname^", "acodetemplateid", false, "~/afilepath"))
+                        new CodeTemplateCommand("12345678", "^aninvalidname^", "acodetemplateid", false, "~/afilepath"))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
             }
@@ -32,14 +32,14 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenConstructedAndCodeTemplateIdIsMissing_ThenThrows()
             {
-                FluentActions.Invoking(() => new CodeTemplateCommand("aname", null, false, "~/afilepath"))
+                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", "aname", null, false, "~/afilepath"))
                     .Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
             public void WhenConstructedAndFilePathIsMissing_ThenThrows()
             {
-                FluentActions.Invoking(() => new CodeTemplateCommand("aname", "acodetemplateid", false, null))
+                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", "aname", "acodetemplateid", false, null))
                     .Should().Throw<ArgumentNullException>();
             }
 
@@ -47,7 +47,7 @@ namespace CLI.UnitTests.Domain
             public void WhenConstructedAndFilePathIsInvalid_ThenThrows()
             {
                 FluentActions.Invoking(() =>
-                        new CodeTemplateCommand("aname", "acodetemplateid", false, "^aninvalidfilepath^"))
+                        new CodeTemplateCommand("12345678", "aname", "acodetemplateid", false, "^aninvalidfilepath^"))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(ValidationMessages.Automation_InvalidFilePath.Format("^aninvalidfilepath^") + "*");
             }
@@ -75,25 +75,16 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
-                    solutionPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
+                    solutionPathResolver.Object, this.textTemplateEngine.Object, "12345678", "acommandname", "acodetemplateid",
                     false, "~/afilepath.cs");
             }
 
             [Fact]
             public void WhenExecuteAndNoArtifactLinkAndFileNotExist_ThenGeneratesFileAndAddsArtifactLink()
             {
-                var target = new SolutionItem();
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var target = new SolutionItem(new Element("anelementname"), null);
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 var solution = new SolutionDefinition(toolkit);
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
@@ -118,18 +109,9 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndNoArtifactLinkButFileExists_ThenGeneratesFileAndAddsArtifactLink()
             {
-                var ownerSolution = new SolutionItem();
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null);
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
@@ -154,24 +136,15 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkButFileNotExists_ThenGeneratesFileAndUpdatesArtifactLink()
             {
-                var ownerSolution = new SolutionItem
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
                 {
                     ArtifactLinks = new List<ArtifactLink>
                     {
                         new ArtifactLink(this.command.Id, "apath", "atag")
                     }
                 };
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
@@ -196,24 +169,15 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkAndFileExists_ThenGeneratesFileAndUpdatesArtifactLink()
             {
-                var ownerSolution = new SolutionItem
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
                 {
                     ArtifactLinks = new List<ArtifactLink>
                     {
                         new ArtifactLink(this.command.Id, "apath", "atag")
                     }
                 };
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
@@ -258,25 +222,16 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
-                    solutionPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
+                    solutionPathResolver.Object, this.textTemplateEngine.Object, "12345678", "acommandname", "acodetemplateid",
                     true, "~/afilepath.cs");
             }
 
             [Fact]
             public void WhenExecuteAndNoArtifactLinkAndFileExists_ThenAddsArtifactLink()
             {
-                var ownerSolution = new SolutionItem();
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null);
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
                 var solution = new SolutionDefinition(toolkit);
@@ -299,24 +254,15 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkAndFileExists_ThenDoesNothing()
             {
-                var ownerSolution = new SolutionItem
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
                 {
                     ArtifactLinks = new List<ArtifactLink>
                     {
                         new ArtifactLink(this.command.Id, "apath", "atag")
                     }
                 };
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")
-                {
-                    CodeTemplateFiles = new List<CodeTemplateFile>
-                    {
-                        new CodeTemplateFile
-                        {
-                            Id = "acodetemplateid",
-                            Contents = CodeTemplateFile.Encoding.GetBytes("atemplate")
-                        }
-                    }
-                };
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns("acontent");
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))

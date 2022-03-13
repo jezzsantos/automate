@@ -2,12 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionItem : IIdentifiableEntity
+    internal class SolutionItem : IIdentifiableEntity, IPersistable
     {
         // ReSharper disable once InconsistentNaming
         private object _value;
@@ -77,14 +76,20 @@ namespace Automate.CLI.Domain
             Parent = parent;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public SolutionItem()
+        private SolutionItem(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            PatternSchema = properties.Rehydrate<PatternDefinition>(factory, nameof(PatternSchema));
+            ElementSchema = properties.Rehydrate<Element>(factory, nameof(ElementSchema));
+            AttributeSchema = properties.Rehydrate<Attribute>(factory, nameof(AttributeSchema));
+            Value = properties.Rehydrate<object>(factory, nameof(Value));
+            Properties = properties.Rehydrate<Dictionary<string, SolutionItem>>(factory, nameof(Properties));
+            Items = properties.Rehydrate<List<SolutionItem>>(factory, nameof(Items));
+            IsMaterialised = properties.Rehydrate<bool>(factory, nameof(IsMaterialised));
+            ArtifactLinks = properties.Rehydrate<List<ArtifactLink>>(factory, nameof(ArtifactLinks));
         }
 
-        [IgnoreDataMember]
         public SolutionItem Parent { get; set; }
 
         public PatternDefinition PatternSchema { get; set; }
@@ -117,22 +122,39 @@ namespace Automate.CLI.Domain
 
         public bool IsMaterialised { get; set; }
 
-        [IgnoreDataMember]
         public bool IsPattern => PatternSchema.Exists();
 
-        [IgnoreDataMember]
         public bool IsElement => ElementSchema.Exists() && !ElementSchema.IsCollection;
 
-        [IgnoreDataMember]
         public bool IsCollection => ElementSchema.Exists() && ElementSchema.IsCollection;
 
-        [IgnoreDataMember]
         public bool IsAttribute => AttributeSchema.Exists();
 
-        [IgnoreDataMember]
         public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
 
         public List<ArtifactLink> ArtifactLinks { get; set; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(PatternSchema), PatternSchema);
+            properties.Dehydrate(nameof(ElementSchema), ElementSchema);
+            properties.Dehydrate(nameof(AttributeSchema), AttributeSchema);
+            properties.Dehydrate(nameof(Value), Value);
+            properties.Dehydrate(nameof(Properties), Properties);
+            properties.Dehydrate(nameof(Items), Items);
+            properties.Dehydrate(nameof(IsMaterialised), IsMaterialised);
+            properties.Dehydrate(nameof(ArtifactLinks), ArtifactLinks);
+
+            return properties;
+        }
+
+        public static SolutionItem Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new SolutionItem(properties, factory);
+        }
 
         public SolutionItem Materialise(object value = null)
         {
@@ -190,9 +212,7 @@ namespace Automate.CLI.Domain
             }
 
             // We construct a standalone (non-collection) child element from this "ephemeral" collection
-            var standaloneElement = ElementSchema.Clone();
-            standaloneElement.IsCollection = false;
-            standaloneElement.Cardinality = ElementCardinality.Single;
+            var standaloneElement = ElementSchema.MakeStandalone();
             var childElementItem = new SolutionItem(standaloneElement, this);
             childElementItem.Materialise();
             Items.Add(childElementItem);
@@ -368,9 +388,9 @@ namespace Automate.CLI.Domain
 
         public string Id { get; set; }
 
-        private IAutomation GetAutomationByName(string name)
+        private Automation GetAutomationByName(string name)
         {
-            var automations = new List<IAutomation>();
+            var automations = new List<Automation>();
             if (IsPattern)
             {
                 automations = PatternSchema.Automation.ToListSafe();

@@ -5,7 +5,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionDefinition : INamedEntity
+    internal class SolutionDefinition : INamedEntity, IPersistable
     {
         public SolutionDefinition(ToolkitDefinition toolkit, string name = null)
         {
@@ -19,18 +19,35 @@ namespace Automate.CLI.Domain
             InitialiseSchema();
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public SolutionDefinition()
+        private SolutionDefinition(PersistableProperties properties, IPersistableFactory factory)
         {
+            Id = properties.Rehydrate<string>(factory, nameof(Id));
+            Name = properties.Rehydrate<string>(factory, nameof(Name));
+            Toolkit = properties.Rehydrate<ToolkitDefinition>(factory, nameof(Toolkit));
+            Model = properties.Rehydrate<SolutionItem>(factory, nameof(Model));
         }
 
-        public ToolkitDefinition Toolkit { get; set; }
+        public ToolkitDefinition Toolkit { get; }
 
         public string PatternName => Toolkit.Pattern?.Name;
 
-        public SolutionItem Model { get; set; }
+        public SolutionItem Model { get; private set; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(Id), Id);
+            properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(Toolkit), Toolkit);
+            properties.Dehydrate(nameof(Model), Model);
+
+            return properties;
+        }
+
+        public static SolutionDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new SolutionDefinition(properties, factory);
+        }
 
         public string GetConfiguration()
         {
@@ -170,9 +187,9 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
         private static string GetRandomNumber()
         {
@@ -188,13 +205,13 @@ namespace Automate.CLI.Domain
 
     internal class SolutionItemCommandPair
     {
-        public SolutionItemCommandPair(IAutomation automation, SolutionItem solutionItem)
+        public SolutionItemCommandPair(Automation automation, SolutionItem solutionItem)
         {
             Automation = automation;
             SolutionItem = solutionItem;
         }
 
-        public IAutomation Automation { get; }
+        public Automation Automation { get; }
 
         public SolutionItem SolutionItem { get; }
     }

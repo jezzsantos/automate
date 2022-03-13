@@ -1,4 +1,5 @@
-﻿using Automate.CLI.Domain;
+﻿using System.Collections.Generic;
+using Automate.CLI.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -72,14 +73,14 @@ namespace CLI.UnitTests.Domain
         public void WhenFindByAutomationOnPattern_ThenReturnsAutomation()
         {
             var pattern = new PatternDefinition("apatternname");
-            var automation1 = new TestAutomation("anautomationid");
-            pattern.Automation.Add(automation1);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            pattern.Automation.Add(automation);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model);
         }
 
@@ -88,8 +89,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
-            var automation1 = new TestAutomation("anautomationid");
-            element3.Automation.Add(automation1);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            element3.Automation.Add(automation);
             var element2 = new Element("anelementname2");
             element2.Elements.Add(element3);
             var element1 = new Element("anelementname1");
@@ -100,10 +101,10 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"].Materialise();
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]);
         }
 
@@ -112,8 +113,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            var automation1 = new TestAutomation("anautomationid");
-            collection1.Automation.Add(automation1);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            collection1.Automation.Add(automation);
             var element2 = new Element("anelementname2");
             element2.Elements.Add(collection1);
             var element1 = new Element("anelementname1");
@@ -124,10 +125,10 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].Items[0]);
         }
 
@@ -136,9 +137,9 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            var automation1 = new TestAutomation("anautomationid");
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
-            element1.Automation.Add(automation1);
+            element1.Automation.Add(automation);
             collection1.Elements.Add(element1);
             pattern.Elements.Add(collection1);
 
@@ -146,10 +147,10 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
             solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
         }
 
@@ -158,9 +159,9 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            var automation1 = new TestAutomation("anautomationid");
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
-            element1.Automation.Add(automation1);
+            element1.Automation.Add(automation);
             collection1.Elements.Add(element1);
             pattern.Elements.Add(collection1);
 
@@ -172,16 +173,16 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"].Materialise();
             solution.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"].Materialise();
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().Contain(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation == automation1
+                pair.Automation == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"]);
         }
 
@@ -190,8 +191,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
-            var automation1 = new TestAutomation("anautomationid");
-            element3.Automation.Add(automation1);
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            element3.Automation.Add(automation);
             var element2 = new Element("anelementname2");
             element2.Elements.Add(element3);
             var element1 = new Element("anelementname1");
@@ -200,7 +201,7 @@ namespace CLI.UnitTests.Domain
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
 
-            var pairs = solution.FindByAutomation("anautomationid");
+            var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().BeEmpty();
         }

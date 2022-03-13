@@ -53,7 +53,8 @@ namespace Automate.CLI.Infrastructure
 
             try
             {
-                toolkit = SystemIoFileConstants.Encoding.GetString(contents).FromJson<ToolkitDefinition>();
+                var json = SystemIoFileConstants.Encoding.GetString(contents);
+                toolkit = json.FromJson<ToolkitDefinition>(new AutomatePersistableFactory());
             }
             catch (Exception ex)
             {
@@ -77,22 +78,17 @@ namespace Automate.CLI.Infrastructure
             var codeTemplates = toolkit.Pattern.GetAllCodeTemplates();
             if (codeTemplates.HasNone())
             {
-                toolkit.CodeTemplateFiles = null;
                 return;
             }
 
-            toolkit.CodeTemplateFiles =
+            toolkit.AddCodeTemplateFiles(
                 codeTemplates
                     .Select(template =>
                     {
                         var contents = this.store.DownloadCodeTemplate(toolkit.Pattern, template);
-                        return new CodeTemplateFile
-                        {
-                            Contents = contents,
-                            Id = template.Id
-                        };
+                        return new CodeTemplateFile(contents, template.Id);
                     })
-                    .ToList();
+                    .ToList());
         }
 
         private string UpdateToolkitVersion(PatternDefinition pattern, string versionInstruction)
@@ -102,7 +98,7 @@ namespace Automate.CLI.Infrastructure
                 : PatternDefinition.DefaultVersionNumber.ToString(VersionFieldCount));
             var newVersion = CalculatePackageVersion(currentVersion, versionInstruction).ToString(VersionFieldCount);
 
-            pattern.ToolkitVersion = newVersion;
+            pattern.UpdateToolkitVersion(newVersion);
             this.store.Save(pattern);
 
             return newVersion;

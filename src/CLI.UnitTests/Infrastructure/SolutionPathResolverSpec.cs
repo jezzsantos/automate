@@ -31,7 +31,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(), null))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), null))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -39,7 +39,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsInvalidFormat_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(), "notavalidexpression"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), "notavalidexpression"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("notavalidexpression"));
         }
@@ -48,7 +48,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsEmpty_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(), "{}"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), "{}"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("{}"));
         }
@@ -91,7 +91,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var collection = new Element("acollectionname", isCollection: true);
-            var element = new Element("anelementname", cardinality: ElementCardinality.Single);
+            var element = new Element("anelementname");
             collection.Elements.Add(element);
             pattern.Elements.Add(collection);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
@@ -169,7 +169,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionIsNull_ThenReturnsNull()
         {
-            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem());
+            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem(new Element("anelementname"), null));
 
             result.Should().BeNull();
         }

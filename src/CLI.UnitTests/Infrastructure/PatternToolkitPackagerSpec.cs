@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Application;
@@ -33,7 +32,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsAutoAndFirstVersion_ThenPackagesVersion1OfToolkit()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname" };
+            var pattern = new PatternDefinition("apatternname");
 
             var result = this.packager.Pack(pattern, PatternToolkitPackager.AutoIncrementInstruction);
 
@@ -43,7 +42,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsNullAndFirstVersion_ThenPackagesVersion1OfToolkit()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname" };
+            var pattern = new PatternDefinition("apatternname");
 
             var result = this.packager.Pack(pattern, null);
 
@@ -53,7 +52,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsAutoAndHasVersion_ThenPackagesNextVersionOfToolkit()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "1.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("1.0.0");
 
             var result = this.packager.Pack(pattern, PatternToolkitPackager.AutoIncrementInstruction);
 
@@ -63,7 +63,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsNullAndHasVersion_ThenPackagesNextVersionOfToolkit()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "1.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("1.0.0");
 
             var result = this.packager.Pack(pattern, null);
 
@@ -73,7 +74,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsBeforeCurrentVersion_ThenThrows()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "1.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("1.0.0");
 
             this.packager
                 .Invoking(x => x.Pack(pattern, "0.1"))
@@ -84,7 +86,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsInvalid_ThenThrows()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "1.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("1.0.0");
 
             this.packager
                 .Invoking(x => x.Pack(pattern, "notaversionnumber"))
@@ -96,7 +99,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndVersionInstructionIsAVersion_ThenPackagesVersionOfToolkit()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "1.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("1.0.0");
 
             var result = this.packager.Pack(pattern, "2.1");
 
@@ -106,24 +110,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPackAndCodeTemplates_ThenReturnsPackage()
         {
-            var pattern = new PatternDefinition
-            {
-                Id = "apatternid", Name = "apatternname", ToolkitVersion = "0.0.0",
-                CodeTemplates = new List<CodeTemplate>
-                {
-                    new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1")
-                },
-                Elements = new List<Element>
-                {
-                    new Element("anelementname")
-                    {
-                        CodeTemplates = new List<CodeTemplate>
-                        {
-                            new CodeTemplate("acodetemplatename2", "afullpath2", "anextension2")
-                        }
-                    }
-                }
-            };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("0.0.0");
+            pattern.CodeTemplates.Add(new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1"));
+            var element = new Element("anelementname");
+            element.CodeTemplates.Add(new CodeTemplate("acodetemplatename2", "afullpath2", "anextension2"));
+            pattern.Elements.Add(element);
             var fileContents = new byte[] { 0x01 };
             this.patternStore.Setup(ps => ps.GetCurrent())
                 .Returns(pattern);
@@ -149,11 +141,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenPack_ThenReturnsPackage()
         {
-            var pattern = new PatternDefinition { Id = "apatternid", Name = "apatternname", ToolkitVersion = "0.0.0" };
+            var pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion("0.0.0");
 
             var result = this.packager.Pack(pattern, null);
 
-            result.Toolkit.Id.Should().Be("apatternid");
+            result.Toolkit.Id.Should().NotBeNull();
             result.Toolkit.Version.Should().Be("1.0.0");
             result.Toolkit.PatternName.Should().Be("apatternname");
             result.BuiltLocation.Should().Be("alocation");
@@ -200,22 +193,18 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenUnPack_ThenReturnsToolkit()
         {
-            var toolkit = new ToolkitDefinition
-            {
-                Id = "atoolkitid",
-                Pattern = new PatternDefinition()
-            };
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
             var installer = new Mock<IFile>();
             installer.Setup(f => f.FullPath)
                 .Returns("afullpath");
             installer.Setup(f => f.GetContents())
-                .Returns(CodeTemplateFile.Encoding.GetBytes(toolkit.ToJson()));
+                .Returns(CodeTemplateFile.Encoding.GetBytes(toolkit.ToJson(new AutomatePersistableFactory())));
 
             var result = this.packager.UnPack(installer.Object);
 
-            result.Id.Should().Be("atoolkitid");
+            result.Id.Should().Be(toolkit.Id);
             this.toolkitStore.Verify(ts => ts.Import(It.Is<ToolkitDefinition>(t =>
-                t.Id == "atoolkitid"
+                t.Id == toolkit.Id
             )));
         }
     }

@@ -5,28 +5,37 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class CommandLaunchPoint : Automation
+    internal class CommandLaunchPoint : IAutomation
     {
-        public CommandLaunchPoint(string name, List<string> commandIds) : base(name)
+        public CommandLaunchPoint(string id, string name, Dictionary<string, object> metadata) : this(id, name, metadata[nameof(CommandIds)].ToString().SafeSplit(";").ToList())
         {
+        }
+
+        public CommandLaunchPoint(string id, string name, List<string> commandIds)
+        {
+            id.GuardAgainstNullOrEmpty(nameof(id));
+            id.GuardAgainstInvalid(IdGenerator.IsValid, nameof(id),
+                ValidationMessages.InvalidIdentifier);
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
             commandIds.GuardAgainstNull(nameof(commandIds));
             commandIds.GuardAgainstInvalid(ids => ids.Exists() && ids.Any(), nameof(commandIds),
                 ValidationMessages.Automation_EmptyCommandIds);
             commandIds.GuardAgainstInvalid(Validations.IsIdentifiers, nameof(commandIds),
                 ValidationMessages.Automation_InvalidCommandIds.Format(commandIds.Join(", ")));
+            Id = id;
+            Name = name;
             CommandIds = commandIds;
         }
 
-        /// <summary>
-        ///     For serialization
-        /// </summary>
-        public CommandLaunchPoint()
-        {
-        }
+        public List<string> CommandIds { get; }
 
-        public List<string> CommandIds { get; set; }
+        public string Id { get; }
 
-        public override CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
+        public string Name { get; }
+
+        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
         {
             var outcome = new CommandExecutionResult(Name);
 
@@ -43,7 +52,7 @@ namespace Automate.CLI.Domain
 
             return outcome;
 
-            void ExecuteCommandSafely(IAutomation command, SolutionItem solutionItem, string cmdId)
+            void ExecuteCommandSafely(Automation command, SolutionItem solutionItem, string cmdId)
             {
                 try
                 {

@@ -100,10 +100,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenFindAutomationAndFoundOnPattern_ThenReturnsAutomation()
         {
-            var automation = new TestAutomation("acmdid");
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.Automation.Add(automation);
 
-            var result = this.pattern.FindAutomation("acmdid");
+            var result = this.pattern.FindAutomation(automation.Id);
 
             result.Should().Be(automation);
         }
@@ -111,14 +111,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenFindAutomationAndFoundOnDescendantElement_ThenReturnsAutomation()
         {
-            var automation = new TestAutomation("acmdid");
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
             element2.Automation.Add(automation);
             element1.Elements.Add(element2);
             this.pattern.Elements.Add(element1);
 
-            var result = this.pattern.FindAutomation("acmdid");
+            var result = this.pattern.FindAutomation(automation.Id);
 
             result.Should().Be(automation);
         }
@@ -222,23 +222,6 @@ namespace CLI.UnitTests.Domain
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[0].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[1].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[2].Properties["acollection3"].Items.Count.Should().Be(3);
-        }
-    }
-
-    internal class TestAutomation : IAutomation
-    {
-        public TestAutomation(string id)
-        {
-            Id = id;
-        }
-
-        public string Id { get; set; }
-
-        public string Name { get; set; } = "anautomationname";
-
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
-        {
-            return new CommandExecutionResult("anautomationname", new List<string> { "alogentry" });
         }
     }
 }

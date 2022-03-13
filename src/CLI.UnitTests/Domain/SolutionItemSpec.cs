@@ -17,10 +17,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithPattern_ThenPatternAssigned()
         {
-            var pattern = new PatternDefinition("apatternname")
-            {
-                Description = "adescription"
-            };
+            var pattern = new PatternDefinition("apatternname");
 
             var result = new SolutionItem(pattern);
 
@@ -34,7 +31,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithValue_ThenValueAssigned()
         {
-            var parent = new SolutionItem();
+            var parent = new SolutionItem(new Element("anelementname"), null);
             var result = new SolutionItem("avalue", Attribute.DefaultType, parent);
 
             result.Id.Should().NotBeNull();
@@ -294,7 +291,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyInPatternSchema_ThenReturnsTrue()
         {
-            var pattern = new PatternDefinition("apattername");
+            var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             pattern.Attributes.Add(attribute);
 
@@ -543,7 +540,7 @@ namespace CLI.UnitTests.Domain
             {
                 Value = "awrongvalue"
             };
-            attribute.DataType = "int"; //HACK, this should not be possible
+            attribute.SetDataType("int");
 
             var result = solutionItem
                 .Validate(new ValidationContext());
@@ -628,17 +625,17 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteCommand_ThenReturnsResult()
         {
-            var automation = new TestAutomation("anautomationid");
+            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
             pattern.Automation.Add(automation);
             var solutionItem = new SolutionItem(pattern);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
-            var result = solutionItem.ExecuteCommand(solution, "anautomationname");
+            var result = solutionItem.ExecuteCommand(solution, "acommandname");
 
-            result.CommandName.Should().Be("anautomationname");
+            result.CommandName.Should().Be("acommandname");
             result.IsSuccess.Should().BeTrue();
-            result.Log.Should().ContainSingle("alogentry");
+            result.Log.Should().ContainSingle("testingonly");
             result.ValidationErrors.Should().BeEmpty();
         }
     }
