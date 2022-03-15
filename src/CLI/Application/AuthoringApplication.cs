@@ -49,17 +49,54 @@ namespace Automate.CLI.Application
 
         public string CurrentPatternVersion => this.store.GetCurrent()?.ToolkitVersion;
 
+        public PatternDefinition GetCurrentPattern()
+        {
+            return EnsureCurrentPatternExists();
+        }
+
         public void CreateNewPattern(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
-            this.store.Create(name);
+
+            var pattern = new PatternDefinition(name);
+            this.store.Create(pattern);
         }
 
         public void SwitchCurrentPattern(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
+
             var current = this.store.Find(name);
             this.store.ChangeCurrent(current.Id);
+        }
+
+        public (IPatternElement Parent, Attribute Attribute) AddAttribute(string name, string type, string defaultValue,
+            bool isRequired, List<string> choices, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var attribute = target.AddAttribute(name, type, isRequired, defaultValue, choices);
+            this.store.Save(pattern);
+
+            return (target, attribute);
+        }
+
+        public (IPatternElement Parent, Element Element) AddElement(string name, string displayName,
+            string description, bool isCollection, ElementCardinality cardinality,
+            string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var element = target.AddElement(name, displayName, description, isCollection, cardinality);
+            this.store.Save(pattern);
+
+            return (target, element);
         }
 
         public CodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
@@ -68,8 +105,7 @@ namespace Automate.CLI.Application
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
             relativeFilePath.GuardAgainstNullOrEmpty(nameof(relativeFilePath));
 
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
+            var pattern = EnsureCurrentPatternExists();
 
             var fullPath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
             if (!this.fileResolver.ExistsAtPath(fullPath))
@@ -80,28 +116,9 @@ namespace Automate.CLI.Application
             }
             var extension = this.fileResolver.GetFileExtension(fullPath);
 
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
+            var target = ResolveTargetElement(pattern, parentExpression);
 
-            var templateName = name.HasValue()
-                ? name
-                : $"CodeTemplate{target.CodeTemplates.ToListSafe().Count + 1}";
-            if (CodeTemplateExistsByName(target, templateName))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateByNameExists
-                    .Format(name));
-            }
-
-            var codeTemplate = new CodeTemplate(templateName, fullPath, extension);
-            target.CodeTemplates.Add(codeTemplate);
+            var codeTemplate = target.AttachCodeTemplate(name, fullPath, extension);
             this.store.Save(pattern);
 
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
@@ -112,100 +129,10 @@ namespace Automate.CLI.Application
 
         public List<CodeTemplate> ListCodeTemplates(string parentExpression)
         {
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
 
             return target.CodeTemplates.ToListSafe();
-        }
-
-        public (IPatternElement parent, Attribute child) AddAttribute(string name, string type, string defaultValue,
-            bool isRequired, string isOneOf, string parentExpression)
-        {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
-
-            if (AttributeNameIsReserved(name))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeNameReserved.Format(name));
-            }
-
-            if (AttributeExistsByName(target, name))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExists.Format(name));
-            }
-
-            if (ElementExistsByName(target, name))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExistsAsElement.Format(name));
-            }
-
-            var choices = isOneOf.SafeSplit(";").ToList();
-            var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
-            target.Attributes.Add(attribute);
-            this.store.Save(pattern);
-
-            return (target, attribute);
-        }
-
-        public (IPatternElement parent, IPatternElement child) AddElement(string name, string displayName,
-            string description, bool isCollection, ElementCardinality cardinality,
-            string parentExpression)
-        {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
-
-            if (ElementExistsByName(target, name))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExists.Format(name));
-            }
-
-            if (AttributeExistsByName(target, name))
-            {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_ElementByNameExistsAsAttribute.Format(name));
-            }
-
-            var element = new Element(name, displayName, description, isCollection, cardinality);
-            target.Elements.Add(element);
-            this.store.Save(pattern);
-
-            return (target, element);
         }
 
         public Automation AddCodeTemplateCommand(string codeTemplateName, string name, bool isTearOff,
@@ -214,128 +141,48 @@ namespace Automate.CLI.Application
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
             filePath.GuardAgainstNullOrEmpty(nameof(filePath));
 
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
 
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
+            try
             {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
+                var command = target.AddCodeTemplateCommand(name, codeTemplateName, isTearOff, filePath);
+                this.store.Save(pattern);
+
+                return command;
+            }
+            catch (AutomateException ex)
+            {
+                if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNoFound.Format(codeTemplateName))
                 {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
+                    throw new AutomateException(parentExpression.HasValue()
+                        ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName, parentExpression)
+                        : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
                 }
-            }
 
-            var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
-            if (codeTemplate.NotExists())
-            {
-                throw new AutomateException(parentExpression.HasValue()
-                    ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName, parentExpression)
-                    : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
+                throw;
             }
-            var commandName = name.HasValue()
-                ? name
-                : $"CodeTemplateCommand{target.Automation.ToListSafe().Count + 1}";
-            if (AutomationExistsByName(target, commandName))
-            {
-                throw new AutomateException(
-                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(commandName));
-            }
+        }
 
-            var automation = new Automation(commandName, AutomationType.CodeTemplateCommand, new Dictionary<string, object>
-            {
-                { nameof(CodeTemplateCommand.CodeTemplateId), codeTemplate.Id },
-                { nameof(CodeTemplateCommand.IsTearOff), isTearOff },
-                { nameof(CodeTemplateCommand.FilePath), filePath }
-            });
-            target.Automation.Add(automation);
+        public Automation AddCommandLaunchPoint(string name, List<string> commandIds, string parentExpression)
+        {
+            commandIds.GuardAgainstNull(nameof(commandIds));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var launchPoint = target.AddCommandLaunchPoint(name, commandIds, pattern);
             this.store.Save(pattern);
 
-            return automation;
-        }
-
-        public Automation AddCommandLaunchPoint(string commandIds, string name, string parentExpression)
-        {
-            commandIds.GuardAgainstNullOrEmpty(nameof(commandIds));
-
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
-
-            var launchPointName = name.HasValue()
-                ? name
-                : $"LaunchPoint{target.Automation.ToListSafe().Count + 1}";
-            if (AutomationExistsByName(target, launchPointName))
-            {
-                throw new AutomateException(
-                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(launchPointName));
-            }
-
-            var commandIdentifiers = commandIds.SafeSplit(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-            commandIdentifiers.ForEach(cmdId =>
-            {
-                var codeTemplate = pattern.FindAutomation(cmdId);
-                if (codeTemplate.NotExists())
-                {
-                    throw new AutomateException(ExceptionMessages.AuthoringApplication_CommandIdNotFound.Format(cmdId));
-                }
-            });
-
-            var automation = new Automation(launchPointName, AutomationType.CommandLaunchPoint, new Dictionary<string, object>
-            {
-                { nameof(CommandLaunchPoint.CommandIds), commandIdentifiers.Join(";") }
-            });
-            target.Automation.Add(automation);
-            this.store.Save(pattern);
-
-            return automation;
-        }
-
-        public PatternToolkitPackage PackageToolkit(string version)
-        {
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            var package = this.packager.Pack(pattern, version);
-
-            return package;
-        }
-
-        public PatternDefinition GetCurrentPattern()
-        {
-            VerifyCurrentPatternExists();
-            return this.store.GetCurrent();
+            return launchPoint;
         }
 
         public string TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
 
-            VerifyCurrentPatternExists();
-            var pattern = this.store.GetCurrent();
-
-            IPatternElement target = pattern;
-            if (parentExpression.HasValue())
-            {
-                target = this.patternResolver.Resolve(pattern, parentExpression);
-                if (target.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_NodeExpressionNotFound.Format(parentExpression));
-                }
-            }
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
 
             var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
@@ -345,7 +192,41 @@ namespace Automate.CLI.Application
                     : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
             }
 
+            var textTemplate = GetTemplateContent();
+            
             if (importedRelativeFilePath.HasValue())
+            {
+                var importedData = ImportData();
+                return GenerateImportedCode(importedData);
+            }
+
+            var generatedData = GenerateTestData();
+            var code = GenerateGeneratedCode(generatedData);
+            if (exportedRelativeFilePath.HasValue())
+            {
+                ExportResult(generatedData);
+            }
+
+            return code;
+
+            string GenerateImportedCode(Dictionary<string, object> data)
+            {
+                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), textTemplate, data);
+            }
+
+            string GenerateGeneratedCode(LazySolutionItemDictionary data)
+            {
+                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), textTemplate, data);
+            }
+
+            string GetTemplateContent()
+            {
+                var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
+                var contents = CodeTemplateFile.Encoding.GetString(byteContents);
+                return contents;
+            }
+
+            Dictionary<string, object> ImportData()
             {
                 var fullPath = this.fileResolver.CreatePath(rootPath, importedRelativeFilePath);
                 if (!this.fileResolver.ExistsAtPath(fullPath))
@@ -366,10 +247,10 @@ namespace Automate.CLI.Application
                     throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataImport_NotValidJson, ex);
                 }
 
-                var contents = GetTemplateContent();
-                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), contents, importedData);
+                return importedData;
             }
-            else
+
+            LazySolutionItemDictionary GenerateTestData()
             {
                 var solution = pattern.CreateTestSolution();
                 var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
@@ -377,66 +258,57 @@ namespace Automate.CLI.Application
                 {
                     throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution.Format(codeTemplate.Id));
                 }
-                var generatedData = solutionItem.GetConfiguration(true);
-
-                var contents = GetTemplateContent();
-                var generatedCode = this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), contents, generatedData);
-
-                if (exportedRelativeFilePath.HasValue())
-                {
-                    var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
-                    try
-                    {
-                        this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(generatedData.ToJson()));
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format(fullPath, ex.Message));
-                    }
-                }
-
-                return generatedCode;
+                return solutionItem.GetConfiguration(true);
             }
 
-            string GetTemplateContent()
+            void ExportResult(LazySolutionItemDictionary generatedData)
             {
-                var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
-                var contents = CodeTemplateFile.Encoding.GetString(byteContents);
-                return contents;
+                var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
+                try
+                {
+                    this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(generatedData.ToJson()));
+                }
+                catch (Exception ex)
+                {
+                    throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format(fullPath, ex.Message));
+                }
             }
         }
 
-        private void VerifyCurrentPatternExists()
+        public PatternToolkitPackage PackageToolkit(string version)
         {
-            if (this.store.GetCurrent().NotExists())
+            var pattern = EnsureCurrentPatternExists();
+
+            return this.packager.Pack(pattern, version);
+        }
+
+        private IPatternElement ResolveTargetElement(PatternDefinition pattern, string parentExpression)
+        {
+            if (parentExpression.HasValue())
+            {
+                var target = this.patternResolver.Resolve(pattern, parentExpression);
+                if (target.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format(parentExpression));
+                }
+
+                return target;
+            }
+
+            return pattern;
+        }
+
+        private PatternDefinition EnsureCurrentPatternExists()
+        {
+            var pattern = this.store.GetCurrent();
+
+            if (pattern.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
             }
-        }
 
-        private static bool AutomationExistsByName(IAutomationContainer element, string automationName)
-        {
-            return element.Automation.Safe().Any(ele => ele.Name.EqualsIgnoreCase(automationName));
-        }
-
-        private static bool ElementExistsByName(IElementContainer element, string elementName)
-        {
-            return element.Elements.Safe().Any(ele => ele.Name.EqualsIgnoreCase(elementName));
-        }
-
-        private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
-        {
-            return element.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
-        }
-
-        private static bool AttributeNameIsReserved(string attributeName)
-        {
-            return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
-        }
-
-        private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)
-        {
-            return element.CodeTemplates.Safe().Any(template => template.Name.EqualsIgnoreCase(templateName));
+            return pattern;
         }
     }
 }

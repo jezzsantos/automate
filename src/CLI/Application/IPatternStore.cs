@@ -8,7 +8,7 @@ namespace Automate.CLI.Application
 
         PatternDefinition GetCurrent();
 
-        PatternDefinition Create(string name);
+        PatternDefinition Create(PatternDefinition pattern);
 
         PatternDefinition Find(string name);
 

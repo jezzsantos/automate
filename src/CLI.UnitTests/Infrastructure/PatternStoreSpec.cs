@@ -105,7 +105,7 @@ namespace CLI.UnitTests.Infrastructure
             this.repository.NewPattern(new PatternDefinition("aname"));
 
             this.store
-                .Invoking(x => x.Create("aname"))
+                .Invoking(x => x.Create(new PatternDefinition("aname")))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternStore_FoundNamed.Format("aname"));
         }
@@ -113,7 +113,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenCreate_ThenReturnsPatternAsCurrent()
         {
-            var result = this.store.Create("aname");
+            var result = this.store.Create(new PatternDefinition("aname"));
 
             this.repository.ListPatterns().Single().Name.Should().Be(result.Name);
             this.repository.GetLocalState().CurrentPattern.Should().Be(result.Id);

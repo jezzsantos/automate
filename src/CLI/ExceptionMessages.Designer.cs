@@ -61,15 +61,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name must be unique.
-        /// </summary>
-        internal static string AuthoringApplication_AttributeByNameExists {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_AttributeByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An element/collection with name: &apos;{0}&apos; already exists. The name cannot be the same as any element/collection.
         /// </summary>
         internal static string AuthoringApplication_AttributeByNameExistsAsElement {
@@ -106,15 +97,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A code template with name: &apos;{0}&apos; already exists. The name must be unique.
-        /// </summary>
-        internal static string AuthoringApplication_CodeTemplateByNameExists {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_CodeTemplateByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist on element referenced by: &apos;{1}&apos;.
         /// </summary>
         internal static string AuthoringApplication_CodeTemplateNotExistsElement {
@@ -142,33 +124,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A Command with ID: &apos;{0}&apos; does not exist anywhere on this pattern.
-        /// </summary>
-        internal static string AuthoringApplication_CommandIdNotFound {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_CommandIdNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An element with name: &apos;{0}&apos; already exists. The name must be unique.
-        /// </summary>
-        internal static string AuthoringApplication_ElementByNameExists {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_ElementByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name cannot be the same as any attribute.
-        /// </summary>
-        internal static string AuthoringApplication_ElementByNameExistsAsAttribute {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_ElementByNameExistsAsAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Pattern does not yet exist.
         /// </summary>
         internal static string AuthoringApplication_NoCurrentPattern {
@@ -180,9 +135,9 @@ namespace Automate.CLI {
         /// <summary>
         ///   Looks up a localized string similar to The expression: &apos;{0}&apos; does not resolve to an element in this pattern.
         /// </summary>
-        internal static string AuthoringApplication_NodeExpressionNotFound {
+        internal static string AuthoringApplication_PathExpressionNotFound {
             get {
-                return ResourceManager.GetString("AuthoringApplication_NodeExpressionNotFound", resourceCulture);
+                return ResourceManager.GetString("AuthoringApplication_PathExpressionNotFound", resourceCulture);
             }
         }
         
@@ -268,6 +223,60 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternElement_AttributeByNameExists {
+            get {
+                return ResourceManager.GetString("PatternElement_AttributeByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A code template with name: &apos;{0}&apos; already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternElement_CodeTemplateByNameExists {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplateByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; was not found.
+        /// </summary>
+        internal static string PatternElement_CodeTemplateNoFound {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplateNoFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A Command with ID: &apos;{0}&apos; does not exist anywhere on this pattern.
+        /// </summary>
+        internal static string PatternElement_CommandIdNotFound {
+            get {
+                return ResourceManager.GetString("PatternElement_CommandIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An element with name: &apos;{0}&apos; already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternElement_ElementByNameExists {
+            get {
+                return ResourceManager.GetString("PatternElement_ElementByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attribute with name: &apos;{0}&apos; already exists. The name cannot be the same as any attribute.
+        /// </summary>
+        internal static string PatternElement_ElementByNameExistsAsAttribute {
+            get {
+                return ResourceManager.GetString("PatternElement_ElementByNameExistsAsAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid pattern expression.
         /// </summary>
         internal static string PatternPathResolver_InvalidExpression {
@@ -277,7 +286,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A pattern with the name: &apos;{0}&apos; already exists.
+        ///   Looks up a localized string similar to A pattern with the same name: &apos;{0}&apos; already exists.
         /// </summary>
         internal static string PatternStore_FoundNamed {
             get {

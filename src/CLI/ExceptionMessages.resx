@@ -28,7 +28,7 @@
         <value>A pattern with id: '{0}' cannot be found in the pattern store at location: '{1}'</value>
     </data>
     <data name="PatternStore_FoundNamed" xml:space="preserve">
-        <value>A pattern with the name: '{0}' already exists</value>
+        <value>A pattern with the same name: '{0}' already exists</value>
     </data>
     <data name="SolutionStore_NotFoundAtLocationWithId" xml:space="preserve">
         <value>A solution with id: '{0}' cannot be found in the solution store at location: '{1}'</value>
@@ -51,29 +51,32 @@
     <data name="AuthoringApplication_CodeTemplate_NotFoundAtLocation" xml:space="preserve">
         <value>'The code file: '{1}' could not be found at location: '{0}'</value>
     </data>
-    <data name="AuthoringApplication_CodeTemplateByNameExists" xml:space="preserve">
+    <data name="PatternElement_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name: '{0}' already exists. The name must be unique</value>
     </data>
     <data name="AuthoringApplication_AttributeNameReserved" xml:space="preserve">
         <value>The name: '{0}' is a reserved name, and cannot be used as a name for an attribute</value>
     </data>
-    <data name="AuthoringApplication_AttributeByNameExists" xml:space="preserve">
+    <data name="PatternElement_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name must be unique</value>
     </data>
     <data name="AuthoringApplication_AttributeByNameExistsAsElement" xml:space="preserve">
         <value>An element/collection with name: '{0}' already exists. The name cannot be the same as any element/collection</value>
     </data>
-    <data name="AuthoringApplication_NodeExpressionNotFound" xml:space="preserve">
+    <data name="AuthoringApplication_PathExpressionNotFound" xml:space="preserve">
         <value>The expression: '{0}' does not resolve to an element in this pattern</value>
     </data>
-    <data name="AuthoringApplication_ElementByNameExists" xml:space="preserve">
+    <data name="PatternElement_ElementByNameExists" xml:space="preserve">
         <value>An element with name: '{0}' already exists. The name must be unique</value>
     </data>
-    <data name="AuthoringApplication_ElementByNameExistsAsAttribute" xml:space="preserve">
+    <data name="PatternElement_ElementByNameExistsAsAttribute" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name cannot be the same as any attribute</value>
     </data>
     <data name="AuthoringApplication_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name: '{0}' already exists. The name must be unique</value>
+    </data>
+    <data name="PatternElement_CodeTemplateNoFound" xml:space="preserve">
+        <value>A CodeTemplate with name: '{0}' was not found</value>
     </data>
     <data name="AuthoringApplication_CodeTemplateNotExistsRoot" xml:space="preserve">
         <value>A CodeTemplate with name: '{0}' does not exist on the pattern</value>
@@ -84,7 +87,7 @@
     <data name="AuthoringApplication_CodeTemplateNotExistsTestSolution" xml:space="preserve">
         <value>A CodeTemplate with ID: '{0}' cannot be found on the test solution</value>
     </data>
-    <data name="AuthoringApplication_CommandIdNotFound" xml:space="preserve">
+    <data name="PatternElement_CommandIdNotFound" xml:space="preserve">
         <value>A Command with ID: '{0}' does not exist anywhere on this pattern</value>
     </data>
     <data name="AuthoringApplication_TestDataImport_NotFoundAtLocation" xml:space="preserve">

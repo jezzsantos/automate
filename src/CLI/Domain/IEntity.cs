@@ -31,6 +31,17 @@ namespace Automate.CLI.Domain
     internal interface IPatternElement : INamedEntity, ICustomizableEntity, IElementContainer, IAttributeContainer,
         IAutomationContainer
     {
+        Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices);
+
+        Element AddElement(string name, string displayName, string description, bool isCollection, ElementCardinality cardinality);
+
+        CodeTemplate AttachCodeTemplate(string name, string fullPath, string extension);
+
+        Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath);
+
+        Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement pattern);
+
+        Automation FindAutomation(string id);
     }
 
     internal interface INamedEntity : IIdentifiableEntity

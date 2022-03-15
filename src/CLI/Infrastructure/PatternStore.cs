@@ -64,15 +64,14 @@ namespace Automate.CLI.Infrastructure
             return pattern;
         }
 
-        public PatternDefinition Create(string name)
+        public PatternDefinition Create(PatternDefinition pattern)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            if (ExistsByName(name))
+            pattern.GuardAgainstNull(nameof(pattern));
+            if (ExistsByName(pattern.Name))
             {
-                throw new AutomateException(ExceptionMessages.PatternStore_FoundNamed.Format(name));
+                throw new AutomateException(ExceptionMessages.PatternStore_FoundNamed.Format(pattern.Name));
             }
 
-            var pattern = new PatternDefinition(name);
             this.patternRepository.NewPattern(pattern);
 
             var state = this.localStateRepository.GetLocalState();

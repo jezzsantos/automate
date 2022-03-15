@@ -382,7 +382,8 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var launchPoint = Authoring.AddCommandLaunchPoint(commandIdentifiers, name, asChildOf);
+                var cmdIds = commandIdentifiers.SafeSplit(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var launchPoint = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
                     launchPoint.Name);
             }
@@ -408,8 +409,9 @@ namespace Automate.CLI.Infrastructure
                 bool isRequired,
                 string isOneOf, string asChildOf, bool outputStructured, IConsole console)
             {
+                var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
-                    Authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, isOneOf, asChildOf);
+                    Authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
                     parent.Id, attribute.Id);
             }
