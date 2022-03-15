@@ -246,7 +246,7 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename", null);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute);
+            pattern.AddAttribute(attribute);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
 
@@ -348,9 +348,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
             var element = new Element("anelementname");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
@@ -371,9 +371,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename", "int");
             var element = new Element("anelementname");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
@@ -395,9 +395,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
             var element = new Element("anelementname");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
@@ -416,9 +416,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
@@ -437,9 +437,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"].Materialise();
@@ -469,11 +469,11 @@ namespace CLI.UnitTests.Application
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
-            element2.Attributes.Add(attribute2);
-            element1.Elements.Add(element2);
+            element2.AddAttribute(attribute2);
+            element1.AddElement(element2);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute1);
-            pattern.Elements.Add(element1);
+            pattern.AddAttribute(attribute1);
+            pattern.AddElement(element1);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
@@ -508,11 +508,11 @@ namespace CLI.UnitTests.Application
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
-            element2.Attributes.Add(attribute2);
-            element1.Elements.Add(element2);
+            element2.AddAttribute(attribute2);
+            element1.AddElement(element2);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute1);
-            pattern.Elements.Add(element1);
+            pattern.AddAttribute(attribute1);
+            pattern.AddElement(element1);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
@@ -568,8 +568,8 @@ namespace CLI.UnitTests.Application
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element1);
-            pattern.Elements.Add(element2);
+            pattern.AddElement(element1);
+            pattern.AddElement(element2);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -591,11 +591,11 @@ namespace CLI.UnitTests.Application
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var collection2 = new Element("acollectionname2", "adisplayname2", "adescription2", true,
                 ElementCardinality.OneOrMany);
-            collection2.Attributes.Add(attribute2);
+            collection2.AddAttribute(attribute2);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute1);
-            pattern.Elements.Add(element1);
-            pattern.Elements.Add(collection2);
+            pattern.AddAttribute(attribute1);
+            pattern.AddElement(element1);
+            pattern.AddElement(collection2);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -639,9 +639,9 @@ namespace CLI.UnitTests.Application
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            element.Automation.Add(automation);
+            element.AddAutomation(automation);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
 
@@ -659,7 +659,7 @@ namespace CLI.UnitTests.Application
         {
             var pattern = new PatternDefinition("apatternname");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            pattern.Automation.Add(automation);
+            pattern.AddAutomation(automation);
             UpdateToolkit(pattern);
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))

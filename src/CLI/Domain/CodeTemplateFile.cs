@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Automate.CLI.Domain
 {
@@ -20,7 +21,7 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
-        public byte[] Contents { get; }
+        public IReadOnlyList<byte> Contents { get; }
 
         public PersistableProperties Dehydrate()
         {

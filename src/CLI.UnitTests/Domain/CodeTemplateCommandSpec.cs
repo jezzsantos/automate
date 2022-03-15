@@ -136,13 +136,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkButFileNotExists_ThenGeneratesFileAndUpdatesArtifactLink()
             {
-                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
-                {
-                    ArtifactLinks = new List<ArtifactLink>
-                    {
-                        new ArtifactLink(this.command.Id, "apath", "atag")
-                    }
-                };
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null);
+                ownerSolution.AddArtifactLink(this.command.Id, "apath", "atag");
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
                 toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
@@ -169,13 +164,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkAndFileExists_ThenGeneratesFileAndUpdatesArtifactLink()
             {
-                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
-                {
-                    ArtifactLinks = new List<ArtifactLink>
-                    {
-                        new ArtifactLink(this.command.Id, "apath", "atag")
-                    }
-                };
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null);
+                ownerSolution.AddArtifactLink(this.command.Id, "apath", "atag");
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
                 toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
@@ -254,13 +244,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenExecuteAndArtifactLinkAndFileExists_ThenDoesNothing()
             {
-                var ownerSolution = new SolutionItem(new Element("anelementname"), null)
-                {
-                    ArtifactLinks = new List<ArtifactLink>
-                    {
-                        new ArtifactLink(this.command.Id, "apath", "atag")
-                    }
-                };
+                var ownerSolution = new SolutionItem(new Element("anelementname"), null);
+                ownerSolution.AddArtifactLink(this.command.Id, "apath", "atag");
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
                 toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))

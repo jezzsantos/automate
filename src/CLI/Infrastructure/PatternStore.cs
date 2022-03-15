@@ -75,7 +75,7 @@ namespace Automate.CLI.Infrastructure
             this.patternRepository.NewPattern(pattern);
 
             var state = this.localStateRepository.GetLocalState();
-            state.CurrentPattern = pattern.Id;
+            state.SetCurrentPattern(pattern.Id);
             this.localStateRepository.SaveLocalState(state);
 
             return pattern;
@@ -92,7 +92,7 @@ namespace Automate.CLI.Infrastructure
             }
 
             var state = this.localStateRepository.GetLocalState();
-            state.CurrentPattern = pattern.Id;
+            state.SetCurrentPattern(pattern.Id);
             this.localStateRepository.SaveLocalState(state);
         }
 

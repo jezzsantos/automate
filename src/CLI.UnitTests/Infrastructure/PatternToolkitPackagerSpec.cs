@@ -112,10 +112,10 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             pattern.UpdateToolkitVersion("0.0.0");
-            pattern.CodeTemplates.Add(new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1"));
+            pattern.AddCodeTemplate(new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1"));
             var element = new Element("anelementname");
-            element.CodeTemplates.Add(new CodeTemplate("acodetemplatename2", "afullpath2", "anextension2"));
-            pattern.Elements.Add(element);
+            element.AddCodeTemplate(new CodeTemplate("acodetemplatename2", "afullpath2", "anextension2"));
+            pattern.AddElement(element);
             var fileContents = new byte[] { 0x01 };
             this.patternStore.Setup(ps => ps.GetCurrent())
                 .Returns(pattern);

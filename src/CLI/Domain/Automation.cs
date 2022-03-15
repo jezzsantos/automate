@@ -41,7 +41,7 @@ namespace Automate.CLI.Domain
 
         public AutomationType Type { get; }
 
-        public Dictionary<string, object> Metadata { get; }
+        public IReadOnlyDictionary<string, object> Metadata { get; }
 
         public string Name { get; }
 

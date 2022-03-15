@@ -2,9 +2,9 @@
 
 namespace Automate.CLI.Domain
 {
-    internal class PatternToolkitPackage
+    internal class ToolkitPackage
     {
-        public PatternToolkitPackage(ToolkitDefinition toolkit, string buildLocation)
+        public ToolkitPackage(ToolkitDefinition toolkit, string buildLocation)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             buildLocation.GuardAgainstNullOrEmpty(nameof(buildLocation));
@@ -13,7 +13,7 @@ namespace Automate.CLI.Domain
             Toolkit = toolkit;
         }
 
-        public ToolkitDefinition Toolkit { get; set; }
+        public ToolkitDefinition Toolkit { get; }
 
         public string BuiltLocation { get; }
     }

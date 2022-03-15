@@ -20,7 +20,7 @@ namespace Automate.CLI.Domain
         {
         }
 
-        public CodeTemplateCommand(string id, string name, Dictionary<string, object> metadata) : this(
+        public CodeTemplateCommand(string id, string name, IReadOnlyDictionary<string, object> metadata) : this(
             new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(),
             new TextTemplatingEngine(), id, name, metadata[nameof(CodeTemplateId)].ToString(), metadata[nameof(IsTearOff)].ToString().ToBool(), metadata[nameof(FilePath)].ToString())
         {
@@ -91,7 +91,7 @@ namespace Automate.CLI.Domain
             if (willGenerateFile)
             {
                 var contents = codeTemplate.Contents.Exists()
-                    ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents)
+                    ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents.ToArray())
                     : string.Empty;
                 var generatedCode = this.textTemplatingEngine.Transform(DomainMessages.CodeTemplateCommand_TemplateContent_Description.Format(codeTemplate.Id), contents, target);
 
@@ -103,12 +103,7 @@ namespace Automate.CLI.Domain
                 .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
             if (link.NotExists())
             {
-                link = new ArtifactLink(Id, absoluteFilePath, filename);
-                if (target.ArtifactLinks.NotExists())
-                {
-                    target.ArtifactLinks = new List<ArtifactLink>();
-                }
-                target.ArtifactLinks.Add(link);
+                link = target.AddArtifactLink(Id, absoluteFilePath, filename);
                 if (IsTearOff)
                 {
                     log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(filename, absoluteFilePath));

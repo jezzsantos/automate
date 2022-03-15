@@ -172,7 +172,7 @@ namespace Automate.CLI.Domain
 
             void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
             {
-                solutionItem.Parent = parent;
+                solutionItem.SetParent(parent);
                 var properties = solutionItem.Properties.Safe();
                 foreach (var property in properties)
                 {

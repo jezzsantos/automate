@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Automate.CLI;
 using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -115,7 +116,8 @@ namespace CLI.UnitTests.Extensions
         public void WhenFromJsonAndJsonIsNull_ThenThrows()
         {
             FluentActions.Invoking(() => PersistableExtensions.FromJson<TestPersistable>(null, Mock.Of<IPersistableFactory>()))
-                .Should().Throw<ArgumentNullException>();
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PersistableExtensions_FromJson_NoJson);
         }
 
         [Fact]

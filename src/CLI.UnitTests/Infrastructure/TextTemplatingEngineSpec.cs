@@ -40,7 +40,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var solution = new SolutionItem(element, null);
             solution.Materialise();
 

@@ -8,8 +8,12 @@ namespace Automate.CLI.Domain
 {
     internal class SolutionItem : IIdentifiableEntity, IPersistable
     {
+        private readonly List<ArtifactLink> artifactLinks;
+
         // ReSharper disable once InconsistentNaming
         private object _value;
+        private List<SolutionItem> items;
+        private Dictionary<string, SolutionItem> properties;
 
         public SolutionItem(PatternDefinition pattern)
         {
@@ -20,18 +24,18 @@ namespace Automate.CLI.Domain
             ElementSchema = null;
             IsMaterialised = true;
             Value = null;
-            Items = null;
-
-            Properties = new Dictionary<string, SolutionItem>();
+            this.properties = new Dictionary<string, SolutionItem>();
             pattern.Attributes.ToListSafe()
                 .ForEach(attr =>
                 {
-                    Properties.Add(attr.Name,
+                    this.properties.Add(attr.Name,
                         new SolutionItem(attr, this));
                 });
             pattern.Elements.ToListSafe()
-                .ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele, this)); });
+                .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(ele, this)); });
+            this.items = null;
             Parent = null;
+            this.artifactLinks = new List<ArtifactLink>();
         }
 
         public SolutionItem(Attribute attribute, SolutionItem parent)
@@ -43,9 +47,10 @@ namespace Automate.CLI.Domain
             AttributeSchema = attribute;
             IsMaterialised = attribute.DefaultValue.HasValue();
             SetValue(attribute.DefaultValue, attribute.DataType);
-            Properties = null;
-            Items = null;
+            this.properties = null;
+            this.items = null;
             Parent = parent;
+            this.artifactLinks = new List<ArtifactLink>();
         }
 
         public SolutionItem(Element element, SolutionItem parent)
@@ -57,9 +62,10 @@ namespace Automate.CLI.Domain
             ElementSchema = element;
             IsMaterialised = false;
             Value = null;
-            Properties = null;
-            Items = null;
+            this.properties = null;
+            this.items = null;
             Parent = parent;
+            this.artifactLinks = new List<ArtifactLink>();
         }
 
         public SolutionItem(object value, string dataType, SolutionItem parent)
@@ -71,9 +77,10 @@ namespace Automate.CLI.Domain
             ElementSchema = null;
             IsMaterialised = true;
             SetValue(value, dataType);
-            Properties = null;
-            Items = null;
+            this.properties = null;
+            this.items = null;
             Parent = parent;
+            this.artifactLinks = new List<ArtifactLink>();
         }
 
         private SolutionItem(PersistableProperties properties, IPersistableFactory factory)
@@ -84,43 +91,35 @@ namespace Automate.CLI.Domain
             ElementSchema = properties.Rehydrate<Element>(factory, nameof(ElementSchema));
             AttributeSchema = properties.Rehydrate<Attribute>(factory, nameof(AttributeSchema));
             Value = properties.Rehydrate<object>(factory, nameof(Value));
-            Properties = properties.Rehydrate<Dictionary<string, SolutionItem>>(factory, nameof(Properties));
-            Items = properties.Rehydrate<List<SolutionItem>>(factory, nameof(Items));
+            this.properties = properties.Rehydrate<Dictionary<string, SolutionItem>>(factory, nameof(Properties));
+            this.items = properties.Rehydrate<List<SolutionItem>>(factory, nameof(Items));
             IsMaterialised = properties.Rehydrate<bool>(factory, nameof(IsMaterialised));
-            ArtifactLinks = properties.Rehydrate<List<ArtifactLink>>(factory, nameof(ArtifactLinks));
+            this.artifactLinks = properties.Rehydrate<List<ArtifactLink>>(factory, nameof(ArtifactLinks));
         }
 
-        public SolutionItem Parent { get; set; }
+        public SolutionItem Parent { get; private set; }
 
-        public PatternDefinition PatternSchema { get; set; }
+        public PatternDefinition PatternSchema { get; }
 
-        public Element ElementSchema { get; set; }
+        public Element ElementSchema { get; }
 
-        public Attribute AttributeSchema { get; set; }
+        public Attribute AttributeSchema { get; }
 
         public object Value
         {
             get => this._value;
-            set
-            {
-                if (IsAttribute)
-                {
-                    this._value = Attribute.SetValue(AttributeSchema.DataType, value);
-                }
-                else
-                {
-                    this._value = value;
-                }
-            }
+            set => this._value = IsAttribute
+                ? Attribute.SetValue(AttributeSchema.DataType, value)
+                : value;
         }
 
-        public Dictionary<string, SolutionItem> Properties { get; set; }
+        public IReadOnlyDictionary<string, SolutionItem> Properties => this.properties;
 
-        public List<SolutionItem> Items { get; set; }
+        public IReadOnlyList<SolutionItem> Items => this.items;
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public bool IsMaterialised { get; set; }
+        public bool IsMaterialised { get; private set; }
 
         public bool IsPattern => PatternSchema.Exists();
 
@@ -132,23 +131,23 @@ namespace Automate.CLI.Domain
 
         public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
 
-        public List<ArtifactLink> ArtifactLinks { get; set; }
+        public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
 
         public PersistableProperties Dehydrate()
         {
-            var properties = new PersistableProperties();
-            properties.Dehydrate(nameof(Id), Id);
-            properties.Dehydrate(nameof(Name), Name);
-            properties.Dehydrate(nameof(PatternSchema), PatternSchema);
-            properties.Dehydrate(nameof(ElementSchema), ElementSchema);
-            properties.Dehydrate(nameof(AttributeSchema), AttributeSchema);
-            properties.Dehydrate(nameof(Value), Value);
-            properties.Dehydrate(nameof(Properties), Properties);
-            properties.Dehydrate(nameof(Items), Items);
-            properties.Dehydrate(nameof(IsMaterialised), IsMaterialised);
-            properties.Dehydrate(nameof(ArtifactLinks), ArtifactLinks);
+            var props = new PersistableProperties();
+            props.Dehydrate(nameof(Id), Id);
+            props.Dehydrate(nameof(Name), Name);
+            props.Dehydrate(nameof(PatternSchema), PatternSchema);
+            props.Dehydrate(nameof(ElementSchema), ElementSchema);
+            props.Dehydrate(nameof(AttributeSchema), AttributeSchema);
+            props.Dehydrate(nameof(Value), Value);
+            props.Dehydrate(nameof(Properties), Properties);
+            props.Dehydrate(nameof(Items), Items);
+            props.Dehydrate(nameof(IsMaterialised), IsMaterialised);
+            props.Dehydrate(nameof(ArtifactLinks), ArtifactLinks);
 
-            return properties;
+            return props;
         }
 
         public static SolutionItem Rehydrate(PersistableProperties properties, IPersistableFactory factory)
@@ -166,18 +165,18 @@ namespace Automate.CLI.Domain
 
             if (IsElement)
             {
-                Properties = new Dictionary<string, SolutionItem>();
+                this.properties = new Dictionary<string, SolutionItem>();
                 ElementSchema.Attributes.ToListSafe().ForEach(
-                    attr => { Properties.Add(attr.Name, new SolutionItem(attr, this)); });
-                ElementSchema.Elements.ToListSafe().ForEach(ele => { Properties.Add(ele.Name, new SolutionItem(ele, this)); });
-                Items = null;
+                    attr => { this.properties.Add(attr.Name, new SolutionItem(attr, this)); });
+                ElementSchema.Elements.ToListSafe().ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(ele, this)); });
+                this.items = null;
                 IsMaterialised = true;
             }
 
             if (IsCollection)
             {
-                Properties = new Dictionary<string, SolutionItem>();
-                Items = new List<SolutionItem>();
+                this.properties = new Dictionary<string, SolutionItem>();
+                this.items = new List<SolutionItem>();
                 IsMaterialised = true;
             }
 
@@ -215,7 +214,7 @@ namespace Automate.CLI.Domain
             var standaloneElement = ElementSchema.MakeStandalone();
             var childElementItem = new SolutionItem(standaloneElement, this);
             childElementItem.Materialise();
-            Items.Add(childElementItem);
+            this.items.Add(childElementItem);
 
             return childElementItem;
         }
@@ -386,7 +385,20 @@ namespace Automate.CLI.Domain
             return command.Execute(solution, this);
         }
 
-        public string Id { get; set; }
+        public ArtifactLink AddArtifactLink(string commandId, string path, string tag)
+        {
+            var link = new ArtifactLink(commandId, path, tag);
+            this.artifactLinks.Add(link);
+
+            return link;
+        }
+
+        public void SetParent(SolutionItem parent)
+        {
+            Parent = parent;
+        }
+
+        public string Id { get; }
 
         private Automation GetAutomationByName(string name)
         {

@@ -62,7 +62,7 @@ namespace Automate.CLI.Infrastructure
             }
 
             var state = this.localStateRepository.GetLocalState();
-            state.CurrentToolkit = id;
+            state.SetCurrentToolkit(id);
             this.localStateRepository.SaveLocalState(state);
         }
 

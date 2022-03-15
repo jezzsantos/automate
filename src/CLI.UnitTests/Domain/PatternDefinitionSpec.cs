@@ -39,8 +39,8 @@ namespace CLI.UnitTests.Domain
         {
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element1.Elements.Add(element2);
-            this.pattern.Elements.Add(element1);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
 
             var result = this.pattern.GetAllCodeTemplates();
 
@@ -51,7 +51,7 @@ namespace CLI.UnitTests.Domain
         public void WhenGetAllCodeTemplatesAndFoundOnPattern_ThenReturnsAutomation()
         {
             var template = new CodeTemplate("aname", "afullpath", "anextension");
-            this.pattern.CodeTemplates.Add(template);
+            this.pattern.AddCodeTemplate(template);
 
             var result = this.pattern.GetAllCodeTemplates();
 
@@ -65,10 +65,10 @@ namespace CLI.UnitTests.Domain
             var template2 = new CodeTemplate("aname2", "afullpath", "anextension");
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element2.CodeTemplates.Add(template1);
-            element1.Elements.Add(element2);
-            this.pattern.Elements.Add(element1);
-            this.pattern.CodeTemplates.Add(template2);
+            element2.AddCodeTemplate(template1);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
+            this.pattern.AddCodeTemplate(template2);
 
             var result = this.pattern.GetAllCodeTemplates();
 
@@ -89,8 +89,8 @@ namespace CLI.UnitTests.Domain
         {
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element1.Elements.Add(element2);
-            this.pattern.Elements.Add(element1);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
 
             var result = this.pattern.FindAutomation("acmdid");
 
@@ -101,7 +101,7 @@ namespace CLI.UnitTests.Domain
         public void WhenFindAutomationAndFoundOnPattern_ThenReturnsAutomation()
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            this.pattern.Automation.Add(automation);
+            this.pattern.AddAutomation(automation);
 
             var result = this.pattern.FindAutomation(automation.Id);
 
@@ -114,9 +114,9 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element2.Automation.Add(automation);
-            element1.Elements.Add(element2);
-            this.pattern.Elements.Add(element1);
+            element2.AddAutomation(automation);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
 
             var result = this.pattern.FindAutomation(automation.Id);
 
@@ -149,10 +149,10 @@ namespace CLI.UnitTests.Domain
             var attribute4 = new Attribute("anattribute4", "decimal", false, "9.9");
             var attribute5 = new Attribute("anattribute5", "DateTime", false, date.ToIso8601());
             var attribute6 = new Attribute("anattribute6", "string", false, "B", new List<string> { "A", "B" });
-            element3.Attributes.AddRange(new[] { attribute1, attribute2, attribute3, attribute4, attribute5, attribute6 });
-            element2.Elements.Add(element3);
-            element1.Elements.Add(element2);
-            this.pattern.Elements.Add(element1);
+            element3.AddAttributes(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
+            element2.AddElement(element3);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
 
             var result = this.pattern.CreateTestSolution();
 
@@ -179,10 +179,10 @@ namespace CLI.UnitTests.Domain
             var attribute4 = new Attribute("anattribute4", "decimal");
             var attribute5 = new Attribute("anattribute5", "DateTime");
             var attribute6 = new Attribute("anattribute6", "string", false, null, new List<string> { "A", "B" });
-            collection3.Attributes.AddRange(new[] { attribute1, attribute2, attribute3, attribute4, attribute5, attribute6 });
-            collection2.Elements.Add(collection3);
-            collection1.Elements.Add(collection2);
-            this.pattern.Elements.Add(collection1);
+            collection3.AddAttributes(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
+            collection2.AddElement(collection3);
+            collection1.AddElement(collection2);
+            this.pattern.AddElement(collection1);
 
             var result = this.pattern.CreateTestSolution();
 

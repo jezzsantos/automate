@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 
-namespace Automate.CLI.Extensions
+namespace Automate.CLI.Infrastructure
 {
     internal static class PersistableExtensions
     {
@@ -25,6 +26,11 @@ namespace Automate.CLI.Extensions
         public static TPersistable FromJson<TPersistable>(this string json, IPersistableFactory factory)
             where TPersistable : IPersistable
         {
+            if (!json.HasValue())
+            {
+                throw new AutomateException(ExceptionMessages.PersistableExtensions_FromJson_NoJson);
+            }
+
             var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(json, new JsonSerializerOptions
             {
                 Converters = { new ListConverter(), new DictionaryConverter() }

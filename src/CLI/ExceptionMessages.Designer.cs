@@ -331,65 +331,74 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attempt to deserialize empty JSON.
+        /// </summary>
+        internal static string PersistableExtensions_FromJson_NoJson {
+            get {
+                return ResourceManager.GetString("PersistableExtensions_FromJson_NoJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericDictionaryNoParameters {
+        internal static string PersistableExtensions_GenericDictionaryNoParameters {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNoParameters", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericDictionaryNoParameters", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to is not a generic type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericDictionaryNotGeneric {
+        internal static string PersistableExtensions_GenericDictionaryNotGeneric {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNotGeneric", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericDictionaryNotGeneric", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary with a string key.
         /// </summary>
-        internal static string PersistenceExtensions_GenericDictionaryNotStringKey {
+        internal static string PersistableExtensions_GenericDictionaryNotStringKey {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryNotStringKey", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericDictionaryNotStringKey", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is a not a supported generic Dictionary type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericDictionaryTooManyParameters {
+        internal static string PersistableExtensions_GenericDictionaryTooManyParameters {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericDictionaryTooManyParameters", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericDictionaryTooManyParameters", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is a not a supported generic List type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericListNoParameters {
+        internal static string PersistableExtensions_GenericListNoParameters {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericListNoParameters", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericListNoParameters", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to is not a generic type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericListNotGeneric {
+        internal static string PersistableExtensions_GenericListNotGeneric {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericListNotGeneric", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericListNotGeneric", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is a not a supported generic List type.
         /// </summary>
-        internal static string PersistenceExtensions_GenericListTooManyParameters {
+        internal static string PersistableExtensions_GenericListTooManyParameters {
             get {
-                return ResourceManager.GetString("PersistenceExtensions_GenericListTooManyParameters", resourceCulture);
+                return ResourceManager.GetString("PersistableExtensions_GenericListTooManyParameters", resourceCulture);
             }
         }
         

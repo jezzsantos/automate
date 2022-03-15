@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
@@ -92,8 +92,8 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var collection = new Element("acollectionname", isCollection: true);
             var element = new Element("anelementname");
-            collection.Elements.Add(element);
-            pattern.Elements.Add(collection);
+            collection.AddElement(element);
+            pattern.AddElement(collection);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var collectionInstance = solution.Model.Properties["acollectionname"].MaterialiseCollectionItem();
             var elementInstance = collectionInstance.Properties["anelementname"].Materialise();
@@ -108,7 +108,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             var result = this.resolver.ResolveItem(solution, "{apatternname.anelementname}");
@@ -121,7 +121,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
@@ -136,9 +136,9 @@ namespace CLI.UnitTests.Infrastructure
             var element3 = new Element("anelementname3");
             var element2 = new Element("anelementname2");
             var element1 = new Element("anelementname1");
-            element2.Elements.Add(element3);
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element2.AddElement(element3);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
 
@@ -154,9 +154,9 @@ namespace CLI.UnitTests.Infrastructure
             var element3 = new Element("anelementname3");
             var element2 = new Element("anelementname2");
             var element1 = new Element("anelementname1");
-            element2.Elements.Add(element3);
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element2.AddElement(element3);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise().Properties["anelementname2"].Materialise()
                 .Properties["anelementname3"].Materialise();
@@ -187,7 +187,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var solutionItem = new SolutionItem(element, null);
             solutionItem.Materialise();
 
@@ -201,9 +201,9 @@ namespace CLI.UnitTests.Infrastructure
         {
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
             var solutionItem = new SolutionItem(pattern);
             solutionItem.Properties["anelementname"].Materialise();
 

@@ -14,11 +14,11 @@ namespace Automate.CLI.Domain
             CurrentSolution = properties.Rehydrate<string>(factory, nameof(CurrentSolution));
         }
 
-        public string CurrentPattern { get; set; } = null!;
+        public string CurrentPattern { get; private set; } = null!;
 
-        public string CurrentToolkit { get; set; } = null!;
+        public string CurrentToolkit { get; private set; } = null!;
 
-        public string CurrentSolution { get; set; } = null!;
+        public string CurrentSolution { get; private set; } = null!;
 
         public PersistableProperties Dehydrate()
         {
@@ -33,6 +33,21 @@ namespace Automate.CLI.Domain
         public static LocalState Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
             return new LocalState(properties, factory);
+        }
+
+        public void SetCurrentPattern(string id)
+        {
+            CurrentPattern = id;
+        }
+
+        public void SetCurrentToolkit(string id)
+        {
+            CurrentToolkit = id;
+        }
+
+        public void SetCurrentSolution(string id)
+        {
+            CurrentSolution = id;
         }
     }
 }

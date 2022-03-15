@@ -1,4 +1,5 @@
-﻿using ServiceStack;
+﻿using System.Linq;
+using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
@@ -48,10 +49,10 @@ namespace Automate.CLI.Domain
         public Element MakeStandalone()
         {
             var element = new Element(Name, DisplayName, Description, false, ElementCardinality.Single);
-            Elements.ForEach(ele => element.Elements.Add(ele));
-            Attributes.ForEach(attr => element.Attributes.Add(attr));
-            Automation.ForEach(auto => element.Automation.Add(auto));
-            CodeTemplates.ForEach(temp => element.CodeTemplates.Add(temp));
+            Elements.ToList().ForEach(ele => element.AddElement(ele));
+            Attributes.ToList().ForEach(attr => element.AddAttribute(attr));
+            Automation.ToList().ForEach(auto => element.AddAutomation(auto));
+            CodeTemplates.ToList().ForEach(temp => element.AddCodeTemplate(temp));
 
             return element;
         }

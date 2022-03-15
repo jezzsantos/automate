@@ -261,12 +261,12 @@ namespace Automate.CLI.Application
                 return solutionItem.GetConfiguration(true);
             }
 
-            void ExportResult(LazySolutionItemDictionary generatedData)
+            void ExportResult(LazySolutionItemDictionary data)
             {
                 var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
                 try
                 {
-                    this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(generatedData.ToJson()));
+                    this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
                 }
                 catch (Exception ex)
                 {
@@ -275,7 +275,7 @@ namespace Automate.CLI.Application
             }
         }
 
-        public PatternToolkitPackage PackageToolkit(string version)
+        public ToolkitPackage PackageToolkit(string version)
         {
             var pattern = EnsureCurrentPatternExists();
 

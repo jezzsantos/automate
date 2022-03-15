@@ -77,7 +77,7 @@ namespace CLI.UnitTests.Domain
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
-            pattern.Automation.Add(automation);
+            pattern.AddAutomation(automation);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var solutionItem = solution.Model;
 
@@ -95,10 +95,10 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element2.Automation.Add(automation);
-            element1.Elements.Add(element2);
+            element2.AddAutomation(automation);
+            element1.AddElement(element2);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element1);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
@@ -118,10 +118,10 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            collection1.Automation.Add(automation);
-            element1.Elements.Add(collection1);
+            collection1.AddAutomation(automation);
+            element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element1);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
@@ -143,10 +143,10 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object> { { "FailTurn", 2 } });
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", isCollection: true);
-            collection1.Automation.Add(automation);
-            element1.Elements.Add(collection1);
+            collection1.AddAutomation(automation);
+            element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Elements.Add(element1);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()

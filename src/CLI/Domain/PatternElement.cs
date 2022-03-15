@@ -6,6 +6,11 @@ namespace Automate.CLI.Domain
 {
     internal abstract class PatternElement : IPatternElement
     {
+        private readonly List<Attribute> attributes;
+        private readonly List<Automation> automations;
+        private readonly List<CodeTemplate> codeTemplates;
+        private readonly List<Element> elements;
+
         protected PatternElement(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -14,20 +19,20 @@ namespace Automate.CLI.Domain
 
             Id = IdGenerator.Create();
             Name = name;
-            CodeTemplates = new List<CodeTemplate>();
-            Automation = new List<Automation>();
-            Attributes = new List<Attribute>();
-            Elements = new List<Element>();
+            this.codeTemplates = new List<CodeTemplate>();
+            this.automations = new List<Automation>();
+            this.attributes = new List<Attribute>();
+            this.elements = new List<Element>();
         }
 
         protected PatternElement(PersistableProperties properties, IPersistableFactory factory)
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
-            Attributes = properties.Rehydrate<List<Attribute>>(factory, nameof(Attributes));
-            Elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
-            Automation = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
-            CodeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
+            this.attributes = properties.Rehydrate<List<Attribute>>(factory, nameof(Attributes));
+            this.elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
+            this.automations = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
+            this.codeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
         }
 
         public virtual PersistableProperties Dehydrate()
@@ -41,6 +46,26 @@ namespace Automate.CLI.Domain
             properties.Dehydrate(nameof(Automation), Automation);
 
             return properties;
+        }
+
+        public void AddElement(Element element)
+        {
+            this.elements.Add(element);
+        }
+
+        public void AddAttribute(Attribute attribute)
+        {
+            this.attributes.Add(attribute);
+        }
+
+        public void AddCodeTemplate(CodeTemplate codeTemplate)
+        {
+            this.codeTemplates.Add(codeTemplate);
+        }
+
+        public void AddAutomation(Automation automation)
+        {
+            this.automations.Add(automation);
         }
 
         public Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices)
@@ -63,7 +88,7 @@ namespace Automate.CLI.Domain
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
-            Attributes.Add(attribute);
+            this.attributes.Add(attribute);
 
             return attribute;
         }
@@ -83,7 +108,7 @@ namespace Automate.CLI.Domain
             }
 
             var element = new Element(name, displayName, description, isCollection, cardinality);
-            Elements.Add(element);
+            this.elements.Add(element);
 
             return element;
         }
@@ -103,7 +128,7 @@ namespace Automate.CLI.Domain
             }
 
             var codeTemplate = new CodeTemplate(templateName, fullPath, extension);
-            CodeTemplates.Add(codeTemplate);
+            this.codeTemplates.Add(codeTemplate);
 
             return codeTemplate;
         }
@@ -134,7 +159,7 @@ namespace Automate.CLI.Domain
                 { nameof(CodeTemplateCommand.IsTearOff), isTearOff },
                 { nameof(CodeTemplateCommand.FilePath), filePath }
             });
-            Automation.Add(automation);
+            this.automations.Add(automation);
 
             return automation;
         }
@@ -165,7 +190,7 @@ namespace Automate.CLI.Domain
             {
                 { nameof(CommandLaunchPoint.CommandIds), commandIds.Join(";") }
             });
-            Automation.Add(automation);
+            this.automations.Add(automation);
 
             return automation;
         }
@@ -192,13 +217,13 @@ namespace Automate.CLI.Domain
 
         public string Name { get; }
 
-        public List<Element> Elements { get; }
+        public IReadOnlyList<Element> Elements => this.elements;
 
-        public List<Attribute> Attributes { get; }
+        public IReadOnlyList<Attribute> Attributes => this.attributes;
 
-        public List<CodeTemplate> CodeTemplates { get; }
+        public IReadOnlyList<CodeTemplate> CodeTemplates => this.codeTemplates;
 
-        public List<Automation> Automation { get; }
+        public IReadOnlyList<Automation> Automation => this.automations;
 
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {

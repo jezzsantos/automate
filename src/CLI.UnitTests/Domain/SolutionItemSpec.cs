@@ -45,7 +45,7 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname");
-            pattern.Attributes.Add(attribute);
+            pattern.AddAttribute(attribute);
 
             var result = new SolutionItem(pattern);
 
@@ -61,7 +61,7 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname", "string", false, "adefaultvalue");
-            pattern.Attributes.Add(attribute);
+            pattern.AddAttribute(attribute);
 
             var result = new SolutionItem(pattern);
 
@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Domain
             var date = DateTime.UtcNow;
             var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname", "DateTime", false, date.ToIso8601());
-            pattern.Attributes.Add(attribute);
+            pattern.AddAttribute(attribute);
 
             var result = new SolutionItem(pattern);
 
@@ -94,8 +94,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname", "adisplayname", "adescription");
-            element.Attributes.Add(new Attribute("anattributename", "string", false, "adefaultvalue"));
-            pattern.Elements.Add(element);
+            element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
+            pattern.AddElement(element);
 
             var result = new SolutionItem(pattern);
 
@@ -112,8 +112,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("acollectionname", "adisplayname", "adescription", true);
-            element.Attributes.Add(new Attribute("anattributename", "string", false, "adefaultvalue"));
-            pattern.Elements.Add(element);
+            element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
+            pattern.AddElement(element);
 
             var result = new SolutionItem(pattern);
 
@@ -130,14 +130,14 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3", "adisplayname3", "adescription3", true);
-            element3.Attributes.Add(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
+            element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2", true);
-            element2.Attributes.Add(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
+            element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1", true);
-            element1.Attributes.Add(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
-            element2.Elements.Add(element3);
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
+            element2.AddElement(element3);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
 
             var result = new SolutionItem(pattern);
 
@@ -174,7 +174,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
 
             var result = new SolutionItem(element, null)
                 .Materialise();
@@ -192,8 +192,8 @@ namespace CLI.UnitTests.Domain
             var collection = new Element("acollectionname", isCollection: true);
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             var element = new Element("anelementname");
-            collection.Attributes.Add(attribute);
-            collection.Elements.Add(element);
+            collection.AddAttribute(attribute);
+            collection.AddElement(element);
 
             var result = new SolutionItem(collection, null)
                 .Materialise();
@@ -234,7 +234,7 @@ namespace CLI.UnitTests.Domain
         {
             var collection = new Element("acollectionname", isCollection: true);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            collection.Attributes.Add(attribute);
+            collection.AddAttribute(attribute);
             var solutionItem = new SolutionItem(collection, null);
 
             var result = solutionItem.MaterialiseCollectionItem();
@@ -257,9 +257,9 @@ namespace CLI.UnitTests.Domain
         {
             var collection1 = new Element("acollectionname1", isCollection: true);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
-            collection1.Attributes.Add(attribute);
+            collection1.AddAttribute(attribute);
             var collection2 = new Element("acollectionname2", isCollection: true);
-            collection1.Elements.Add(collection2);
+            collection1.AddElement(collection2);
             var solutionItem = new SolutionItem(collection1, null);
 
             var result1 = solutionItem.MaterialiseCollectionItem();
@@ -293,7 +293,7 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            pattern.Attributes.Add(attribute);
+            pattern.AddAttribute(attribute);
 
             var result = new SolutionItem(pattern)
                 .HasAttribute("anattributename");
@@ -306,7 +306,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
 
             var result = new SolutionItem(element, null)
                 .HasAttribute("anattributename");
@@ -357,7 +357,7 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
 
             new SolutionItem(pattern)
                 .Invoking(x => x.GetProperty("anelementname"))
@@ -370,7 +370,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
 
             new SolutionItem(element, null)
                 .Invoking(x => x.GetProperty("anattributename"))
@@ -383,7 +383,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            element.Attributes.Add(attribute);
+            element.AddAttribute(attribute);
 
             var result = new SolutionItem(element, null)
                 .Materialise()
@@ -396,7 +396,7 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsPatternWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(new Attribute("anattributename", isRequired: true));
+            pattern.AddAttribute(new Attribute("anattributename", isRequired: true));
 
             var result = new SolutionItem(pattern)
                 .Validate(new ValidationContext());
@@ -438,7 +438,7 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsElementWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var element = new Element("anelementname");
-            element.Attributes.Add(new Attribute("anattributename", isRequired: true));
+            element.AddAttribute(new Attribute("anattributename", isRequired: true));
 
             var result = new SolutionItem(element, null)
                 .Materialise()
@@ -454,7 +454,7 @@ namespace CLI.UnitTests.Domain
         {
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
-            element1.Elements.Add(element2);
+            element1.AddElement(element2);
 
             var result = new SolutionItem(element1, null)
                 .Materialise()
@@ -506,8 +506,8 @@ namespace CLI.UnitTests.Domain
             var collection = new Element("acollectionname", isCollection: true);
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", isRequired: true);
-            element.Attributes.Add(attribute);
-            collection.Elements.Add(element);
+            element.AddAttribute(attribute);
+            collection.AddElement(element);
 
             var solutionItem = new SolutionItem(collection, null);
             solutionItem.MaterialiseCollectionItem();
@@ -559,13 +559,13 @@ namespace CLI.UnitTests.Domain
             var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2");
             var collectionLevel1 = new Element("acollectionname2", "adisplayname1", "adescription1", true);
-            elementLevel2.Attributes.Add(attribute2);
-            collectionLevel1.Attributes.Add(attribute3);
-            elementLevel1.Elements.Add(elementLevel2);
+            elementLevel2.AddAttribute(attribute2);
+            collectionLevel1.AddAttribute(attribute3);
+            elementLevel1.AddElement(elementLevel2);
             var pattern = new PatternDefinition("apatternname");
-            pattern.Attributes.Add(attribute1);
-            pattern.Elements.Add(elementLevel1);
-            pattern.Elements.Add(collectionLevel1);
+            pattern.AddAttribute(attribute1);
+            pattern.AddElement(elementLevel1);
+            pattern.AddElement(collectionLevel1);
 
             var solutionItem = new SolutionItem(pattern);
             solutionItem.Properties["anelementname1"].Materialise();
@@ -627,7 +627,7 @@ namespace CLI.UnitTests.Domain
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
-            pattern.Automation.Add(automation);
+            pattern.AddAutomation(automation);
             var solutionItem = new SolutionItem(pattern);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 

@@ -7,7 +7,7 @@ namespace Automate.CLI.Domain
 {
     internal class CommandLaunchPoint : IAutomation
     {
-        public CommandLaunchPoint(string id, string name, Dictionary<string, object> metadata) : this(id, name, metadata[nameof(CommandIds)].ToString().SafeSplit(";").ToList())
+        public CommandLaunchPoint(string id, string name, IReadOnlyDictionary<string, object> metadata) : this(id, name, metadata[nameof(CommandIds)].ToString().SafeSplit(";").ToList())
         {
         }
 

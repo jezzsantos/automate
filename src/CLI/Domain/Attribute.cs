@@ -74,7 +74,7 @@ namespace Automate.CLI.Domain
 
         public string DefaultValue { get; }
 
-        public List<string> Choices { get; }
+        public IReadOnlyList<string> Choices { get; }
 
         public PersistableProperties Dehydrate()
         {
@@ -125,7 +125,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public static bool IsValidDataType(string dataType, object value)
+        private static bool IsValidDataType(string dataType, object value)
         {
             if (value.IsNull())
             {

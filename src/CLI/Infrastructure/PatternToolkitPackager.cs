@@ -22,7 +22,7 @@ namespace Automate.CLI.Infrastructure
             this.toolkitStore = toolkitStore;
         }
 
-        public PatternToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
+        public ToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
         {
             var newVersion = UpdateToolkitVersion(pattern, versionInstruction);
 
@@ -32,7 +32,7 @@ namespace Automate.CLI.Infrastructure
 
             var location = this.toolkitStore.Export(toolkit);
 
-            return new PatternToolkitPackage(toolkit, location);
+            return new ToolkitPackage(toolkit, location);
         }
 
         public ToolkitDefinition UnPack(IFile installer)

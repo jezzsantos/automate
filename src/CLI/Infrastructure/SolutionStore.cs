@@ -49,7 +49,7 @@ namespace Automate.CLI.Infrastructure
             this.solutionRepository.NewSolution(solution);
 
             var state = this.localStateRepository.GetLocalState();
-            state.CurrentSolution = solution.Id;
+            state.SetCurrentSolution(solution.Id);
             this.localStateRepository.SaveLocalState(state);
 
             return solution;
@@ -82,7 +82,7 @@ namespace Automate.CLI.Infrastructure
             }
 
             var state = this.localStateRepository.GetLocalState();
-            state.CurrentSolution = solution.Id;
+            state.SetCurrentSolution(solution.Id);
             this.localStateRepository.SaveLocalState(state);
         }
     }

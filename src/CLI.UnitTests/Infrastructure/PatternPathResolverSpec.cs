@@ -87,7 +87,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.Elements.Add(element);
+            pattern.AddElement(element);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname}");
 
@@ -99,9 +99,9 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var elementLevel1 = new Element("anelementname1");
-            pattern.Elements.Add(elementLevel1);
+            pattern.AddElement(elementLevel1);
             var elementLevel2 = new Element("anelementname2");
-            elementLevel1.Elements.Add(elementLevel2);
+            elementLevel1.AddElement(elementLevel2);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname1.anelementname2.anuknownelement}");
 
@@ -113,11 +113,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var elementLevel1 = new Element("anelementname1");
-            pattern.Elements.Add(elementLevel1);
+            pattern.AddElement(elementLevel1);
             var elementLevel2 = new Element("anelementname2");
-            elementLevel1.Elements.Add(elementLevel2);
+            elementLevel1.AddElement(elementLevel2);
             var elementLevel3 = new Element("anelementname3");
-            elementLevel2.Elements.Add(elementLevel3);
+            elementLevel2.AddElement(elementLevel3);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.anelementname1.anelementname2.anelementname3}");
 
@@ -129,7 +129,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var collection = new Element("acollectionname", null, null, true);
-            pattern.Elements.Add(collection);
+            pattern.AddElement(collection);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.acollectionname}");
 
@@ -141,9 +141,9 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var collectionLevel1 = new Element("acollectionname1", null, null, true);
-            pattern.Elements.Add(collectionLevel1);
+            pattern.AddElement(collectionLevel1);
             var collectionLevel2 = new Element("acollectionname2", null, null, true);
-            collectionLevel1.Elements.Add(collectionLevel2);
+            collectionLevel1.AddElement(collectionLevel2);
 
             var result = this.resolver.Resolve(pattern,
                 "{apatternname.acollectionname1.acollectionname2.anuknowncollection}");
@@ -156,11 +156,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var collectionLevel1 = new Element("acollectionname1", null, null, true);
-            pattern.Elements.Add(collectionLevel1);
+            pattern.AddElement(collectionLevel1);
             var collectionLevel2 = new Element("acollectionname2", null, null, true);
-            collectionLevel1.Elements.Add(collectionLevel2);
+            collectionLevel1.AddElement(collectionLevel2);
             var collectionLevel3 = new Element("acollectionname3", null, null, true);
-            collectionLevel2.Elements.Add(collectionLevel3);
+            collectionLevel2.AddElement(collectionLevel3);
 
             var result = this.resolver.Resolve(pattern,
                 "{apatternname.acollectionname1.acollectionname2.acollectionname3}");

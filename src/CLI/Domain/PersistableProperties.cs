@@ -18,12 +18,12 @@ namespace Automate.CLI.Domain
 
         public Dictionary<string, object> Dictionary => this;
 
-        public void Dehydrate(string name, byte[] bytes)
+        public void Dehydrate(string name, IEnumerable<byte> bytes)
         {
             Dehydrate(name, (object)bytes);
         }
 
-        public void Dehydrate(string name, Dictionary<string, object> value)
+        public void Dehydrate(string name, IEnumerable<KeyValuePair<string, object>> value)
         {
             Dehydrate(name, (object)value);
         }
@@ -44,14 +44,14 @@ namespace Automate.CLI.Domain
             Dehydrate(name, value?.Dehydrate().Dictionary);
         }
 
-        public void Dehydrate<TPersistable>(string name, List<TPersistable> items)
+        public void Dehydrate<TPersistable>(string name, IEnumerable<TPersistable> items)
             where TPersistable : IPersistable
         {
             var result = items.Safe().Select(item => item.Dehydrate().Dictionary).ToList();
             Dehydrate(name, result);
         }
 
-        public void Dehydrate<TPersistable>(string name, Dictionary<string, TPersistable> dictionary)
+        public void Dehydrate<TPersistable>(string name, IEnumerable<KeyValuePair<string, TPersistable>> dictionary)
             where TPersistable : IPersistable
         {
             var result = dictionary.Safe().ToDictionary(pair => pair.Key, pair => pair.Value.Dehydrate().Dictionary);
@@ -78,14 +78,14 @@ namespace Automate.CLI.Domain
                 return;
             }
 
-            if (value is byte[] bytes)
+            if (value is IEnumerable<byte> bytes)
             {
-                object value1 = Convert.ToBase64String(bytes);
+                object value1 = Convert.ToBase64String(bytes.ToArray());
                 base.Add(name, value1);
                 return;
             }
 
-            if (value is Dictionary<string, object> dictionary)
+            if (value is IEnumerable<KeyValuePair<string, object>> dictionary)
             {
                 base.Add(name, dictionary);
                 return;
@@ -105,14 +105,14 @@ namespace Automate.CLI.Domain
             Dehydrate(name, value?.Dehydrate().Dictionary);
         }
 
-        public void Add<TPersistable>(string name, List<TPersistable> items)
+        public void Add<TPersistable>(string name, IEnumerable<TPersistable> items)
             where TPersistable : IPersistable
         {
             var result = items.Safe().Select(item => item.Dehydrate().Dictionary).ToList();
             Dehydrate(name, result);
         }
 
-        public void Add<TPersistable>(string name, Dictionary<string, TPersistable> dictionary)
+        public void Add<TPersistable>(string name, IEnumerable<KeyValuePair<string, TPersistable>> dictionary)
             where TPersistable : IPersistable
         {
             var result = dictionary.Safe().ToDictionary(pair => pair.Key, pair => pair.Value.Dehydrate().Dictionary);
@@ -275,22 +275,22 @@ namespace Automate.CLI.Domain
             {
                 if (!IsGenericDictionary(type))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericDictionaryNotGeneric);
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNotGeneric);
                 }
 
                 var genericArguments = type.GenericTypeArguments;
                 if (genericArguments.HasNone())
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericDictionaryNoParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNoParameters.Format(type));
                 }
                 if (genericArguments.Length > 2)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericDictionaryTooManyParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryTooManyParameters.Format(type));
                 }
 
                 if (genericArguments.First() != typeof(string))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericDictionaryNotStringKey.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNotStringKey.Format(type));
                 }
 
                 return genericArguments.Last();
@@ -320,17 +320,17 @@ namespace Automate.CLI.Domain
             {
                 if (!IsGenericList(type))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericListNotGeneric);
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListNotGeneric);
                 }
 
                 var genericArguments = type.GenericTypeArguments;
                 if (genericArguments.HasNone())
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericListNoParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListNoParameters.Format(type));
                 }
                 if (genericArguments.Length > 1)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistenceExtensions_GenericListTooManyParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListTooManyParameters.Format(type));
                 }
 
                 return genericArguments.Single();

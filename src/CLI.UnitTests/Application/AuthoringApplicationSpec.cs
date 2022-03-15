@@ -435,7 +435,7 @@ namespace CLI.UnitTests.Application
             this.application.CreateNewPattern("apatternname");
             this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition pattern, string version) =>
-                    new PatternToolkitPackage(new ToolkitDefinition(pattern, version), "abuildlocation"));
+                    new ToolkitPackage(new ToolkitDefinition(pattern, version), "abuildlocation"));
 
             var toolkit = this.application.PackageToolkit("2.0");
 

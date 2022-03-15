@@ -5,6 +5,8 @@ namespace Automate.CLI.Domain
 {
     internal class ToolkitDefinition : IIdentifiableEntity, IPersistable
     {
+        private List<CodeTemplateFile> codeTemplateFiles;
+
         public ToolkitDefinition(PatternDefinition pattern, string version)
         {
             pattern.GuardAgainstNull(nameof(pattern));
@@ -20,7 +22,7 @@ namespace Automate.CLI.Domain
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Version = properties.Rehydrate<string>(factory, nameof(Version));
             Pattern = properties.Rehydrate<PatternDefinition>(factory, nameof(Pattern));
-            CodeTemplateFiles = properties.Rehydrate<List<CodeTemplateFile>>(factory, nameof(CodeTemplateFiles));
+            this.codeTemplateFiles = properties.Rehydrate<List<CodeTemplateFile>>(factory, nameof(CodeTemplateFiles));
         }
 
         public string Version { get; }
@@ -29,7 +31,7 @@ namespace Automate.CLI.Domain
 
         public PatternDefinition Pattern { get; }
 
-        public List<CodeTemplateFile> CodeTemplateFiles { get; private set; }
+        public IReadOnlyList<CodeTemplateFile> CodeTemplateFiles => this.codeTemplateFiles;
 
         public PersistableProperties Dehydrate()
         {
@@ -49,7 +51,7 @@ namespace Automate.CLI.Domain
 
         public void AddCodeTemplateFiles(List<CodeTemplateFile> files)
         {
-            CodeTemplateFiles = files;
+            this.codeTemplateFiles = files;
         }
 
         public string Id { get; }

@@ -13,20 +13,20 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
-            element3.Attributes.Add(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
+            element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
             var collection3 = new Element("acollectionname3", isCollection: true);
             var element2 = new Element("anelementname2");
-            element2.Attributes.Add(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
+            element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
             var collection2 = new Element("acollectionname2", isCollection: true);
             var element1 = new Element("anelementname1");
-            element1.Attributes.Add(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
+            element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
             var collection1 = new Element("acollectionname1", isCollection: true);
-            element2.Elements.Add(element3);
-            element2.Elements.Add(collection3);
-            pattern.Elements.Add(element1);
-            pattern.Elements.Add(collection1);
-            pattern.Elements.Add(element2);
-            pattern.Elements.Add(collection2);
+            element2.AddElement(element3);
+            element2.AddElement(collection3);
+            pattern.AddElement(element1);
+            pattern.AddElement(collection1);
+            pattern.AddElement(element2);
+            pattern.AddElement(collection2);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             solution.Name.Should().Match("apatternname???");
@@ -74,7 +74,7 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            pattern.Automation.Add(automation);
+            pattern.AddAutomation(automation);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
 
             var pairs = solution.FindByAutomation(automation.Id);
@@ -90,12 +90,12 @@ namespace CLI.UnitTests.Domain
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            element3.Automation.Add(automation);
+            element3.AddAutomation(automation);
             var element2 = new Element("anelementname2");
-            element2.Elements.Add(element3);
+            element2.AddElement(element3);
             var element1 = new Element("anelementname1");
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -114,12 +114,12 @@ namespace CLI.UnitTests.Domain
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", isCollection: true);
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            collection1.Automation.Add(automation);
+            collection1.AddAutomation(automation);
             var element2 = new Element("anelementname2");
-            element2.Elements.Add(collection1);
+            element2.AddElement(collection1);
             var element1 = new Element("anelementname1");
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -139,9 +139,9 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", isCollection: true);
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
-            element1.Automation.Add(automation);
-            collection1.Elements.Add(element1);
-            pattern.Elements.Add(collection1);
+            element1.AddAutomation(automation);
+            collection1.AddElement(element1);
+            pattern.AddElement(collection1);
 
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
@@ -161,9 +161,9 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", isCollection: true);
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
-            element1.Automation.Add(automation);
-            collection1.Elements.Add(element1);
-            pattern.Elements.Add(collection1);
+            element1.AddAutomation(automation);
+            collection1.AddElement(element1);
+            pattern.AddElement(collection1);
 
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
@@ -192,12 +192,12 @@ namespace CLI.UnitTests.Domain
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            element3.Automation.Add(automation);
+            element3.AddAutomation(automation);
             var element2 = new Element("anelementname2");
-            element2.Elements.Add(element3);
+            element2.AddElement(element3);
             var element1 = new Element("anelementname1");
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
 
@@ -211,19 +211,19 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var attribute1 = new Attribute("anattributename1", defaultValue: "adefaultvalue");
-            pattern.Attributes.Add(attribute1);
+            pattern.AddAttribute(attribute1);
             var collection1 = new Element("acollectionname1", isCollection: true);
             var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue");
-            collection1.Attributes.Add(attribute2);
+            collection1.AddAttribute(attribute2);
             var element2 = new Element("anelementname2");
             var attribute3 = new Attribute("anattributename3", defaultValue: "adefaultvalue");
-            element2.Attributes.Add(attribute3);
-            element2.Elements.Add(collection1);
+            element2.AddAttribute(attribute3);
+            element2.AddElement(collection1);
             var element1 = new Element("anelementname1");
             var attribute4 = new Attribute("anattributename4", defaultValue: "adefaultvalue");
-            element1.Attributes.Add(attribute4);
-            element1.Elements.Add(element2);
-            pattern.Elements.Add(element1);
+            element1.AddAttribute(attribute4);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -251,15 +251,15 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var attribute1 = new Attribute("anattributename1", defaultValue: "adefaultvalue");
-            pattern.Attributes.Add(attribute1);
+            pattern.AddAttribute(attribute1);
             var collection1 = new Element("acollectionname1", isCollection: true);
             var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue");
-            collection1.Attributes.Add(attribute2);
+            collection1.AddAttribute(attribute2);
             var element1 = new Element("anelementname1");
             var attribute3 = new Attribute("anattributename3", defaultValue: "adefaultvalue");
-            element1.Attributes.Add(attribute3);
-            collection1.Elements.Add(element1);
-            pattern.Elements.Add(collection1);
+            element1.AddAttribute(attribute3);
+            collection1.AddElement(element1);
+            pattern.AddElement(collection1);
 
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
             solution.Model.Properties["acollectionname1"].MaterialiseCollectionItem();

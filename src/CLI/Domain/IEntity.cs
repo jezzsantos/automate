@@ -8,9 +8,9 @@ namespace Automate.CLI.Domain
 
     internal interface IAutomationContainer
     {
-        List<CodeTemplate> CodeTemplates { get; }
+        IReadOnlyList<CodeTemplate> CodeTemplates { get; }
 
-        List<Automation> Automation { get; }
+        IReadOnlyList<Automation> Automation { get; }
     }
 
     internal interface IAutomation : INamedEntity
@@ -20,12 +20,12 @@ namespace Automate.CLI.Domain
 
     internal interface IElementContainer
     {
-        List<Element> Elements { get; }
+        IReadOnlyList<Element> Elements { get; }
     }
 
     internal interface IAttributeContainer
     {
-        List<Attribute> Attributes { get; }
+        IReadOnlyList<Attribute> Attributes { get; }
     }
 
     internal interface IPatternElement : INamedEntity, ICustomizableEntity, IElementContainer, IAttributeContainer,
