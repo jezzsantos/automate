@@ -5,7 +5,7 @@ namespace Automate.CLI.Application
 {
     internal interface ISolutionStore
     {
-        SolutionDefinition Create(ToolkitDefinition toolkit, string name);
+        SolutionDefinition Create(SolutionDefinition solution);
 
         void Save(SolutionDefinition solution);
 

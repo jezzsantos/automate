@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
@@ -66,6 +65,11 @@ namespace Automate.CLI.Application
             return toolkit;
         }
 
+        public List<ToolkitDefinition> ListInstalledToolkits()
+        {
+            return this.toolkitStore.ListAll();
+        }
+
         public SolutionDefinition CreateSolution(string toolkitName, string solutionName)
         {
             var toolkit = this.toolkitStore.FindByName(toolkitName);
@@ -74,12 +78,9 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
-            return this.solutionStore.Create(toolkit, solutionName);
-        }
+            var solution = new SolutionDefinition(toolkit, solutionName);
 
-        public List<ToolkitDefinition> ListInstalledToolkits()
-        {
-            return this.toolkitStore.ListAll();
+            return this.solutionStore.Create(solution);
         }
 
         public List<SolutionDefinition> ListCreatedSolutions()
@@ -90,14 +91,14 @@ namespace Automate.CLI.Application
         public void SwitchCurrentSolution(string solutionId)
         {
             solutionId.GuardAgainstNullOrEmpty(nameof(solutionId));
+
             this.solutionStore.ChangeCurrent(solutionId);
         }
 
         public SolutionItem ConfigureSolution(string addElementExpression,
-            string addToCollectionExpression, string onElementExpression, List<string> propertyAssignments)
+            string addToCollectionExpression, string onElementExpression, Dictionary<string, string> propertyAssignments)
         {
-            VerifyCurrentSolutionExists();
-            var solution = this.solutionStore.GetCurrent();
+            var solution = EnsureCurrentSolutionExists();
 
             if (!addElementExpression.HasValue() && !addToCollectionExpression.HasValue()
                                                  && !onElementExpression.HasValue()
@@ -129,13 +130,77 @@ namespace Automate.CLI.Application
                         solution.Id, onElementExpression, addToCollectionExpression));
             }
 
+            var target = ResolveTargetItem(solution, addElementExpression, addToCollectionExpression, onElementExpression);
             if (propertyAssignments.Safe().Any())
             {
-                propertyAssignments.ForEach(pa => pa.GuardAgainstInvalid(IsValidAssignment,
-                    nameof(propertyAssignments),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid, solution.Id));
+                target.SetProperties(propertyAssignments);
             }
 
+            this.solutionStore.Save(solution);
+
+            return target;
+        }
+
+        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation) GetConfiguration(bool includeSchema, bool includeValidationResults)
+        {
+            var solution = EnsureCurrentSolutionExists();
+
+            var validation = includeValidationResults
+                ? Validate(null)
+                : ValidationResults.None;
+
+            var schema = includeSchema
+                ? solution.Toolkit.Pattern
+                : null;
+
+            return (solution.GetConfiguration(), schema, validation);
+        }
+
+        public ValidationResults Validate(string itemExpression)
+        {
+            var solution = EnsureCurrentSolutionExists();
+            var target = ResolveTargetItem(solution, itemExpression);
+
+            return target.Validate(new ValidationContext());
+        }
+
+        public CommandExecutionResult ExecuteLaunchPoint(string name, string itemExpression)
+        {
+            var solution = EnsureCurrentSolutionExists();
+            var target = ResolveTargetItem(solution, itemExpression);
+
+            var validationResults = solution.Validate(new ValidationContext());
+            if (validationResults.Any())
+            {
+                return new CommandExecutionResult(name, validationResults);
+            }
+
+            var result = target.ExecuteCommand(solution, name);
+            this.solutionStore.Save(solution);
+
+            return result;
+        }
+
+        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string itemExpression)
+        {
+            var target = solution.Model;
+            if (itemExpression.HasValue())
+            {
+                var solutionItem = this.solutionPathResolver.ResolveItem(solution, itemExpression);
+                if (solutionItem.NotExists())
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(solution.PatternName,
+                            itemExpression));
+                }
+                target = solutionItem;
+            }
+
+            return target;
+        }
+
+        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string addElementExpression, string addToCollectionExpression, string onElementExpression)
+        {
             var target = solution.Model;
             if (addElementExpression.HasValue())
             {
@@ -143,7 +208,7 @@ namespace Automate.CLI.Application
                 if (solutionItem.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                             solution.PatternName,
                             addElementExpression));
                 }
@@ -164,7 +229,7 @@ namespace Automate.CLI.Application
                 if (collection.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                             solution.PatternName,
                             addToCollectionExpression));
                 }
@@ -178,7 +243,7 @@ namespace Automate.CLI.Application
                 if (solutionItem.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                             solution.PatternName,
                             onElementExpression));
                 }
@@ -192,137 +257,18 @@ namespace Automate.CLI.Application
 
                 target = solutionItem;
             }
-
-            if (propertyAssignments.Safe().Any())
-            {
-                var nameValues =
-                    propertyAssignments
-                        .Select(ParseAssignment)
-                        .ToDictionary(pair => pair.Name, pair => pair.Value);
-                foreach (var (name, value) in nameValues)
-                {
-                    if (!target!.HasAttribute(name))
-                    {
-                        throw new AutomateException(
-                            ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyNotExists.Format(
-                                target.Name, name));
-                    }
-
-                    var property = target.GetProperty(name);
-                    if (property.IsChoice)
-                    {
-                        if (!property.HasChoice(value))
-                        {
-                            throw new AutomateException(
-                                ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf
-                                    .Format(
-                                        target.Name, name, property.ChoiceValues.Join(";"), value));
-                        }
-                    }
-                    else
-                    {
-                        if (!property.DataTypeMatches(value))
-                        {
-                            throw new AutomateException(
-                                ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible
-                                    .Format(
-                                        target.Name, name, property.DataType, value));
-                        }
-                    }
-
-                    property.SetProperty(value);
-                }
-            }
-
-            this.solutionStore.Save(solution);
-
             return target;
         }
 
-        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation) GetConfiguration(bool includeSchema, bool includeValidationResults)
+        private SolutionDefinition EnsureCurrentSolutionExists()
         {
-            VerifyCurrentSolutionExists();
             var solution = this.solutionStore.GetCurrent();
-            var validation = includeValidationResults
-                ? Validate(null)
-                : ValidationResults.None;
-            var schema = includeSchema
-                ? solution.Toolkit.Pattern
-                : null;
-
-            return (solution.GetConfiguration(), schema, validation);
-        }
-
-        public ValidationResults Validate(string elementExpression)
-        {
-            VerifyCurrentSolutionExists();
-            var solution = this.solutionStore.GetCurrent();
-
-            var target = solution.Model;
-            if (elementExpression.HasValue())
-            {
-                var solutionItem = this.solutionPathResolver.ResolveItem(solution, elementExpression);
-                if (solutionItem.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(solution.PatternName,
-                            elementExpression));
-                }
-                target = solutionItem;
-            }
-
-            return target.Validate(new ValidationContext());
-        }
-
-        public CommandExecutionResult ExecuteLaunchPoint(string name, string elementExpression)
-        {
-            VerifyCurrentSolutionExists();
-            var solution = this.solutionStore.GetCurrent();
-
-            var target = solution.Model;
-            if (elementExpression.HasValue())
-            {
-                var solutionItem = this.solutionPathResolver.ResolveItem(solution, elementExpression);
-                if (solutionItem.NotExists())
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(solution.PatternName,
-                            elementExpression));
-                }
-                target = solutionItem;
-            }
-
-            var validationResults = solution.Model.Validate(new ValidationContext());
-            if (validationResults.Any())
-            {
-                return new CommandExecutionResult(name, validationResults);
-            }
-
-            var result = target.ExecuteCommand(solution, name);
-            this.solutionStore.Save(solution);
-
-            return result;
-        }
-
-        private void VerifyCurrentSolutionExists()
-        {
-            if (this.solutionStore.GetCurrent().NotExists())
+            if (solution.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
             }
-        }
 
-        private static bool IsValidAssignment(string assignment)
-        {
-            const string propertyNameExpression = @"[\w]+";
-            const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
-            return Regex.IsMatch(assignment, $"({propertyNameExpression})[=]{{1}}({propertyValueExpression})");
-        }
-
-        private static (string Name, string Value) ParseAssignment(string expression)
-        {
-            var parts = expression.Split('=');
-            return (parts.First(), parts.Last());
+            return solution;
         }
     }
 }

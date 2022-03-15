@@ -398,6 +398,46 @@ namespace Automate.CLI.Domain
             Parent = parent;
         }
 
+        public void SetProperties(Dictionary<string, string> propertyAssignments)
+        {
+            propertyAssignments.GuardAgainstNull(nameof(propertyAssignments));
+
+            foreach (var (name, value) in propertyAssignments)
+            {
+                var assignment = $"{name}={value}";
+                assignment.GuardAgainstInvalid(_ => Validations.IsPropertyAssignment(name, value), nameof(assignment),
+                    ExceptionMessages.SolutionItem_ConfigureSolution_PropertyAssignmentInvalid, name, Id);
+
+                if (!HasAttribute(name))
+                {
+                    throw new AutomateException(
+                        ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyNotExists.Format(Name, name));
+                }
+
+                var property = GetProperty(name);
+                if (property.IsChoice)
+                {
+                    if (!property.HasChoice(value))
+                    {
+                        throw new AutomateException(
+                            ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf
+                                .Format(Name, name, property.ChoiceValues.Join(";"), value));
+                    }
+                }
+                else
+                {
+                    if (!property.DataTypeMatches(value))
+                    {
+                        throw new AutomateException(
+                            ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible
+                                .Format(Name, name, property.DataType, value));
+                    }
+                }
+
+                property.SetProperty(value);
+            }
+        }
+
         public string Id { get; }
 
         private Automation GetAutomationByName(string name)

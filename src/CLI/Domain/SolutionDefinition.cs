@@ -187,6 +187,11 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public ValidationResults Validate(ValidationContext context)
+        {
+            return Model.Validate(context);
+        }
+
         public string Id { get; }
 
         public string Name { get; }

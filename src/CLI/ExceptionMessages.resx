@@ -141,10 +141,10 @@
     <data name="RuntimeApplication_ConfigureSolution_NoChanges" xml:space="preserve">
         <value>Tried to configure solution ID: '{0}' without any changes to any elements or collections</value>
     </data>
-    <data name="RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
-        <value>Tried to configure solution ID: '{1}' but contains invalid assignment: '{0}'</value>
+    <data name="SolutionItem_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
+        <value>Tried to configure property: '{1}' (on element: '{2}') but contains invalid assignment: '{0}'</value>
     </data>
-    <data name="RuntimeApplication_ElementExpressionNotFound" xml:space="preserve">
+    <data name="RuntimeApplication_ItemExpressionNotFound" xml:space="preserve">
         <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
     </data>
     <data name="RuntimeApplication_ConfigureSolution_AddElementExists" xml:space="preserve">
@@ -153,13 +153,13 @@
     <data name="RuntimeApplication_ConfigureSolution_OnElementNotExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') has not been created yet, and cannot be configured</value>
     </data>
-    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
+    <data name="SolutionItem_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') does not have a property called: '{1}'</value>
     </data>
-    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf" xml:space="preserve">
+    <data name="SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf" xml:space="preserve">
         <value>The property: '{1}' (on element: '{0}') can only have one of these values: '{2}', it cannot be: '{3}'</value>
     </data>
-    <data name="RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible" xml:space="preserve">
+    <data name="SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible" xml:space="preserve">
         <value>The property: '{1}' (on element: '{0}') is of type: '{2}', and cannot accept value: '{3}'</value>
     </data>
     <data name="SolutionPathResolver_InvalidExpression" xml:space="preserve">

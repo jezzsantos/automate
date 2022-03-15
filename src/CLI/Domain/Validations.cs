@@ -36,5 +36,12 @@ namespace Automate.CLI.Domain
         {
             return Regex.IsMatch(path, @"^[~]{0,1}[\/\\\._ A-Za-z0-9\(\)\{\}]+$");
         }
+
+        public static bool IsPropertyAssignment(string name, string value)
+        {
+            const string propertyNameExpression = @"[\w]+";
+            const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
+            return Regex.IsMatch(name, propertyNameExpression) && Regex.IsMatch(value, propertyValueExpression);
+        }
     }
 }

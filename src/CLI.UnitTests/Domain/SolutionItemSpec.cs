@@ -638,5 +638,122 @@ namespace CLI.UnitTests.Domain
             result.Log.Should().ContainSingle("testingonly");
             result.ValidationErrors.Should().BeEmpty();
         }
+
+        [Fact]
+        public void WhenSetPropertiesAndAnyPropertyLeftHandSideOfAssigmentInvalid_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.SetProperties(new Dictionary<string, string>
+                {
+                    { "notavalidpropertyassignment", "" }
+                }))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ExceptionMessages.SolutionItem_ConfigureSolution_PropertyAssignmentInvalid.Format(
+                        "notavalidpropertyassignment=", "notavalidpropertyassignment", solutionItem.Id) + "*");
+        }
+
+        [Fact]
+        public void WhenSetPropertiesAndAnyPropertyRightHandSideOfAssigmentInvalid_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.SetProperties(new Dictionary<string, string>
+                {
+                    { "", "notavalidpropertyassignment" }
+                }))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(
+                    ExceptionMessages.SolutionItem_ConfigureSolution_PropertyAssignmentInvalid.Format(
+                        "=notavalidpropertyassignment", "", solutionItem.Id) + "*");
+        }
+
+        [Fact]
+        public void WhenSetPropertiesWithUnknownProperty_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.SetProperties(new Dictionary<string, string>
+                {
+                    { "anunknownattribute", "avalue" }
+                }))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyNotExists.Format("apatternname", "anunknownattribute"));
+        }
+
+        [Fact]
+        public void WhenSetPropertiesWithWithPropertyOfWrongChoice_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.SetProperties(new Dictionary<string, string>
+                {
+                    { "anattributename", "awrongvalue" }
+                }))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf.Format("apatternname", "anattributename", new List<string> { "avalue" }.Join(";"), "awrongvalue"));
+        }
+
+        [Fact]
+        public void WhenSetPropertiesWithPropertyOfWrongDataType_ThenThrows()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.AddAttribute(new Attribute("anattributename", "int"));
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem
+                .Invoking(x => x.SetProperties(new Dictionary<string, string>
+                {
+                    { "anattributename", "astring" }
+                }))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible.Format("apatternname", "anattributename", "int", "astring"));
+        }
+
+        [Fact]
+        public void WhenSetPropertiesAndPropertyChoice_ThenUpdatesProperties()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem.SetProperties(new Dictionary<string, string>
+            {
+                { "anattributename", "avalue" }
+            });
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
+        }
+
+        [Fact]
+        public void WhenSetProperties_ThenUpdatesProperties()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.AddAttribute(new Attribute("anattributename1"));
+            pattern.AddAttribute(new Attribute("anattributename2"));
+            pattern.AddAttribute(new Attribute("anattributename3"));
+            var solutionItem = new SolutionItem(pattern);
+
+            solutionItem.SetProperties(new Dictionary<string, string>
+            {
+                { "anattributename1", "avalue1" },
+                { "anattributename2", "avalue2" },
+                { "anattributename3", "avalue3" }
+            });
+
+            solutionItem.Properties["anattributename1"].Value.Should().Be("avalue1");
+            solutionItem.Properties["anattributename2"].Value.Should().Be("avalue2");
+            solutionItem.Properties["anattributename3"].Value.Should().Be("avalue3");
+        }
     }
 }

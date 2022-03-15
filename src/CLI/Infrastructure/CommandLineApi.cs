@@ -650,7 +650,11 @@ namespace Automate.CLI.Infrastructure
                     sets.AddRange(andSet);
                 }
 
-                var solutionItem = Runtime.ConfigureSolution(expression, null, null, sets);
+                var nameValues = sets
+                    .Select(ParsePropertyAssignment)
+                    .ToDictionary(pair => pair.Name, pair => pair.Value);
+
+                var solutionItem = Runtime.ConfigureSolution(expression, null, null, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
             }
 
@@ -661,8 +665,11 @@ namespace Automate.CLI.Infrastructure
                 {
                     sets.AddRange(andSet);
                 }
+                var nameValues = sets
+                    .Select(ParsePropertyAssignment)
+                    .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var solutionItem = Runtime.ConfigureSolution(null, expression, null, sets);
+                var solutionItem = Runtime.ConfigureSolution(null, expression, null, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
             }
 
@@ -673,8 +680,11 @@ namespace Automate.CLI.Infrastructure
                 {
                     sets.AddRange(andSet);
                 }
+                var nameValues = sets
+                    .Select(ParsePropertyAssignment)
+                    .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var solutionItem = Runtime.ConfigureSolution(null, null, expression, sets);
+                var solutionItem = Runtime.ConfigureSolution(null, null, expression, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
             }
 
@@ -768,6 +778,12 @@ namespace Automate.CLI.Infrastructure
                     .ForEach(item => { builder.AppendLine($"* {item}"); });
 
                 return builder.ToString();
+            }
+
+            private static (string Name, string Value) ParsePropertyAssignment(string expression)
+            {
+                var parts = expression.Split('=');
+                return (parts.First(), parts.Last());
             }
         }
     }

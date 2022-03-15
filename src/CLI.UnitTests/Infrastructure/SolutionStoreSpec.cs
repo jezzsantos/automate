@@ -69,7 +69,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenCreate_ThenReturnsSolutionAsCurrent()
         {
-            var result = this.store.Create(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"), "aname");
+            var result = this.store.Create(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"), "aname"));
 
             this.repository.ListSolutions().Single().Id.Should().Be(result.Id);
             this.repository.GetLocalState().CurrentSolution.Should().Be(result.Id);

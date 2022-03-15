@@ -8,7 +8,6 @@ using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Moq;
-using ServiceStack;
 using Xunit;
 using Attribute = Automate.CLI.Domain.Attribute;
 
@@ -138,7 +137,7 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionAndCurrentSolutionNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ConfigureSolution(null, null, null, new List<string>()))
+                .Invoking(x => x.ConfigureSolution(null, null, null, new Dictionary<string, string>()))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
         }
@@ -196,22 +195,6 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndAnyPropertyAssigmentInvalid_ThenThrows()
-        {
-            var solution = this.application.CreateSolution("apatternname", null);
-
-            this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, new List<string>
-                {
-                    "notavalidpropertyassignment"
-                }))
-                .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid.Format(
-                        "notavalidpropertyassignment", solution.Id) + "*");
-        }
-
-        [Fact]
         public void WhenConfigureSolutionAndAddElementButUnknown_ThenThrows()
         {
             this.application.CreateSolution("apatternname", null);
@@ -222,7 +205,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                    ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                         "apatternname", "anelementexpression"));
         }
 
@@ -251,7 +234,7 @@ namespace CLI.UnitTests.Application
             var solution = this.application.CreateSolution("apatternname", null);
 
             var result = this.application.ConfigureSolution(null, null, null,
-                new List<string> { "anattributename=avalue" });
+                new Dictionary<string, string> { { "anattributename", "avalue" } });
 
             result.Id.Should().NotBeNull();
             solution.Model.Properties["anattributename"].Value.Should().Be("avalue");
@@ -280,7 +263,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.ConfigureSolution(null, "acollectionexpression", null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                    ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                         "apatternname", "acollectionexpression"));
         }
 
@@ -308,7 +291,7 @@ namespace CLI.UnitTests.Application
                 .Invoking(x => x.ConfigureSolution(null, null, "anelementexpression", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format(
+                    ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
                         "apatternname", "anelementexpression"));
         }
 
@@ -328,90 +311,6 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithUnknownProperty_ThenThrows()
-        {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname"), null));
-
-            this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, null,
-                    new List<string> { "anunknownname=avalue" }))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyNotExists.Format(
-                        "anelementname", "anunknownname"));
-        }
-
-        [Fact]
-        public void WhenConfigureSolutionWithWithPropertyOfWrongChoice_ThenThrows()
-        {
-            var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
-            var element = new Element("anelementname");
-            element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"];
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
-
-            this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, null,
-                    new List<string> { "anattributename=awrongvalue" }))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf.Format(
-                        "anelementname", "anattributename", new List<string> { "avalue" }.Join(";"), "awrongvalue"));
-        }
-
-        [Fact]
-        public void WhenConfigureSolutionWithPropertyOfWrongDataType_ThenThrows()
-        {
-            var attribute = new Attribute("anattributename", "int");
-            var element = new Element("anelementname");
-            element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"];
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
-
-            this.application
-                .Invoking(x =>
-                    x.ConfigureSolution("anelementexpression", null, null,
-                        new List<string> { "anattributename=astring" }))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible.Format(
-                        "anelementname", "anattributename", "int", "astring"));
-        }
-
-        [Fact]
-        public void WhenConfigureSolutionWithNewElementAndPropertyChoice_ThenReturnsSolution()
-        {
-            var attribute = new Attribute("anattributename", choices: new List<string> { "avalue" });
-            var element = new Element("anelementname");
-            element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"];
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
-
-            var result = this.application.ConfigureSolution("anelementexpression", null, null,
-                new List<string> { "anattributename=avalue" });
-
-            result.Id.Should().Be(solutionItem.Id);
-            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
-        }
-
-        [Fact]
         public void WhenConfigureSolutionWithAddElementAndProperty_ThenReturnsSolution()
         {
             var attribute = new Attribute("anattributename");
@@ -426,7 +325,7 @@ namespace CLI.UnitTests.Application
                 .Returns(solutionItem);
 
             var result = this.application.ConfigureSolution("anelementexpression", null, null,
-                new List<string> { "anattributename=avalue" });
+                new Dictionary<string, string> { { "anattributename", "avalue" } });
 
             result.Id.Should().Be(solutionItem.Id);
             solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
@@ -447,7 +346,7 @@ namespace CLI.UnitTests.Application
                 .Returns(solutionItem);
 
             var result = this.application.ConfigureSolution(null, null, "anelementexpression",
-                new List<string> { "anattributename=avalue" });
+                new Dictionary<string, string> { { "anattributename", "avalue" } });
 
             result.Id.Should().Be(solutionItem.Id);
             solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
@@ -559,7 +458,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.Validate("anelementexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format("apatternname", "anelementexpression"));
+                .WithMessage(ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname", "anelementexpression"));
         }
 
         [Fact]
@@ -631,7 +530,7 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.ExecuteLaunchPoint("acommandname", "anelementexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_ElementExpressionNotFound.Format("apatternname", "anelementexpression"));
+                .WithMessage(ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname", "anelementexpression"));
         }
 
         [Fact]

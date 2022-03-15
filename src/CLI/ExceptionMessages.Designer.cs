@@ -421,33 +421,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
-        /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyNotExists {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyNotExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) can only have one of these values: &apos;{2}&apos;, it cannot be: &apos;{3}&apos;.
-        /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyValueIsNotOneOf", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) is of type: &apos;{2}&apos;, and cannot accept value: &apos;{3}&apos;.
-        /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_ElementPropertyValueNotCompatible", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes to any elements or collections.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_NoChanges {
@@ -484,20 +457,11 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{1}&apos; but contains invalid assignment: &apos;{0}&apos;.
-        /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_PropertyAssignmentInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
         /// </summary>
-        internal static string RuntimeApplication_ElementExpressionNotFound {
+        internal static string RuntimeApplication_ItemExpressionNotFound {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ElementExpressionNotFound", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ItemExpressionNotFound", resourceCulture);
             }
         }
         
@@ -543,6 +507,42 @@ namespace Automate.CLI {
         internal static string SolutionItem_ConfigurationForNonElement {
             get {
                 return ResourceManager.GetString("SolutionItem_ConfigurationForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
+        /// </summary>
+        internal static string SolutionItem_ConfigureSolution_ElementPropertyNotExists {
+            get {
+                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) can only have one of these values: &apos;{2}&apos;, it cannot be: &apos;{3}&apos;.
+        /// </summary>
+        internal static string SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf {
+            get {
+                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) is of type: &apos;{2}&apos;, and cannot accept value: &apos;{3}&apos;.
+        /// </summary>
+        internal static string SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible {
+            get {
+                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure property: &apos;{1}&apos; (on element: &apos;{2}&apos;) but contains invalid assignment: &apos;{0}&apos;.
+        /// </summary>
+        internal static string SolutionItem_ConfigureSolution_PropertyAssignmentInvalid {
+            get {
+                return ResourceManager.GetString("SolutionItem_ConfigureSolution_PropertyAssignmentInvalid", resourceCulture);
             }
         }
         
