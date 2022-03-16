@@ -32,6 +32,11 @@ namespace Automate.CLI.Extensions
             return !string.IsNullOrEmpty(value);
         }
 
+        public static bool HasNoValue(this string value)
+        {
+            return !value.HasValue();
+        }
+
         public static bool EqualsOrdinal(this string value, string other)
         {
             return string.Equals(value, other, StringComparison.Ordinal);

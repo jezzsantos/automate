@@ -8,6 +8,13 @@ namespace Automate.CLI.Extensions
 {
     internal static class CollectionExtensions
     {
+        public static string ToMultiLineText<T>(this IEnumerable<T> items, Func<T, string> selector)
+        {
+            return items.Safe()
+                .Select(selector)
+                .SafeJoin(Environment.NewLine);
+        }
+
         public static List<T> ToListSafe<T>(this IEnumerable<T> enumerable)
         {
             return enumerable.Safe().ToList();

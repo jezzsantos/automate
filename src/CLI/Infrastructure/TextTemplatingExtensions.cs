@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Automate.CLI.Extensions;
 using Scriban;
 
@@ -18,8 +17,7 @@ namespace Automate.CLI.Infrastructure
             if (engine.HasErrors)
             {
                 var message = engine.Messages
-                    .Select(msg => $"({msg.Span.Start},{msg.Span.End}): {msg.Message}")
-                    .Join(Environment.NewLine);
+                    .ToMultiLineText(msg => $"({msg.Span.Start},{msg.Span.End}): {msg.Message}");
                 throw new AutomateException(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(description, message));
             }
 

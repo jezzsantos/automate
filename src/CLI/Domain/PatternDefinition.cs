@@ -7,27 +7,25 @@ namespace Automate.CLI.Domain
 {
     internal class PatternDefinition : PatternElement, IValidateable, IPersistable
     {
-        internal static readonly Version DefaultVersionNumber = new Version(0, 0, 0);
-
         public PatternDefinition(string name) : base(name)
         {
             DisplayName = name;
             Description = null;
-            ToolkitVersion = DefaultVersionNumber.ToString(2);
+            ToolkitVersion = new ToolkitVersion();
         }
 
         private PatternDefinition(PersistableProperties properties, IPersistableFactory factory) : base(properties, factory)
         {
             DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
             Description = properties.Rehydrate<string>(factory, nameof(Description));
-            ToolkitVersion = properties.Rehydrate<string>(factory, nameof(ToolkitVersion));
+            ToolkitVersion = properties.Rehydrate<ToolkitVersion>(factory, nameof(ToolkitVersion));
         }
 
         public string DisplayName { get; }
 
         public string Description { get; }
 
-        public string ToolkitVersion { get; private set; }
+        public ToolkitVersion ToolkitVersion { get; private set; }
 
         public override PersistableProperties Dehydrate()
         {
@@ -41,7 +39,10 @@ namespace Automate.CLI.Domain
 
         public static PatternDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
-            return new PatternDefinition(properties, factory);
+            var instance = new PatternDefinition(properties, factory);
+            instance.PopulateAncestry();
+
+            return instance;
         }
 
         public List<CodeTemplate> GetAllCodeTemplates()
@@ -61,7 +62,7 @@ namespace Automate.CLI.Domain
         public SolutionDefinition CreateTestSolution()
         {
             const int maxNumberInstances = 3;
-            var solution = new SolutionDefinition(new ToolkitDefinition(this, new Version(0, 0, 0, 0).ToString(2)));
+            var solution = new SolutionDefinition(new ToolkitDefinition(this));
 
             PopulateDescendants(solution.Model, 1);
 
@@ -93,7 +94,6 @@ namespace Automate.CLI.Domain
                 }
             }
 
-            solution.PopulateAncestry();
             return solution;
 
             void PopulatePatternElement(SolutionItem solutionItem, IPatternElement element, int instanceCountAtThisLevel)
@@ -130,14 +130,29 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void UpdateToolkitVersion(string version)
+        public VersionUpdateResult UpdateToolkitVersion(string versionInstruction)
         {
-            ToolkitVersion = version;
+            return ToolkitVersion.UpdateVersion(versionInstruction);
         }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {
             return ValidationResults.None;
+        }
+
+        private void PopulateAncestry()
+        {
+            PopulateDescendantParents(this, null);
+
+            void PopulateDescendantParents(PatternElement element, PatternElement parent)
+            {
+                element.SetParent(parent);
+                var elements = element.Elements.Safe();
+                foreach (var ele in elements)
+                {
+                    PopulateDescendantParents(ele, element);
+                }
+            }
         }
     }
 }

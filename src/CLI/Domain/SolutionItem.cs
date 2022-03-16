@@ -210,10 +210,7 @@ namespace Automate.CLI.Domain
                 Materialise();
             }
 
-            // We construct a standalone (non-collection) child element from this "ephemeral" collection
-            var standaloneElement = ElementSchema.MakeStandalone();
-            var childElementItem = new SolutionItem(standaloneElement, this);
-            childElementItem.Materialise();
+            var childElementItem = CreateEphemeralCollectionItem();
             this.items.Add(childElementItem);
 
             return childElementItem;
@@ -439,6 +436,15 @@ namespace Automate.CLI.Domain
         }
 
         public string Id { get; }
+
+        private SolutionItem CreateEphemeralCollectionItem()
+        {
+            var standaloneElement = ElementSchema.MakeStandalone();
+            var childElementItem = new SolutionItem(standaloneElement, Parent);
+            childElementItem.Materialise();
+
+            return childElementItem;
+        }
 
         private Automation GetAutomationByName(string name)
         {

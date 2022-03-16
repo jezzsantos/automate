@@ -617,7 +617,7 @@ namespace CLI.UnitTests.Domain
             var solutionItem = new SolutionItem(pattern);
 
             solutionItem
-                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(pattern, "1.0")), "acommandname"))
+                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(pattern)), "acommandname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_UnknownAutomation.Format("acommandname"));
         }
@@ -629,7 +629,7 @@ namespace CLI.UnitTests.Domain
             var pattern = new PatternDefinition("apatternname");
             pattern.AddAutomation(automation);
             var solutionItem = new SolutionItem(pattern);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
 
             var result = solutionItem.ExecuteCommand(solution, "acommandname");
 

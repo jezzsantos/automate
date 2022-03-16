@@ -114,5 +114,51 @@ namespace Automate.CLI.Domain {
                 return ResourceManager.GetString("CommandLaunchPoint_CommandIdFailedExecution", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {0}) was added to element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Attribute_Add {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Attribute_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automation (ID: {0}) was added to element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Automation_Add {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Automation_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate (ID: {0}) was added to element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_CodeTemplate_Add {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_CodeTemplate_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element/Collection (ID: {0}) was added to element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Element_Add {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Element_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos; should represent a change due to non-breaking changes (that have been auto-detected in this toolkit):
+        ///&apos;{1}&apos;.
+        /// </summary>
+        internal static string ToolkitVersion_Warning {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_Warning", resourceCulture);
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace Automate.CLI.Domain
 
             Id = IdGenerator.Create();
             Name = name;
+            Parent = null;
             this.codeTemplates = new List<CodeTemplate>();
             this.automations = new List<Automation>();
             this.attributes = new List<Attribute>();
@@ -35,6 +36,10 @@ namespace Automate.CLI.Domain
             this.codeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
         }
 
+        internal PatternElement Parent { get; private set; }
+
+        private PatternDefinition Pattern => GetRoot();
+
         public virtual PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
@@ -48,24 +53,34 @@ namespace Automate.CLI.Domain
             return properties;
         }
 
-        public void AddElement(Element element)
-        {
-            this.elements.Add(element);
-        }
-
         public void AddAttribute(Attribute attribute)
         {
             this.attributes.Add(attribute);
+            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Attribute_Add.Format(attribute.Id, Id));
+        }
+
+        public void AddElement(Element element)
+        {
+            element.SetParent(this);
+            this.elements.Add(element);
+            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Element_Add.Format(element.Id, Id));
         }
 
         public void AddCodeTemplate(CodeTemplate codeTemplate)
         {
             this.codeTemplates.Add(codeTemplate);
+            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_CodeTemplate_Add.Format(codeTemplate.Id, Id));
         }
 
         public void AddAutomation(Automation automation)
         {
             this.automations.Add(automation);
+            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Automation_Add.Format(automation.Id, Id));
+        }
+
+        public void SetParent(PatternElement parent)
+        {
+            Parent = parent;
         }
 
         public Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices)
@@ -88,7 +103,7 @@ namespace Automate.CLI.Domain
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
-            this.attributes.Add(attribute);
+            AddAttribute(attribute);
 
             return attribute;
         }
@@ -108,7 +123,7 @@ namespace Automate.CLI.Domain
             }
 
             var element = new Element(name, displayName, description, isCollection, cardinality);
-            this.elements.Add(element);
+            AddElement(element);
 
             return element;
         }
@@ -128,7 +143,7 @@ namespace Automate.CLI.Domain
             }
 
             var codeTemplate = new CodeTemplate(templateName, fullPath, extension);
-            this.codeTemplates.Add(codeTemplate);
+            AddCodeTemplate(codeTemplate);
 
             return codeTemplate;
         }
@@ -159,7 +174,7 @@ namespace Automate.CLI.Domain
                 { nameof(CodeTemplateCommand.IsTearOff), isTearOff },
                 { nameof(CodeTemplateCommand.FilePath), filePath }
             });
-            this.automations.Add(automation);
+            AddAutomation(automation);
 
             return automation;
         }
@@ -190,7 +205,7 @@ namespace Automate.CLI.Domain
             {
                 { nameof(CommandLaunchPoint.CommandIds), commandIds.Join(";") }
             });
-            this.automations.Add(automation);
+            AddAutomation(automation);
 
             return automation;
         }
@@ -225,6 +240,24 @@ namespace Automate.CLI.Domain
 
         public IReadOnlyList<Automation> Automation => this.automations;
 
+        private void RecordChange(VersionChange change, string description)
+        {
+            var pattern = Pattern;
+            if (pattern.NotExists())
+            {
+                return;
+            }
+
+            if (this == Pattern)
+            {
+                pattern.ToolkitVersion.RegisterChange(change, description);
+            }
+            else
+            {
+                pattern.RecordChange(change, description);
+            }
+        }
+
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {
             return element.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
@@ -248,6 +281,13 @@ namespace Automate.CLI.Domain
         private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)
         {
             return element.CodeTemplates.Safe().Any(template => template.Name.EqualsIgnoreCase(templateName));
+        }
+
+        private PatternDefinition GetRoot()
+        {
+            return Parent.NotExists()
+                ? this as PatternDefinition
+                : Parent.GetRoot();
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Automate.CLI.Application
 
         public string CurrentPatternName => this.store.GetCurrent()?.Name;
 
-        public string CurrentPatternVersion => this.store.GetCurrent()?.ToolkitVersion;
+        public string CurrentPatternVersion => this.store.GetCurrent()?.ToolkitVersion.Current;
 
         public PatternDefinition GetCurrentPattern()
         {
@@ -275,11 +275,11 @@ namespace Automate.CLI.Application
             }
         }
 
-        public ToolkitPackage PackageToolkit(string version)
+        public ToolkitPackage PackageToolkit(string versionInstruction)
         {
             var pattern = EnsureCurrentPatternExists();
 
-            return this.packager.Pack(pattern, version);
+            return this.packager.Pack(pattern, versionInstruction);
         }
 
         private IPatternElement ResolveTargetElement(PatternDefinition pattern, string parentExpression)

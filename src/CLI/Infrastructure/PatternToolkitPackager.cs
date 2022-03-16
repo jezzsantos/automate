@@ -8,8 +8,6 @@ namespace Automate.CLI.Infrastructure
 {
     internal class PatternToolkitPackager : IPatternToolkitPackager
     {
-        private const int VersionFieldCount = 3;
-        public const string AutoIncrementInstruction = "auto";
         private readonly IPatternStore store;
         private readonly IToolkitStore toolkitStore;
 
@@ -24,19 +22,25 @@ namespace Automate.CLI.Infrastructure
 
         public ToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
         {
-            var newVersion = UpdateToolkitVersion(pattern, versionInstruction);
+            pattern.GuardAgainstNull(nameof(pattern));
 
-            var toolkit = new ToolkitDefinition(pattern, newVersion);
+            var version = pattern.UpdateToolkitVersion(versionInstruction);
+
+            this.store.Save(pattern);
+
+            var toolkit = new ToolkitDefinition(pattern, new Version(version.Version));
 
             PackageAssets(toolkit);
 
             var location = this.toolkitStore.Export(toolkit);
 
-            return new ToolkitPackage(toolkit, location);
+            return new ToolkitPackage(toolkit, location, version.Message);
         }
 
         public ToolkitDefinition UnPack(IFile installer)
         {
+            installer.GuardAgainstNull(nameof(installer));
+            
             var toolkit = UnpackToolkit(installer);
 
             //TODO: we will need to worry about existing versions of this toolkit, and existing products created from them  
@@ -91,44 +95,5 @@ namespace Automate.CLI.Infrastructure
                     .ToList());
         }
 
-        private string UpdateToolkitVersion(PatternDefinition pattern, string versionInstruction)
-        {
-            var currentVersion = Version.Parse(pattern.ToolkitVersion.HasValue()
-                ? pattern.ToolkitVersion
-                : PatternDefinition.DefaultVersionNumber.ToString(VersionFieldCount));
-            var newVersion = CalculatePackageVersion(currentVersion, versionInstruction).ToString(VersionFieldCount);
-
-            pattern.UpdateToolkitVersion(newVersion);
-            this.store.Save(pattern);
-
-            return newVersion;
-        }
-
-        private static Version CalculatePackageVersion(Version currentVersion, string versionInstruction)
-        {
-            if (!versionInstruction.HasValue())
-            {
-                return currentVersion.NextMajor();
-            }
-
-            if (versionInstruction.EqualsIgnoreCase(AutoIncrementInstruction))
-            {
-                return currentVersion.NextMajor();
-            }
-
-            if (Version.TryParse(versionInstruction, out var requestedVersion))
-            {
-                if (requestedVersion < currentVersion)
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.PatternToolkitPackager_VersionBeforeCurrent.Format(versionInstruction,
-                            currentVersion.ToString(VersionFieldCount)));
-                }
-                return new Version(requestedVersion.Major, requestedVersion.Minor, requestedVersion.ZeroBuild());
-            }
-
-            throw new AutomateException(
-                ExceptionMessages.PatternToolkitPackager_InvalidVersionInstruction.Format(versionInstruction));
-        }
     }
 }

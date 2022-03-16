@@ -38,7 +38,7 @@ namespace CLI.UnitTests.Application
             this.application =
                 new RuntimeApplication(this.toolkitStore, this.solutionStore, this.fileResolver.Object,
                     this.packager.Object, this.solutionPathResolver.Object);
-            this.toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0");
+            this.toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
             this.toolkitStore.Import(this.toolkit);
         }
 
@@ -573,7 +573,7 @@ namespace CLI.UnitTests.Application
         private void UpdateToolkit(PatternDefinition pattern)
         {
             this.toolkitStore.DestroyAll();
-            this.toolkitStore.Import(new ToolkitDefinition(pattern, "1.0"));
+            this.toolkitStore.Import(new ToolkitDefinition(pattern));
         }
     }
 }

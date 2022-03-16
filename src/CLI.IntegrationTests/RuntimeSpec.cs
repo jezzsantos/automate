@@ -53,7 +53,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "1.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "0.1.0"));
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "1.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "0.1.0"));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace CLI.IntegrationTests
         {
             BuildAndInstallToolkit();
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var locationV2 = Path.Combine(desktopFolder, "APattern_2.0.toolkit");
+            var locationV2 = Path.Combine(desktopFolder, "APattern_0.2.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
@@ -82,7 +82,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "2.0.0"));
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "0.2.0"));
         }
 
         [Fact]
@@ -562,7 +562,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
             var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_1.0.toolkit");
+            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();

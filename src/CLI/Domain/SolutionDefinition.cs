@@ -46,7 +46,9 @@ namespace Automate.CLI.Domain
 
         public static SolutionDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
-            return new SolutionDefinition(properties, factory);
+            var instance = new SolutionDefinition(properties, factory);
+            instance.PopulateAncestry();
+            return instance;
         }
 
         public string GetConfiguration()
@@ -166,7 +168,16 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void PopulateAncestry()
+        public ValidationResults Validate(ValidationContext context)
+        {
+            return Model.Validate(context);
+        }
+
+        public string Id { get; }
+
+        public string Name { get; }
+
+        private void PopulateAncestry()
         {
             PopulateDescendantParents(Model, null);
 
@@ -186,15 +197,6 @@ namespace Automate.CLI.Domain
                 }
             }
         }
-
-        public ValidationResults Validate(ValidationContext context)
-        {
-            return Model.Validate(context);
-        }
-
-        public string Id { get; }
-
-        public string Name { get; }
 
         private static string GetRandomNumber()
         {

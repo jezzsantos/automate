@@ -135,7 +135,7 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("toolkit", "Builds a pattern into a toolkit")
                 {
-                    new Option("--versionas", "A specific version number, or 'auto' to auto-increment the current version",
+                    new Option("--asversion", "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
                         typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
@@ -362,11 +362,15 @@ namespace Automate.CLI.Infrastructure
         {
             private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
 
-            internal static void HandleBuild(string versionas, bool outputStructured, IConsole console)
+            internal static void HandleBuild(string asversion, bool outputStructured, IConsole console)
             {
-                var package = Authoring.PackageToolkit(versionas);
+                var package = Authoring.PackageToolkit(asversion);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
                     package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
+                if (package.Message.HasValue())
+                {
+                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning, package.Message);
+                }
             }
 
             internal static void HandleAddCodeTemplateCommand(string codeTemplateName, string name, bool asTearOff,
@@ -605,8 +609,8 @@ namespace Automate.CLI.Infrastructure
                 if (toolkits.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
-                        toolkits.Select(toolkit =>
-                            $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}" + Environment.NewLine).Join());
+                        toolkits.ToMultiLineText(toolkit =>
+                            $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
                 }
                 else
                 {
@@ -626,8 +630,8 @@ namespace Automate.CLI.Infrastructure
                 if (solutions.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
-                        solutions.Select(solution =>
-                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}" + Environment.NewLine).Join());
+                        solutions.ToMultiLineText(solution =>
+                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}"));
                 }
                 else
                 {

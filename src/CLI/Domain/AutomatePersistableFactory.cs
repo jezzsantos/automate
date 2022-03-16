@@ -66,6 +66,14 @@ namespace Automate.CLI.Domain
             {
                 return LocalState.Rehydrate(properties, this);
             }
+            if (persistableType == typeof(ToolkitVersion))
+            {
+                return ToolkitVersion.Rehydrate(properties, this);
+            }
+            if (persistableType == typeof(VersionChangeLog))
+            {
+                return VersionChangeLog.Rehydrate(properties, this);
+            }
 
             throw new AutomateException($"Tried to Rehydrate an unknown persistable type '{persistableType}'");
         }

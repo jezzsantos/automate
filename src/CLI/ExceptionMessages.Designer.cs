@@ -313,24 +313,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, is not a valid 2-dot version number.
-        /// </summary>
-        internal static string PatternToolkitPackager_InvalidVersionInstruction {
-            get {
-                return ResourceManager.GetString("PatternToolkitPackager_InvalidVersionInstruction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, cannot be before the current toolkit version number: &apos;{1}&apos;.
-        /// </summary>
-        internal static string PatternToolkitPackager_VersionBeforeCurrent {
-            get {
-                return ResourceManager.GetString("PatternToolkitPackager_VersionBeforeCurrent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An attempt to deserialize empty JSON.
         /// </summary>
         internal static string PersistableExtensions_FromJson_NoJson {
@@ -671,6 +653,43 @@ namespace Automate.CLI {
         internal static string ToolkitStore_NotFoundAtLocationWithId {
             get {
                 return ResourceManager.GetString("ToolkitStore_NotFoundAtLocationWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, (compared to expected version &apos;{1}&apos;) must represent the breaking changes (that have been auto-detected in this toolkit):
+        ///&apos;{2}&apos;.
+        /// </summary>
+        internal static string ToolkitVersion_IllegalVersion {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_IllegalVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, is not a supported version version number.
+        /// </summary>
+        internal static string ToolkitVersion_InvalidVersionInstruction {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_InvalidVersionInstruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, cannot be before the current toolkit version number: &apos;{1}&apos;.
+        /// </summary>
+        internal static string ToolkitVersion_VersionBeforeCurrent {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_VersionBeforeCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, cannot be used.
+        /// </summary>
+        internal static string ToolkitVersion_ZeroVersion {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_ZeroVersion", resourceCulture);
             }
         }
     }

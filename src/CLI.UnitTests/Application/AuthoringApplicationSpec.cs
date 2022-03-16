@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -435,14 +436,14 @@ namespace CLI.UnitTests.Application
             this.application.CreateNewPattern("apatternname");
             this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition pattern, string version) =>
-                    new ToolkitPackage(new ToolkitDefinition(pattern, version), "abuildlocation"));
+                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version)), "abuildlocation", null));
 
-            var toolkit = this.application.PackageToolkit("2.0");
+            var toolkit = this.application.PackageToolkit("2.0.0");
 
-            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), "2.0"));
+            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), "2.0.0"));
             toolkit.BuiltLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");
-            toolkit.Toolkit.Version.Should().Be("2.0");
+            toolkit.Toolkit.Version.Should().Be("2.0.0");
         }
 
         [Fact]

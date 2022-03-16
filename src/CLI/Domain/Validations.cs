@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Automate.CLI.Extensions;
@@ -42,6 +43,31 @@ namespace Automate.CLI.Domain
             const string propertyNameExpression = @"[\w]+";
             const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
             return Regex.IsMatch(name, propertyNameExpression) && Regex.IsMatch(value, propertyValueExpression);
+        }
+
+        public static bool IsVersionInstruction(string instruction)
+        {
+            if (instruction.HasNoValue())
+            {
+                return true;
+            }
+
+            if (instruction.EqualsIgnoreCase(ToolkitVersion.AutoIncrementInstruction))
+            {
+                return true;
+            }
+
+            if (!Version.TryParse(instruction, out var version))
+            {
+                return false;
+            }
+
+            if (version.Revision != -1)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

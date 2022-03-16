@@ -63,7 +63,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndCommandNotFound_ThenThrows()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
             var solutionItem = solution.Model;
 
             this.launchPoint
@@ -78,7 +78,7 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
             pattern.AddAutomation(automation);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var solutionItem = solution.Model;
 
             var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
@@ -99,7 +99,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["anelementname2"].Materialise();
@@ -122,7 +122,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
@@ -147,7 +147,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var solutionItem = solution.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();

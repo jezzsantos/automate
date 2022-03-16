@@ -177,9 +177,7 @@ namespace Automate.CLI.Infrastructure
                 throw new AutomateException(ExceptionMessages.JsonFileRepository_SolutionNotFound.Format(id));
             }
 
-            var solution = File.ReadAllText(filename).FromJson<SolutionDefinition>(this.persistableFactory);
-            solution.PopulateAncestry();
-            return solution;
+            return File.ReadAllText(filename).FromJson<SolutionDefinition>(this.persistableFactory);
         }
 
         public List<SolutionDefinition> ListSolutions()
@@ -298,7 +296,7 @@ namespace Automate.CLI.Infrastructure
 
         private static string CreateFilenameForExportedToolkit(string name, string version)
         {
-            var filename = Path.ChangeExtension($"{name}_{version}", ToolkitInstallerFileExtension);
+            var filename = $"{name}_{version}{ToolkitInstallerFileExtension}";
             var directory = GetExportedToolkitDirectory();
 
             return Path.Combine(directory, filename);

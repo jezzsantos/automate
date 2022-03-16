@@ -111,11 +111,18 @@
     <data name="SystemIoFile_SourceFileNotExist" xml:space="preserve">
         <value>The file does not exist at path: '{0}'</value>
     </data>
-    <data name="PatternToolkitPackager_InvalidVersionInstruction" xml:space="preserve">
-        <value>Requested version number: '{0}', is not a valid 2-dot version number</value>
+    <data name="ToolkitVersion_InvalidVersionInstruction" xml:space="preserve">
+        <value>Requested version number: '{0}', is not a supported version version number</value>
     </data>
-    <data name="PatternToolkitPackager_VersionBeforeCurrent" xml:space="preserve">
+    <data name="ToolkitVersion_VersionBeforeCurrent" xml:space="preserve">
         <value>Requested version number: '{0}', cannot be before the current toolkit version number: '{1}'</value>
+    </data>
+    <data name="ToolkitVersion_ZeroVersion" xml:space="preserve">
+        <value>Requested version number: '{0}', cannot be used</value>
+    </data>
+    <data name="ToolkitVersion_IllegalVersion" xml:space="preserve">
+        <value>Requested version number: '{0}', (compared to expected version '{1}') must represent the breaking changes (that have been auto-detected in this toolkit):
+'{2}'</value>
     </data>
     <data name="PatternToolkitPackager_InvalidInstallerFile" xml:space="preserve">
         <value>The installer file at: '{0}', contains an invalid toolkit definition</value>

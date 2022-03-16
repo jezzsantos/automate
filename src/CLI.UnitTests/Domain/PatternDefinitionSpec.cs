@@ -23,7 +23,7 @@ namespace CLI.UnitTests.Domain
         {
             this.pattern.Name.Should().Be("aname");
             this.pattern.Id.Should().NotBeEmpty();
-            this.pattern.ToolkitVersion.Should().Be("0.0");
+            this.pattern.ToolkitVersion.Current.Should().Be("0.0.0");
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace CLI.UnitTests.Domain
             var result = this.pattern.CreateTestSolution();
 
             result.PatternName.Should().Be("aname");
-            result.Toolkit.Version.Should().Be("0.0");
+            result.Toolkit.Version.Should().Be("0.0.0");
             result.Toolkit.CodeTemplateFiles.Should().BeNull();
             result.Model.Name.Should().Be("aname");
             result.Model.Properties.Should().BeEmpty();

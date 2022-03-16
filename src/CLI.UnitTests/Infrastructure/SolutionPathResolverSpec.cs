@@ -31,7 +31,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), null))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), null))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -39,7 +39,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsInvalidFormat_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), "notavalidexpression"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "notavalidexpression"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("notavalidexpression"));
         }
@@ -48,7 +48,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsEmpty_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0")), "{}"))
+                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "{}"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("{}"));
         }
@@ -56,7 +56,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveAndExpressionIsJustNameOfPattern_ThenReturnsPattern()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
 
             var result = this.resolver.ResolveItem(solution, "{apatternname}");
 
@@ -66,7 +66,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveAndExpressionElementNotExist_ThenReturnsNull()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
 
             var result = this.resolver.ResolveItem(solution, "{anunknownelementname}");
 
@@ -79,7 +79,7 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
 
@@ -94,7 +94,7 @@ namespace CLI.UnitTests.Infrastructure
             var element = new Element("anelementname");
             collection.AddElement(element);
             pattern.AddElement(collection);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var collectionInstance = solution.Model.Properties["acollectionname"].MaterialiseCollectionItem();
             var elementInstance = collectionInstance.Properties["anelementname"].Materialise();
 
@@ -109,7 +109,7 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
 
             var result = this.resolver.ResolveItem(solution, "{apatternname.anelementname}");
 
@@ -122,7 +122,7 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
 
@@ -139,7 +139,7 @@ namespace CLI.UnitTests.Infrastructure
             element2.AddElement(element3);
             element1.AddElement(element2);
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             solution.Model.Properties["anelementname1"].Materialise();
 
             var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
@@ -157,7 +157,7 @@ namespace CLI.UnitTests.Infrastructure
             element2.AddElement(element3);
             element1.AddElement(element2);
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern, "1.0"));
+            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             solution.Model.Properties["anelementname1"].Materialise().Properties["anelementname2"].Materialise()
                 .Properties["anelementname3"].Materialise();
 

@@ -24,11 +24,11 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenListAllAndSolutions_ThenReturnsAll()
         {
             var solution1 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")));
             var solution2 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2")));
             var solution3 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3")));
             this.repository.NewSolution(solution1);
             this.repository.NewSolution(solution2);
             this.repository.NewSolution(solution3);
@@ -52,11 +52,11 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenFindByIdAndExists_ThenReturnsSolution()
         {
             var solution1 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")));
             var solution2 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname2")));
             var solution3 =
-                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3"), "1.0"));
+                new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname3")));
             this.repository.NewSolution(solution1);
             this.repository.NewSolution(solution2);
             this.repository.NewSolution(solution3);
@@ -69,7 +69,7 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenCreate_ThenReturnsSolutionAsCurrent()
         {
-            var result = this.store.Create(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"), "aname"));
+            var result = this.store.Create(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")), "aname"));
 
             this.repository.ListSolutions().Single().Id.Should().Be(result.Id);
             this.repository.GetLocalState().CurrentSolution.Should().Be(result.Id);
@@ -90,8 +90,8 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenChangeCurrent_ThenChangesCurrent()
         {
-            var solution1 = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
-            var solution2 = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1"), "1.0"));
+            var solution1 = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")));
+            var solution2 = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")));
             this.repository.NewSolution(solution1);
             this.repository.NewSolution(solution2);
 

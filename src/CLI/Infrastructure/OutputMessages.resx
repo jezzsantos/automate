@@ -74,6 +74,9 @@
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:
 `automate install toolkit "{&lt;FilePath&gt;}"`</value>
     </data>
+    <data name="CommandLine_Output_BuiltToolkit_Warning" xml:space="preserve">
+        <value>Warning: {Warning}</value>
+    </data>
     <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' (v.{Version}) has been installed and is ready to use with command:
 `automate run toolkit &lt;PatternName&gt; --name "SolutionName"`</value>

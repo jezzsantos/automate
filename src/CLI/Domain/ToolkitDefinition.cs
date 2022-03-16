@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
@@ -7,14 +8,15 @@ namespace Automate.CLI.Domain
     {
         private List<CodeTemplateFile> codeTemplateFiles;
 
-        public ToolkitDefinition(PatternDefinition pattern, string version)
+        public ToolkitDefinition(PatternDefinition pattern, Version version = null)
         {
             pattern.GuardAgainstNull(nameof(pattern));
-            version.GuardAgainstNullOrEmpty(nameof(version));
 
             Id = pattern.Id;
             Pattern = pattern;
-            Version = version;
+            Version = version.Exists()
+                ? version.ToString(ToolkitVersion.VersionFieldCount)
+                : ToolkitVersion.InitialVersionNumber.ToString(ToolkitVersion.VersionFieldCount);
         }
 
         private ToolkitDefinition(PersistableProperties properties, IPersistableFactory factory)

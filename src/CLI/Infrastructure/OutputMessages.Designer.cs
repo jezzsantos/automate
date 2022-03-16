@@ -80,6 +80,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning: {Warning}.
+        /// </summary>
+        internal static string CommandLine_Output_BuiltToolkit_Warning {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_BuiltToolkit_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; with ID: {CommandId}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
