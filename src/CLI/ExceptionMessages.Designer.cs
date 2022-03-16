@@ -232,6 +232,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The attribute with name: &apos;{0}&apos; does not exist.
+        /// </summary>
+        internal static string PatternElement_AttributeByNameNotExists {
+            get {
+                return ResourceManager.GetString("PatternElement_AttributeByNameNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A code template with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string PatternElement_CodeTemplateByNameExists {
@@ -273,6 +282,15 @@ namespace Automate.CLI {
         internal static string PatternElement_ElementByNameExistsAsAttribute {
             get {
                 return ResourceManager.GetString("PatternElement_ElementByNameExistsAsAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element with name: &apos;{0}&apos; does not exist.
+        /// </summary>
+        internal static string PatternElement_ElementByNameNotExists {
+            get {
+                return ResourceManager.GetString("PatternElement_ElementByNameNotExists", resourceCulture);
             }
         }
         
@@ -667,15 +685,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, is not a supported version version number.
-        /// </summary>
-        internal static string ToolkitVersion_InvalidVersionInstruction {
-            get {
-                return ResourceManager.GetString("ToolkitVersion_InvalidVersionInstruction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, cannot be before the current toolkit version number: &apos;{1}&apos;.
         /// </summary>
         internal static string ToolkitVersion_VersionBeforeCurrent {
@@ -690,6 +699,15 @@ namespace Automate.CLI {
         internal static string ToolkitVersion_ZeroVersion {
             get {
                 return ResourceManager.GetString("ToolkitVersion_ZeroVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos;, is not a supported version version number.
+        /// </summary>
+        internal static string VersionInstruction_InvalidVersionInstruction {
+            get {
+                return ResourceManager.GetString("VersionInstruction_InvalidVersionInstruction", resourceCulture);
             }
         }
     }

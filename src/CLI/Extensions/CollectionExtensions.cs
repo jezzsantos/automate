@@ -8,11 +8,25 @@ namespace Automate.CLI.Extensions
 {
     internal static class CollectionExtensions
     {
-        public static string ToMultiLineText<T>(this IEnumerable<T> items, Func<T, string> selector)
+        public static string ToMultiLineText<T>(this IEnumerable<T> items, Func<T, string> selector = null)
         {
+            if (selector.Exists())
+            {
+                return items.Safe()
+                    .Select(selector)
+                    .SafeJoin(Environment.NewLine);
+            }
+
             return items.Safe()
-                .Select(selector)
+                .Select((Func<T, string>)(x => x.ToString()))
                 .SafeJoin(Environment.NewLine);
+        }
+
+        public static string ToBulletList<T>(this IEnumerable<T> items, Func<T, string> selector = null)
+        {
+            return selector.Exists()
+                ? items.ToMultiLineText(arg => "* " + selector(arg))
+                : items.ToMultiLineText(item => $"* {item}");
         }
 
         public static List<T> ToListSafe<T>(this IEnumerable<T> enumerable)

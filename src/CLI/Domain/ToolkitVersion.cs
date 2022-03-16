@@ -97,12 +97,11 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public VersionUpdateResult UpdateVersion(string versionInstruction)
+        public VersionUpdateResult UpdateVersion(VersionInstruction instruction)
         {
-            versionInstruction.GuardAgainstInvalid(_ => Validations.IsVersionInstruction(versionInstruction), nameof(versionInstruction),
-                ExceptionMessages.ToolkitVersion_InvalidVersionInstruction);
+            instruction.GuardAgainstNull(nameof(instruction));
 
-            var result = CalculateNewVersion(versionInstruction);
+            var result = CalculateNewVersion(instruction);
 
             Current = result.Version;
             ResetAfterUpdate();
@@ -115,7 +114,7 @@ namespace Automate.CLI.Domain
             LastChanges = VersionChange.NoChange;
         }
 
-        private VersionUpdateResult CalculateNewVersion(string versionInstruction)
+        private VersionUpdateResult CalculateNewVersion(VersionInstruction instruction)
         {
             var currentVersion = new Version(Current);
 
@@ -123,20 +122,20 @@ namespace Automate.CLI.Domain
                 ? currentVersion.RevMajor()
                 : currentVersion.RevMinor();
 
-            if (versionInstruction.HasNoValue())
+            if (instruction.Instruction.HasNoValue())
             {
                 return new VersionUpdateResult(expectedNewVersion);
             }
 
-            if (versionInstruction.EqualsIgnoreCase(AutoIncrementInstruction))
+            if (instruction.Instruction.EqualsIgnoreCase(AutoIncrementInstruction))
             {
                 return new VersionUpdateResult(expectedNewVersion);
             }
 
-            if (!Version.TryParse(versionInstruction, out var requestedVersion))
+            if (!Version.TryParse(instruction.Instruction, out var requestedVersion))
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitVersion_InvalidVersionInstruction.Format(versionInstruction));
+                    ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Format(instruction));
             }
 
             requestedVersion = requestedVersion.To2Dot();
@@ -150,7 +149,7 @@ namespace Automate.CLI.Domain
             if (requestedVersion < currentVersion)
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitVersion_VersionBeforeCurrent.Format(versionInstruction,
+                    ExceptionMessages.ToolkitVersion_VersionBeforeCurrent.Format(instruction.Instruction,
                         currentVersion.ToString(VersionFieldCount)));
             }
 
@@ -158,15 +157,21 @@ namespace Automate.CLI.Domain
             {
                 if (LastChanges == VersionChange.Breaking)
                 {
-                    throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Format(versionInstruction,
+                    if (instruction.Force)
+                    {
+                        return new VersionUpdateResult(requestedVersion,
+                            DomainMessages.ToolkitVersion_Forced.Format(instruction.Instruction,
+                                ChangeLog.ToBulletList(item => item.Description)));
+                    }
+                    throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Format(instruction.Instruction,
                         expectedNewVersion.ToString(VersionFieldCount), ChangeLog.ToMultiLineText(item => item.Description)));
                 }
 
                 if (LastChanges == VersionChange.NonBreaking)
                 {
                     return new VersionUpdateResult(requestedVersion,
-                        DomainMessages.ToolkitVersion_Warning.Format(versionInstruction,
-                            ChangeLog.ToMultiLineText(item => item.Description)));
+                        DomainMessages.ToolkitVersion_Warning.Format(instruction.Instruction,
+                            ChangeLog.ToBulletList(item => item.Description)));
                 }
             }
 

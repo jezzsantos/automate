@@ -220,6 +220,59 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenDeleteAttributeAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.DeleteAttribute("anattributename", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenDeleteAttribute_TheDeletesAttributeFromPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null, null);
+
+            var result = this.application.DeleteAttribute("anattributename", null);
+
+            this.store.GetCurrent().Attributes.Should().BeEmpty();
+            result.Parent.Id.Should().Be(this.store.GetCurrent().Id);
+        }
+
+        [Fact]
+        public void WhenDeleteAttributeAndParentNotExists_ThenThrows()
+        {
+            this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+                .Returns((PatternDefinition)null);
+
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x =>
+                    x.DeleteAttribute("anattributename", "anunknownparent"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenDeleteAttributeAndParentIsElement_ThenDeletesAttributeFromElement()
+        {
+            this.application.CreateNewPattern("apatternname");
+            var (_, parentElement) = this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+            this.patternPathResolver
+                .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
+                .Returns(parentElement);
+            this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null, "{apatternname.anelementname}");
+
+            var result = this.application.DeleteAttribute("anattributename", "{apatternname.anelementname}");
+
+            result.Parent.Attributes.Should().BeEmpty();
+            result.Parent.Id.Should().Be(parentElement.Id);
+        }
+
+        [Fact]
         public void WhenAddElementAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
@@ -276,6 +329,59 @@ namespace CLI.UnitTests.Application
 
             var element = result.Parent.Elements.Single();
             element.Name.Should().Be("achildelementname");
+            result.Parent.Id.Should().Be(parentElement.Id);
+        }
+
+        [Fact]
+        public void WhenDeleteElementAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.DeleteElement("anelementname", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenDeleteElement_TheDeletesElementFromPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+
+            var result = this.application.DeleteElement("anelementname", null);
+
+            this.store.GetCurrent().Elements.Should().BeEmpty();
+            result.Parent.Id.Should().Be(this.store.GetCurrent().Id);
+        }
+
+        [Fact]
+        public void WhenDeleteElementAndParentNotExists_ThenThrows()
+        {
+            this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+                .Returns((PatternDefinition)null);
+
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x =>
+                    x.DeleteElement("anelementname", "anunknownparent"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenDeleteElementAndParentIsElement_ThenDeletesElementFromElement()
+        {
+            this.application.CreateNewPattern("apatternname");
+            var (_, parentElement) = this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+            this.patternPathResolver
+                .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
+                .Returns(parentElement);
+            this.application.AddElement("anelementname2", null, null, false, ElementCardinality.Single, "{apatternname.anelementname}");
+
+            var result = this.application.DeleteElement("anelementname2", "{apatternname.anelementname}");
+
+            result.Parent.Elements.Should().BeEmpty();
             result.Parent.Id.Should().Be(parentElement.Id);
         }
 
@@ -425,7 +531,7 @@ namespace CLI.UnitTests.Application
         public void WhenBuildToolkitAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.PackageToolkit(null))
+                .Invoking(x => x.PackageToolkit(null, false))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -434,13 +540,14 @@ namespace CLI.UnitTests.Application
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
             this.application.CreateNewPattern("apatternname");
-            this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
-                .Returns((PatternDefinition pattern, string version) =>
-                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version)), "abuildlocation", null));
+            this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
+                .Returns((PatternDefinition pattern, VersionInstruction version) =>
+                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)), "abuildlocation", null));
 
-            var toolkit = this.application.PackageToolkit("2.0.0");
+            var toolkit = this.application.PackageToolkit("2.0.0", false);
 
-            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), "2.0.0"));
+            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.Is<VersionInstruction>(vi =>
+                vi.Instruction == "2.0.0")));
             toolkit.BuiltLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");
             toolkit.Toolkit.Version.Should().Be("2.0.0");

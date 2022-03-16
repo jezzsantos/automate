@@ -42,6 +42,10 @@ namespace Automate.CLI.Domain
         Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement pattern);
 
         Automation FindAutomation(string id);
+
+        Attribute DeleteAttribute(string name);
+
+        Element DeleteElement(string name);
     }
 
     internal interface INamedEntity : IIdentifiableEntity

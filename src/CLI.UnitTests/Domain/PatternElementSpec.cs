@@ -17,6 +17,7 @@ namespace CLI.UnitTests.Domain
         public PatternElementSpec()
         {
             this.element = new TestPatternElement("aname");
+            this.element.SetParent(new PatternDefinition("apatternname"));
         }
 
         [Fact]
@@ -79,6 +80,7 @@ namespace CLI.UnitTests.Domain
             result.DefaultValue.Should().Be("adefaultvalue");
             result.IsRequired.Should().BeFalse();
             result.Choices.Should().BeNull();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
         [Fact]
@@ -91,8 +93,21 @@ namespace CLI.UnitTests.Domain
             result.DefaultValue.Should().BeNull();
             result.IsRequired.Should().BeFalse();
             result.Choices.Should().BeNull();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
+        [Fact]
+        public void WhenDeleteAttribute_TheDeletesAttributeFromElement()
+        {
+            var attribute = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue", null);
+
+            var result = this.element.DeleteAttribute("anattributename");
+
+            result.Id.Should().Be(attribute.Id);
+            this.element.Attributes.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+        
         [Fact]
         public void WhenAddElementAndAlreadyExists_ThenThrows()
         {
@@ -125,7 +140,21 @@ namespace CLI.UnitTests.Domain
             result.DisplayName.Should().Be("adisplayname");
             result.Description.Should().Be("adescription");
             result.IsCollection.Should().BeFalse();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
+
+        [Fact]
+        public void WhenDeleteElement_TheDeletesElementFromElement()
+        {
+            var ele = this.element.AddElement("anelementname", null, null, false, ElementCardinality.Single);
+
+            var result = this.element.DeleteElement("anelementname");
+
+            result.Id.Should().Be(ele.Id);
+            this.element.Elements.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
 
         [Fact]
         public void WhenAttachCodeTemplateAndTemplateWithSameName_ThenThrows()
@@ -145,6 +174,7 @@ namespace CLI.UnitTests.Domain
 
             result.Name.Should().Be("atemplatename");
             result.Metadata.OriginalFilePath.Should().Be("afullpath");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
         [Fact]
@@ -179,6 +209,7 @@ namespace CLI.UnitTests.Domain
             result.Name.Should().Be("acommandname");
             result.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
             result.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
         [Fact]
@@ -229,6 +260,7 @@ namespace CLI.UnitTests.Domain
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
         [Fact]
@@ -248,10 +280,6 @@ namespace CLI.UnitTests.Domain
     internal class TestPatternElement : PatternElement
     {
         public TestPatternElement(string name) : base(name)
-        {
-        }
-
-        public TestPatternElement(PersistableProperties properties, IPersistableFactory factory) : base(properties, factory)
         {
         }
     }

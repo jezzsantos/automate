@@ -51,8 +51,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--name", "A friendly name for the code template",
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
@@ -65,9 +64,14 @@ namespace Automate.CLI.Infrastructure
                     new Option("--isoneof", "A list of semi-colon delimited values", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the attribute to",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddAttribute)),
+                new Command("delete-attribute", "Deletes an attribute from an element/collection in the pattern")
+                {
+                    new Argument("Name", "The name of the attribute"),
+                    new Option("--aschildof", "The expression of the element/collection to delete the attribute from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteAttribute)),
                 new Command("add-element", "Adds an element to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the element"),
@@ -86,10 +90,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--describedas", "A description for the collection", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the collection to",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne),
-                    new Option("--ality",
-                        "The number of instances of this element in this collection that must exist",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--ality", "The number of instances of this element in this collection that must exist",
                         typeof(ElementCardinality), () => ElementCardinality.ZeroOrMany, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
                 new Command("add-codetemplate-command", "Adds a command that renders a code template")
@@ -99,13 +101,11 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--astearoff",
                         "Only if you only want to generate the file once, and not overwrite the file if it already exists",
-                        typeof(bool),
-                        arity: ArgumentArity.ZeroOrOne),
+                        typeof(bool), arity: ArgumentArity.ZeroOrOne),
                     new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ExactlyOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
@@ -113,8 +113,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--name", "A name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
@@ -123,8 +122,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Argument("Name", "The name of the code template"),
                     new Option("--aschildof", "The expression of the element/collection on which the code template exists",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne),
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--import-data", "Import the specified data for the test. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--export-data", "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
@@ -136,16 +134,16 @@ namespace Automate.CLI.Infrastructure
                 new Command("toolkit", "Builds a pattern into a toolkit")
                 {
                     new Option("--asversion", "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
-                        typeof(string),
-                        arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--force", "Force the specified version number even it it violates breaking changes checks",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
             };
             var installCommands = new Command(InstallCommandName, "Installing toolkits")
             {
                 new Command("toolkit", "Installs the pattern from a toolkit")
                 {
-                    new Argument("Location",
-                        "The location of the *.toolkit file to install into the current directory")
+                    new Argument("Location", "The location of the *.toolkit file to install into the current directory")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleInstall))
             };
             var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
@@ -153,8 +151,7 @@ namespace Automate.CLI.Infrastructure
                 new Command("toolkit", "Creates a new solution from a toolkit")
                 {
                     new Argument("PatternName", "The name of the pattern in the toolkit that you want to use"),
-                    new Option("--name", "A name for the solution",
-                        arity: ArgumentArity.ZeroOrOne)
+                    new Option("--name", "A name for the solution", arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
                 new Command("switch", "Switches to configuring another solution")
                 {
@@ -362,9 +359,9 @@ namespace Automate.CLI.Infrastructure
         {
             private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
 
-            internal static void HandleBuild(string asversion, bool outputStructured, IConsole console)
+            internal static void HandleBuild(string asversion, bool force, bool outputStructured, IConsole console)
             {
-                var package = Authoring.PackageToolkit(asversion);
+                var package = Authoring.PackageToolkit(asversion, force);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
                     package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
                 if (package.Message.HasValue())
@@ -417,6 +414,14 @@ namespace Automate.CLI.Infrastructure
                 var (parent, attribute) =
                     Authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
+                    parent.Id, attribute.Id);
+            }
+
+            internal static void HandleDeleteAttribute(string name, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var (parent, attribute) =
+                    Authoring.DeleteAttribute(name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeDeleted, name,
                     parent.Id, attribute.Id);
             }
 

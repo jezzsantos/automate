@@ -130,9 +130,9 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public VersionUpdateResult UpdateToolkitVersion(string versionInstruction)
+        public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
         {
-            return ToolkitVersion.UpdateVersion(versionInstruction);
+            return ToolkitVersion.UpdateVersion(instruction);
         }
 
         public ValidationResults Validate(ValidationContext context, object value)

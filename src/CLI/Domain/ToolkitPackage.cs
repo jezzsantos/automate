@@ -20,4 +20,20 @@ namespace Automate.CLI.Domain
 
         public string Message { get; }
     }
+
+    internal class VersionInstruction
+    {
+        public VersionInstruction(string instruction = null, bool force = false)
+        {
+            instruction.GuardAgainstInvalid(_ => Validations.IsVersionInstruction(instruction), nameof(instruction),
+                ExceptionMessages.VersionInstruction_InvalidVersionInstruction);
+
+            Instruction = instruction;
+            Force = force;
+        }
+
+        public string Instruction { get; }
+
+        public bool Force { get; }
+    }
 }

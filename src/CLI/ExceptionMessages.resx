@@ -60,6 +60,9 @@
     <data name="PatternElement_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name must be unique</value>
     </data>
+    <data name="PatternElement_AttributeByNameNotExists" xml:space="preserve">
+        <value>The attribute with name: '{0}' does not exist</value>
+    </data>
     <data name="AuthoringApplication_AttributeByNameExistsAsElement" xml:space="preserve">
         <value>An element/collection with name: '{0}' already exists. The name cannot be the same as any element/collection</value>
     </data>
@@ -68,6 +71,9 @@
     </data>
     <data name="PatternElement_ElementByNameExists" xml:space="preserve">
         <value>An element with name: '{0}' already exists. The name must be unique</value>
+    </data>
+    <data name="PatternElement_ElementByNameNotExists" xml:space="preserve">
+        <value>The element with name: '{0}' does not exist</value>
     </data>
     <data name="PatternElement_ElementByNameExistsAsAttribute" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name cannot be the same as any attribute</value>
@@ -111,7 +117,7 @@
     <data name="SystemIoFile_SourceFileNotExist" xml:space="preserve">
         <value>The file does not exist at path: '{0}'</value>
     </data>
-    <data name="ToolkitVersion_InvalidVersionInstruction" xml:space="preserve">
+    <data name="VersionInstruction_InvalidVersionInstruction" xml:space="preserve">
         <value>Requested version number: '{0}', is not a supported version version number</value>
     </data>
     <data name="ToolkitVersion_VersionBeforeCurrent" xml:space="preserve">

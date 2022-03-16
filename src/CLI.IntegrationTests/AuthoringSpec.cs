@@ -342,7 +342,47 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0", location));
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_BuiltToolkit_Warning.FormatTemplate(DomainMessages.ToolkitVersion_Warning.Format("0.1.0", DomainMessages.PatternElement_VersionChange_CodeTemplate_Add.Format(codeTemplate.Id, pattern.Id))));
+                    OutputMessages.CommandLine_Output_BuiltToolkit_Warning
+                        .FormatTemplate(DomainMessages.ToolkitVersion_Warning
+                            .Format("0.1.0", new[]
+                            {
+                                DomainMessages.PatternElement_VersionChange_CodeTemplate_Add
+                                    .Format(codeTemplate.Id, pattern.Id)
+                            }.ToBulletList())));
+        }
+
+        [Fact]
+        public void WhenBuildToolkitWithCurrentVersionAndBreakingChangesAndForceVersion_ThenBuildsToolkitOnDesktopAndWarns()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute \"AnAttribute\" --isrequired ");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            var pattern = this.setup.Patterns.Single();
+            var codeTemplate = pattern.CodeTemplates.First();
+            var attribute = pattern.Attributes.First();
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} delete-attribute \"AnAttribute\"");
+
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion 0.1.0 --force");
+
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0", location));
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit_Warning
+                        .FormatTemplate(DomainMessages.ToolkitVersion_Forced
+                            .Format("0.1.0", new[]
+                            {
+                                DomainMessages.PatternElement_VersionChange_Attribute_Add.Format(attribute.Id, pattern.Id),
+                                DomainMessages.PatternElement_VersionChange_CodeTemplate_Add.Format(codeTemplate.Id, pattern.Id),
+                                DomainMessages.PatternElement_VersionChange_Attribute_Delete.Format(attribute.Id, pattern.Id)
+                            }.ToBulletList())));
         }
 
         [Fact]

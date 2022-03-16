@@ -84,6 +84,19 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
+        public (IPatternElement Parent, Attribute Attribute) DeleteAttribute(string name, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var attribute = target.DeleteAttribute(name);
+            this.store.Save(pattern);
+
+            return (target, attribute);
+        }
+
         public (IPatternElement Parent, Element Element) AddElement(string name, string displayName,
             string description, bool isCollection, ElementCardinality cardinality,
             string parentExpression)
@@ -97,6 +110,19 @@ namespace Automate.CLI.Application
             this.store.Save(pattern);
 
             return (target, element);
+        }
+
+        public (IPatternElement Parent, Element Element) DeleteElement(string name, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var attribute = target.DeleteElement(name);
+            this.store.Save(pattern);
+
+            return (target, attribute);
         }
 
         public CodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
@@ -193,7 +219,7 @@ namespace Automate.CLI.Application
             }
 
             var textTemplate = GetTemplateContent();
-            
+
             if (importedRelativeFilePath.HasValue())
             {
                 var importedData = ImportData();
@@ -275,11 +301,11 @@ namespace Automate.CLI.Application
             }
         }
 
-        public ToolkitPackage PackageToolkit(string versionInstruction)
+        public ToolkitPackage PackageToolkit(string versionInstruction, bool forceVersion)
         {
             var pattern = EnsureCurrentPatternExists();
 
-            return this.packager.Pack(pattern, versionInstruction);
+            return this.packager.Pack(pattern, new VersionInstruction(versionInstruction, forceVersion));
         }
 
         private IPatternElement ResolveTargetElement(PatternDefinition pattern, string parentExpression)

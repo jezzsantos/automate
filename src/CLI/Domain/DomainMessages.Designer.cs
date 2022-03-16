@@ -125,6 +125,15 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {0}) was deleted from element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Attribute_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Attribute_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automation (ID: {0}) was added to element &apos;{1}&apos;.
         /// </summary>
         internal static string PatternElement_VersionChange_Automation_Add {
@@ -152,8 +161,27 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {0}) was deleted from element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Element_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Element_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos; has been forcefully applied despite the breaking changes (that have been auto-detected in this toolkit):
+        ///{1}.
+        /// </summary>
+        internal static string ToolkitVersion_Forced {
+            get {
+                return ResourceManager.GetString("ToolkitVersion_Forced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos; should represent a change due to non-breaking changes (that have been auto-detected in this toolkit):
-        ///&apos;{1}&apos;.
+        ///{1}.
         /// </summary>
         internal static string ToolkitVersion_Warning {
             get {

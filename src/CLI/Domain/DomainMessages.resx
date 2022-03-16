@@ -45,13 +45,23 @@
     </data>
     <data name="ToolkitVersion_Warning" xml:space="preserve">
     <value>Requested version number: '{0}' should represent a change due to non-breaking changes (that have been auto-detected in this toolkit):
-'{1}'</value>
+{1}</value>
+    </data>
+    <data name="ToolkitVersion_Forced" xml:space="preserve">
+    <value>Requested version number: '{0}' has been forcefully applied despite the breaking changes (that have been auto-detected in this toolkit):
+{1}</value>
     </data>
     <data name="PatternElement_VersionChange_Attribute_Add" xml:space="preserve">
         <value>Attribute (ID: {0}) was added to element '{1}'</value>
     </data>
+    <data name="PatternElement_VersionChange_Attribute_Delete" xml:space="preserve">
+        <value>Attribute (ID: {0}) was deleted from element '{1}'</value>
+    </data>
     <data name="PatternElement_VersionChange_Element_Add" xml:space="preserve">
         <value>Element/Collection (ID: {0}) was added to element '{1}'</value>
+    </data>
+    <data name="PatternElement_VersionChange_Element_Delete" xml:space="preserve">
+        <value>Element (ID: {0}) was deleted from element '{1}'</value>
     </data>
     <data name="PatternElement_VersionChange_CodeTemplate_Add" xml:space="preserve">
         <value>CodeTemplate (ID: {0}) was added to element '{1}'</value>

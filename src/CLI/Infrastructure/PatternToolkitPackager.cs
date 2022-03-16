@@ -20,11 +20,11 @@ namespace Automate.CLI.Infrastructure
             this.toolkitStore = toolkitStore;
         }
 
-        public ToolkitPackage Pack(PatternDefinition pattern, string versionInstruction)
+        public ToolkitPackage Pack(PatternDefinition pattern, VersionInstruction instruction)
         {
             pattern.GuardAgainstNull(nameof(pattern));
 
-            var version = pattern.UpdateToolkitVersion(versionInstruction);
+            var version = pattern.UpdateToolkitVersion(instruction);
 
             this.store.Save(pattern);
 

@@ -38,7 +38,7 @@ namespace Automate.CLI.Domain
 
         internal PatternElement Parent { get; private set; }
 
-        private PatternDefinition Pattern => GetRoot();
+        internal PatternDefinition Pattern => GetRoot();
 
         public virtual PersistableProperties Dehydrate()
         {
@@ -59,11 +59,23 @@ namespace Automate.CLI.Domain
             RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Attribute_Add.Format(attribute.Id, Id));
         }
 
+        public void DeleteAttribute(Attribute attribute)
+        {
+            this.attributes.Remove(attribute);
+            RecordChange(VersionChange.Breaking, DomainMessages.PatternElement_VersionChange_Attribute_Delete.Format(attribute.Id, Id));
+        }
+
         public void AddElement(Element element)
         {
             element.SetParent(this);
             this.elements.Add(element);
             RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Element_Add.Format(element.Id, Id));
+        }
+
+        public void DeleteElement(Element element)
+        {
+            this.elements.Remove(element);
+            RecordChange(VersionChange.Breaking, DomainMessages.PatternElement_VersionChange_Element_Delete.Format(element.Id, Id));
         }
 
         public void AddCodeTemplate(CodeTemplate codeTemplate)
@@ -108,6 +120,21 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
+        public Attribute DeleteAttribute(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var attribute = GetAttributeByName(this, name);
+            if (attribute.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameNotExists.Format(name));
+            }
+
+            DeleteAttribute(attribute);
+
+            return attribute;
+        }
+
         public Element AddElement(string name, string displayName, string description, bool isCollection, ElementCardinality cardinality)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -124,6 +151,21 @@ namespace Automate.CLI.Domain
 
             var element = new Element(name, displayName, description, isCollection, cardinality);
             AddElement(element);
+
+            return element;
+        }
+
+        public Element DeleteElement(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var element = GetElementByName(this, name);
+            if (element.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameNotExists.Format(name));
+            }
+
+            DeleteElement(element);
 
             return element;
         }
@@ -260,7 +302,12 @@ namespace Automate.CLI.Domain
 
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)
         {
-            return element.Attributes.Safe().Any(attr => attr.Name.EqualsIgnoreCase(attributeName));
+            return GetAttributeByName(element, attributeName).Exists();
+        }
+
+        private static Attribute GetAttributeByName(IAttributeContainer element, string attributeName)
+        {
+            return element.Attributes.Safe().FirstOrDefault(attr => attr.Name.EqualsIgnoreCase(attributeName));
         }
 
         private static bool AttributeNameIsReserved(string attributeName)
@@ -271,6 +318,11 @@ namespace Automate.CLI.Domain
         private static bool ElementExistsByName(IElementContainer element, string elementName)
         {
             return element.Elements.Safe().Any(ele => ele.Name.EqualsIgnoreCase(elementName));
+        }
+
+        private static Element GetElementByName(IElementContainer element, string elementName)
+        {
+            return element.Elements.Safe().FirstOrDefault(attr => attr.Name.EqualsIgnoreCase(elementName));
         }
 
         private static bool AutomationExistsByName(IAutomationContainer element, string automationName)

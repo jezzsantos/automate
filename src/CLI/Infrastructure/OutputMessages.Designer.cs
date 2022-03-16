@@ -70,6 +70,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted Attribute: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_AttributeDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_AttributeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command:
         ///`automate install toolkit &quot;{&lt;FilePath&gt;}&quot;`.
         /// </summary>

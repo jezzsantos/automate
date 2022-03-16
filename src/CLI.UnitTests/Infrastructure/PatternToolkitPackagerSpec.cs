@@ -34,7 +34,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
 
-            var result = this.packager.Pack(pattern, ToolkitVersion.AutoIncrementInstruction);
+            var result = this.packager.Pack(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
 
             result.Toolkit.Version.Should().Be("0.1.0");
         }
@@ -43,9 +43,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenPackAndVersionInstructionIsAVersion_ThenPackagesVersionOfToolkit()
         {
             var pattern = new PatternDefinition("apatternname");
-            pattern.UpdateToolkitVersion("1.0.0");
+            pattern.UpdateToolkitVersion(new VersionInstruction("1.0.0"));
 
-            var result = this.packager.Pack(pattern, "2.1.0");
+            var result = this.packager.Pack(pattern, new VersionInstruction("2.1.0"));
 
             result.Toolkit.Version.Should().Be("2.1.0");
         }
@@ -64,7 +64,7 @@ namespace CLI.UnitTests.Infrastructure
             this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
                 .Returns(fileContents);
 
-            var result = this.packager.Pack(pattern, null);
+            var result = this.packager.Pack(pattern, new VersionInstruction());
 
             result.Toolkit.CodeTemplateFiles.Should().ContainSingle(ctf =>
                 ctf.Id == pattern.CodeTemplates.Single().Id && ctf.Contents == fileContents);
@@ -85,7 +85,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
 
-            var result = this.packager.Pack(pattern, null);
+            var result = this.packager.Pack(pattern, new VersionInstruction());
 
             result.Toolkit.Id.Should().NotBeNull();
             result.Toolkit.Version.Should().Be("0.1.0");
