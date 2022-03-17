@@ -281,11 +281,25 @@ namespace Automate.CLI.Infrastructure
                 }, 1)
                 .Build();
 
+            WriteBanner(args);
+
             var result = parser.Invoke(args);
 
             Console.WriteLine();
 
             return result;
+        }
+
+        private static void WriteBanner(params string[] args)
+        {
+            if (args.HasNone())
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine(@"┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐");
+                Console.WriteLine(@"├─┤│ │ │ │ ││││├─┤ │ ├┤ ");
+                Console.WriteLine(@"┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘");
+                Console.ResetColor();
+            }
         }
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
