@@ -125,7 +125,7 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
-        public CodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
+        public UploadedCodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
             string parentExpression)
         {
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
@@ -148,9 +148,9 @@ namespace Automate.CLI.Application
             this.store.Save(pattern);
 
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
-            this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
+            var location = this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
-            return codeTemplate;
+            return new UploadedCodeTemplate(codeTemplate, location);
         }
 
         public List<CodeTemplate> ListCodeTemplates(string parentExpression)

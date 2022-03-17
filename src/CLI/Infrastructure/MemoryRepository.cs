@@ -81,9 +81,10 @@ namespace Automate.CLI.Infrastructure
                 .FirstOrDefault(p => p.Key == id).Value;
         }
 
-        public void UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
+        public string UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
         {
             this.inMemoryCodeTemplates.Add(codeTemplateId, file.GetContents());
+            return InMemoryLocation;
         }
 
         public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)

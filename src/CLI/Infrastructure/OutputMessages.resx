@@ -39,7 +39,7 @@
         <value>The Pattern: '{Name}' was created with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added Code Template: '{Name}' from: '{FilePath}'</value>
+        <value>Added Code Template: '{Name}' (ID: {Id}) from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
         <value>Code Template '{Name}' outputs:

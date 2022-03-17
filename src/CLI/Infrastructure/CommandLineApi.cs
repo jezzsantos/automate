@@ -465,10 +465,10 @@ namespace Automate.CLI.Infrastructure
                 bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var template = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                var uploaded = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Name,
-                    template.Metadata.OriginalFilePath);
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, uploaded.Template.Name, uploaded.Template.Id,
+                    uploaded.Template.Metadata.OriginalFilePath, uploaded.Location);
             }
 
             internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData, string exportData, bool outputStructured, IConsole console)

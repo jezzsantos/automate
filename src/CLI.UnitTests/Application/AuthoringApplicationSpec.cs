@@ -130,8 +130,12 @@ namespace CLI.UnitTests.Application
         public void WhenAttachCodeTemplate_ThenTemplateAdded()
         {
             this.store.Create(new PatternDefinition("aname"));
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
+            var result = this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+
+            result.Template.Name.Should().Be("atemplatename");
+            result.Template.Metadata.OriginalFilePath.Should().Be("afullpath");
+            result.Location.Should().Be(MemoryRepository.InMemoryLocation);
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
             this.store.GetCurrent().CodeTemplates.Single().Metadata.OriginalFilePath.Should().Be("afullpath");
         }

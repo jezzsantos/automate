@@ -101,9 +101,9 @@ namespace Automate.CLI.Infrastructure
             this.patternRepository.UpsertPattern(pattern);
         }
 
-        public void UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile source)
+        public string UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile source)
         {
-            this.patternRepository.UploadPatternCodeTemplate(pattern, codeTemplateId, source);
+            return this.patternRepository.UploadPatternCodeTemplate(pattern, codeTemplateId, source);
         }
 
         public byte[] DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)

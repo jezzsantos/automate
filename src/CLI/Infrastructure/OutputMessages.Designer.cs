@@ -107,7 +107,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; from: &apos;{FilePath}&apos;.
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: {Id}) from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {

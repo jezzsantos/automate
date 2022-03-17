@@ -104,11 +104,13 @@ namespace Automate.CLI.Infrastructure
                 .FirstOrDefault(pattern => pattern.Id == id);
         }
 
-        public void UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
+        public string UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file)
         {
             var extension = file.Extension;
             var uploadedFilePath = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
             file.CopyTo(uploadedFilePath);
+
+            return uploadedFilePath;
         }
 
         public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
