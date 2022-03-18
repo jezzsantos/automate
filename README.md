@@ -1,6 +1,8 @@
 [![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
 
-# automate
+      ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
+      ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
+      ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
 
 **Question to a Team Developer:**
 
@@ -85,7 +87,8 @@ If this sounds like your situation then maybe we can help you define (and enforc
 This project is in early prototype stage. Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
 
 1. Install the tool:
-    * `dotnet tool install --global automate`
+    * Installers are here: `https://github.com/jezzsantos/automate/releases`
+    * Otherwise, if .NET installed: `dotnet tool install --global automate`
 
 2. Navigate to your codebase, and harvest your first pattern from it.
 
