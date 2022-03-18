@@ -297,6 +297,26 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenAddCommandLaunchPointWithAllCommands_ThenAddsLaunchPoint()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+            var commandId = this.setup.Patterns.Single().Automation.Single().Id;
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint \"*\" --name ALaunchPoint");
+
+            var launchPoint = this.setup.Patterns.Single().Automation.Last();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id, commandId));
+        }
+
+        [Fact]
         public void WhenAddCommandLaunchPoint_ThenAddsLaunchPoint()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
@@ -309,10 +329,35 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId} --name ALaunchPoint");
 
+            var launchPoint = this.setup.Patterns.Single().Automation.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate("ALaunchPoint"));
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id, commandId));
+        }
+
+        [Fact]
+        public void WhenUpdateCommandLaunchPointWithMoreCommands_ThenUpdatesLaunchPoint()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+            var commandId1 = this.setup.Patterns.Single().Automation.First().Id;
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint \"*\" --name ALaunchPoint");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+            var commandId2 = this.setup.Patterns.Single().Automation.Last().Id;
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-command-launchpoint \"ALaunchPoint\" --add \"*\" --from \"{{APattern}}\"");
+
+            var launchPoint = this.setup.Patterns.Single().Automation[1];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_LaunchPointUpdated.FormatTemplate(launchPoint.Name, launchPoint.Id, new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
         }
 
         [Fact]

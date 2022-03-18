@@ -7,33 +7,58 @@ namespace Automate.CLI.Domain
 {
     internal class CommandLaunchPoint : IAutomation
     {
-        public CommandLaunchPoint(string id, string name, IReadOnlyDictionary<string, object> metadata) : this(id, name, metadata[nameof(CommandIds)].ToString().SafeSplit(";").ToList())
-        {
-        }
+        internal const string CommandIdDelimiter = ";";
+        private readonly Automation automation;
 
-        public CommandLaunchPoint(string id, string name, List<string> commandIds)
+        public CommandLaunchPoint(string name, List<string> commandIds)
         {
-            id.GuardAgainstNullOrEmpty(nameof(id));
-            id.GuardAgainstInvalid(IdGenerator.IsValid, nameof(id),
-                ValidationMessages.InvalidIdentifier);
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
-                ValidationMessages.InvalidNameIdentifier);
             commandIds.GuardAgainstNull(nameof(commandIds));
             commandIds.GuardAgainstInvalid(ids => ids.Exists() && ids.Any(), nameof(commandIds),
                 ValidationMessages.Automation_EmptyCommandIds);
             commandIds.GuardAgainstInvalid(Validations.IsIdentifiers, nameof(commandIds),
                 ValidationMessages.Automation_InvalidCommandIds.Format(commandIds.Join(", ")));
-            Id = id;
-            Name = name;
-            CommandIds = commandIds;
+
+            this.automation = new Automation(name, AutomationType.CommandLaunchPoint, new Dictionary<string, object>
+            {
+                { nameof(CommandIds), commandIds.SafeJoin(CommandIdDelimiter) }
+            });
         }
 
-        public List<string> CommandIds { get; }
+        private CommandLaunchPoint(Automation automation)
+        {
+            automation.GuardAgainstNull(nameof(automation));
+            this.automation = automation;
+        }
 
-        public string Id { get; }
+        public IReadOnlyList<string> CommandIds => this.automation.Metadata[nameof(CommandIds)].ToString().SafeSplit(CommandIdDelimiter).ToList();
 
-        public string Name { get; }
+        public static CommandLaunchPoint FromAutomation(Automation automation)
+        {
+            return new CommandLaunchPoint(automation);
+        }
+
+        public Automation AsAutomation()
+        {
+            return this.automation;
+        }
+
+        public void AppendCommandIds(List<string> commandIds)
+        {
+            commandIds.GuardAgainstNull(nameof(commandIds));
+
+            commandIds.ForEach(commandId =>
+            {
+                if (!CommandIds.Contains(commandId))
+                {
+                    var a = new List<string>(CommandIds) { commandId }.Join(CommandIdDelimiter);
+                    this.automation.UpdateMetadata(nameof(CommandIds), a);
+                }
+            });
+        }
+
+        public string Id => this.automation.Id;
+
+        public string Name => this.automation.Name;
 
         public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
         {
@@ -41,13 +66,13 @@ namespace Automate.CLI.Domain
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
-                var automation = solution.FindByAutomation(cmdId);
-                if (automation.HasNone())
+                var command = solution.FindByAutomation(cmdId);
+                if (command.HasNone())
                 {
                     throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
                 }
 
-                automation.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
+                command.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
             });
 
             return outcome;

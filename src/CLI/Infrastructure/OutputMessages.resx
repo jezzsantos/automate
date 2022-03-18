@@ -71,7 +71,10 @@
         <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
-        <value>Added Launch Point for commands with name: '{Name}'</value>
+        <value>Added Launch Point '{Name}' with ID: {Id}, for commands: {Commands}</value>
+    </data>
+    <data name="CommandLine_Output_LaunchPointUpdated" xml:space="preserve">
+        <value>Updated Launch Point '{Name}' with ID: {Id}, with commands: {Commands}</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:

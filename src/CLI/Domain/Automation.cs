@@ -16,6 +16,7 @@ namespace Automate.CLI.Domain
     internal class Automation : IPersistable
     {
         private static int testTurn;
+        private readonly Dictionary<string, object> metadata;
 
         public Automation(string name, AutomationType type, Dictionary<string, object> metadata)
         {
@@ -27,7 +28,7 @@ namespace Automate.CLI.Domain
             Id = IdGenerator.Create();
             Name = name;
             Type = type;
-            Metadata = metadata;
+            this.metadata = metadata;
             testTurn = 0;
         }
 
@@ -36,12 +37,12 @@ namespace Automate.CLI.Domain
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
             Type = properties.Rehydrate<AutomationType>(factory, nameof(Type));
-            Metadata = properties.Rehydrate<Dictionary<string, object>>(factory, nameof(Metadata));
+            this.metadata = properties.Rehydrate<Dictionary<string, object>>(factory, nameof(Metadata));
         }
 
         public AutomationType Type { get; }
 
-        public IReadOnlyDictionary<string, object> Metadata { get; }
+        public IReadOnlyDictionary<string, object> Metadata => this.metadata;
 
         public string Name { get; }
 
@@ -53,11 +54,11 @@ namespace Automate.CLI.Domain
             properties.Dehydrate(nameof(Id), Id);
             properties.Dehydrate(nameof(Name), Name);
             properties.Dehydrate(nameof(Type), Type);
-            properties.Dehydrate(nameof(Metadata), Metadata);
+            properties.Dehydrate(nameof(Metadata), this.metadata);
 
             return properties;
         }
-
+        
         public static Automation Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
             return new Automation(properties, factory);
@@ -69,13 +70,13 @@ namespace Automate.CLI.Domain
             {
                 case AutomationType.CodeTemplateCommand:
                 {
-                    var automation = new CodeTemplateCommand(Id, Name, Metadata); //Challenge here is to give it all the data it needs, including its ID, and its dependencies
+                    var automation = CodeTemplateCommand.FromAutomation(this);
                     return automation.Execute(solution, target);
                 }
 
                 case AutomationType.CommandLaunchPoint:
                 {
-                    var automation = new CommandLaunchPoint(Id, Name, Metadata); //Challenge here is to give it all the data it needs, including its ID, and its dependencies
+                    var automation = CommandLaunchPoint.FromAutomation(this);
                     return automation.Execute(solution, target);
                 }
 
@@ -95,6 +96,13 @@ namespace Automate.CLI.Domain
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown type of automation: {Type}");
             }
+        }
+
+        public void UpdateMetadata(string name, object value)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            value.GuardAgainstNull(nameof(value));
+            this.metadata[name] = value;
         }
     }
 }

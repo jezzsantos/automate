@@ -39,7 +39,9 @@ namespace Automate.CLI.Domain
 
         Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath);
 
-        Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement pattern);
+        Automation AddCommandLaunchPoint(string name, List<string> commandIds, PatternDefinition pattern);
+
+        Automation UpdateCommandLaunchPoint(string name, List<string> commandIds, IPatternElement sourceElement, PatternDefinition pattern);
 
         Automation FindAutomation(string id);
 

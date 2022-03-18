@@ -143,6 +143,15 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automation (ID: {0}) was updated on element &apos;{1}&apos;.
+        /// </summary>
+        internal static string PatternElement_VersionChange_Automation_Update {
+            get {
+                return ResourceManager.GetString("PatternElement_VersionChange_Automation_Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CodeTemplate (ID: {0}) was added to element &apos;{1}&apos;.
         /// </summary>
         internal static string PatternElement_VersionChange_CodeTemplate_Add {

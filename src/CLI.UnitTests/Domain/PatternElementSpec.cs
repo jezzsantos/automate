@@ -13,11 +13,13 @@ namespace CLI.UnitTests.Domain
     public class PatternElementSpec
     {
         private readonly TestPatternElement element;
+        private readonly PatternDefinition pattern;
 
         public PatternElementSpec()
         {
+            this.pattern = new PatternDefinition("apatternname");
             this.element = new TestPatternElement("aname");
-            this.element.SetParent(new PatternDefinition("apatternname"));
+            this.pattern.AddElement(this.element);
         }
 
         [Fact]
@@ -53,7 +55,7 @@ namespace CLI.UnitTests.Domain
                 .Invoking(x => x.AddAttribute(Attribute.ReservedAttributeNames[0], null, false, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.AuthoringApplication_AttributeNameReserved.Format(
+                    ExceptionMessages.PatternElement_AttributeNameReserved.Format(
                         Attribute.ReservedAttributeNames[0]));
         }
 
@@ -66,7 +68,7 @@ namespace CLI.UnitTests.Domain
                 .Invoking(x => x.AddAttribute("anelementname", null, false, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.AuthoringApplication_AttributeByNameExistsAsElement.Format(
+                    ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(
                         "anelementname"));
         }
 
@@ -107,7 +109,7 @@ namespace CLI.UnitTests.Domain
             this.element.Attributes.Should().BeEmpty();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
-        
+
         [Fact]
         public void WhenAddElementAndAlreadyExists_ThenThrows()
         {
@@ -155,7 +157,6 @@ namespace CLI.UnitTests.Domain
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
 
-
         [Fact]
         public void WhenAttachCodeTemplateAndTemplateWithSameName_ThenThrows()
         {
@@ -195,7 +196,7 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("acommandname"));
+                .WithMessage(ExceptionMessages.PatternElement_AutomationByNameExists.Format("acommandname"));
         }
 
         [Fact]
@@ -229,12 +230,21 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
             var command = this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.pattern);
 
             this.element
-                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element))
+                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.pattern))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format("alaunchpointname"));
+                .WithMessage(ExceptionMessages.PatternElement_AutomationByNameExists.Format("alaunchpointname"));
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointAndNoCommands_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string>(), this.pattern))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_NoCommandIds);
         }
 
         [Fact]
@@ -249,14 +259,13 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenAddCommandLaunchPoint_TheAddsAutomationToElement()
+        public void WhenAddCommandLaunchPointWithIdsFromAnywhereInPattern_TheAddsAutomationToElement()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
-            var command1 = pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
-            var command2 = pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
+            this.pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
+            var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
-            var result = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id }, pattern);
+            var result = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id }, this.pattern);
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -264,20 +273,93 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenAddCommandLaunchPointToPatternWithWildcard_TheAddsAllAutomationFromPatternToElement()
+        {
+            this.pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
+            var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
+
+            var result = this.pattern.AddCommandLaunchPoint("alaunchpointname", new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
+
+            result.Name.Should().Be("alaunchpointname");
+            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
+            this.pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointToElementWithWildcard_TheAddsAllAutomationFromElementToElement()
+        {
+            this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command1 = this.element.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
+            var command2 = this.element.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
+
+            var result = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
+
+            result.Name.Should().Be("alaunchpointname");
+            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
+            this.pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
         public void WhenAddCommandLaunchPointAndNoName_TheAddsAutomationWithDefaultName()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
-            var command = pattern.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
+            this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command = this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
 
-            var result = this.element.AddCommandLaunchPoint(null, new List<string> { command.Id }, pattern);
+            var result = this.element.AddCommandLaunchPoint(null, new List<string> { command.Id }, this.pattern);
 
-            result.Name.Should().Be("LaunchPoint1");
+            result.Name.Should().Be("LaunchPoint2");
+            result.Should().Be(this.element.Automation[1]);
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command.Id}");
+        }
+
+        [Fact]
+        public void WhenUpdateCommandLaunchPointAndNoCommands_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string>(), this.element, this.pattern))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_NoCommandIds);
+        }
+
+        [Fact]
+        public void WhenUpdateCommandLaunchPointAndCommandNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { "acmdid" }, this.element, this.pattern))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.PatternElement_CommandIdNotFound.Format("acmdid"));
+        }
+
+        [Fact]
+        public void WhenUpdateCommandLaunchPointAndNotExists_ThenThrows()
+        {
+            this.pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
+
+            this.element
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.element, this.pattern))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format("alaunchpointname"));
+        }
+
+        [Fact]
+        public void WhenUpdateCommandLaunchPoint_ThenAddsCommands()
+        {
+            this.pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
+            var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.pattern);
+
+            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { command2.Id }, this.element, this.pattern);
+
+            result.Should().Be(this.element.Automation[0]);
+            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
         }
     }
 
-    internal class TestPatternElement : PatternElement
+    internal class TestPatternElement : Element
     {
         public TestPatternElement(string name) : base(name)
         {

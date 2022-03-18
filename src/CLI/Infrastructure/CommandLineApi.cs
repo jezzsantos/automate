@@ -109,12 +109,22 @@ namespace Automate.CLI.Infrastructure
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
-                    new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch"),
+                    new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
                     new Option("--name", "A name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint))
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint)),
+                new Command("update-command-launchpoint", "Adds a launch point for a command")
+                {
+                    new Argument("Name", "The name of the launch point"),
+                    new Option("--add", "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
+                        typeof(string), arity: ArgumentArity.ExactlyOne),
+                    new Option("--from", "The expression of the element/collection to add commands from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection on which the launch point exists",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCommandLaunchPoint))
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
             {
@@ -397,10 +407,19 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var cmdIds = commandIdentifiers.SafeSplit(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var launchPoint = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
-                    launchPoint.Name);
+                    launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+            }
+
+            internal static void HandleUpdateCommandLaunchPoint(string name, string add, string from, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var launchPoint = Authoring.UpdateCommandLaunchPoint(name, cmdIds, from, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
+                    launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,

@@ -17,35 +17,20 @@ namespace CLI.UnitTests.Domain
         public CommandLaunchPointSpec()
         {
             this.launchPoint =
-                new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { IdGenerator.Create() });
-        }
-
-        [Fact]
-        public void WhenConstructedAndNameIsMissing_ThenThrows()
-        {
-            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", null, new List<string> { "acmdid" }))
-                .Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void WhenConstructedAndNameIsInvalid_ThenThrows()
-        {
-            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "^aninvalidname^", new List<string> { "acmdid" }))
-                .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
+                new CommandLaunchPoint("alaunchpointname", new List<string> { IdGenerator.Create() });
         }
 
         [Fact]
         public void WhenConstructedAndCommandIdsMissing_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", (List<string>)null))
+            FluentActions.Invoking(() => new CommandLaunchPoint("aname", null))
                 .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void WhenConstructedAndCommandIdsEmpty_ThenThrows()
         {
-            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", new List<string>()))
+            FluentActions.Invoking(() => new CommandLaunchPoint("aname", new List<string>()))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Automation_EmptyCommandIds + "*");
         }
@@ -54,7 +39,7 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructedAndCommandIdsInvalid_ThenThrows()
         {
             var cmdIds = new List<string> { IdGenerator.Create(), "aninvalidcmdid", IdGenerator.Create() };
-            FluentActions.Invoking(() => new CommandLaunchPoint("12345678", "aname", cmdIds))
+            FluentActions.Invoking(() => new CommandLaunchPoint("aname", cmdIds))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Automation_InvalidCommandIds.Format(cmdIds.Join(", ")) +
                              "*");
@@ -81,7 +66,7 @@ namespace CLI.UnitTests.Domain
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
             var solutionItem = solution.Model;
 
-            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+            var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
                 .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
@@ -104,7 +89,7 @@ namespace CLI.UnitTests.Domain
                 .Properties["anelementname1"].Materialise()
                 .Properties["anelementname2"].Materialise();
 
-            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+            var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
                 .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
@@ -129,7 +114,7 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
             solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
-            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+            var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
                 .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
@@ -154,12 +139,42 @@ namespace CLI.UnitTests.Domain
             solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
             solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
-            var result = new CommandLaunchPoint("12345678", "alaunchpointname", new List<string> { automation.Id })
+            var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
                 .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().Contain("testingonly", DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(), "anexceptionmessage"));
             result.IsSuccess.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenAppendCommandIdsAndHasNone_ThenAddsOne()
+        {
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid" });
+
+            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid");
+        }
+
+        [Fact]
+        public void WhenAppendCommandIdsWithNew_ThenAddsNew()
+        {
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid1" });
+
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid2" });
+
+            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid2");
+        }
+
+        [Fact]
+        public void WhenAppendCommandIdsWithNewAndDuplicates_ThenAddsNew()
+        {
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid1" });
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid2" });
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid3" });
+
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid2", "acmdid3", "acmdid4" });
+
+            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid2", "acmdid3", "acmdid4");
         }
     }
 }

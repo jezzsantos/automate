@@ -203,6 +203,21 @@ namespace Automate.CLI.Application
             return launchPoint;
         }
 
+        public Automation UpdateCommandLaunchPoint(string name, List<string> commandIds, string sourceExpression, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            commandIds.GuardAgainstNull(nameof(commandIds));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+            var source = ResolveTargetElement(pattern, sourceExpression);
+
+            var launchPoint = target.UpdateCommandLaunchPoint(name, commandIds, source, pattern);
+            this.store.Save(pattern);
+
+            return launchPoint;
+        }
+
         public string TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));

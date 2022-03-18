@@ -14,32 +14,16 @@ namespace CLI.UnitTests.Domain
         public class GivenNoCommand
         {
             [Fact]
-            public void WhenConstructedAndNameIsMissing_ThenThrows()
-            {
-                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", null, "acodetemplateid", false, "~/afilepath"))
-                    .Should().Throw<ArgumentNullException>();
-            }
-
-            [Fact]
-            public void WhenConstructedAndNameIsInvalid_ThenThrows()
-            {
-                FluentActions.Invoking(() =>
-                        new CodeTemplateCommand("12345678", "^aninvalidname^", "acodetemplateid", false, "~/afilepath"))
-                    .Should().Throw<ArgumentOutOfRangeException>()
-                    .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
-            }
-
-            [Fact]
             public void WhenConstructedAndCodeTemplateIdIsMissing_ThenThrows()
             {
-                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", "aname", null, false, "~/afilepath"))
+                FluentActions.Invoking(() => new CodeTemplateCommand("aname", null, false, "~/afilepath"))
                     .Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
             public void WhenConstructedAndFilePathIsMissing_ThenThrows()
             {
-                FluentActions.Invoking(() => new CodeTemplateCommand("12345678", "aname", "acodetemplateid", false, null))
+                FluentActions.Invoking(() => new CodeTemplateCommand("aname", "acodetemplateid", false, null))
                     .Should().Throw<ArgumentNullException>();
             }
 
@@ -47,7 +31,7 @@ namespace CLI.UnitTests.Domain
             public void WhenConstructedAndFilePathIsInvalid_ThenThrows()
             {
                 FluentActions.Invoking(() =>
-                        new CodeTemplateCommand("12345678", "aname", "acodetemplateid", false, "^aninvalidfilepath^"))
+                        new CodeTemplateCommand("aname", "acodetemplateid", false, "^aninvalidfilepath^"))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(ValidationMessages.Automation_InvalidFilePath.Format("^aninvalidfilepath^") + "*");
             }
@@ -75,7 +59,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
-                    solutionPathResolver.Object, this.textTemplateEngine.Object, "12345678", "acommandname", "acodetemplateid",
+                    solutionPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
                     false, "~/afilepath.cs");
             }
 
@@ -212,7 +196,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
-                    solutionPathResolver.Object, this.textTemplateEngine.Object, "12345678", "acommandname", "acodetemplateid",
+                    solutionPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
                     true, "~/afilepath.cs");
             }
 

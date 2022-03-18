@@ -239,11 +239,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Launch Point for commands with name: &apos;{Name}&apos;.
+        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; with ID: {Id}, for commands: {Commands}.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_LaunchPointAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; with ID: {Id}, with commands: {Commands}.
+        /// </summary>
+        internal static string CommandLine_Output_LaunchPointUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_LaunchPointUpdated", resourceCulture);
             }
         }
         

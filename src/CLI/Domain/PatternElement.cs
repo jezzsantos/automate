@@ -6,6 +6,7 @@ namespace Automate.CLI.Domain
 {
     internal abstract class PatternElement : IPatternElement
     {
+        internal const string LaunchPointSelectionWildcard = "*";
         private readonly List<Attribute> attributes;
         private readonly List<Automation> automations;
         private readonly List<CodeTemplate> codeTemplates;
@@ -101,7 +102,7 @@ namespace Automate.CLI.Domain
 
             if (AttributeNameIsReserved(name))
             {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeNameReserved.Format(name));
+                throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved.Format(name));
             }
 
             if (AttributeExistsByName(this, name))
@@ -111,7 +112,7 @@ namespace Automate.CLI.Domain
 
             if (ElementExistsByName(this, name))
             {
-                throw new AutomateException(ExceptionMessages.AuthoringApplication_AttributeByNameExistsAsElement.Format(name));
+                throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(name));
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
@@ -201,38 +202,47 @@ namespace Automate.CLI.Domain
                 throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNoFound.Format(codeTemplateName));
             }
 
-            var automationName = name.HasValue()
+            var templateName = name.HasValue()
                 ? name
                 : $"CodeTemplateCommand{Automation.ToListSafe().Count + 1}";
-            if (AutomationExistsByName(this, automationName))
+            if (AutomationExistsByName(this, templateName))
             {
                 throw new AutomateException(
-                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(automationName));
+                    ExceptionMessages.PatternElement_AutomationByNameExists.Format(templateName));
             }
 
-            var automation = new Automation(automationName, AutomationType.CodeTemplateCommand, new Dictionary<string, object>
-            {
-                { nameof(CodeTemplateCommand.CodeTemplateId), codeTemplate.Id },
-                { nameof(CodeTemplateCommand.IsTearOff), isTearOff },
-                { nameof(CodeTemplateCommand.FilePath), filePath }
-            });
+            var automation = new CodeTemplateCommand(templateName, codeTemplate.Id, isTearOff, filePath).AsAutomation();
             AddAutomation(automation);
 
             return automation;
         }
 
-        public Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement pattern)
+        public Automation AddCommandLaunchPoint(string name, List<string> commandIds, PatternDefinition pattern)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
             pattern.GuardAgainstNull(nameof(pattern));
 
-            commandIds.ForEach(cmdId =>
+            if (commandIds.HasNone())
             {
-                if (!pattern.FindAutomation(cmdId).Exists())
+                throw new AutomateException(ExceptionMessages.PatternElement_NoCommandIds);
+            }
+            if (commandIds.Count == 1
+                && commandIds.First() == LaunchPointSelectionWildcard)
+            {
+                commandIds.Clear();
+                commandIds.AddRange(GetAllLaunchableAutomation(Automation));
+            }
+            else
+            {
+                commandIds.ForEach(cmdId =>
                 {
-                    throw new AutomateException(ExceptionMessages.PatternElement_CommandIdNotFound.Format(cmdId));
-                }
-            });
+                    var command = pattern.FindAutomation(cmdId);
+                    if (command.NotExists() || !command.IsLaunchable())
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_CommandIdNotFound.Format(cmdId));
+                    }
+                });
+            }
 
             var launchPointName = name.HasValue()
                 ? name
@@ -240,16 +250,54 @@ namespace Automate.CLI.Domain
             if (AutomationExistsByName(this, launchPointName))
             {
                 throw new AutomateException(
-                    ExceptionMessages.AuthoringApplication_AutomationByNameExists.Format(launchPointName));
+                    ExceptionMessages.PatternElement_AutomationByNameExists.Format(launchPointName));
             }
 
-            var automation = new Automation(launchPointName, AutomationType.CommandLaunchPoint, new Dictionary<string, object>
-            {
-                { nameof(CommandLaunchPoint.CommandIds), commandIds.Join(";") }
-            });
+            var automation = new CommandLaunchPoint(launchPointName, commandIds).AsAutomation();
             AddAutomation(automation);
 
             return automation;
+        }
+
+        public Automation UpdateCommandLaunchPoint(string name, List<string> commandIds, IPatternElement sourceElement, PatternDefinition pattern)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            commandIds.GuardAgainstNull(nameof(commandIds));
+            pattern.GuardAgainstNull(nameof(pattern));
+
+            if (commandIds.HasNone())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_NoCommandIds);
+            }
+            if (commandIds.Count == 1
+                && commandIds.First() == LaunchPointSelectionWildcard)
+            {
+                commandIds.Clear();
+                commandIds.AddRange(GetAllLaunchableAutomation(sourceElement.Automation));
+            }
+            else
+            {
+                commandIds.ForEach(cmdId =>
+                {
+                    var command = pattern.FindAutomation(cmdId);
+                    if (command.NotExists() || !command.IsLaunchable())
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_CommandIdNotFound.Format(cmdId));
+                    }
+                });
+            }
+
+            var automation = GetAutomationByName(this, name);
+            if (automation.NotExists() || automation.Type != AutomationType.CommandLaunchPoint)
+            {
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(name));
+            }
+            var launchPoint = CommandLaunchPoint.FromAutomation(automation);
+            launchPoint.AppendCommandIds(commandIds);
+            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Automation_Update.Format(launchPoint.Id, Id));
+
+            return launchPoint.AsAutomation();
         }
 
         public Automation FindAutomation(string id)
@@ -281,6 +329,14 @@ namespace Automate.CLI.Domain
         public IReadOnlyList<CodeTemplate> CodeTemplates => this.codeTemplates;
 
         public IReadOnlyList<Automation> Automation => this.automations;
+
+        private static List<string> GetAllLaunchableAutomation(IReadOnlyList<Automation> automation)
+        {
+            return automation
+                .Where(auto => auto.IsLaunchable())
+                .Select(auto => auto.Id)
+                .ToList();
+        }
 
         private void RecordChange(VersionChange change, string description)
         {
@@ -322,12 +378,17 @@ namespace Automate.CLI.Domain
 
         private static Element GetElementByName(IElementContainer element, string elementName)
         {
-            return element.Elements.Safe().FirstOrDefault(attr => attr.Name.EqualsIgnoreCase(elementName));
+            return element.Elements.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(elementName));
         }
 
         private static bool AutomationExistsByName(IAutomationContainer element, string automationName)
         {
             return element.Automation.Safe().Any(ele => ele.Name.EqualsIgnoreCase(automationName));
+        }
+
+        private static Automation GetAutomationByName(IAutomationContainer element, string name)
+        {
+            return element.Automation.Safe().FirstOrDefault(auto => auto.Name.EqualsIgnoreCase(name));
         }
 
         private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)

@@ -61,33 +61,6 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An element/collection with name: &apos;{0}&apos; already exists. The name cannot be the same as any element/collection.
-        /// </summary>
-        internal static string AuthoringApplication_AttributeByNameExistsAsElement {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_AttributeByNameExistsAsElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
-        /// </summary>
-        internal static string AuthoringApplication_AttributeNameReserved {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_AttributeNameReserved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automation with name: &apos;{0}&apos; already exists. The name must be unique.
-        /// </summary>
-        internal static string AuthoringApplication_AutomationByNameExists {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_AutomationByNameExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &apos;The code file: &apos;{1}&apos; could not be found at location: &apos;{0}&apos;.
         /// </summary>
         internal static string AuthoringApplication_CodeTemplate_NotFoundAtLocation {
@@ -232,11 +205,47 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An element/collection with name: &apos;{0}&apos; already exists. The name cannot be the same as any element/collection.
+        /// </summary>
+        internal static string PatternElement_AttributeByNameExistsAsElement {
+            get {
+                return ResourceManager.GetString("PatternElement_AttributeByNameExistsAsElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The attribute with name: &apos;{0}&apos; does not exist.
         /// </summary>
         internal static string PatternElement_AttributeByNameNotExists {
             get {
                 return ResourceManager.GetString("PatternElement_AttributeByNameNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
+        /// </summary>
+        internal static string PatternElement_AttributeNameReserved {
+            get {
+                return ResourceManager.GetString("PatternElement_AttributeNameReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automation with name: &apos;{0}&apos; already exists. The name must be unique.
+        /// </summary>
+        internal static string PatternElement_AutomationByNameExists {
+            get {
+                return ResourceManager.GetString("PatternElement_AutomationByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No commands were added to the launch point.
+        /// </summary>
+        internal static string PatternElement_AutomationNotExistsByName {
+            get {
+                return ResourceManager.GetString("PatternElement_AutomationNotExistsByName", resourceCulture);
             }
         }
         
@@ -291,6 +300,15 @@ namespace Automate.CLI {
         internal static string PatternElement_ElementByNameNotExists {
             get {
                 return ResourceManager.GetString("PatternElement_ElementByNameNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No commands were added to the launch point.
+        /// </summary>
+        internal static string PatternElement_NoCommandIds {
+            get {
+                return ResourceManager.GetString("PatternElement_NoCommandIds", resourceCulture);
             }
         }
         

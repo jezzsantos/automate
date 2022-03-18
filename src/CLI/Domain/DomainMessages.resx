@@ -69,4 +69,7 @@
     <data name="PatternElement_VersionChange_Automation_Add" xml:space="preserve">
         <value>Automation (ID: {0}) was added to element '{1}'</value>
     </data>
+    <data name="PatternElement_VersionChange_Automation_Update" xml:space="preserve">
+        <value>Automation (ID: {0}) was updated on element '{1}'</value>
+    </data>
 </root>
