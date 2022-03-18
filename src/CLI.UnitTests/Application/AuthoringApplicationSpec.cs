@@ -587,7 +587,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.TestCodeTemplate("atemplatename", null, null, null, null);
 
-            result.Should().Be("anoutput");
+            result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
@@ -605,7 +605,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}", null, null, null);
 
-            result.Should().Be("anoutput");
+            result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
@@ -653,7 +653,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", "animportpath", null);
 
-            result.Should().Be("anoutput");
+            result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
                 (string)dic["aname"] == "avalue")));
         }
@@ -684,7 +684,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath");
 
-            result.Should().Be("anoutput");
+            result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }

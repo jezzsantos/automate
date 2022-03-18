@@ -42,14 +42,14 @@
         <value>Added Code Template: '{Name}' (ID: {Id}) from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
-        <value>Code Template '{Name}' outputs:
+        <value>Code Template '{Name}' (ID: {Id}) outputs:
 {Output}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestImported" xml:space="preserve">
-        <value>Code Template '{Name}' tested with data from: '{Imported}'</value>
+        <value>Data for testing Code Template '{Name}' (ID: {Id}) was imported from: '{Imported}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestExported" xml:space="preserve">
-        <value>Code Template '{Name}' data for this test exported to: '{Exported}'</value>
+        <value>Data from testing Code Template '{Name}' (ID: {Id}) has been exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_PatternTree" xml:space="preserve">
         <value>Pattern is configured as:

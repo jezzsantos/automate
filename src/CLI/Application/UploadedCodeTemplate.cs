@@ -1,6 +1,7 @@
-﻿using Automate.CLI.Extensions;
+﻿using Automate.CLI.Domain;
+using Automate.CLI.Extensions;
 
-namespace Automate.CLI.Domain
+namespace Automate.CLI.Application
 {
     internal class UploadedCodeTemplate
     {

@@ -218,7 +218,7 @@ namespace Automate.CLI.Application
             return launchPoint;
         }
 
-        public string TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
+        public CodeTemplateTest TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
 
@@ -238,7 +238,7 @@ namespace Automate.CLI.Application
             if (importedRelativeFilePath.HasValue())
             {
                 var importedData = ImportData();
-                return GenerateImportedCode(importedData);
+                return new CodeTemplateTest(codeTemplate, GenerateImportedCode(importedData));
             }
 
             var generatedData = GenerateTestData();
@@ -248,7 +248,7 @@ namespace Automate.CLI.Application
                 ExportResult(generatedData);
             }
 
-            return code;
+            return new CodeTemplateTest(codeTemplate, code);
 
             string GenerateImportedCode(Dictionary<string, object> data)
             {

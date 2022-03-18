@@ -116,7 +116,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; outputs:
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; (ID: {Id}) outputs:
         ///{Output}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTested {
@@ -126,7 +126,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; data for this test exported to: &apos;{Exported}&apos;.
+        ///   Looks up a localized string similar to Data from testing Code Template &apos;{Name}&apos; (ID: {Id}) has been exported to: &apos;{Exported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestExported {
             get {
@@ -135,7 +135,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; tested with data from: &apos;{Imported}&apos;.
+        ///   Looks up a localized string similar to Data for testing Code Template &apos;{Name}&apos; (ID: {Id}) was imported from: &apos;{Imported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestImported {
             get {

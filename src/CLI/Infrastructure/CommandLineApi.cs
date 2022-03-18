@@ -512,20 +512,20 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData, string exportData, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var output = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
+                var result = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported, name, exportData);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported, name, result.Template.Id, exportData);
                     console.WriteOutputLine();
                 }
 
                 if (importData.HasValue())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported, name, importData);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported, name, result.Template.Id, importData);
                     console.WriteOutputLine();
                 }
 
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, output);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, result.Template.Id, result.Output);
             }
 
             internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)

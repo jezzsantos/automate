@@ -548,10 +548,11 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.TestCommandName} codetemplate ATemplateName --aschildof {{APattern.AnElement1}}");
 
+            var template = this.setup.Patterns.Single().Elements.Single().CodeTemplates.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName",
+                    OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName", template.Id,
                         $"A{Environment.NewLine}" +
                         $"aproperty11{Environment.NewLine}" +
                         $"A{Environment.NewLine}"));
@@ -571,10 +572,11 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.TestCommandName} codetemplate ATemplateName --aschildof {{APattern.AnElement1}} --import-data \"Assets/TestData/data1.json\"");
 
+            var template = this.setup.Patterns.Single().Elements.Single().CodeTemplates.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName",
+                    OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName", template.Id,
                         $"A{Environment.NewLine}" +
                         $"aproperty11{Environment.NewLine}" +
                         $"A{Environment.NewLine}"));
