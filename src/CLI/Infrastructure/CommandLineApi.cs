@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Builder;
+using System.CommandLine.Help;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
@@ -222,6 +223,10 @@ namespace Automate.CLI.Infrastructure
                 new Command("solutions", "Lists all created solutions")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
             };
+            var testingOnlyCommands = new Command("testingonly", "For testing only!")
+            {
+                new Option("--fail", "Throws a general exception", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+            }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.HandleFail));
 
             var command =
                 new RootCommand(
@@ -237,7 +242,10 @@ namespace Automate.CLI.Infrastructure
                     runCommands,
                     configureCommands,
                     validateCommands,
-                    executeCommands
+                    executeCommands,
+#if TESTINGONLY
+                    testingOnlyCommands
+#endif
                 };
             command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
                 typeof(bool), () => false,
@@ -289,9 +297,15 @@ namespace Automate.CLI.Infrastructure
                     Console.Error.WriteLine();
                     context.Console.WriteError($"Failed Unexpectedly, with: {message}", ConsoleColor.Red);
                 }, 1)
+                .UseHelp(context =>
+                {
+                    context.HelpBuilder.CustomizeLayout(_ =>
+                    {
+                        return HelpBuilder.Default.GetLayout()
+                            .Prepend(_ => { WriteBanner(); });
+                    });
+                })
                 .Build();
-
-            WriteBanner(args);
 
             var result = parser.Invoke(args);
 
@@ -300,16 +314,13 @@ namespace Automate.CLI.Infrastructure
             return result;
         }
 
-        private static void WriteBanner(params string[] args)
+        private static void WriteBanner()
         {
-            if (args.HasNone())
-            {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(@"┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐");
-                Console.WriteLine(@"├─┤│ │ │ │ ││││├─┤ │ ├┤ ");
-                Console.WriteLine(@"┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘");
-                Console.ResetColor();
-            }
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(@"┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐");
+            Console.WriteLine(@"├─┤│ │ │ │ ││││├─┤ │ ├┤ ");
+            Console.WriteLine(@"┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘");
+            Console.ResetColor();
         }
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
@@ -317,7 +328,7 @@ namespace Automate.CLI.Infrastructure
             // ReSharper disable All
             var isDebugBuild = false;
 
-#if DEBUG
+#if TESTINGONLY
             isDebugBuild = true;
 #endif
 
@@ -329,7 +340,7 @@ namespace Automate.CLI.Infrastructure
             var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
             {
-                return context.ParseResult.GetValueForOption<bool>(debugOption);
+                return (bool)(context.ParseResult.GetValueForOption(debugOption));
             }
 
             return false;
@@ -377,6 +388,14 @@ namespace Automate.CLI.Infrastructure
 
             return args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
                    || args[0] == TestCommandName || isViewPatternCommand;
+        }
+
+        private class TestingOnlyHandlers
+        {
+            internal static void HandleFail(bool outputStructured, IConsole console)
+            {
+                throw new Exception("testingonly");
+            }
         }
 
         private class AuthoringHandlers
