@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -25,6 +26,17 @@ namespace CLI.UnitTests.Domain
                 this.version.Current.Should().Be("0.0.0");
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
+            }
+
+            [Fact]
+            public void WhenRegisterChangeWithMessageArgs_ThenSavesStructuredMessage()
+            {
+                this.version.RegisterChange(VersionChange.NoChange, "achange{One}{Two}{Three}", "avalue1", true, 25);
+
+                this.version.LastChanges.Should().Be(VersionChange.NoChange);
+                this.version.ChangeLog.Single().Message.Should().Be("achangeavalue1True25");
+                this.version.ChangeLog.Single().MessageTemplate.Should().Be("achange{One}{Two}{Three}");
+                this.version.ChangeLog.Single().Arguments.Should().ContainInOrder("avalue1", "True", "25");
             }
 
             [Fact]
@@ -115,7 +127,7 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NoChange, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
-                this.version.ChangeLog.Should().BeEmpty();
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -124,7 +136,7 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NonBreaking, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -133,7 +145,7 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.Breaking, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -214,8 +226,9 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NoChange, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
-                this.version.ChangeLog.Count.Should().Be(1);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "anonbreakingchange");
+                this.version.ChangeLog.Count.Should().Be(2);
+                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -225,8 +238,8 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "anonbreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -236,8 +249,8 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "anonbreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -318,8 +331,9 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NoChange, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
-                this.version.ChangeLog.Count.Should().Be(1);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "abreakingchange");
+                this.version.ChangeLog.Count.Should().Be(2);
+                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -329,8 +343,8 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "abreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -340,8 +354,8 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "abreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Description == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]

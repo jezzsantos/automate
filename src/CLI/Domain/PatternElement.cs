@@ -57,38 +57,38 @@ namespace Automate.CLI.Domain
         public void AddAttribute(Attribute attribute)
         {
             this.attributes.Add(attribute);
-            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Attribute_Add.Format(attribute.Id, Id));
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Add, attribute.Id, Id);
         }
 
         public void DeleteAttribute(Attribute attribute)
         {
             this.attributes.Remove(attribute);
-            RecordChange(VersionChange.Breaking, DomainMessages.PatternElement_VersionChange_Attribute_Delete.Format(attribute.Id, Id));
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Delete, attribute.Id, Id);
         }
 
         public void AddElement(Element element)
         {
             element.SetParent(this);
             this.elements.Add(element);
-            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Element_Add.Format(element.Id, Id));
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Element_Add, element.Id, Id);
         }
 
         public void DeleteElement(Element element)
         {
             this.elements.Remove(element);
-            RecordChange(VersionChange.Breaking, DomainMessages.PatternElement_VersionChange_Element_Delete.Format(element.Id, Id));
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Delete, element.Id, Id);
         }
 
         public void AddCodeTemplate(CodeTemplate codeTemplate)
         {
             this.codeTemplates.Add(codeTemplate);
-            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_CodeTemplate_Add.Format(codeTemplate.Id, Id));
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_CodeTemplate_Add, codeTemplate.Id, Id);
         }
 
         public void AddAutomation(Automation automation)
         {
             this.automations.Add(automation);
-            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Automation_Add.Format(automation.Id, Id));
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Add, automation.Id, Id);
         }
 
         public void SetParent(PatternElement parent)
@@ -295,7 +295,7 @@ namespace Automate.CLI.Domain
             }
             var launchPoint = CommandLaunchPoint.FromAutomation(automation);
             launchPoint.AppendCommandIds(commandIds);
-            RecordChange(VersionChange.NonBreaking, DomainMessages.PatternElement_VersionChange_Automation_Update.Format(launchPoint.Id, Id));
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, launchPoint.Id, Id);
 
             return launchPoint.AsAutomation();
         }
@@ -338,7 +338,7 @@ namespace Automate.CLI.Domain
                 .ToList();
         }
 
-        private void RecordChange(VersionChange change, string description)
+        private void RecordChange(VersionChange change, string description, params object[] args)
         {
             var pattern = Pattern;
             if (pattern.NotExists())
@@ -348,11 +348,11 @@ namespace Automate.CLI.Domain
 
             if (this == Pattern)
             {
-                pattern.ToolkitVersion.RegisterChange(change, description);
+                pattern.ToolkitVersion.RegisterChange(change, description, args);
             }
             else
             {
-                pattern.RecordChange(change, description);
+                pattern.RecordChange(change, description, args);
             }
         }
 

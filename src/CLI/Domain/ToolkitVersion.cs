@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
@@ -46,13 +47,14 @@ namespace Automate.CLI.Domain
             return new ToolkitVersion(properties, factory);
         }
 
-        public void RegisterChange(VersionChange change, string description)
+        public void RegisterChange(VersionChange change, string description, params object[] args)
         {
             description.GuardAgainstNull(nameof(description));
 
             switch (change)
             {
                 case VersionChange.NoChange:
+                    this.changeLog.Add(new VersionChangeLog(change, description, args));
                     return;
 
                 case VersionChange.NonBreaking:
@@ -60,13 +62,13 @@ namespace Automate.CLI.Domain
                     switch (LastChanges)
                     {
                         case VersionChange.NoChange:
-                            this.changeLog.Add(new VersionChangeLog(change, description));
+                            this.changeLog.Add(new VersionChangeLog(change, description, args));
                             LastChanges = VersionChange.NonBreaking;
                             break;
 
                         case VersionChange.NonBreaking:
                         case VersionChange.Breaking:
-                            this.changeLog.Add(new VersionChangeLog(change, description));
+                            this.changeLog.Add(new VersionChangeLog(change, description, args));
                             return;
 
                         default:
@@ -79,12 +81,12 @@ namespace Automate.CLI.Domain
                     {
                         case VersionChange.NoChange:
                         case VersionChange.NonBreaking:
-                            this.changeLog.Add(new VersionChangeLog(change, description));
+                            this.changeLog.Add(new VersionChangeLog(change, description, args));
                             LastChanges = VersionChange.Breaking;
                             break;
 
                         case VersionChange.Breaking:
-                            this.changeLog.Add(new VersionChangeLog(change, description));
+                            this.changeLog.Add(new VersionChangeLog(change, description, args));
                             return;
 
                         default:
@@ -103,6 +105,7 @@ namespace Automate.CLI.Domain
 
             var result = CalculateNewVersion(instruction);
 
+            this.changeLog.Add(new VersionChangeLog(VersionChange.NoChange, VersionChanges.ToolkitVersion_NewVersion, Current, result.Version));
             Current = result.Version;
             ResetAfterUpdate();
             return result;
@@ -161,17 +164,17 @@ namespace Automate.CLI.Domain
                     {
                         return new VersionUpdateResult(requestedVersion,
                             DomainMessages.ToolkitVersion_Forced.Format(instruction.Instruction,
-                                ChangeLog.ToBulletList(item => item.Description)));
+                                ChangeLog.ToBulletList(item => item.Message)));
                     }
                     throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Format(instruction.Instruction,
-                        expectedNewVersion.ToString(VersionFieldCount), ChangeLog.ToMultiLineText(item => item.Description)));
+                        expectedNewVersion.ToString(VersionFieldCount), ChangeLog.ToMultiLineText(item => item.Message)));
                 }
 
                 if (LastChanges == VersionChange.NonBreaking)
                 {
                     return new VersionUpdateResult(requestedVersion,
                         DomainMessages.ToolkitVersion_Warning.Format(instruction.Instruction,
-                            ChangeLog.ToBulletList(item => item.Description)));
+                            ChangeLog.ToBulletList(item => item.Message)));
                 }
             }
 
@@ -181,28 +184,38 @@ namespace Automate.CLI.Domain
 
     internal class VersionChangeLog : IPersistable
     {
-        public VersionChangeLog(VersionChange change, string description)
+        public VersionChangeLog(VersionChange change, string description, params object[] args)
         {
             description.GuardAgainstNullOrEmpty(nameof(description));
-            Description = description;
             Change = change;
+            MessageTemplate = description;
+            Message = description.FormatTemplate(args);
+            Arguments = args.Safe().Select(arg => arg.ToString()).ToList();
         }
 
         private VersionChangeLog(PersistableProperties properties, IPersistableFactory factory)
         {
-            Description = properties.Rehydrate<string>(factory, nameof(Description));
             Change = properties.Rehydrate<VersionChange>(factory, nameof(Change));
+            Message = properties.Rehydrate<string>(factory, nameof(Message));
+            MessageTemplate = properties.Rehydrate<string>(factory, nameof(MessageTemplate));
+            Arguments = properties.Rehydrate<List<string>>(factory, nameof(Arguments));
         }
 
-        public string Description { get; }
-
         public VersionChange Change { get; }
+
+        public string Message { get; }
+
+        public string MessageTemplate { get; }
+
+        public IReadOnlyList<string> Arguments { get; }
 
         public PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
-            properties.Dehydrate(nameof(Description), Description);
             properties.Dehydrate(nameof(Change), Change);
+            properties.Dehydrate(nameof(Message), Message);
+            properties.Dehydrate(nameof(MessageTemplate), MessageTemplate);
+            properties.Dehydrate(nameof(Arguments), Arguments);
 
             return properties;
         }

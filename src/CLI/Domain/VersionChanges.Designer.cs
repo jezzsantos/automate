@@ -22,14 +22,14 @@ namespace Automate.CLI.Domain {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DomainMessages {
+    internal class VersionChanges {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal DomainMessages() {
+        internal VersionChanges() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Automate.CLI.Domain {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Automate.CLI.Domain.DomainMessages", typeof(DomainMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Automate.CLI.Domain.VersionChanges", typeof(VersionChanges).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,77 +61,74 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was added to element {ParentId}.
         /// </summary>
-        internal static string AuthoringApplication_TestCodeTemplate_Description {
+        internal static string PatternElement_Attribute_Add {
             get {
-                return ResourceManager.GetString("AuthoringApplication_TestCodeTemplate_Description", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Attribute_Add", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplateCommand ({0}) path expression.
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was deleted from element {ParentId}.
         /// </summary>
-        internal static string CodeTemplateCommand_FilePathExpression_Description {
+        internal static string PatternElement_Attribute_Delete {
             get {
-                return ResourceManager.GetString("CodeTemplateCommand_FilePathExpression_Description", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Attribute_Delete", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generated file: &apos;{0}&apos; to: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Automation (ID: {AutomationId}) was added to element {ParentId}.
         /// </summary>
-        internal static string CodeTemplateCommand_Log_GeneratedFile {
+        internal static string PatternElement_Automation_Add {
             get {
-                return ResourceManager.GetString("CodeTemplateCommand_Log_GeneratedFile", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Automation_Add", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated link to file: &apos;{0}&apos; at: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Automation (ID: {AutomationId}) was updated on element {ParentId}.
         /// </summary>
-        internal static string CodeTemplateCommand_Log_UpdatedLink {
+        internal static string PatternElement_Automation_Update {
             get {
-                return ResourceManager.GetString("CodeTemplateCommand_Log_UpdatedLink", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Automation_Update", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        ///   Looks up a localized string similar to CodeTemplate (ID: {TemplateId}) was added to element {ParentId}.
         /// </summary>
-        internal static string CodeTemplateCommand_TemplateContent_Description {
+        internal static string PatternElement_CodeTemplate_Add {
             get {
-                return ResourceManager.GetString("CodeTemplateCommand_TemplateContent_Description", resourceCulture);
+                return ResourceManager.GetString("PatternElement_CodeTemplate_Add", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command: &apos;{0}&apos; failed to execute. Errors were:
-        ///{1}.
+        ///   Looks up a localized string similar to Element/Collection (ID: {ElementId}) was added to element {ParentId}.
         /// </summary>
-        internal static string CommandLaunchPoint_CommandIdFailedExecution {
+        internal static string PatternElement_Element_Add {
             get {
-                return ResourceManager.GetString("CommandLaunchPoint_CommandIdFailedExecution", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Element_Add", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos; has been forcefully applied despite the breaking changes (that have been auto-detected in this toolkit):
-        ///{1}.
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was deleted from element {ParentId}.
         /// </summary>
-        internal static string ToolkitVersion_Forced {
+        internal static string PatternElement_Element_Delete {
             get {
-                return ResourceManager.GetString("ToolkitVersion_Forced", resourceCulture);
+                return ResourceManager.GetString("PatternElement_Element_Delete", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested version number: &apos;{0}&apos; should represent a change due to non-breaking changes (that have been auto-detected in this toolkit):
-        ///{1}.
+        ///   Looks up a localized string similar to Toolkit was upgraded from v.{Old} to v.{New}.
         /// </summary>
-        internal static string ToolkitVersion_Warning {
+        internal static string ToolkitVersion_NewVersion {
             get {
-                return ResourceManager.GetString("ToolkitVersion_Warning", resourceCulture);
+                return ResourceManager.GetString("ToolkitVersion_NewVersion", resourceCulture);
             }
         }
     }

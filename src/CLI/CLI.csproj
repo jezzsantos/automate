@@ -66,6 +66,10 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Domain\VersionChanges.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="ExceptionMessages.Designer.cs">
@@ -89,5 +93,10 @@
             <DependentUpon>DomainMessages.resx</DependentUpon>
         </Compile>
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <Compile Update="Domain\VersionChanges.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>VersionChanges.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>

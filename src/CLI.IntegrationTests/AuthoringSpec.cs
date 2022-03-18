@@ -391,8 +391,8 @@ namespace CLI.IntegrationTests
                         .FormatTemplate(DomainMessages.ToolkitVersion_Warning
                             .Format("0.1.0", new[]
                             {
-                                DomainMessages.PatternElement_VersionChange_CodeTemplate_Add
-                                    .Format(codeTemplate.Id, pattern.Id)
+                                VersionChanges.PatternElement_CodeTemplate_Add
+                                    .FormatTemplate(codeTemplate.Id, pattern.Id)
                             }.ToBulletList())));
         }
 
@@ -424,9 +424,9 @@ namespace CLI.IntegrationTests
                         .FormatTemplate(DomainMessages.ToolkitVersion_Forced
                             .Format("0.1.0", new[]
                             {
-                                DomainMessages.PatternElement_VersionChange_Attribute_Add.Format(attribute.Id, pattern.Id),
-                                DomainMessages.PatternElement_VersionChange_CodeTemplate_Add.Format(codeTemplate.Id, pattern.Id),
-                                DomainMessages.PatternElement_VersionChange_Attribute_Delete.Format(attribute.Id, pattern.Id)
+                                VersionChanges.PatternElement_Attribute_Add.FormatTemplate(attribute.Id, pattern.Id),
+                                VersionChanges.PatternElement_CodeTemplate_Add.FormatTemplate(codeTemplate.Id, pattern.Id),
+                                VersionChanges.PatternElement_Attribute_Delete.FormatTemplate(attribute.Id, pattern.Id)
                             }.ToBulletList())));
         }
 

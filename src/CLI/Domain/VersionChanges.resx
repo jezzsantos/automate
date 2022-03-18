@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="ToolkitVersion_NewVersion" xml:space="preserve">
+        <value>Toolkit was upgraded from v.{Old} to v.{New}</value>
+    </data>
+    <data name="PatternElement_Attribute_Add" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was added to element {ParentId}</value>
+    </data>
+    <data name="PatternElement_Attribute_Delete" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was deleted from element {ParentId}</value>
+    </data>
+    <data name="PatternElement_Element_Add" xml:space="preserve">
+        <value>Element/Collection (ID: {ElementId}) was added to element {ParentId}</value>
+    </data>
+    <data name="PatternElement_Element_Delete" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was deleted from element {ParentId}</value>
+    </data>
+    <data name="PatternElement_CodeTemplate_Add" xml:space="preserve">
+        <value>CodeTemplate (ID: {TemplateId}) was added to element {ParentId}</value>
+    </data>
+    <data name="PatternElement_Automation_Add" xml:space="preserve">
+        <value>Automation (ID: {AutomationId}) was added to element {ParentId}</value>
+    </data>
+    <data name="PatternElement_Automation_Update" xml:space="preserve">
+        <value>Automation (ID: {AutomationId}) was updated on element {ParentId}</value>
+    </data>
+</root>
