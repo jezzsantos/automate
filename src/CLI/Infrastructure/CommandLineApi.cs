@@ -325,27 +325,17 @@ namespace Automate.CLI.Infrastructure
 
         private static bool IsDebugging(InvocationContext context, Exception ex)
         {
-            // ReSharper disable All
-            var isDebugBuild = false;
-
 #if TESTINGONLY
-            isDebugBuild = true;
-#endif
-
-            if (isDebugBuild)
-            {
-                return true;
-            }
-
+            return true;
+#else
             var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
             {
-                return (bool)(context.ParseResult.GetValueForOption(debugOption));
+                return (bool)context.ParseResult.FindResultFor(debugOption)!.GetValueOrDefault()!;
             }
 
             return false;
-
-            // ReSharper restore All
+#endif
         }
 
         private static bool IsRuntimeCommand(IReadOnlyList<string> args)

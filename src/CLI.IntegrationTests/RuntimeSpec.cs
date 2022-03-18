@@ -110,7 +110,7 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_InstalledToolkitsListed.FormatTemplate(
                         $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
         }
-
+        
         [Fact]
         public void WhenCreateSolution_ThenCreatesSolution()
         {

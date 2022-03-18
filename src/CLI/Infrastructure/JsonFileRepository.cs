@@ -203,7 +203,7 @@ namespace Automate.CLI.Infrastructure
 
         public List<ToolkitDefinition> ListToolkits()
         {
-            if (!Directory.Exists(PatternLocation))
+            if (!Directory.Exists(ToolkitLocation))
             {
                 return new List<ToolkitDefinition>();
             }
