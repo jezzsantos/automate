@@ -115,7 +115,7 @@
         <value>The installer could not be found at: '{0}'</value>
     </data>
     <data name="RuntimeApplication_ToolkitNotFound" xml:space="preserve">
-        <value>No toolkit with Name: '{0}' is installed</value>
+        <value>No toolkit with Name: '{0}' is installed yet</value>
     </data>
     <data name="PatternPathResolver_InvalidExpression" xml:space="preserve">
         <value>The expression: '{0}' is not a valid pattern expression</value>

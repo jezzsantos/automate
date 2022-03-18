@@ -610,6 +610,24 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenTestCodeTemplateOnDescendantCollection_ThenReturnsResult()
+        {
+            this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
+                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("acollectionname", null, null, true, ElementCardinality.Single, null);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.acollectionname}"))
+                .Returns(this.application.GetCurrentPattern().Elements.Single);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.acollectionname}");
+
+            var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.acollectionname}", null, null, null);
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+        }
+
+        [Fact]
         public void WhenTestCodeTemplateAndImportDataNotExist_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname");

@@ -126,7 +126,7 @@ namespace Automate.CLI.Domain
                 if (solutionItem.IsPattern)
                 {
                     var codeTemplate = solutionItem.PatternSchema.CodeTemplates.Safe()
-                        .FirstOrDefault(temp => temp.Id.EqualsIgnoreCase(codeTemplateId));
+                        .FirstOrDefault(template => template.Id.EqualsIgnoreCase(codeTemplateId));
                     if (codeTemplate.Exists())
                     {
                         return solutionItem;
@@ -136,32 +136,40 @@ namespace Automate.CLI.Domain
                 if (solutionItem.IsElement)
                 {
                     var codeTemplate = solutionItem.ElementSchema.CodeTemplates.Safe()
-                        .FirstOrDefault(tem => tem.Id.EqualsIgnoreCase(codeTemplateId));
+                        .FirstOrDefault(template => template.Id.EqualsIgnoreCase(codeTemplateId));
                     if (codeTemplate.Exists())
                     {
                         return solutionItem;
                     }
                 }
-                if (solutionItem.IsCollection || solutionItem.IsAttribute || solutionItem.IsValue)
+
+                if (solutionItem.IsPattern || solutionItem.IsElement)
                 {
-                    return default;
+                    foreach (var (_, value) in solutionItem.Properties.Safe())
+                    {
+                        var result = FindDescendantCodeTemplate(value);
+                        if (result.Exists())
+                        {
+                            return result;
+                        }
+                    }
                 }
 
-                foreach (var (_, value) in solutionItem.Properties.Safe())
+                if (solutionItem.IsCollection)
                 {
-                    var result = FindDescendantCodeTemplate(value);
-                    if (result.Exists())
+                    foreach (var item in solutionItem.Items.Safe())
                     {
-                        return result;
+                        var result = FindDescendantCodeTemplate(item);
+                        if (result.Exists())
+                        {
+                            return result;
+                        }
                     }
                 }
-                foreach (var item in solutionItem.Items.Safe())
+
+                if (solutionItem.IsAttribute || solutionItem.IsValue)
                 {
-                    var result = FindDescendantCodeTemplate(item);
-                    if (result.Exists())
-                    {
-                        return result;
-                    }
+                    return default;
                 }
 
                 return default;

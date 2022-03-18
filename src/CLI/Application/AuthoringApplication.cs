@@ -225,7 +225,7 @@ namespace Automate.CLI.Application
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
+            var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(template => template.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(parentExpression.HasValue()

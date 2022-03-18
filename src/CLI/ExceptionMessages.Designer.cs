@@ -241,7 +241,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No commands were added to the launch point.
+        ///   Looks up a localized string similar to The launch point with name: &apos;{0}&apos; does not exist.
         /// </summary>
         internal static string PatternElement_AutomationNotExistsByName {
             get {
@@ -511,7 +511,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No toolkit with Name: &apos;{0}&apos; is installed.
+        ///   Looks up a localized string similar to No toolkit with Name: &apos;{0}&apos; is installed yet.
         /// </summary>
         internal static string RuntimeApplication_ToolkitNotFound {
             get {
