@@ -190,6 +190,19 @@ namespace Automate.CLI.Application
             }
         }
 
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath, string parentExpression)
+        {
+            commandName.GuardAgainstNullOrEmpty(nameof(commandName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var command = target.UpdateCodeTemplateCommand(commandName, name, isTearOff, filePath);
+            this.store.Save(pattern);
+
+            return command;
+        }
+
         public Automation AddCommandLaunchPoint(string name, List<string> commandIds, string parentExpression)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));

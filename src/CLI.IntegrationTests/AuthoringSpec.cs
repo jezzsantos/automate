@@ -297,6 +297,25 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenUpdateCodeTemplateCommand_ThenUpdatesCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --withpath ~/afilepath");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" --astearoff true --withpath anewpath");
+
+            var command = this.setup.Patterns.Single().Automation.First();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.FormatTemplate(command.Name, command.Id, "anewpath", true));
+        }
+        
+
+        [Fact]
         public void WhenAddCommandLaunchPointWithAllCommands_ThenAddsLaunchPoint()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");

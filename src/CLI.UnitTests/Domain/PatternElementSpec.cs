@@ -226,6 +226,32 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenUpdateCodeTemplateCommandAndNotExists_ThenThrows()
+        {
+            this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+
+            this.element
+                .Invoking(x => x.UpdateCodeTemplateCommand("acommandname", null, null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CodeTemplateCommand, "acommandname"));
+        }
+
+        [Fact]
+        public void WhenUpdateCodeTemplateCommand_ThenUpdates()
+        {
+            this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
+            this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
+
+            var result = this.element.UpdateCodeTemplateCommand("acommandname", "anewname", true, "anewpath");
+
+            result.Should().Be(this.element.Automation[0]);
+            result.Name.Should().Be("anewname");
+            result.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(true);
+            result.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
+        }
+        
+
+        [Fact]
         public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
         {
             this.element.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
@@ -341,11 +367,11 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.element, this.pattern))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format("alaunchpointname"));
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint, "alaunchpointname"));
         }
 
         [Fact]
-        public void WhenUpdateCommandLaunchPoint_ThenAddsCommands()
+        public void WhenUpdateCommandLaunchPoint_ThenUpdates()
         {
             this.pattern.AttachCodeTemplate("atemplatename", "afullpath", "anextension");
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");

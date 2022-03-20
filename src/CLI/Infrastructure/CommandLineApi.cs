@@ -105,9 +105,21 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool), arity: ArgumentArity.ZeroOrOne),
                     new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ExactlyOne),
-                    new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                    new Option("--aschildof", "The expression of the element/collection to add the command to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
+                new Command("update-codetemplate-command", "Updates an existing command")
+                {
+                    new Argument("CommandName", "The name of the command to update"),
+                    new Option("--name", "A new name for the command", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--astearoff", "If you only want to generate the file once, and not overwrite the file if it already exists",
+                        typeof(bool?), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection on which the command exists",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCodeTemplateCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
                     new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
@@ -116,9 +128,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint)),
-                new Command("update-command-launchpoint", "Adds a launch point for a command")
+                new Command("update-command-launchpoint", "Updates an existing launch point")
                 {
-                    new Argument("Name", "The name of the launch point"),
+                    new Argument("LaunchPointName", "The name of the launch point to update"),
                     new Option("--add", "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
                         typeof(string), arity: ArgumentArity.ExactlyOne),
                     new Option("--from", "The expression of the element/collection to add commands from",
@@ -404,13 +416,20 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void HandleAddCodeTemplateCommand(string codeTemplateName, string name, bool asTearOff,
-                string withPath,
-                string asChildOf, bool outputStructured, IConsole console)
+                string withPath, string asChildOf, bool outputStructured, IConsole console)
             {
                 var command = Authoring.AddCodeTemplateCommand(codeTemplateName, name, asTearOff, withPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
                     command.Name,
                     command.Id);
+            }
+
+            internal static void HandleUpdateCodeTemplateCommand(string commandName, string name, bool? asTearOff,
+                string withPath, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var command = Authoring.UpdateCodeTemplateCommand(commandName, name, asTearOff, withPath, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
+                    command.Name, command.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)], command.Metadata[nameof(CodeTemplateCommand.IsTearOff)]);
             }
 
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
@@ -422,11 +441,11 @@ namespace Automate.CLI.Infrastructure
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
-            internal static void HandleUpdateCommandLaunchPoint(string name, string add, string from, string asChildOf,
+            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string add, string from, string asChildOf,
                 bool outputStructured, IConsole console)
             {
                 var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var launchPoint = Authoring.UpdateCommandLaunchPoint(name, cmdIds, from, asChildOf);
+                var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }

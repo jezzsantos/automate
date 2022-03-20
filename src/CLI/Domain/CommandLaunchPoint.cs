@@ -50,8 +50,8 @@ namespace Automate.CLI.Domain
             {
                 if (!CommandIds.Contains(commandId))
                 {
-                    var a = new List<string>(CommandIds) { commandId }.Join(CommandIdDelimiter);
-                    this.automation.UpdateMetadata(nameof(CommandIds), a);
+                    var newCommandIds = new List<string>(CommandIds) { commandId }.Join(CommandIdDelimiter);
+                    this.automation.UpdateMetadata(nameof(CommandIds), newCommandIds);
                 }
             });
         }

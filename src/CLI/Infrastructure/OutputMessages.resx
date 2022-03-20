@@ -70,6 +70,9 @@
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
         <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
     </data>
+    <data name="CommandLine_Output_CodeTemplateCommandUpdated" xml:space="preserve">
+        <value>Updated Code Template Command '{Name}' with ID: {Id}, with path: {FilePath}, and TearOff: {TearOff}</value>
+    </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
         <value>Added Launch Point '{Name}' with ID: {Id}, for commands: {Commands}</value>
     </data>

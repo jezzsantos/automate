@@ -241,7 +241,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The launch point with name: &apos;{0}&apos; does not exist.
+        ///   Looks up a localized string similar to A &apos;{0} automation with name: &apos;{1}&apos; does not exist.
         /// </summary>
         internal static string PatternElement_AutomationNotExistsByName {
             get {

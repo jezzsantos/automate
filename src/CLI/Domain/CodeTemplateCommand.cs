@@ -130,5 +130,24 @@ namespace Automate.CLI.Domain
 
             return new CommandExecutionResult(Name, log);
         }
+
+        public void ChangeName(string name)
+        {
+            this.automation.ChangeName(name);
+        }
+
+        public void ChangeTearOff(bool isTearOff)
+        {
+            this.automation.UpdateMetadata(nameof(IsTearOff), isTearOff);
+        }
+
+        public void ChangeFilePath(string filePath)
+        {
+            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
+            filePath.GuardAgainstInvalid(Validations.IsRuntimeFilePath, nameof(filePath),
+                ValidationMessages.Automation_InvalidFilePath);
+
+            this.automation.UpdateMetadata(nameof(FilePath), filePath);
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace Automate.CLI.Domain
 
         public IReadOnlyDictionary<string, object> Metadata => this.metadata;
 
-        public string Name { get; }
+        public string Name { get; private set; }
 
         public string Id { get; }
 
@@ -103,6 +103,15 @@ namespace Automate.CLI.Domain
             name.GuardAgainstNullOrEmpty(nameof(name));
             value.GuardAgainstNull(nameof(value));
             this.metadata[name] = value;
+        }
+
+        public void ChangeName(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+
+            Name = name;
         }
     }
 }
