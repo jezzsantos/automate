@@ -6,18 +6,40 @@ namespace Automate.CLI.Infrastructure
 {
     internal class SystemIoFileSystemWriter : IFileSystemWriter
     {
-        public void Write(string contents, string path)
+        public void Write(string contents, string absolutePath)
         {
-            path.GuardAgainstNullOrEmpty(nameof(path));
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
 
-            new FileInfo(path).Directory?.Create();
-            File.WriteAllText(path, contents ?? string.Empty);
+            new FileInfo(absolutePath).Directory?.Create();
+            File.WriteAllText(absolutePath, contents ?? string.Empty);
         }
 
-        public bool Exists(string path)
+        public bool Exists(string absolutePath)
         {
-            path.GuardAgainstNullOrEmpty(nameof(path));
-            return File.Exists(path);
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+            return File.Exists(absolutePath);
+        }
+
+        public void Delete(string absolutePath)
+        {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+
+            if (File.Exists(absolutePath))
+            {
+                File.Delete(absolutePath);
+            }
+        }
+
+        public void Move(string sourceAbsolutePath, string targetAbsolutePath)
+        {
+            sourceAbsolutePath.GuardAgainstNullOrEmpty(nameof(sourceAbsolutePath));
+            targetAbsolutePath.GuardAgainstNullOrEmpty(nameof(targetAbsolutePath));
+
+            if (File.Exists(sourceAbsolutePath))
+            {
+                new FileInfo(targetAbsolutePath).Directory?.Create();
+                File.Move(sourceAbsolutePath, targetAbsolutePath, true);
+            }
         }
     }
 }

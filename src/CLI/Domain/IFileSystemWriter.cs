@@ -2,8 +2,12 @@
 {
     internal interface IFileSystemWriter
     {
-        void Write(string contents, string path);
+        void Write(string contents, string absolutePath);
 
-        bool Exists(string path);
+        bool Exists(string absolutePath);
+
+        void Delete(string absolutePath);
+
+        void Move(string sourceAbsolutePath, string targetAbsolutePath);
     }
 }

@@ -30,6 +30,12 @@
     <data name="CodeTemplateCommand_Log_UpdatedLink" xml:space="preserve">
         <value>Updated link to file: '{0}' at: '{1}'</value>
     </data>
+    <data name="CodeTemplateCommand_Log_Warning_Deleted" xml:space="preserve">
+        <value>Previously generated file: '{0}' has changed location or name, and was deleted</value>
+    </data>
+    <data name="CodeTemplateCommand_Log_Warning_Moved" xml:space="preserve">
+        <value>Previously generated file: '{0}' was moved to: '{1}'</value>
+    </data>
     <data name="CommandLaunchPoint_CommandIdFailedExecution" xml:space="preserve">
         <value>Command: '{0}' failed to execute. Errors were:
 {1}</value>

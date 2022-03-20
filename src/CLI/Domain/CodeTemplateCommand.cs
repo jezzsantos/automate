@@ -78,59 +78,6 @@ namespace Automate.CLI.Domain
             return this.automation;
         }
 
-        public string Id => this.automation.Id;
-
-        public string Name => this.automation.Name;
-
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
-        {
-            var log = new List<string>();
-
-            var codeTemplate = solution.Toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
-            if (codeTemplate.NotExists())
-            {
-                throw new AutomateException(
-                    ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Format(CodeTemplateId));
-            }
-
-            var filePath = this.solutionPathResolver.ResolveExpression(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(Id), FilePath, target);
-            var absoluteFilePath = filePath.StartsWith(CurrentDirectoryPrefix)
-                ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
-                    filePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
-                : filePath;
-            var filename = this.filePathResolver.GetFilename(absoluteFilePath);
-
-            var fileExists = this.fileSystemWriter.Exists(absoluteFilePath);
-            var willGenerateFile = !IsTearOff || IsTearOff && !fileExists;
-            if (willGenerateFile)
-            {
-                var contents = codeTemplate.Contents.Exists()
-                    ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents.ToArray())
-                    : string.Empty;
-                var generatedCode = this.textTemplatingEngine.Transform(DomainMessages.CodeTemplateCommand_TemplateContent_Description.Format(codeTemplate.Id), contents, target);
-
-                this.fileSystemWriter.Write(generatedCode, absoluteFilePath);
-                log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(filename, absoluteFilePath));
-            }
-
-            var link = target.ArtifactLinks.Safe()
-                .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
-            if (link.NotExists())
-            {
-                target.AddArtifactLink(Id, absoluteFilePath, filename);
-                if (IsTearOff)
-                {
-                    log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(filename, absoluteFilePath));
-                }
-            }
-            else
-            {
-                link.UpdatePathAndTag(absoluteFilePath, filename);
-            }
-
-            return new CommandExecutionResult(Name, log);
-        }
-
         public void ChangeName(string name)
         {
             this.automation.ChangeName(name);
@@ -148,6 +95,107 @@ namespace Automate.CLI.Domain
                 ValidationMessages.Automation_InvalidFilePath);
 
             this.automation.UpdateMetadata(nameof(FilePath), filePath);
+        }
+
+        public string Id => this.automation.Id;
+
+        public string Name => this.automation.Name;
+
+        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
+        {
+            var log = new List<string>();
+
+            var codeTemplate = solution.Toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
+            if (codeTemplate.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Format(CodeTemplateId));
+            }
+
+            var existingLink = target.ArtifactLinks.Safe()
+                .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
+
+            var destinationFilePath = this.solutionPathResolver.ResolveExpression(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(Id), FilePath, target);
+            var destinationFullPath = destinationFilePath.StartsWith(CurrentDirectoryPrefix)
+                ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
+                    destinationFilePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
+                : destinationFilePath;
+            var destinationFileExists = this.fileSystemWriter.Exists(destinationFullPath);
+            var existingLinkChangedLocation = existingLink.Exists()
+                ? existingLink.Path.NotEqualsIgnoreCase(destinationFullPath)
+                : false;
+
+            var shouldMoveOldFile = IsTearOff && !destinationFileExists && existingLinkChangedLocation;
+            var shouldWriteFile = shouldMoveOldFile == false && (!IsTearOff || IsTearOff && !destinationFileExists);
+
+            if (shouldWriteFile)
+            {
+                GenerateAndOverwriteFile(target, codeTemplate, destinationFullPath, log);
+            }
+
+            if (shouldMoveOldFile)
+            {
+                MoveExistingFile(existingLink, destinationFullPath, log);
+            }
+
+            UpdateArtifactLink(target, existingLink, existingLinkChangedLocation, destinationFileExists, destinationFullPath, log);
+
+            return new CommandExecutionResult(Name, log);
+        }
+
+        private void GenerateAndOverwriteFile(SolutionItem target, CodeTemplateFile codeTemplate, string destinationFullPath, List<string> log)
+        {
+            var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
+
+            var contents = codeTemplate.Contents.Exists()
+                ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents.ToArray())
+                : string.Empty;
+            var generatedCode = this.textTemplatingEngine.Transform(DomainMessages.CodeTemplateCommand_TemplateContent_Description.Format(codeTemplate.Id), contents, target);
+
+            this.fileSystemWriter.Write(generatedCode, destinationFullPath);
+            log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(destinationFilename, destinationFullPath));
+        }
+
+        private void MoveExistingFile(ArtifactLink existingLink, string destinationFullPath, List<string> log)
+        {
+            var oldFilePath = existingLink.Path;
+            this.fileSystemWriter.Move(oldFilePath, destinationFullPath);
+            log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format(oldFilePath, destinationFullPath));
+        }
+
+        private void UpdateArtifactLink(SolutionItem target, ArtifactLink existingLink, bool existingLinkChangedLocation, bool destinationFileExists, string destinationFullPath, List<string> log)
+        {
+            var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
+
+            if (existingLink.Exists())
+            {
+                var oldFilePath = existingLink.Path;
+                if (existingLinkChangedLocation)
+                {
+                    if (IsTearOff)
+                    {
+                        if (destinationFileExists)
+                        {
+                            this.fileSystemWriter.Delete(oldFilePath);
+                            log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format(oldFilePath));
+                        }
+                    }
+                    else
+                    {
+                        this.fileSystemWriter.Delete(oldFilePath);
+                        log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format(oldFilePath));
+                    }
+                }
+                existingLink.UpdatePathAndTag(destinationFullPath, destinationFilename);
+            }
+            else
+            {
+                target.AddArtifactLink(Id, destinationFullPath, destinationFilename);
+                if (IsTearOff)
+                {
+                    log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(destinationFilename, destinationFullPath));
+                }
+            }
         }
     }
 }

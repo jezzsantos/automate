@@ -97,6 +97,24 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Previously generated file: &apos;{0}&apos; has changed location or name, and was deleted.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_Warning_Deleted {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_Warning_Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previously generated file: &apos;{0}&apos; was moved to: &apos;{1}&apos;.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_Warning_Moved {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_Warning_Moved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CodeTemplate ({0}) template.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateContent_Description {
