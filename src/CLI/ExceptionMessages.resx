@@ -45,12 +45,6 @@
     <data name="MemoryRepository_NotFound" xml:space="preserve">
         <value>The pattern definition could not be found for: '{0}'</value>
     </data>
-    <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
-        <value>Pattern does not yet exist</value>
-    </data>
-    <data name="AuthoringApplication_CodeTemplate_NotFoundAtLocation" xml:space="preserve">
-        <value>'The code file: '{1}' could not be found at location: '{0}'</value>
-    </data>
     <data name="PatternElement_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name: '{0}' already exists. The name must be unique</value>
     </data>
@@ -81,8 +75,11 @@
     <data name="PatternElement_AutomationByNameExists" xml:space="preserve">
         <value>Automation with name: '{0}' already exists. The name must be unique</value>
     </data>
-    <data name="PatternElement_CodeTemplateNoFound" xml:space="preserve">
+    <data name="PatternElement_CodeTemplateNotFound" xml:space="preserve">
         <value>A CodeTemplate with name: '{0}' was not found</value>
+    </data>
+    <data name="PatternElement_CodeTemplateNotExistsById" xml:space="preserve">
+        <value>A CodeTemplate with ID: '{0}' was not found</value>
     </data>
     <data name="AuthoringApplication_CodeTemplateNotExistsRoot" xml:space="preserve">
         <value>A CodeTemplate with name: '{0}' does not exist on the pattern</value>
@@ -101,6 +98,15 @@
     </data>
     <data name="PatternElement_AutomationNotExistsByName" xml:space="preserve">
         <value>A '{0} automation with name: '{1}' does not exist</value>
+    </data>
+    <data name="PatternElement_AutomationNotExistsById" xml:space="preserve">
+        <value>A '{0} automation with ID: '{1}' does not exist</value>
+    </data>
+    <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
+        <value>Pattern does not yet exist</value>
+    </data>
+    <data name="AuthoringApplication_CodeTemplate_NotFoundAtLocation" xml:space="preserve">
+        <value>'The code file: '{1}' could not be found at location: '{0}'</value>
     </data>
     <data name="AuthoringApplication_TestDataImport_NotFoundAtLocation" xml:space="preserve">
         <value>The imported test data could not be found at location: '{0}'</value>
@@ -248,5 +254,11 @@
     </data>
     <data name="PersistableExtensions_FromJson_NoJson" xml:space="preserve">
         <value>An attempt to deserialize empty JSON</value>
+    </data>
+    <data name="ToolkitDefinition_CodeTemplateFileNotExist" xml:space="preserve">
+        <value>The Code Template: '{0}' does not exist in the toolkit</value>
+    </data>
+    <data name="ToolkitDefinition_CodeTemplateFileAlreadyExists" xml:space="preserve">
+        <value>Code Template: '{0}' already exists in the toolkit</value>
     </data>
 </root>

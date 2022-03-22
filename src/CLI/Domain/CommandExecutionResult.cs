@@ -5,6 +5,8 @@ namespace Automate.CLI.Domain
 {
     internal class CommandExecutionResult
     {
+        private readonly List<string> log;
+
         public CommandExecutionResult(string commandName) : this(commandName, new List<string>())
         {
         }
@@ -16,7 +18,7 @@ namespace Automate.CLI.Domain
 
             IsSuccess = true;
             CommandName = commandName;
-            Log = log;
+            this.log = log;
             ValidationErrors = new ValidationResults();
         }
 
@@ -27,7 +29,7 @@ namespace Automate.CLI.Domain
 
             IsSuccess = false;
             CommandName = commandName;
-            Log = new List<string>();
+            this.log = new List<string>();
             ValidationErrors = validations;
         }
 
@@ -35,7 +37,7 @@ namespace Automate.CLI.Domain
 
         public string CommandName { get; }
 
-        public List<string> Log { get; }
+        public IReadOnlyList<string> Log => this.log;
 
         public ValidationResults ValidationErrors { get; }
 
@@ -50,14 +52,14 @@ namespace Automate.CLI.Domain
         {
             message.GuardAgainstNullOrEmpty(nameof(message));
 
-            Log.Add(message);
+            this.log.Add(message);
         }
 
-        public void Add(List<string> messages)
+        public void Add(IReadOnlyList<string> messages)
         {
             messages.GuardAgainstNull(nameof(messages));
 
-            Log.AddRange(messages);
+            this.log.AddRange(messages);
         }
     }
 }

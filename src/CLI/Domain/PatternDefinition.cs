@@ -45,18 +45,52 @@ namespace Automate.CLI.Domain
             return instance;
         }
 
-        public List<CodeTemplate> GetAllCodeTemplates()
+        public List<(CodeTemplate Template, IPatternElement Parent)> GetAllCodeTemplates()
         {
-            var templates = new List<CodeTemplate>();
+            var templates = new List<(CodeTemplate Template, IPatternElement Parent)>();
             AggregateDescendantTemplates(this);
 
             void AggregateDescendantTemplates(IPatternElement element)
             {
-                element.CodeTemplates.ToListSafe().ForEach(tem => templates.Add(tem));
+                element.CodeTemplates.ToListSafe().ForEach(tem => templates.Add((tem, element)));
                 element.Elements.ToListSafe().ForEach(AggregateDescendantTemplates);
             }
 
             return templates;
+        }
+
+        public List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)> GetAllLaunchPoints()
+        {
+            var launchPoints = new List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)>();
+            AggregateDescendantLaunchPoints(this);
+
+            void AggregateDescendantLaunchPoints(IPatternElement element)
+            {
+                element.Automation
+                    .Where(auto => auto.Type == AutomationType.CommandLaunchPoint)
+                    .ToListSafe().ForEach(auto => { launchPoints.Add((CommandLaunchPoint.FromAutomation(auto), element)); });
+                element.Elements.ToListSafe().ForEach(AggregateDescendantLaunchPoints);
+            }
+
+            return launchPoints;
+        }
+
+        public Automation FindAutomation(string id, Predicate<Automation> where)
+        {
+            return FindDescendantAutomation(this);
+
+            Automation FindDescendantAutomation(IPatternElement element)
+            {
+                var automation = element.Automation.Safe()
+                    .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(id) && where(auto));
+                if (automation.Exists())
+                {
+                    return automation;
+                }
+                return element.Elements.Safe()
+                    .Select(FindDescendantAutomation)
+                    .FirstOrDefault(auto => auto.Exists());
+            }
         }
 
         public SolutionDefinition CreateTestSolution()

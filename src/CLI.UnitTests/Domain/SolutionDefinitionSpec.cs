@@ -274,5 +274,83 @@ namespace CLI.UnitTests.Domain
             element1Item.Parent.Should().Be(collection1Item.Items[0]);
             element1Item.Properties["anattributename3"].Parent.Should().Be(element1Item);
         }
+
+        [Fact]
+        public void WhenUpgradeAndToolkitSameVersion_ThenReturnsSuccessWithWarning()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var solution = new SolutionDefinition(toolkit);
+
+            var result = solution.Upgrade(toolkit, false);
+
+            solution.Toolkit.Pattern.ToolkitVersion.Current.Should().Be("0.0.0");
+            solution.Toolkit.Version.Should().Be("0.0.0");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().ContainSingle(x =>
+                x.Type == MigrationChangeType.Abort
+                && x.MessageTemplate == MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion);
+        }
+
+        [Fact]
+        public void WhenUpgradeAndNewToolkitHasBreakingChange_ThenReturnsFailureWithWarning()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var solution = new SolutionDefinition(toolkit);
+
+            pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion(new VersionInstruction("1.0.0"));
+            var updatedToolkit = new ToolkitDefinition(pattern);
+
+            var result = solution.Upgrade(updatedToolkit, false);
+
+            solution.Toolkit.Pattern.ToolkitVersion.Current.Should().Be("0.0.0");
+            solution.Toolkit.Version.Should().Be("0.0.0");
+            result.IsSuccess.Should().BeFalse();
+            result.Log.Should().ContainSingle(x =>
+                x.Type == MigrationChangeType.Abort
+                && x.MessageTemplate == MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden);
+        }
+
+        [Fact]
+        public void WhenUpgradeAndNewToolkitHasBreakingChangeAndForce_ThenReturnsSuccessWithWarning()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var solution = new SolutionDefinition(toolkit);
+
+            pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion(new VersionInstruction("1.0.0"));
+            var updatedToolkit = new ToolkitDefinition(pattern);
+
+            var result = solution.Upgrade(updatedToolkit, true);
+
+            solution.Toolkit.Pattern.ToolkitVersion.Current.Should().Be("1.0.0");
+            solution.Toolkit.Version.Should().Be("1.0.0");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().ContainSingle(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced);
+        }
+
+        [Fact]
+        public void WhenUpgrade_ThenUpgrades()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var solution = new SolutionDefinition(toolkit);
+
+            pattern = new PatternDefinition("apatternname");
+            pattern.UpdateToolkitVersion(new VersionInstruction());
+            var updatedToolkit = new ToolkitDefinition(pattern);
+
+            var result = solution.Upgrade(updatedToolkit, true);
+
+            solution.Toolkit.Pattern.ToolkitVersion.Current.Should().Be("0.1.0");
+            solution.Toolkit.Version.Should().Be("0.1.0");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
     }
 }

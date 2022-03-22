@@ -144,7 +144,7 @@ namespace Automate.CLI.Application
 
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var codeTemplate = target.AttachCodeTemplate(name, fullPath, extension);
+            var codeTemplate = target.AddCodeTemplate(name, fullPath, extension);
             this.store.Save(pattern);
 
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
@@ -179,7 +179,7 @@ namespace Automate.CLI.Application
             }
             catch (AutomateException ex)
             {
-                if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNoFound.Format(codeTemplateName))
+                if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName))
                 {
                     throw new AutomateException(parentExpression.HasValue()
                         ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName, parentExpression)
@@ -210,7 +210,7 @@ namespace Automate.CLI.Application
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var launchPoint = target.AddCommandLaunchPoint(name, commandIds, pattern);
+            var launchPoint = target.AddCommandLaunchPoint(name, commandIds);
             this.store.Save(pattern);
 
             return launchPoint;
@@ -225,7 +225,7 @@ namespace Automate.CLI.Application
             var target = ResolveTargetElement(pattern, parentExpression);
             var source = ResolveTargetElement(pattern, sourceExpression);
 
-            var launchPoint = target.UpdateCommandLaunchPoint(name, commandIds, source, pattern);
+            var launchPoint = target.UpdateCommandLaunchPoint(name, commandIds, source);
             this.store.Save(pattern);
 
             return launchPoint;

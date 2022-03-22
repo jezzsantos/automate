@@ -46,14 +46,32 @@ namespace Automate.CLI.Domain
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
 
+            if (commandIds.HasNone())
+            {
+                return;
+            }
+
+            var updated = new List<string>(CommandIds);
             commandIds.ForEach(commandId =>
             {
                 if (!CommandIds.Contains(commandId))
                 {
-                    var newCommandIds = new List<string>(CommandIds) { commandId }.Join(CommandIdDelimiter);
-                    this.automation.UpdateMetadata(nameof(CommandIds), newCommandIds);
+                    updated.Add(commandId);
                 }
             });
+            this.automation.UpdateMetadata(nameof(CommandIds), updated.Join(CommandIdDelimiter));
+        }
+
+        public void RemoveCommandId(string commandId)
+        {
+            commandId.GuardAgainstNullOrEmpty(nameof(commandId));
+
+            var updated = new List<string>(CommandIds);
+            if (CommandIds.Contains(commandId))
+            {
+                updated.Remove(commandId);
+            }
+            this.automation.UpdateMetadata(nameof(CommandIds), updated.Join(CommandIdDelimiter));
         }
 
         public string Id => this.automation.Id;

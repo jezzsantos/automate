@@ -35,17 +35,21 @@ namespace Automate.CLI.Domain
 
         Element AddElement(string name, string displayName, string description, bool isCollection, ElementCardinality cardinality);
 
-        CodeTemplate AttachCodeTemplate(string name, string fullPath, string extension);
+        CodeTemplate AddCodeTemplate(string name, string fullPath, string extension);
+
+        void DeleteCodeTemplate(string id, bool includeReferencingAutomation);
 
         Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath);
 
         Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath);
 
-        Automation AddCommandLaunchPoint(string name, List<string> commandIds, PatternDefinition pattern);
+        public void DeleteCodeTemplateCommand(string id, bool includeReferencingAutomation);
 
-        Automation UpdateCommandLaunchPoint(string launchPointName, List<string> commandIds, IPatternElement sourceElement, PatternDefinition pattern);
+        Automation AddCommandLaunchPoint(string name, List<string> commandIds);
 
-        Automation FindAutomation(string id);
+        Automation UpdateCommandLaunchPoint(string launchPointName, List<string> commandIds, IPatternElement sourceElement);
+
+        public void DeleteCommandLaunchPoint(string id);
 
         Attribute DeleteAttribute(string name);
 

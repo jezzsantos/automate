@@ -241,6 +241,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A &apos;{0} automation with ID: &apos;{1}&apos; does not exist.
+        /// </summary>
+        internal static string PatternElement_AutomationNotExistsById {
+            get {
+                return ResourceManager.GetString("PatternElement_AutomationNotExistsById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A &apos;{0} automation with name: &apos;{1}&apos; does not exist.
         /// </summary>
         internal static string PatternElement_AutomationNotExistsByName {
@@ -259,11 +268,20 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate with ID: &apos;{0}&apos; was not found.
+        /// </summary>
+        internal static string PatternElement_CodeTemplateNotExistsById {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplateNotExistsById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; was not found.
         /// </summary>
-        internal static string PatternElement_CodeTemplateNoFound {
+        internal static string PatternElement_CodeTemplateNotFound {
             get {
-                return ResourceManager.GetString("PatternElement_CodeTemplateNoFound", resourceCulture);
+                return ResourceManager.GetString("PatternElement_CodeTemplateNotFound", resourceCulture);
             }
         }
         
@@ -680,6 +698,24 @@ namespace Automate.CLI {
         internal static string TextTemplatingExtensions_TransformFailed {
             get {
                 return ResourceManager.GetString("TextTemplatingExtensions_TransformFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code Template: &apos;{0}&apos; already exists in the toolkit.
+        /// </summary>
+        internal static string ToolkitDefinition_CodeTemplateFileAlreadyExists {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_CodeTemplateFileAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Code Template: &apos;{0}&apos; does not exist in the toolkit.
+        /// </summary>
+        internal static string ToolkitDefinition_CodeTemplateFileNotExist {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_CodeTemplateFileNotExist", resourceCulture);
             }
         }
         

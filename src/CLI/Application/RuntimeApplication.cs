@@ -181,6 +181,18 @@ namespace Automate.CLI.Application
             return result;
         }
 
+        public SolutionUpgradeResult UpgradeSolution(bool force)
+        {
+            var solution = EnsureCurrentSolutionExists();
+
+            var latestToolkit = this.toolkitStore.FindById(solution.Toolkit.Id);
+
+            var result = solution.Upgrade(latestToolkit, force);
+            this.solutionStore.Save(solution);
+
+            return result;
+        }
+
         private SolutionItem ResolveTargetItem(SolutionDefinition solution, string itemExpression)
         {
             var target = solution.Model;

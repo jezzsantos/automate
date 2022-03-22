@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="SolutionDefinition_Upgrade_SameToolkitVersion" xml:space="preserve">
+        <value>Skipped, a newer version of the toolkit (Name: '{Name}' v{Version}) has not been installed yet</value>
+    </data>
+    <data name="SolutionDefinition_Upgrade_BreakingChangeForbidden" xml:space="preserve">
+        <value>Failed, the updated toolkit (Name: '{Name}' v{Version}) contains at least one breaking change, and therefore cannot be automatically upgraded</value>
+    </data>
+    <data name="SolutionDefinition_Upgrade_BreakingChangeForced" xml:space="preserve">
+        <value>Upgrade was forcefully applied despite the toolkit (Name: '{Name}' v{Version}) indicating a breaking change. The integrity of the upgraded solution cannot be guaranteed, and may need to be updated</value>
+    </data>
+    <data name="ToolkitDefinition_CodeTemplateFile_ContentUpgraded" xml:space="preserve">
+        <value>Changed contents of Code Template: '{Name}' (ID: '{Id}')</value>
+    </data>
+    <data name="ToolkitDefinition_CodeTemplateFile_Deleted" xml:space="preserve">
+        <value>Deleted Code Template: '{Name}' (ID: '{Id}')</value>
+    </data>
+    <data name="ToolkitDefinition_CodeTemplateFile_Added" xml:space="preserve">
+        <value>Added new Code Template: '{Name}' (ID: '{Id}')</value>
+    </data>
+</root>

@@ -71,6 +71,11 @@ namespace Automate.CLI.Infrastructure
             return this.toolkitRepository.FindToolkitByName(name);
         }
 
+        public ToolkitDefinition FindById(string id)
+        {
+            return this.toolkitRepository.FindToolkitById(id);
+        }
+
         public List<ToolkitDefinition> ListAll()
         {
             return this.toolkitRepository.ListToolkits();

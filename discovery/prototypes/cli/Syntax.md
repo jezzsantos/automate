@@ -443,7 +443,7 @@ That's it for defining the pattern.
 
 Now the tech lead can build a toolkit from that pattern, and give it to their dev team.
 
-`automate build toolkit --versionas "auto"`
+`automate build toolkit --asversion "auto"`
 
 > This command creates a standalone (cross-platform) package (`AcmeAPI.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
 >

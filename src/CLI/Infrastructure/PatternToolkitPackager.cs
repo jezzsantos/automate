@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -28,9 +27,8 @@ namespace Automate.CLI.Infrastructure
 
             this.store.Save(pattern);
 
-            var toolkit = new ToolkitDefinition(pattern, new Version(version.Version));
-
-            PackageAssets(toolkit);
+            var toolkit = new ToolkitDefinition(pattern);
+            toolkit.Pack((pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
 
             var location = this.toolkitStore.Export(toolkit);
 
@@ -40,7 +38,7 @@ namespace Automate.CLI.Infrastructure
         public ToolkitDefinition UnPack(IFile installer)
         {
             installer.GuardAgainstNull(nameof(installer));
-            
+
             var toolkit = UnpackToolkit(installer);
 
             //TODO: we will need to worry about existing versions of this toolkit, and existing products created from them  
@@ -76,24 +74,5 @@ namespace Automate.CLI.Infrastructure
             }
             return toolkit;
         }
-
-        private void PackageAssets(ToolkitDefinition toolkit)
-        {
-            var codeTemplates = toolkit.Pattern.GetAllCodeTemplates();
-            if (codeTemplates.HasNone())
-            {
-                return;
-            }
-
-            toolkit.AddCodeTemplateFiles(
-                codeTemplates
-                    .Select(template =>
-                    {
-                        var contents = this.store.DownloadCodeTemplate(toolkit.Pattern, template);
-                        return new CodeTemplateFile(contents, template.Id);
-                    })
-                    .ToList());
-        }
-
     }
 }

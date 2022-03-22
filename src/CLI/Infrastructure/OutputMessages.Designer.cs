@@ -200,7 +200,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is now being configured.
+        ///   Looks up a localized string similar to The Solution: &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is now being configured.
         /// </summary>
         internal static string CommandLine_Output_CurrentSolutionInUse {
             get {
@@ -335,7 +335,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is configured as:
+        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfiguration {
@@ -345,7 +345,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution Item &apos;{Name}&apos; (ID: &apos;{SolutionItemId}&apos;) was configured successfully.
+        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was configured successfully.
         /// </summary>
         internal static string CommandLine_Output_SolutionConfigured {
             get {
@@ -354,7 +354,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is now the default.
+        ///   Looks up a localized string similar to The Solution: &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_SolutionSwitched {
             get {
@@ -363,7 +363,37 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is not correctly configured in these ways:
+        ///   Looks up a localized string similar to Failed to upgrade Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionUpgradeFailed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully upgraded Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionUpgradeSucceeded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aborted upgrade of Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionUpgradeWithWarning {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeWithWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is not correctly configured in these ways:
         ///{Errors}.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationFailed {
@@ -373,7 +403,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) is configured correctly.
+        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is configured correctly.
         /// </summary>
         internal static string CommandLine_Output_SolutionValidationSuccess {
             get {

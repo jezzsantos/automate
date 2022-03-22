@@ -384,7 +384,7 @@ namespace CLI.UnitTests.Application
 
             result.Pattern.Should().BeNull();
             result.Validation.Should().BeEquivalentTo(ValidationResults.None);
-            result.Configuration.Should().Be(JsonConversions.ToJson<dynamic>(new
+            result.Configuration.Should().Be(new
             {
                 id = solution.Model.Id,
                 anattributename1 = "adefaultvalue1",
@@ -397,7 +397,7 @@ namespace CLI.UnitTests.Application
                         anattributename2 = "adefaultvalue2"
                     }
                 }
-            }));
+            }.ToJson<dynamic>());
         }
 
         [Fact]
@@ -423,7 +423,7 @@ namespace CLI.UnitTests.Application
 
             result.Pattern.Should().Be(pattern);
             result.Validation.Results.Should().BeEmpty();
-            result.Configuration.Should().Be(JsonConversions.ToJson<dynamic>(new
+            result.Configuration.Should().Be(new
             {
                 id = solution.Model.Id,
                 anattributename1 = "adefaultvalue1",
@@ -436,7 +436,7 @@ namespace CLI.UnitTests.Application
                         anattributename2 = "adefaultvalue2"
                     }
                 }
-            }));
+            }.ToJson<dynamic>());
         }
 
         [Fact]
@@ -568,6 +568,29 @@ namespace CLI.UnitTests.Application
 
             result.CommandName.Should().Be("acommandname");
             result.Log.Should().ContainSingle("testingonly");
+        }
+
+        [Fact]
+        public void WhenUpgradeSolutionAndSolutionNotExist_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.UpgradeSolution(false))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+        }
+
+        [Fact]
+        public void WhenUpgradeSolutionAndNothingToUpgrade_ThenSolutionUpgraded()
+        {
+            this.application.CreateSolution("apatternname", null);
+
+            var result = this.application.UpgradeSolution(false);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().ContainSingle(x =>
+                x.Type == MigrationChangeType.Abort
+                && x.MessageTemplate == MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion);
+            result.Solution.Id.Should().Be(this.application.CurrentSolutionId);
         }
 
         private void UpdateToolkit(PatternDefinition pattern)

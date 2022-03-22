@@ -114,24 +114,24 @@
 `automate run switch &lt;SolutionID&gt;` to switch to this existing solution</value>
     </data>
     <data name="CommandLine_Output_CurrentSolutionInUse" xml:space="preserve">
-        <value>The Solution: '{Name}' (ID: '{SolutionId}') is now being configured</value>
+        <value>The Solution: '{SolutionName}' (ID: '{SolutionId}') is now being configured</value>
     </data>
     <data name="CommandLine_Output_SolutionSwitched" xml:space="preserve">
-        <value>The Solution: '{Name}' (ID: '{SolutionId}') is now the default</value>
+        <value>The Solution: '{SolutionName}' (ID: '{SolutionId}') is now the default</value>
     </data>
     <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
-        <value>The Solution Item '{Name}' (ID: '{SolutionItemId}') was configured successfully</value>
+        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was configured successfully</value>
     </data>
     <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
-        <value>Solution '{Name}' (ID: '{SolutionId}') is configured as:
+        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationFailed" xml:space="preserve">
-        <value>Solution '{Name}' (ID: '{SolutionId}') is not correctly configured in these ways:
+        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is not correctly configured in these ways:
 {Errors}</value>
     </data>
     <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
-        <value>Solution '{Name}' (ID: '{SolutionId}') is configured correctly</value>
+        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecutionSucceeded" xml:space="preserve">
         <value>The Command: '{Command}' executed successfully:
@@ -139,6 +139,18 @@
     </data>
     <data name="CommandLine_Output_CommandExecutionFailed" xml:space="preserve">
         <value>The Command: '{Command}' did not completely succeed. Some commands failed:
+{Log}</value>
+    </data>
+    <data name="CommandLine_Output_SolutionUpgradeSucceeded" xml:space="preserve">
+        <value>Successfully upgraded Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+{Log}</value>
+    </data>
+    <data name="CommandLine_Output_SolutionUpgradeWithWarning" xml:space="preserve">
+        <value>Aborted upgrade of Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+{Log}</value>
+    </data>
+    <data name="CommandLine_Output_SolutionUpgradeFailed" xml:space="preserve">
+        <value>Failed to upgrade Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
 </root>

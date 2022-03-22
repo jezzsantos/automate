@@ -28,6 +28,7 @@ namespace Automate.CLI.Infrastructure
         public const string ValidateCommandName = "validate";
         public const string ExecuteCommandName = "execute";
         public const string ViewCommandName = "view";
+        public const string UpgradeCommandName = "upgrade";
         private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
         private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
 
@@ -235,6 +236,14 @@ namespace Automate.CLI.Infrastructure
                 new Command("solutions", "Lists all created solutions")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
             };
+            var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and solutions")
+            {
+                new Command("solution", "Upgrades a solution from a new version of its toolkit")
+                    {
+                        new Option("--force", "Force the upgrade despite any compatability errors")
+                    }
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSolutionUpgrade))
+            };
             var testingOnlyCommands = new Command("testingonly", "For testing only!")
             {
                 new Option("--fail", "Throws a general exception", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
@@ -255,6 +264,7 @@ namespace Automate.CLI.Infrastructure
                     configureCommands,
                     validateCommands,
                     executeCommands,
+                    upgradeCommands,
 #if TESTINGONLY
                     testingOnlyCommands
 #endif
@@ -662,6 +672,29 @@ namespace Automate.CLI.Infrastructure
 
         private class RuntimeHandlers
         {
+            internal static void HandleSolutionUpgrade(bool force, bool outputStructured, IConsole console)
+            {
+                var upgrade = Runtime.UpgradeSolution(force);
+                if (upgrade.IsSuccess)
+                {
+                    if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
+                    {
+                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning,
+                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                    }
+                    else
+                    {
+                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded,
+                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                    }
+                }
+                else
+                {
+                    console.WriteError(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeFailed,
+                        upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                }
+            }
+
             internal static void HandleInstall(string location, bool outputStructured, IConsole console)
             {
                 var toolkit = Runtime.InstallToolkit(location);
@@ -841,11 +874,20 @@ namespace Automate.CLI.Infrastructure
                 return builder.ToString();
             }
 
-            private static string FormatExecutionLog(List<string> items)
+            private static string FormatExecutionLog(IReadOnlyList<string> items)
             {
                 var builder = new StringBuilder();
-                items
+                items.ToList()
                     .ForEach(item => { builder.AppendLine($"* {item}"); });
+
+                return builder.ToString();
+            }
+
+            private static string FormatUpgradeLog(IReadOnlyList<MigrationChange> items)
+            {
+                var builder = new StringBuilder();
+                items.ToList()
+                    .ForEach(item => { builder.AppendLine($"* {item.Type}: {item.MessageTemplate.FormatTemplate(item.Arguments.ToArray())}"); });
 
                 return builder.ToString();
             }
@@ -876,6 +918,15 @@ namespace Automate.CLI.Infrastructure
             console.WriteOutput(outputStructured
                 ? messageTemplate.FormatTemplateStructured(args)
                 : messageTemplate.FormatTemplate(args), ConsoleColor.DarkYellow);
+        }
+
+        public static void WriteError(this IConsole console, bool outputStructured, string messageTemplate,
+            params object[] args)
+        {
+            console.WriteError(string.Empty, ConsoleColor.Red);
+            console.WriteError(outputStructured
+                ? messageTemplate.FormatTemplateStructured(args)
+                : messageTemplate.FormatTemplate(args), ConsoleColor.Red);
         }
 
         public static void WriteError(this IConsole console, string message, ConsoleColor color)

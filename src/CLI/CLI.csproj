@@ -70,6 +70,10 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Domain\MigrationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="ExceptionMessages.Designer.cs">
@@ -97,6 +101,11 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>VersionChanges.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Domain\MigrationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>MigrationMessages.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

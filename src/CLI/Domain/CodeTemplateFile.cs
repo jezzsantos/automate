@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
@@ -21,7 +22,9 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
-        public IReadOnlyList<byte> Contents { get; }
+        public string CodeTemplateId => Id;
+
+        public IReadOnlyList<byte> Contents { get; private set; }
 
         public PersistableProperties Dehydrate()
         {
@@ -35,6 +38,13 @@ namespace Automate.CLI.Domain
         public static CodeTemplateFile Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
             return new CodeTemplateFile(properties, factory);
+        }
+
+        public void SetContent(IReadOnlyList<byte> contents)
+        {
+            contents.GuardAgainstNull(nameof(contents));
+
+            Contents = contents;
         }
     }
 }

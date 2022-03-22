@@ -531,7 +531,7 @@ namespace CLI.UnitTests.Application
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
             result.Id.Should().Be(automation.Id);
         }
-        
+
         [Fact]
         public void WhenAddCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
         {
@@ -579,10 +579,9 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateNewPattern("apatternname");
             this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
-            var element = new Element("anelementname");
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
-                .Returns(element);
+                .Returns(this.application.GetCurrentPattern().Elements.Single);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
 
@@ -590,8 +589,9 @@ namespace CLI.UnitTests.Application
                 this.application.AddCommandLaunchPoint("alaunchpointname",
                     new List<string> { command.Id }, "{apatternname.anelementname}");
 
+            var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             result.Name.Should().Be("alaunchpointname");
-            element.Automation.Single().Id.Should().Be(result.Id);
+            result.Id.Should().Be(automation.Id);
         }
 
         [Fact]

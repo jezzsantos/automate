@@ -106,6 +106,33 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate (ID: {TemplateId}) was deleted from element {ParentId}.
+        /// </summary>
+        internal static string PatternElement_CodeTemplate_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplate_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplateCommand (ID: {AutomationId}) was deleted from element {ParentId}.
+        /// </summary>
+        internal static string PatternElement_CodeTemplateCommand_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplateCommand_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CommandLaunchPoint (ID: {AutomationId}) was deleted from element {ParentId}.
+        /// </summary>
+        internal static string PatternElement_CommandLaunchPoint_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_CommandLaunchPoint_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Element/Collection (ID: {ElementId}) was added to element {ParentId}.
         /// </summary>
         internal static string PatternElement_Element_Add {

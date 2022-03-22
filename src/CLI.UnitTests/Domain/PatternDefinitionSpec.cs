@@ -55,7 +55,7 @@ namespace CLI.UnitTests.Domain
 
             var result = this.pattern.GetAllCodeTemplates();
 
-            result.Should().ContainSingle(tem => tem.Id == template.Id);
+            result.Should().ContainSingle(tem => tem.Template.Id == template.Id);
         }
 
         [Fact]
@@ -72,14 +72,14 @@ namespace CLI.UnitTests.Domain
 
             var result = this.pattern.GetAllCodeTemplates();
 
-            result.Should().Contain(tem => tem.Id == template1.Id);
-            result.Should().Contain(tem => tem.Id == template2.Id);
+            result.Should().Contain(tem => tem.Template.Id == template1.Id);
+            result.Should().Contain(tem => tem.Template.Id == template2.Id);
         }
 
         [Fact]
         public void WhenFindAutomationAndNone_ThenReturnsNull()
         {
-            var result = this.pattern.FindAutomation("acmdid");
+            var result = this.pattern.FindAutomation("acmdid", auto => true);
 
             result.Should().BeNull();
         }
@@ -92,7 +92,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = this.pattern.FindAutomation("acmdid");
+            var result = this.pattern.FindAutomation("acmdid", auto => true);
 
             result.Should().BeNull();
         }
@@ -103,7 +103,7 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
 
-            var result = this.pattern.FindAutomation(automation.Id);
+            var result = this.pattern.FindAutomation(automation.Id, auto => true);
 
             result.Should().Be(automation);
         }
@@ -118,7 +118,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = this.pattern.FindAutomation(automation.Id);
+            var result = this.pattern.FindAutomation(automation.Id, auto => true);
 
             result.Should().Be(automation);
         }
@@ -130,7 +130,7 @@ namespace CLI.UnitTests.Domain
 
             result.PatternName.Should().Be("aname");
             result.Toolkit.Version.Should().Be("0.0.0");
-            result.Toolkit.CodeTemplateFiles.Should().BeNull();
+            result.Toolkit.CodeTemplateFiles.Should().BeEmpty();
             result.Model.Name.Should().Be("aname");
             result.Model.Properties.Should().BeEmpty();
             result.Model.Items.Should().BeNull();

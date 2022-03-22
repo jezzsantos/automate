@@ -181,6 +181,38 @@ namespace Automate.CLI.Domain
             return Model.Validate(context);
         }
 
+        public SolutionUpgradeResult Upgrade(ToolkitDefinition latestToolkit, bool force)
+        {
+            latestToolkit.GuardAgainstNull(nameof(latestToolkit));
+
+            var result = new SolutionUpgradeResult(this, Toolkit.Version, latestToolkit.Version);
+            if (Toolkit.Version.EqualsOrdinal(latestToolkit.Version))
+            {
+                result.Add(MigrationChangeType.Abort, MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion, latestToolkit.PatternName, latestToolkit.Version);
+                return result;
+            }
+
+            if (IsBreakingChange(Toolkit, latestToolkit))
+            {
+                if (!force)
+                {
+                    result.Fail(MigrationChangeType.Abort, MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden, latestToolkit.PatternName, latestToolkit.Version);
+                    return result;
+                }
+
+                result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced, latestToolkit.PatternName, latestToolkit.Version);
+            }
+
+            Toolkit.MigratePattern(latestToolkit, result);
+
+            return result;
+
+            bool IsBreakingChange(ToolkitDefinition currentToolkit, ToolkitDefinition nextToolkit)
+            {
+                return new Version(nextToolkit.Version).Major > new Version(currentToolkit.Version).Major;
+            }
+        }
+
         public string Id { get; }
 
         public string Name { get; }
