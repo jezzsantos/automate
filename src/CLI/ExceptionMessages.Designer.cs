@@ -142,7 +142,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The code template with ID: &apos;{0}&apos; does not exist in the toolkit.
+        ///   Looks up a localized string similar to Command is misconfigured. A CodeTemplate with ID: &apos;{0}&apos; could not be found on any element in this solution.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateNotExists {
             get {
@@ -151,7 +151,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command with ID: &apos;{0}&apos; could not be found on any element in this solution.
+        ///   Looks up a localized string similar to LaunchPoint is misconfigured. A CodeTemplateCommand with ID: &apos;{0}&apos; could not be found on any element in this solution.
         /// </summary>
         internal static string CommandLaunchPoint_CommandIdNotFound {
             get {

@@ -215,10 +215,10 @@
         <value>This element does not support automation</value>
     </data>
     <data name="CodeTemplateCommand_TemplateNotExists" xml:space="preserve">
-        <value>The code template with ID: '{0}' does not exist in the toolkit</value>
+        <value>Command is misconfigured. A CodeTemplate with ID: '{0}' could not be found on any element in this solution</value>
     </data>
     <data name="CommandLaunchPoint_CommandIdNotFound" xml:space="preserve">
-        <value>The command with ID: '{0}' could not be found on any element in this solution</value>
+        <value>LaunchPoint is misconfigured. A CodeTemplateCommand with ID: '{0}' could not be found on any element in this solution</value>
     </data>
     <data name="TextTemplatingExtensions_HasSyntaxErrors" xml:space="preserve">
         <value>Template: '{0}' has errors:

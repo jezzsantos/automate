@@ -84,13 +84,13 @@ namespace Automate.CLI.Domain
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
-                var command = solution.FindByAutomation(cmdId);
-                if (command.HasNone())
+                var commands = solution.FindByAutomation(cmdId);
+                if (commands.HasNone())
                 {
                     throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
                 }
 
-                command.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
+                commands.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
             });
 
             return outcome;
@@ -104,9 +104,7 @@ namespace Automate.CLI.Domain
                 }
                 catch (Exception ex)
                 {
-                    var message = DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(cmdId, ex.ToMessages(true));
-                    outcome.Add(message);
-                    outcome.Fail();
+                    outcome.Fail(DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(cmdId, ex.ToMessages(true)));
                 }
             }
         }

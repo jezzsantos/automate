@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
@@ -11,7 +12,7 @@ namespace CLI.UnitTests.Domain
     public class CodeTemplateCommandSpec
     {
         [Trait("Category", "Unit")]
-        public class GivenNoCommand
+        public class GivenAnyCommand
         {
             [Fact]
             public void WhenConstructedAndCodeTemplateIdIsMissing_ThenThrows()
@@ -34,6 +35,19 @@ namespace CLI.UnitTests.Domain
                         new CodeTemplateCommand("aname", "acodetemplateid", false, "^aninvalidfilepath^"))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(ValidationMessages.Automation_InvalidFilePath.Format("^aninvalidfilepath^") + "*");
+            }
+
+            [Fact]
+            public void WhenExecuteAndCodeTemplateNotExist_ThenThrows()
+            {
+                var target = new SolutionItem(new Element("anelementname"), null);
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+                var solution = new SolutionDefinition(toolkit);
+
+                new CodeTemplateCommand("aname", "acodetemplateid", false, "afilepath")
+                    .Invoking(x => x.Execute(solution, target))
+                    .Should().Throw<AutomateException>()
+                    .WithMessage(ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Format("acodetemplateid"));
             }
         }
 
@@ -244,7 +258,6 @@ namespace CLI.UnitTests.Domain
                 this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
                 this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
-            
         }
 
         [Trait("Category", "Unit")]

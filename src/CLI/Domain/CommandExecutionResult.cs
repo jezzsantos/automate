@@ -48,6 +48,12 @@ namespace Automate.CLI.Domain
             IsSuccess = false;
         }
 
+        public void Fail(string message)
+        {
+            Fail();
+            Add(message);
+        }
+
         public void Add(string message)
         {
             message.GuardAgainstNullOrEmpty(nameof(message));
