@@ -32,27 +32,27 @@ namespace CLI.UnitTests.Domain
             solution.Name.Should().Match("apatternname???");
             solution.Model.Should().NotBeNull();
             var solutionElement1 = solution.Model.Properties["anelementname1"];
-            solutionElement1.ElementSchema.Should().Be(element1);
+            solutionElement1.ElementSchema.Object.Should().Be(element1);
             solutionElement1.Value.Should().BeNull();
             solutionElement1.IsMaterialised.Should().BeFalse();
             solutionElement1.Items.Should().BeNull();
             solutionElement1.Properties.Should().BeNull();
 
             var solutionCollection1 = solution.Model.Properties["acollectionname1"];
-            solutionCollection1.ElementSchema.Should().Be(collection1);
+            solutionCollection1.ElementSchema.Object.Should().Be(collection1);
             solutionCollection1.IsMaterialised.Should().BeFalse();
             solutionCollection1.Items.Should().BeNull();
             solutionCollection1.Properties.Should().BeNull();
 
             var solutionElement2 = solution.Model.Properties["anelementname2"];
-            solutionElement2.ElementSchema.Should().Be(element2);
+            solutionElement2.ElementSchema.Object.Should().Be(element2);
             solutionElement2.Value.Should().BeNull();
             solutionElement2.IsMaterialised.Should().BeFalse();
             solutionElement2.Items.Should().BeNull();
             solutionElement2.Properties.Should().BeNull();
 
             var solutionCollection2 = solution.Model.Properties["acollectionname2"];
-            solutionCollection2.ElementSchema.Should().Be(collection2);
+            solutionCollection2.ElementSchema.Object.Should().Be(collection2);
             solutionCollection2.IsMaterialised.Should().BeFalse();
             solutionCollection2.Items.Should().BeNull();
             solutionCollection2.Properties.Should().BeNull();
@@ -80,7 +80,7 @@ namespace CLI.UnitTests.Domain
             var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model);
         }
 
@@ -104,7 +104,7 @@ namespace CLI.UnitTests.Domain
             var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]);
         }
 
@@ -128,7 +128,7 @@ namespace CLI.UnitTests.Domain
             var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].Items[0]);
         }
 
@@ -150,7 +150,7 @@ namespace CLI.UnitTests.Domain
             var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
         }
 
@@ -176,13 +176,13 @@ namespace CLI.UnitTests.Domain
             var pairs = solution.FindByAutomation(automation.Id);
 
             pairs.Should().Contain(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation == automation
+                pair.Automation.Object == automation
                 && pair.SolutionItem == solution.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"]);
         }
 

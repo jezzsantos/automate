@@ -14,12 +14,19 @@ namespace CLI.UnitTests.Domain
     [Trait("Category", "Unit")]
     public class SolutionItemSpec
     {
+        private readonly PatternDefinition pattern;
+        private readonly ToolkitDefinition toolkit;
+
+        public SolutionItemSpec()
+        {
+            this.pattern = new PatternDefinition("apatternname");
+            this.toolkit = new ToolkitDefinition(this.pattern);
+        }
+
         [Fact]
         public void WhenConstructedWithPattern_ThenPatternAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
-
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Id.Should().NotBeNull();
             result.Should().NotBeNull();
@@ -31,7 +38,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithValue_ThenValueAssigned()
         {
-            var parent = new SolutionItem(new Element("anelementname"), null);
+            var parent = new SolutionItem(this.toolkit, new Element("anelementname"), null);
             var result = new SolutionItem("avalue", Attribute.DefaultType, parent);
 
             result.Id.Should().NotBeNull();
@@ -43,15 +50,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithAttributeWithoutDefaultValue_ThenAttributeAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname");
-            pattern.AddAttribute(attribute);
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
             result.Properties["aname"].Value.Should().BeNull();
             result.Properties["aname"].IsMaterialised.Should().BeFalse();
         }
@@ -59,15 +65,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithAttributeWithDefaultValue_ThenAttributeAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname", "string", false, "adefaultvalue");
-            pattern.AddAttribute(attribute);
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(attribute.DefaultValue);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
         }
@@ -76,15 +81,14 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructedWithAttributeWithDateTimeDefaultValue_ThenAttributeAssignedUtcDateTime()
         {
             var date = DateTime.UtcNow;
-            var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("aname", "DateTime", false, date.ToIso8601());
-            pattern.AddAttribute(attribute);
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(date);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
         }
@@ -92,16 +96,15 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithElement_ThenElementAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname", "adisplayname", "adescription");
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
-            pattern.AddElement(element);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["anelementname"].ElementSchema.Should().Be(element);
+            result.Properties["anelementname"].ElementSchema.Object.Should().Be(element);
             result.Properties["anelementname"].Value.Should().BeNull();
             result.Properties["anelementname"].IsMaterialised.Should().BeFalse();
             result.Properties["anelementname"].Items.Should().BeNull();
@@ -110,16 +113,15 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithCollection_ThenCollectionAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
             var element = new Element("acollectionname", "adisplayname", "adescription", true);
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
-            pattern.AddElement(element);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["acollectionname"].ElementSchema.Should().Be(element);
+            result.Properties["acollectionname"].ElementSchema.Object.Should().Be(element);
             result.Properties["acollectionname"].Value.Should().BeNull();
             result.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
             result.Properties["acollectionname"].Items.Should().BeNull();
@@ -128,7 +130,6 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithDescendantSchema_ThenDescendantElementsAssigned()
         {
-            var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3", "adisplayname3", "adescription3", true);
             element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2", true);
@@ -137,14 +138,14 @@ namespace CLI.UnitTests.Domain
             element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
             element2.AddElement(element3);
             element1.AddElement(element2);
-            pattern.AddElement(element1);
+            this.pattern.AddElement(element1);
 
-            var result = new SolutionItem(pattern);
+            var result = new SolutionItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
             var solutionElement1 = result.Properties["anelementname1"];
-            solutionElement1.ElementSchema.Should().Be(element1);
+            solutionElement1.ElementSchema.Object.Should().Be(element1);
             solutionElement1.Value.Should().BeNull();
             solutionElement1.IsMaterialised.Should().BeFalse();
             solutionElement1.Items.Should().BeNull();
@@ -163,7 +164,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndPattern_ThenThrows()
         {
-            new SolutionItem(new PatternDefinition("apatternname"))
+            new SolutionItem(this.toolkit, this.pattern)
                 .Invoking(x => x.Materialise())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_PatternAlreadyMaterialised.Format("apatternname"));
@@ -175,8 +176,9 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .Materialise();
 
             result.Id.Should().NotBeNull();
@@ -195,7 +197,7 @@ namespace CLI.UnitTests.Domain
             collection.AddAttribute(attribute);
             collection.AddElement(element);
 
-            var result = new SolutionItem(collection, null)
+            var result = new SolutionItem(this.toolkit, collection, null)
                 .Materialise();
 
             result.Id.Should().NotBeNull();
@@ -209,8 +211,9 @@ namespace CLI.UnitTests.Domain
         public void WhenMaterialiseAndAttribute_ThenMaterialises()
         {
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(attribute, null)
+            var result = new SolutionItem(this.toolkit, attribute, null)
                 .Materialise("avalue");
 
             result.Id.Should().NotBeNull();
@@ -223,7 +226,7 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
 
-            new SolutionItem(element, null)
+            new SolutionItem(this.toolkit, element, null)
                 .Invoking(x => x.MaterialiseCollectionItem())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
@@ -235,7 +238,9 @@ namespace CLI.UnitTests.Domain
             var collection = new Element("acollectionname", isCollection: true);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             collection.AddAttribute(attribute);
-            var solutionItem = new SolutionItem(collection, null);
+            this.pattern.AddElement(collection);
+
+            var solutionItem = new SolutionItem(this.toolkit, collection, null);
 
             var result = solutionItem.MaterialiseCollectionItem();
 
@@ -260,7 +265,9 @@ namespace CLI.UnitTests.Domain
             collection1.AddAttribute(attribute);
             var collection2 = new Element("acollectionname2", isCollection: true);
             collection1.AddElement(collection2);
-            var solutionItem = new SolutionItem(collection1, null);
+            this.pattern.AddElement(collection1);
+
+            var solutionItem = new SolutionItem(this.toolkit, collection1, null);
 
             var result1 = solutionItem.MaterialiseCollectionItem();
 
@@ -291,11 +298,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyInPatternSchema_ThenReturnsTrue()
         {
-            var pattern = new PatternDefinition("apatternname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
-            pattern.AddAttribute(attribute);
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(pattern)
+            var result = new SolutionItem(this.toolkit, this.pattern)
                 .HasAttribute("anattributename");
 
             result.Should().BeTrue();
@@ -307,8 +313,9 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname", "adisplayname", "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeTrue();
@@ -318,8 +325,9 @@ namespace CLI.UnitTests.Domain
         public void WhenHasAttributeAndPropertyNotInSchema_ThenReturnsFalse()
         {
             var element = new Element("anelementname", "adisplayname", "adescription");
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -328,7 +336,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndAttribute_ThenReturnsFalse()
         {
-            var result = new SolutionItem(new Attribute("anattributename", null), null)
+            var attribute = new Attribute("anattributename", null);
+            this.pattern.AddAttribute(attribute);
+
+            var result = new SolutionItem(this.toolkit, attribute, null)
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -355,11 +366,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenGetPropertyAndNotAnAttribute_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
-            pattern.AddElement(element);
+            this.pattern.AddElement(element);
 
-            new SolutionItem(pattern)
+            new SolutionItem(this.toolkit, this.pattern)
                 .Invoking(x => x.GetProperty("anelementname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_NotAnAttribute.Format("anelementname"));
@@ -372,7 +382,7 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
 
-            new SolutionItem(element, null)
+            new SolutionItem(this.toolkit, element, null)
                 .Invoking(x => x.GetProperty("anattributename"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_NotMaterialised);
@@ -384,8 +394,9 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .Materialise()
                 .GetProperty("anattributename");
 
@@ -395,10 +406,9 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndIsPatternWithMissingRequiredAttribute_ThenReturnsErrors()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(new Attribute("anattributename", isRequired: true));
+            this.pattern.AddAttribute(new Attribute("anattributename", isRequired: true));
 
-            var result = new SolutionItem(pattern)
+            var result = new SolutionItem(this.toolkit, this.pattern)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
@@ -410,8 +420,9 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsElementAndNotMaterialised_ThenReturnsErrors()
         {
             var element = new Element("anelementname");
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{anelementname}");
@@ -424,8 +435,9 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsCollectionAndNotMaterialised_ThenReturnsErrors()
         {
             var element = new Element("acollectionname", isCollection: true, cardinality: ElementCardinality.OneOrMany);
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{acollectionname}");
@@ -439,8 +451,9 @@ namespace CLI.UnitTests.Domain
         {
             var element = new Element("anelementname");
             element.AddAttribute(new Attribute("anattributename", isRequired: true));
+            this.pattern.AddElement(element);
 
-            var result = new SolutionItem(element, null)
+            var result = new SolutionItem(this.toolkit, element, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -455,8 +468,9 @@ namespace CLI.UnitTests.Domain
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
             element1.AddElement(element2);
+            this.pattern.AddElement(element1);
 
-            var result = new SolutionItem(element1, null)
+            var result = new SolutionItem(this.toolkit, element1, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -471,8 +485,9 @@ namespace CLI.UnitTests.Domain
         {
             var collection = new Element("acollectionname", isCollection: true,
                 cardinality: ElementCardinality.OneOrMany);
+            this.pattern.AddElement(collection);
 
-            var result = new SolutionItem(collection, null)
+            var result = new SolutionItem(this.toolkit, collection, null)
                 .Materialise()
                 .Validate(new ValidationContext());
 
@@ -487,8 +502,9 @@ namespace CLI.UnitTests.Domain
         {
             var collection = new Element("acollectionname", isCollection: true,
                 cardinality: ElementCardinality.Single);
+            this.pattern.AddElement(collection);
 
-            var solutionItem = new SolutionItem(collection, null);
+            var solutionItem = new SolutionItem(this.toolkit, collection, null);
             solutionItem.MaterialiseCollectionItem();
             solutionItem.MaterialiseCollectionItem();
 
@@ -508,8 +524,9 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", isRequired: true);
             element.AddAttribute(attribute);
             collection.AddElement(element);
+            this.pattern.AddElement(collection);
 
-            var solutionItem = new SolutionItem(collection, null);
+            var solutionItem = new SolutionItem(this.toolkit, collection, null);
             solutionItem.MaterialiseCollectionItem();
 
             var result = solutionItem.Validate(new ValidationContext());
@@ -523,8 +540,9 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsAttributeWithMissingRequiredValue_ThenReturnsErrors()
         {
             var attribute = new Attribute("anattributename", isRequired: true);
+            this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(attribute, null)
+            var result = new SolutionItem(this.toolkit, attribute, null)
                 .Validate(new ValidationContext());
 
             result.Results.Single().Context.Path.Should().Be("{anattributename}");
@@ -536,7 +554,8 @@ namespace CLI.UnitTests.Domain
         public void WhenValidateAndIsAttributeWithWrongDataTypeValue_ThenReturnsErrors()
         {
             var attribute = new Attribute("anattributename");
-            var solutionItem = new SolutionItem(attribute, null)
+            this.pattern.AddAttribute(attribute);
+            var solutionItem = new SolutionItem(this.toolkit, attribute, null)
             {
                 Value = "awrongvalue"
             };
@@ -562,12 +581,11 @@ namespace CLI.UnitTests.Domain
             elementLevel2.AddAttribute(attribute2);
             collectionLevel1.AddAttribute(attribute3);
             elementLevel1.AddElement(elementLevel2);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(attribute1);
-            pattern.AddElement(elementLevel1);
-            pattern.AddElement(collectionLevel1);
+            this.pattern.AddAttribute(attribute1);
+            this.pattern.AddElement(elementLevel1);
+            this.pattern.AddElement(collectionLevel1);
 
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anelementname1"].Materialise();
             solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solutionItem.Properties["acollectionname2"].MaterialiseCollectionItem();
@@ -613,11 +631,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteCommandAndAutomationNotExists_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
-                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(pattern)), "acommandname"))
+                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(this.pattern)), "acommandname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_UnknownAutomation.Format("acommandname"));
         }
@@ -626,10 +643,9 @@ namespace CLI.UnitTests.Domain
         public void WhenExecuteCommand_ThenReturnsResult()
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAutomation(automation);
-            var solutionItem = new SolutionItem(pattern);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
+            this.pattern.AddAutomation(automation);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            var solution = new SolutionDefinition(new ToolkitDefinition(this.pattern));
 
             var result = solutionItem.ExecuteCommand(solution, "acommandname");
 
@@ -642,8 +658,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesAndAnyPropertyLeftHandSideOfAssigmentInvalid_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
@@ -659,8 +674,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesAndAnyPropertyRightHandSideOfAssigmentInvalid_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
@@ -676,8 +690,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesWithUnknownProperty_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
@@ -691,9 +704,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesWithWithPropertyOfWrongChoice_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
-            var solutionItem = new SolutionItem(pattern);
+            this.pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
@@ -707,9 +719,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesWithPropertyOfWrongDataType_ThenThrows()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(new Attribute("anattributename", "int"));
-            var solutionItem = new SolutionItem(pattern);
+            this.pattern.AddAttribute(new Attribute("anattributename", "int"));
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
@@ -723,9 +734,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetPropertiesAndPropertyChoice_ThenUpdatesProperties()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
-            var solutionItem = new SolutionItem(pattern);
+            this.pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem.SetProperties(new Dictionary<string, string>
             {
@@ -738,11 +748,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenSetProperties_ThenUpdatesProperties()
         {
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(new Attribute("anattributename1"));
-            pattern.AddAttribute(new Attribute("anattributename2"));
-            pattern.AddAttribute(new Attribute("anattributename3"));
-            var solutionItem = new SolutionItem(pattern);
+            this.pattern.AddAttribute(new Attribute("anattributename1"));
+            this.pattern.AddAttribute(new Attribute("anattributename2"));
+            this.pattern.AddAttribute(new Attribute("anattributename3"));
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem.SetProperties(new Dictionary<string, string>
             {

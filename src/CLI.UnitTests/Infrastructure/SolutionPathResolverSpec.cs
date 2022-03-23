@@ -83,7 +83,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
 
-            result.ElementSchema.Should().Be(element);
+            result.ElementSchema.Object.Should().Be(element);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(solution, "{apatternname.anelementname}");
 
-            result.ElementSchema.Should().Be(element);
+            result.ElementSchema.Object.Should().Be(element);
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(solution, "{anelementname}");
 
-            result.ElementSchema.Should().Be(element);
+            result.ElementSchema.Object.Should().Be(element);
         }
 
         [Fact]
@@ -163,13 +163,15 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
 
-            result.ElementSchema.Should().Be(element3);
+            result.ElementSchema.Object.Should().Be(element3);
         }
 
         [Fact]
         public void WhenResolveExpressionAndExpressionIsNull_ThenReturnsNull()
         {
-            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem(new Element("anelementname"), null));
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
+            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem(toolkit, new Element("anelementname"), null));
 
             result.Should().BeNull();
         }
@@ -177,7 +179,9 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsNoSyntax_ThenReturnsExpression()
         {
-            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem(new Element("anelementname"), null));
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
+            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem(toolkit, new Element("anelementname"), null));
 
             result.Should().Be("anexpression");
         }
@@ -185,10 +189,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsSyntax_ThenReturnsExpression()
         {
+            var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
-            var solutionItem = new SolutionItem(element, null);
+            pattern.AddElement(element);
+            var solutionItem = new SolutionItem(new ToolkitDefinition(pattern), element, null);
             solutionItem.Materialise();
 
             var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression", solutionItem);
@@ -199,12 +205,12 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsParentSyntax_ThenReturnsExpression()
         {
+            var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element);
-            var solutionItem = new SolutionItem(pattern);
+            var solutionItem = new SolutionItem(new ToolkitDefinition(pattern), pattern);
             solutionItem.Properties["anelementname"].Materialise();
 
             var result = this.resolver.ResolveExpression("adescription", "anexpression{{anelementname.parent.anelementname.anattributename}}anexpression", solutionItem);

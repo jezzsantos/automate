@@ -15,13 +15,19 @@ namespace Automate.CLI.Domain
         private List<SolutionItem> items;
         private Dictionary<string, SolutionItem> properties;
 
-        public SolutionItem(PatternDefinition pattern)
+        public SolutionItem(ToolkitDefinition toolkit, PatternDefinition pattern) : this(toolkit, pattern.ToSchema())
         {
+        }
+
+        private SolutionItem(ToolkitDefinition toolkit, IPatternSchema pattern)
+        {
+            toolkit.GuardAgainstNull(nameof(toolkit));
+            pattern.GuardAgainstNull(nameof(pattern));
+
             Id = IdGenerator.Create();
             Name = pattern.Name;
-            PatternSchema = pattern;
-            AttributeSchema = null;
-            ElementSchema = null;
+            Toolkit = toolkit;
+            Schema = new SolutionItemSchema(pattern.Id, SolutionItemSchemaType.Pattern);
             IsMaterialised = true;
             Value = null;
             this.properties = new Dictionary<string, SolutionItem>();
@@ -29,22 +35,28 @@ namespace Automate.CLI.Domain
                 .ForEach(attr =>
                 {
                     this.properties.Add(attr.Name,
-                        new SolutionItem(attr, this));
+                        new SolutionItem(toolkit, attr, this));
                 });
             pattern.Elements.ToListSafe()
-                .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(ele, this)); });
+                .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(toolkit, ele, this)); });
             this.items = null;
             Parent = null;
             this.artifactLinks = new List<ArtifactLink>();
         }
 
-        public SolutionItem(Attribute attribute, SolutionItem parent)
+        public SolutionItem(ToolkitDefinition toolkit, Attribute attribute, SolutionItem parent) : this(toolkit, attribute.ToSchema(), parent)
         {
+        }
+
+        private SolutionItem(ToolkitDefinition toolkit, IAttributeSchema attribute, SolutionItem parent)
+        {
+            toolkit.GuardAgainstNull(nameof(toolkit));
+            attribute.GuardAgainstNull(nameof(attribute));
+
             Id = IdGenerator.Create();
             Name = attribute.Name;
-            PatternSchema = null;
-            ElementSchema = null;
-            AttributeSchema = attribute;
+            Toolkit = toolkit;
+            Schema = new SolutionItemSchema(attribute.Id, SolutionItemSchemaType.Attribute);
             IsMaterialised = attribute.DefaultValue.HasValue();
             SetValue(attribute.DefaultValue, attribute.DataType);
             this.properties = null;
@@ -53,13 +65,23 @@ namespace Automate.CLI.Domain
             this.artifactLinks = new List<ArtifactLink>();
         }
 
-        public SolutionItem(Element element, SolutionItem parent)
+        public SolutionItem(ToolkitDefinition toolkit, Element element, SolutionItem parent, bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent, isCollectionItem)
         {
+        }
+
+        private SolutionItem(ToolkitDefinition toolkit, IElementSchema element, SolutionItem parent, bool isCollectionItem = false)
+        {
+            toolkit.GuardAgainstNull(nameof(toolkit));
+            element.GuardAgainstNull(nameof(element));
+
             Id = IdGenerator.Create();
             Name = element.Name;
-            PatternSchema = null;
-            AttributeSchema = null;
-            ElementSchema = element;
+            Toolkit = toolkit;
+            Schema = new SolutionItemSchema(element.Id, isCollectionItem
+                ? SolutionItemSchemaType.CollectionItem
+                : element.IsCollection
+                    ? SolutionItemSchemaType.EphemeralCollection
+                    : SolutionItemSchemaType.Element);
             IsMaterialised = false;
             Value = null;
             this.properties = null;
@@ -72,9 +94,8 @@ namespace Automate.CLI.Domain
         {
             Id = IdGenerator.Create();
             Name = null;
-            PatternSchema = null;
-            AttributeSchema = null;
-            ElementSchema = null;
+            Toolkit = null;
+            Schema = SolutionItemSchema.None;
             IsMaterialised = true;
             SetValue(value, dataType);
             this.properties = null;
@@ -87,10 +108,8 @@ namespace Automate.CLI.Domain
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
-            PatternSchema = properties.Rehydrate<PatternDefinition>(factory, nameof(PatternSchema));
-            ElementSchema = properties.Rehydrate<Element>(factory, nameof(ElementSchema));
-            AttributeSchema = properties.Rehydrate<Attribute>(factory, nameof(AttributeSchema));
-            Value = properties.Rehydrate<object>(factory, nameof(Value));
+            Schema = properties.Rehydrate<SolutionItemSchema>(factory, nameof(Schema));
+            this._value = properties.Rehydrate<object>(factory, nameof(Value));
             this.properties = properties.Rehydrate<Dictionary<string, SolutionItem>>(factory, nameof(Properties));
             this.items = properties.Rehydrate<List<SolutionItem>>(factory, nameof(Items));
             IsMaterialised = properties.Rehydrate<bool>(factory, nameof(IsMaterialised));
@@ -99,11 +118,15 @@ namespace Automate.CLI.Domain
 
         public SolutionItem Parent { get; private set; }
 
-        public PatternDefinition PatternSchema { get; }
+        private ToolkitDefinition Toolkit { get; set; }
 
-        public Element ElementSchema { get; }
+        public SolutionItemSchema Schema { get; }
 
-        public Attribute AttributeSchema { get; }
+        public IPatternSchema PatternSchema => Schema.ResolveSchema<IPatternSchema>(Toolkit);
+
+        public IElementSchema ElementSchema => Schema.ResolveSchema<IElementSchema>(Toolkit);
+
+        public IAttributeSchema AttributeSchema => Schema.ResolveSchema<IAttributeSchema>(Toolkit);
 
         public object Value
         {
@@ -121,15 +144,15 @@ namespace Automate.CLI.Domain
 
         public bool IsMaterialised { get; private set; }
 
-        public bool IsPattern => PatternSchema.Exists();
+        public bool IsPattern => Schema.SchemaType == SolutionItemSchemaType.Pattern;
 
-        public bool IsElement => ElementSchema.Exists() && !ElementSchema.IsCollection;
+        public bool IsElement => Schema.SchemaType is SolutionItemSchemaType.Element or SolutionItemSchemaType.CollectionItem;
 
-        public bool IsCollection => ElementSchema.Exists() && ElementSchema.IsCollection;
+        public bool IsCollection => Schema.SchemaType == SolutionItemSchemaType.EphemeralCollection;
 
-        public bool IsAttribute => AttributeSchema.Exists();
+        public bool IsAttribute => Schema.SchemaType == SolutionItemSchemaType.Attribute;
 
-        public bool IsValue => PatternSchema.NotExists() && ElementSchema.NotExists() && AttributeSchema.NotExists();
+        public bool IsValue => Schema.SchemaType == SolutionItemSchemaType.None;
 
         public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
 
@@ -138,9 +161,7 @@ namespace Automate.CLI.Domain
             var props = new PersistableProperties();
             props.Dehydrate(nameof(Id), Id);
             props.Dehydrate(nameof(Name), Name);
-            props.Dehydrate(nameof(PatternSchema), PatternSchema);
-            props.Dehydrate(nameof(ElementSchema), ElementSchema);
-            props.Dehydrate(nameof(AttributeSchema), AttributeSchema);
+            props.Dehydrate(nameof(Schema), Schema);
             props.Dehydrate(nameof(Value), Value);
             props.Dehydrate(nameof(Properties), Properties);
             props.Dehydrate(nameof(Items), Items);
@@ -167,8 +188,8 @@ namespace Automate.CLI.Domain
             {
                 this.properties = new Dictionary<string, SolutionItem>();
                 ElementSchema.Attributes.ToListSafe().ForEach(
-                    attr => { this.properties.Add(attr.Name, new SolutionItem(attr, this)); });
-                ElementSchema.Elements.ToListSafe().ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(ele, this)); });
+                    attr => { this.properties.Add(attr.Name, new SolutionItem(Toolkit, attr, this)); });
+                ElementSchema.Elements.ToListSafe().ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(Toolkit, ele, this)); });
                 this.items = null;
                 IsMaterialised = true;
             }
@@ -390,9 +411,12 @@ namespace Automate.CLI.Domain
             return link;
         }
 
-        public void SetParent(SolutionItem parent)
+        public void SetAncestry(ToolkitDefinition toolkit, SolutionItem parent)
         {
-            Parent = parent;
+            Toolkit = toolkit;
+            Parent = Schema.SchemaType == SolutionItemSchemaType.CollectionItem
+                ? parent?.Parent
+                : parent;
         }
 
         public void SetProperties(Dictionary<string, string> propertyAssignments)
@@ -439,16 +463,15 @@ namespace Automate.CLI.Domain
 
         private SolutionItem CreateEphemeralCollectionItem()
         {
-            var standaloneElement = ElementSchema.MakeStandalone();
-            var childElementItem = new SolutionItem(standaloneElement, Parent);
+            var childElementItem = new SolutionItem(Toolkit, ElementSchema, Parent, true);
             childElementItem.Materialise();
 
             return childElementItem;
         }
 
-        private Automation GetAutomationByName(string name)
+        private IAutomationSchema GetAutomationByName(string name)
         {
-            var automations = new List<Automation>();
+            var automations = new List<IAutomationSchema>();
             if (IsPattern)
             {
                 automations = PatternSchema.Automation.ToListSafe();
@@ -479,7 +502,7 @@ namespace Automate.CLI.Domain
 
         public SolutionItemProperty(SolutionItem item)
         {
-            if (item.AttributeSchema.NotExists())
+            if (!item.IsAttribute)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_NotAnAttribute.Format(item.Name));
             }
@@ -511,6 +534,98 @@ namespace Automate.CLI.Domain
         {
             this.item.Value = Attribute.SetValue(DataType, value);
         }
+    }
+
+    internal class SolutionItemSchema : IPersistable
+    {
+        public static readonly SolutionItemSchema None = new SolutionItemSchema();
+
+        public SolutionItemSchema(string id, SolutionItemSchemaType schemaType)
+        {
+            id.GuardAgainstNullOrEmpty(nameof(id));
+            SchemaId = id;
+            SchemaType = schemaType;
+        }
+
+        private SolutionItemSchema(PersistableProperties properties, IPersistableFactory factory)
+        {
+            SchemaId = properties.Rehydrate<string>(factory, nameof(SchemaId));
+            SchemaType = properties.Rehydrate<SolutionItemSchemaType>(factory, nameof(SchemaType));
+        }
+
+        private SolutionItemSchema()
+        {
+            SchemaId = null;
+            SchemaType = SolutionItemSchemaType.None;
+        }
+
+        public string SchemaId { get; }
+
+        public SolutionItemSchemaType SchemaType { get; }
+
+        public PersistableProperties Dehydrate()
+        {
+            var properties = new PersistableProperties();
+            properties.Dehydrate(nameof(SchemaId), SchemaId);
+            properties.Dehydrate(nameof(System.Data.SchemaType), SchemaType);
+
+            return properties;
+        }
+
+        public static SolutionItemSchema Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        {
+            return new SolutionItemSchema(properties, factory);
+        }
+
+        public TSchema ResolveSchema<TSchema>(ToolkitDefinition toolkit) where TSchema : ISchema
+        {
+            toolkit.GuardAgainstNull(nameof(toolkit));
+
+            if (SchemaType == SolutionItemSchemaType.None)
+            {
+                throw new AutomateException(ExceptionMessages.SolutionItem_InvalidSolutionItemSchema);
+            }
+
+            object target;
+            if (typeof(TSchema) == typeof(IPatternSchema))
+            {
+                target = toolkit.Pattern.FindSchema<PatternDefinition>(SchemaId);
+                if (target.Exists())
+                {
+                    return (TSchema)((PatternDefinition)target).ToSchema();
+                }
+            }
+            if (typeof(TSchema) == typeof(IElementSchema))
+            {
+                target = toolkit.Pattern.FindSchema<Element>(SchemaId);
+                if (target.Exists())
+                {
+                    return SchemaType == SolutionItemSchemaType.CollectionItem
+                        ? (TSchema)(ISchema)new CollectionItemSchema((Element)target)
+                        : (TSchema)((Element)target).ToSchema();
+                }
+            }
+            if (typeof(TSchema) == typeof(IAttributeSchema))
+            {
+                target = toolkit.Pattern.FindSchema<Attribute>(SchemaId);
+                if (target.Exists())
+                {
+                    return (TSchema)((Attribute)target).ToSchema();
+                }
+            }
+
+            throw new AutomateException(ExceptionMessages.SolutionItem_UnknownSchema.Format(SchemaId, SchemaType));
+        }
+    }
+
+    internal enum SolutionItemSchemaType
+    {
+        None = 0,
+        Pattern = 1,
+        Element = 2,
+        EphemeralCollection = 3,
+        CollectionItem = 4,
+        Attribute = 5
     }
 
     /// <summary>

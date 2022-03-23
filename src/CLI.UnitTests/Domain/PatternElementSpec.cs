@@ -40,10 +40,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddAttributeAndAlreadyExists_ThenThrows()
         {
-            this.element.AddAttribute("anattributename", null, false, null, null);
+            this.element.AddAttribute("anattributename", null);
 
             this.element
-                .Invoking(x => x.AddAttribute("anattributename", null, false, null, null))
+                .Invoking(x => x.AddAttribute("anattributename", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_AttributeByNameExists.Format("anattributename"));
         }
@@ -52,7 +52,7 @@ namespace CLI.UnitTests.Domain
         public void WhenAddAttributeWithReservedName_ThenThrows()
         {
             this.element
-                .Invoking(x => x.AddAttribute(Attribute.ReservedAttributeNames[0], null, false, null, null))
+                .Invoking(x => x.AddAttribute(Attribute.ReservedAttributeNames[0], null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_AttributeNameReserved.Format(
@@ -62,10 +62,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddAttributeWithExistingNameOfElementOrCollection_ThenThrows()
         {
-            this.element.AddElement("anelementname", null, null, false, ElementCardinality.Single);
+            this.element.AddElement("anelementname");
 
             this.element
-                .Invoking(x => x.AddAttribute("anelementname", null, false, null, null))
+                .Invoking(x => x.AddAttribute("anelementname", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(
@@ -75,7 +75,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddAttribute_TheAddsAttributeToElement()
         {
-            var result = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue", null);
+            var result = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue");
 
             result.Name.Should().Be("anattributename");
             result.DataType.Should().Be("string");
@@ -88,7 +88,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddAttributeAndNoType_TheAddsAttributeWithDefaultType()
         {
-            var result = this.element.AddAttribute("anattributename", null, false, null, null);
+            var result = this.element.AddAttribute("anattributename", null);
 
             result.Name.Should().Be("anattributename");
             result.DataType.Should().Be("string");
@@ -101,7 +101,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenDeleteAttribute_TheDeletesAttributeFromElement()
         {
-            var attribute = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue", null);
+            var attribute = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue");
 
             var result = this.element.DeleteAttribute("anattributename");
 
@@ -113,10 +113,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddElementAndAlreadyExists_ThenThrows()
         {
-            this.element.AddElement("anelementname", null, null, false, ElementCardinality.Single);
+            this.element.AddElement("anelementname");
 
             this.element
-                .Invoking(x => x.AddElement("anelementname", null, null, false, ElementCardinality.Single))
+                .Invoking(x => x.AddElement("anelementname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_ElementByNameExists.Format("anelementname"));
         }
@@ -124,10 +124,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddElementWithExistingNameOfAttribute_ThenThrows()
         {
-            this.element.AddAttribute("anattributename", null, false, null, null);
+            this.element.AddAttribute("anattributename", null);
 
             this.element
-                .Invoking(x => x.AddElement("anattributename", null, null, false, ElementCardinality.Single))
+                .Invoking(x => x.AddElement("anattributename"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format("anattributename"));
         }
@@ -135,8 +135,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddElement_TheAddsElementToElement()
         {
-            var result = this.element.AddElement("anelementname", "adisplayname", "adescription", false,
-                ElementCardinality.Single);
+            var result = this.element.AddElement("anelementname", "adisplayname", "adescription");
 
             result.Name.Should().Be("anelementname");
             result.DisplayName.Should().Be("adisplayname");
@@ -148,7 +147,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenDeleteElement_TheDeletesElementFromElement()
         {
-            var ele = this.element.AddElement("anelementname", null, null, false, ElementCardinality.Single);
+            var ele = this.element.AddElement("anelementname");
 
             var result = this.element.DeleteElement("anelementname");
 

@@ -19,6 +19,7 @@ namespace CLI.UnitTests.Application
         private readonly RuntimeApplication application;
         private readonly Mock<IFilePathResolver> fileResolver;
         private readonly Mock<IPatternToolkitPackager> packager;
+        private readonly PatternDefinition pattern;
         private readonly Mock<ISolutionPathResolver> solutionPathResolver;
         private readonly ISolutionStore solutionStore;
         private readonly ToolkitDefinition toolkit;
@@ -38,7 +39,8 @@ namespace CLI.UnitTests.Application
             this.application =
                 new RuntimeApplication(this.toolkitStore, this.solutionStore, this.fileResolver.Object,
                     this.packager.Object, this.solutionPathResolver.Object);
-            this.toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            this.pattern = new PatternDefinition("apatternname");
+            this.toolkit = new ToolkitDefinition(this.pattern);
             this.toolkitStore.Import(this.toolkit);
         }
 
@@ -213,8 +215,9 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionAndAddElementAlreadyMaterialised_ThenThrows()
         {
             this.application.CreateSolution("apatternname", null);
+            this.pattern.AddElement("anelementname");
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname"), null).Materialise());
+                .Returns(new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null).Materialise());
 
             this.application
                 .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, null))
@@ -228,9 +231,8 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionWithChangeOnPattern_ThenReturnsSolution()
         {
             var attribute = new Attribute("anattributename", null);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(attribute);
-            UpdateToolkit(pattern);
+            this.pattern.AddAttribute(attribute);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
 
             var result = this.application.ConfigureSolution(null, null, null,
@@ -244,8 +246,9 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionWithNewElement_ThenReturnsSolution()
         {
             this.application.CreateSolution("apatternname", null);
+            this.pattern.AddElement("anelementname");
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname"), null));
+                .Returns(new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null));
 
             var result = this.application.ConfigureSolution("apatternname.anelement", null, null, null);
 
@@ -271,7 +274,8 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionWithNewCollectionElement_ThenReturnsSolution()
         {
             this.application.CreateSolution("apatternname", null);
-            var solutionItem = new SolutionItem(new Element("acollectionname", null, null, true), null);
+            this.pattern.AddElement("anelementname", isCollection: true);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
 
@@ -300,7 +304,7 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(new Element("anelementname"), null));
+                .Returns(new SolutionItem(this.toolkit, new Element("anelementname"), null));
 
             this.application
                 .Invoking(x => x.ConfigureSolution(null, null, "anelementexpression", null))
@@ -316,9 +320,8 @@ namespace CLI.UnitTests.Application
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
             element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
+            this.pattern.AddElement(element);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -337,9 +340,8 @@ namespace CLI.UnitTests.Application
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
             element.AddAttribute(attribute);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
+            this.pattern.AddElement(element);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"].Materialise();
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -370,10 +372,9 @@ namespace CLI.UnitTests.Application
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
             element2.AddAttribute(attribute2);
             element1.AddElement(element2);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(attribute1);
-            pattern.AddElement(element1);
-            UpdateToolkit(pattern);
+            this.pattern.AddAttribute(attribute1);
+            this.pattern.AddElement(element1);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -409,10 +410,9 @@ namespace CLI.UnitTests.Application
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
             element2.AddAttribute(attribute2);
             element1.AddElement(element2);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(attribute1);
-            pattern.AddElement(element1);
-            UpdateToolkit(pattern);
+            this.pattern.AddAttribute(attribute1);
+            this.pattern.AddElement(element1);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -421,7 +421,7 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.GetConfiguration(true, true);
 
-            result.Pattern.Should().Be(pattern);
+            result.Pattern.Should().Be(this.pattern);
             result.Validation.Results.Should().BeEmpty();
             result.Configuration.Should().Be(new
             {
@@ -466,10 +466,9 @@ namespace CLI.UnitTests.Application
         {
             var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
             var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element1);
-            pattern.AddElement(element2);
-            UpdateToolkit(pattern);
+            this.pattern.AddElement(element1);
+            this.pattern.AddElement(element2);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model.Properties["anelementname1"]);
@@ -491,11 +490,10 @@ namespace CLI.UnitTests.Application
             var collection2 = new Element("acollectionname2", "adisplayname2", "adescription2", true,
                 ElementCardinality.OneOrMany);
             collection2.AddAttribute(attribute2);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddAttribute(attribute1);
-            pattern.AddElement(element1);
-            pattern.AddElement(collection2);
-            UpdateToolkit(pattern);
+            this.pattern.AddAttribute(attribute1);
+            this.pattern.AddElement(element1);
+            this.pattern.AddElement(collection2);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model);
@@ -539,9 +537,8 @@ namespace CLI.UnitTests.Application
             var element = new Element("anelementname", "adisplayname", "adescription");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element.AddAutomation(automation);
-            var pattern = new PatternDefinition("apatternname");
-            pattern.AddElement(element);
-            UpdateToolkit(pattern);
+            this.pattern.AddElement(element);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
 
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -556,10 +553,9 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenExecuteLaunchPointOnSolution_ThenReturnsResult()
         {
-            var pattern = new PatternDefinition("apatternname");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            pattern.AddAutomation(automation);
-            UpdateToolkit(pattern);
+            this.pattern.AddAutomation(automation);
+            UpdateToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model);
@@ -593,10 +589,10 @@ namespace CLI.UnitTests.Application
             result.Solution.Id.Should().Be(this.application.CurrentSolutionId);
         }
 
-        private void UpdateToolkit(PatternDefinition pattern)
+        private void UpdateToolkit()
         {
             this.toolkitStore.DestroyAll();
-            this.toolkitStore.Import(new ToolkitDefinition(pattern));
+            this.toolkitStore.Import(new ToolkitDefinition(this.pattern));
         }
     }
 }

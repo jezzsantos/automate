@@ -62,6 +62,10 @@ namespace Automate.CLI.Domain
             {
                 return SolutionItem.Rehydrate(properties, this);
             }
+            if (persistableType == typeof(SolutionItemSchema))
+            {
+                return SolutionItemSchema.Rehydrate(properties, this);
+            }
             if (persistableType == typeof(LocalState))
             {
                 return LocalState.Rehydrate(properties, this);

@@ -16,7 +16,7 @@ namespace Automate.CLI.Domain
                 ? name
                 : $"{toolkit.PatternName}{GetRandomNumber()}";
             Toolkit = toolkit;
-            InitialiseSchema();
+            Model = new SolutionItem(toolkit, toolkit.Pattern);
         }
 
         private SolutionDefinition(PersistableProperties properties, IPersistableFactory factory)
@@ -31,7 +31,7 @@ namespace Automate.CLI.Domain
 
         public string PatternName => Toolkit.Pattern?.Name;
 
-        public SolutionItem Model { get; private set; }
+        public SolutionItem Model { get; }
 
         public PersistableProperties Dehydrate()
         {
@@ -66,8 +66,7 @@ namespace Automate.CLI.Domain
 
                 if (solutionItem.IsPattern)
                 {
-                    var automation = solutionItem.PatternSchema.Automation.Safe()
-                        .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
+                    var automation = solutionItem.PatternSchema.FindAutomationById(automationId);
                     if (automation.Exists())
                     {
                         pairs.Add(new SolutionItemCommandPair(automation, solutionItem));
@@ -125,8 +124,7 @@ namespace Automate.CLI.Domain
             {
                 if (solutionItem.IsPattern)
                 {
-                    var codeTemplate = solutionItem.PatternSchema.CodeTemplates.Safe()
-                        .FirstOrDefault(template => template.Id.EqualsIgnoreCase(codeTemplateId));
+                    var codeTemplate = solutionItem.PatternSchema.FindCodeTemplateById(codeTemplateId);
                     if (codeTemplate.Exists())
                     {
                         return solutionItem;
@@ -135,8 +133,7 @@ namespace Automate.CLI.Domain
 
                 if (solutionItem.IsElement)
                 {
-                    var codeTemplate = solutionItem.ElementSchema.CodeTemplates.Safe()
-                        .FirstOrDefault(template => template.Id.EqualsIgnoreCase(codeTemplateId));
+                    var codeTemplate = solutionItem.ElementSchema.FindCodeTemplateById(codeTemplateId);
                     if (codeTemplate.Exists())
                     {
                         return solutionItem;
@@ -223,7 +220,7 @@ namespace Automate.CLI.Domain
 
             void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
             {
-                solutionItem.SetParent(parent);
+                solutionItem.SetAncestry(Toolkit, parent);
                 var properties = solutionItem.Properties.Safe();
                 foreach (var property in properties)
                 {
@@ -232,8 +229,7 @@ namespace Automate.CLI.Domain
                 var items = solutionItem.Items.Safe();
                 foreach (var item in items)
                 {
-                    //NOTE: We skip the "ephemeral" collection element, to get it its parent instead
-                    PopulateDescendantParents(item, solutionItem.Parent);
+                    PopulateDescendantParents(item, solutionItem);
                 }
             }
         }
@@ -243,22 +239,17 @@ namespace Automate.CLI.Domain
             var number = DateTime.Now.Ticks.ToString();
             return number.Substring(number.Length - 3);
         }
-
-        private void InitialiseSchema()
-        {
-            Model = new SolutionItem(Toolkit.Pattern);
-        }
     }
 
     internal class SolutionItemCommandPair
     {
-        public SolutionItemCommandPair(Automation automation, SolutionItem solutionItem)
+        public SolutionItemCommandPair(IAutomationSchema automation, SolutionItem solutionItem)
         {
             Automation = automation;
             SolutionItem = solutionItem;
         }
 
-        public Automation Automation { get; }
+        public IAutomationSchema Automation { get; }
 
         public SolutionItem SolutionItem { get; }
     }

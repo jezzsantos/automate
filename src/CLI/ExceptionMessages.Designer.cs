@@ -592,6 +592,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot resolve this reference to any schema on the toolkit of this solution.
+        /// </summary>
+        internal static string SolutionItem_InvalidSolutionItemSchema {
+            get {
+                return ResourceManager.GetString("SolutionItem_InvalidSolutionItemSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot materialise item in an non-collection element.
         /// </summary>
         internal static string SolutionItem_MaterialiseNotACollection {
@@ -642,6 +651,15 @@ namespace Automate.CLI {
         internal static string SolutionItem_UnknownAutomation {
             get {
                 return ResourceManager.GetString("SolutionItem_UnknownAutomation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find the associated schema in the toolkit of this solution which matches the ID: {0}, for an: &apos;{1}&apos;.
+        /// </summary>
+        internal static string SolutionItem_UnknownSchema {
+            get {
+                return ResourceManager.GetString("SolutionItem_UnknownSchema", resourceCulture);
             }
         }
         

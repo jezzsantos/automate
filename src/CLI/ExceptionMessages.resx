@@ -261,4 +261,10 @@
     <data name="ToolkitDefinition_CodeTemplateFileAlreadyExists" xml:space="preserve">
         <value>Code Template: '{0}' already exists in the toolkit</value>
     </data>
+    <data name="SolutionItem_InvalidSolutionItemSchema" xml:space="preserve">
+        <value>Cannot resolve this reference to any schema on the toolkit of this solution</value>
+    </data>
+    <data name="SolutionItem_UnknownSchema" xml:space="preserve">
+        <value>Cannot find the associated schema in the toolkit of this solution which matches the ID: {0}, for an: '{1}'</value>
+    </data>
 </root>

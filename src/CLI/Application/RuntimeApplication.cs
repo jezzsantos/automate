@@ -141,7 +141,8 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation) GetConfiguration(bool includeSchema, bool includeValidationResults)
+        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation)
+            GetConfiguration(bool includeSchema, bool includeValidationResults)
         {
             var solution = EnsureCurrentSolutionExists();
 

@@ -95,7 +95,7 @@ namespace Automate.CLI.Domain
 
             return outcome;
 
-            void ExecuteCommandSafely(Automation command, SolutionItem solutionItem, string cmdId)
+            void ExecuteCommandSafely(IAutomationSchema command, SolutionItem solutionItem, string cmdId)
             {
                 try
                 {

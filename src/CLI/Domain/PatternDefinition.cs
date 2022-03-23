@@ -130,28 +130,28 @@ namespace Automate.CLI.Domain
 
             return solution;
 
-            void PopulatePatternElement(SolutionItem solutionItem, IPatternElement element, int instanceCountAtThisLevel)
+            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
             {
-                element.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
-                element.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
+                schema.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
+                schema.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
             }
 
-            void PopulateAttribute(SolutionItem solutionItem, Attribute attribute, int instanceCountAtThisLevel)
+            void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
             {
-                var prop = solutionItem.GetProperty(attribute.Name);
+                var prop = solutionItem.GetProperty(schema.Name);
                 if (!prop.HasDefaultValue)
                 {
                     object testValue;
                     if (prop.ChoiceValues.HasAny())
                     {
-                        var choiceIndex = (instanceCountAtThisLevel - 1) % attribute.Choices.Count;
+                        var choiceIndex = (instanceCountAtThisLevel - 1) % schema.Choices.Count;
                         testValue = prop.ChoiceValues[choiceIndex];
                     }
                     else
                     {
                         testValue = prop.DataType switch
                         {
-                            Attribute.DefaultType => $"{attribute.Name.ToLower()}{instanceCountAtThisLevel}",
+                            Attribute.DefaultType => $"{schema.Name.ToLower()}{instanceCountAtThisLevel}",
                             "bool" => instanceCountAtThisLevel % 2 != 0,
                             "int" => instanceCountAtThisLevel,
                             "decimal" => Convert.ToDecimal($"{instanceCountAtThisLevel}.{instanceCountAtThisLevel}"),
@@ -167,6 +167,75 @@ namespace Automate.CLI.Domain
         public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
         {
             return ToolkitVersion.UpdateVersion(instruction);
+        }
+
+        public TSchema FindSchema<TSchema>(string id) where TSchema : IIdentifiableEntity
+        {
+            return FindDescendantSchema(this);
+
+            TSchema FindDescendantSchema(object descendant)
+            {
+                if (descendant is PatternDefinition pattern)
+                {
+                    if (pattern.Id.EqualsIgnoreCase(id))
+                    {
+                        return pattern is TSchema schema
+                            ? schema
+                            : default;
+                    }
+                    var elementOrAttribute = FindDescendantPatternElementSchema(pattern);
+                    if (elementOrAttribute.Exists())
+                    {
+                        return elementOrAttribute;
+                    }
+                }
+                else if (descendant is Element element)
+                {
+                    if (element.Id.EqualsIgnoreCase(id))
+                    {
+                        return element is TSchema schema
+                            ? schema
+                            : default;
+                    }
+
+                    var elementOrAttribute = FindDescendantPatternElementSchema(element);
+                    if (elementOrAttribute.Exists())
+                    {
+                        return elementOrAttribute;
+                    }
+                }
+                else if (descendant is Attribute attribute)
+                {
+                    if (attribute.Id.EqualsIgnoreCase(id))
+                    {
+                        return attribute is TSchema schema
+                            ? schema
+                            : default;
+                    }
+                }
+
+                return default;
+            }
+
+            TSchema FindDescendantPatternElementSchema(IPatternElement patternElement)
+            {
+                var element = patternElement.Elements.Safe()
+                    .Select(FindDescendantSchema)
+                    .FirstOrDefault(schema => schema.Exists());
+                if (element.Exists())
+                {
+                    return element;
+                }
+                var attribute = patternElement.Attributes.Safe()
+                    .Select(FindDescendantSchema)
+                    .FirstOrDefault(schema => schema.Exists());
+                if (attribute.Exists())
+                {
+                    return attribute;
+                }
+
+                return default;
+            }
         }
 
         public ValidationResults Validate(ValidationContext context, object value)

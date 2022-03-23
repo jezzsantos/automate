@@ -22,7 +22,9 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndEmptyTemplate_ThenReturnsEmptyString()
         {
-            var result = this.engine.Transform("adescription", string.Empty, new SolutionItem(new Element("anelementname"), null));
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
+            var result = this.engine.Transform("adescription", string.Empty, new SolutionItem(toolkit, new Element("anelementname"), null));
 
             result.Should().BeEmpty();
         }
@@ -30,7 +32,9 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndTemplate_ThenReturnsTransformedTemplate()
         {
-            var result = this.engine.Transform("adescription", "atemplate", new SolutionItem(new Element("anelementname"), null));
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
+            var result = this.engine.Transform("adescription", "atemplate", new SolutionItem(toolkit, new Element("anelementname"), null));
 
             result.Should().Be("atemplate");
         }
@@ -38,10 +42,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndTemplateContainsSubstitution_ThenReturnsTransformedTemplate()
         {
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
-            var solution = new SolutionItem(element, null);
+            pattern.AddElement(element);
+            var solution = new SolutionItem(toolkit, element, null);
             solution.Materialise();
 
             var result = this.engine.Transform("adescription", "{{model.anattributename}}", solution);
@@ -52,8 +59,10 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndHasSyntaxErrors_ThenThrows()
         {
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.}}", new SolutionItem(new Element("anelementname"), null)))
+                .Invoking(x => x.Transform("adescription", "{{model.}}", new SolutionItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format("adescription",
                     "((8:0,8),(9:0,9)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" + Environment.NewLine +
@@ -63,8 +72,10 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformAndHasTransformationErrors_ThenThrows()
         {
+            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.parent.notexists}}", new SolutionItem(new Element("anelementname"), null)))
+                .Invoking(x => x.Transform("adescription", "{{model.parent.notexists}}", new SolutionItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_TransformFailed.Format("adescription",
                     "<input>(1,16) : error : Cannot get the member model.parent.notexists for a null object." + Environment.NewLine));

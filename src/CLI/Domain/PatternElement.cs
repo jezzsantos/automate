@@ -115,7 +115,7 @@ namespace Automate.CLI.Domain
             Parent = parent;
         }
 
-        public Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices)
+        public Attribute AddAttribute(string name, string type = Attribute.DefaultType, bool isRequired = false, string defaultValue = null, List<string> choices = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
@@ -155,7 +155,7 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
-        public Element AddElement(string name, string displayName, string description, bool isCollection, ElementCardinality cardinality)
+        public Element AddElement(string name, string displayName = null, string description = null, bool isCollection = false, ElementCardinality cardinality = ElementCardinality.Single)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
