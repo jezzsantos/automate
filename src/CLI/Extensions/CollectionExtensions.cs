@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using JetBrains.Annotations;
 
@@ -127,6 +128,16 @@ namespace Automate.CLI.Extensions
                     yield return element;
                 }
             }
+        }
+
+        public static IEnumerable<T> Remainder<T, TResult>(this IEnumerable<T> source, IEnumerable<T> target, Expression<Func<T, TResult>> comparer)
+        {
+            var predicate = comparer.Compile();
+            var difference = source.Safe()
+                .Where(src => target.Safe().All(tar => !predicate(tar).Equals(predicate(src))))
+                .ToList();
+
+            return difference;
         }
     }
 }

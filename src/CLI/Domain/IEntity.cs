@@ -33,6 +33,8 @@ namespace Automate.CLI.Domain
     {
         Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices);
 
+        void UpdateAttribute(string attributeName, string name, string type, bool? isRequired, string defaultValue, List<string> choices);
+
         Element AddElement(string name, string displayName, string description, bool isCollection, ElementCardinality cardinality);
 
         CodeTemplate AddCodeTemplate(string name, string fullPath, string extension);

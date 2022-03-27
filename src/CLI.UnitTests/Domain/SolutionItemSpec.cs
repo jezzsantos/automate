@@ -4,6 +4,7 @@ using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
+using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 using Attribute = Automate.CLI.Domain.Attribute;
@@ -196,6 +197,7 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname");
             collection.AddAttribute(attribute);
             collection.AddElement(element);
+            this.pattern.AddElement(collection);
 
             var result = new SolutionItem(this.toolkit, collection, null)
                 .Materialise();
@@ -246,7 +248,7 @@ namespace CLI.UnitTests.Domain
 
             result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
-            result.IsCollection.Should().BeFalse();
+            result.IsEphemeralCollection.Should().BeFalse();
             result.ElementSchema.Name.Should().Be("acollectionname");
             result.Value.Should().BeNull();
             result.Items.Should().BeNull();
@@ -273,18 +275,18 @@ namespace CLI.UnitTests.Domain
 
             result1.Id.Should().NotBeNull();
             result1.IsMaterialised.Should().BeTrue();
-            result1.IsCollection.Should().BeFalse();
+            result1.IsEphemeralCollection.Should().BeFalse();
             result1.ElementSchema.Name.Should().Be("acollectionname1");
             result1.Value.Should().BeNull();
             result1.Items.Should().BeNull();
             result1.Properties.Should().Contain(prop =>
                 prop.Key == "anattributename" && (string)prop.Value.Value == "adefaultvalue");
             result1.Properties.Should().Contain(prop =>
-                prop.Key == "acollectionname2" && prop.Value.IsCollection == true);
+                prop.Key == "acollectionname2" && prop.Value.IsEphemeralCollection == true);
 
             var result2 = result1.Properties["acollectionname2"].MaterialiseCollectionItem();
             result2.IsMaterialised.Should().BeTrue();
-            result2.IsCollection.Should().BeFalse();
+            result2.IsEphemeralCollection.Should().BeFalse();
             result2.ElementSchema.Name.Should().Be("acollectionname2");
             result2.Value.Should().BeNull();
             result2.Items.Should().BeNull();
@@ -763,6 +765,576 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anattributename1"].Value.Should().Be("avalue1");
             solutionItem.Properties["anattributename2"].Value.Should().Be("avalue2");
             solutionItem.Properties["anattributename3"].Value.Should().Be("avalue3");
+        }
+
+        [Fact]
+        public void WhenMigrateAndAddElementToPattern_ThenNothing()
+        {
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.AddElement("anelementname");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("anelementname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenMigrateAndAddCollectionToPattern_ThenNothing()
+        {
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.AddElement("acollectionname", isCollection: true);
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("acollectionname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenMigrateAndAddAttributeToPattern_ThenAddsElement()
+        {
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.AddAttribute("anattributename", defaultValue: "adefaultvalue");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("anattributename").Should().BeTrue();
+            solutionItem.Properties["anattributename"].IsMaterialised.Should().BeTrue();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.NonBreaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeAdded
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "adefaultvalue");
+        }
+
+        [Fact]
+        public void WhenMigrateElementOfPatternAndHasBeenDeleted_ThenRemovesElement()
+        {
+            this.pattern.AddElement("anelementname");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anelementname"].Materialise();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.DeleteElement("anelementname");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("anelementname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == "apatternname.anelementname");
+        }
+
+        [Fact]
+        public void WhenMigrateCollectionOfPatternWithItemsAndHasBeenDeleted_ThenRemovesCollectionAndAllItems()
+        {
+            this.pattern.AddElement("acollectionname", isCollection: true);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.DeleteElement("acollectionname");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("acollectionname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == "apatternname.acollectionname");
+        }
+
+        [Fact]
+        public void WhenMigrateElementOfCollectionOfPatternAndHasBeenDeleted_ThenRemovesElementsOfCollectionItems()
+        {
+            var collection = this.pattern.AddElement("acollectionname", isCollection: true);
+            collection.AddElement("anelementname");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            solutionItem.Properties["acollectionname"].Items[0].Properties["anelementname"].Materialise();
+            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            solutionItem.Properties["acollectionname"].Items[1].Properties["anelementname"].Materialise();
+            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            solutionItem.Properties["acollectionname"].Items[2].Properties["anelementname"].Materialise();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.Elements.Single().DeleteElement("anelementname");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("acollectionname").Should().BeTrue();
+            solutionItem.Properties["acollectionname"].Items.Count.Should().Be(3);
+            solutionItem.Properties["acollectionname"].Items[0].Properties.ContainsKey("anelementname").Should().BeFalse();
+            solutionItem.Properties["acollectionname"].Items[1].Properties.ContainsKey("anelementname").Should().BeFalse();
+            solutionItem.Properties["acollectionname"].Items[2].Properties.ContainsKey("anelementname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == "apatternname.acollectionname.anelementname");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeOfPatternAndHasBeenDeleted_ThenRemovesAttribute()
+        {
+            this.pattern.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.DeleteAttribute("anattributename");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("anattributename").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDeleted
+                && (string)x.Arguments[0] == "apatternname.anattributename");
+        }
+
+        [Fact]
+        public void WhenMigrateDescendantElementAndHasBeenDeleted_ThenRemovesElement()
+        {
+            var element = this.pattern.AddElement("anelementname1");
+            element.AddElement("anelementname2");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anelementname1"].Materialise();
+            solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.Elements.Single().DeleteElement("anelementname2");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anelementname1"].Properties.ContainsKey("anelementname2").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == "apatternname.anelementname1.anelementname2");
+        }
+
+        [Fact]
+        public void WhenMigrateDescendantCollectionAndHasBeenDeleted_ThenRemovesElement()
+        {
+            var element = this.pattern.AddElement("anelementname");
+            element.AddElement("acollectionname", isCollection: true);
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anelementname"].Materialise();
+            solutionItem.Properties["anelementname"].Properties["acollectionname"].Materialise();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.Elements.Single().DeleteElement("acollectionname");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anelementname"].Properties.ContainsKey("acollectionname").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == "apatternname.anelementname.acollectionname");
+        }
+
+        [Fact]
+        public void WhenMigrateDescendantAttributeAndHasBeenDeleted_ThenRemovesAttribute()
+        {
+            var element = this.pattern.AddElement("anelementname");
+            element.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anelementname"].Materialise();
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.Elements.Single().DeleteAttribute("anattributename");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anelementname"].Properties.ContainsKey("anattributename").Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDeleted
+                && (string)x.Arguments[0] == "apatternname.anelementname.anattributename");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndNameChanged_ThenRenamesAttribute()
+        {
+            this.pattern.AddAttribute("anattributename1");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename1"].Value = "avalue";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename1", "anattributename2");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties.ContainsKey("anattributename1").Should().BeFalse();
+            solutionItem.Properties["anattributename2"].Value.Should().Be("avalue");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeNameChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename1"
+                && (string)x.Arguments[1] == "anattributename1"
+                && (string)x.Arguments[2] == "anattributename2");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDataTypeChangedAndHasNoValue_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename", "int");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = null;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", type: "bool");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDataTypeChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "int"
+                && (string)x.Arguments[2] == "bool");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndNoDefaultValue_ThenResetsValue()
+        {
+            this.pattern.AddAttribute("anattributename", "int");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = 25;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", type: "bool");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDataTypeChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "int"
+                && (string)x.Arguments[2] == "bool");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
+        {
+            this.pattern.AddAttribute("anattributename", "int");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = 25;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", type: "bool", defaultValue: "True");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be(true);
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDataTypeChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "int"
+                && (string)x.Arguments[2] == "bool");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasIncorrectDefaultValue_ThenResetsValue()
+        {
+            this.pattern.AddAttribute("anattributename", "int");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = 25;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", type: "int", defaultValue: "25");
+            latestPattern.UpdateAttribute("anattributename", type: "bool");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDataTypeChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "int"
+                && (string)x.Arguments[2] == "bool");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesAddedAndOldValueIsAChoice_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "achoice2";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("achoice2");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.NonBreaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeChoicesAdded
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "achoice2");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesAddedAndOldValueIsNotAChoice_ThenResetsValue()
+        {
+            this.pattern.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "notachoice";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.NonBreaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeChoicesAdded
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == null);
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesChangedToScalar_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "achoice2";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string>());
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("achoice2");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeChoicesDeleted
+                && (string)x.Arguments[0] == "apatternname.anattributename");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesChangedAndNoValue_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice1", "achoice1" });
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = null;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesChangedAndHasIncorrectValueAndNoDefaultValue_ThenResetsValue()
+        {
+            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "achoice1";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeChoicesChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
+        {
+            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "achoice1";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", defaultValue: "achoice9", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("achoice9");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeChoicesChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndChoicesChangedAndHasCorrectValue_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "achoice3";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice3", "achoice4", "achoice5" });
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("achoice3");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDefaultValueChangedAndHasNoValue_ThenSetsNewDefaultValue()
+        {
+            this.pattern.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = null;
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", defaultValue: "adefaultvalue");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.NonBreaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDefaultValueChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == null
+                && (string)x.Arguments[2] == "adefaultvalue");
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDefaultValueChangedAndHasNonDefaultValue_ThenLeavesValue()
+        {
+            this.pattern.AddAttribute("anattributename");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "avalue";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", defaultValue: "adefaultvalue");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenMigrateAttributeAndDefaultValueChangedAndHasOldDefaultValue_ThenSetsNewDefaultValue()
+        {
+            this.pattern.AddAttribute("anattributename", null, false, "adefaultvalue");
+            var solutionItem = new SolutionItem(this.toolkit, this.pattern);
+            solutionItem.Properties["anattributename"].Value = "adefaultvalue";
+
+            var latestPattern = ClonePattern(this.pattern);
+            latestPattern.UpdateAttribute("anattributename", defaultValue: "anewdefaultvalue");
+            var latestToolkit = new ToolkitDefinition(latestPattern);
+            var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
+
+            solutionItem.Migrate(latestToolkit, result);
+
+            solutionItem.Properties["anattributename"].Value.Should().Be("anewdefaultvalue");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.NonBreaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_AttributeDefaultValueChanged
+                && (string)x.Arguments[0] == "apatternname.anattributename"
+                && (string)x.Arguments[1] == "adefaultvalue"
+                && (string)x.Arguments[2] == "anewdefaultvalue");
+        }
+
+        private static PatternDefinition ClonePattern(PatternDefinition originalPattern)
+        {
+            var factory = new AutomatePersistableFactory();
+            return originalPattern.ToJson(factory).FromJson<PatternDefinition>(factory);
         }
     }
 }

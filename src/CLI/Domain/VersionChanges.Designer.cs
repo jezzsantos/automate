@@ -79,6 +79,51 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its choices.
+        /// </summary>
+        internal static string PatternElement_Attribute_Update_Choices {
+            get {
+                return ResourceManager.GetString("PatternElement_Attribute_Update_Choices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its data type.
+        /// </summary>
+        internal static string PatternElement_Attribute_Update_DataType {
+            get {
+                return ResourceManager.GetString("PatternElement_Attribute_Update_DataType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its default value.
+        /// </summary>
+        internal static string PatternElement_Attribute_Update_DefaultValue {
+            get {
+                return ResourceManager.GetString("PatternElement_Attribute_Update_DefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its name.
+        /// </summary>
+        internal static string PatternElement_Attribute_Update_Name {
+            get {
+                return ResourceManager.GetString("PatternElement_Attribute_Update_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed whether it is required.
+        /// </summary>
+        internal static string PatternElement_Attribute_Update_Required {
+            get {
+                return ResourceManager.GetString("PatternElement_Attribute_Update_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automation (ID: {AutomationId}) was added to element {ParentId}.
         /// </summary>
         internal static string PatternElement_Automation_Add {

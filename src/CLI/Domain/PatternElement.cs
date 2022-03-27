@@ -140,6 +140,69 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
+        public void UpdateAttribute(string attributeName, string name = null, string type = null, bool? isRequired = false, string defaultValue = null, List<string> choices = null)
+        {
+            attributeName.GuardAgainstNullOrEmpty(nameof(attributeName));
+
+            var attribute = GetAttributeByName(this, attributeName);
+            if (attribute.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameNotExists.Format(attributeName));
+            }
+
+            if (name.HasValue())
+            {
+                if (name.NotEqualsIgnoreCase(attribute.Name))
+                {
+                    if (AttributeNameIsReserved(name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved.Format(name));
+                    }
+
+                    if (AttributeExistsByName(this, name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExists.Format(name));
+                    }
+
+                    if (ElementExistsByName(this, name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(name));
+                    }
+
+                    attribute.SetName(name);
+                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name, attribute.Id, Id);
+                }
+            }
+
+            if (type.HasValue() && type != attribute.DataType)
+            {
+                attribute.SetDataType(type);
+                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType, attribute.Id, Id);
+            }
+
+            if (choices.Exists())
+            {
+                var change = attribute.Choices.HasNone()
+                    ? VersionChange.NonBreaking
+                    : VersionChange.Breaking;
+                attribute.SetChoices(choices);
+
+                RecordChange(change, VersionChanges.PatternElement_Attribute_Update_Choices, attribute.Id, Id);
+            }
+
+            if (isRequired.HasValue && attribute.IsRequired != isRequired.Value)
+            {
+                attribute.SetRequired(isRequired.Value);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required, attribute.Id, Id);
+            }
+
+            if (defaultValue.HasValue() && attribute.DefaultValue.NotEqualsOrdinal(defaultValue))
+            {
+                attribute.SetDefaultValue(defaultValue);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue, attribute.Id, Id);
+            }
+        }
+
         public Attribute DeleteAttribute(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));

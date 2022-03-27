@@ -95,7 +95,7 @@ namespace Automate.CLI.Domain
                     }
                 }
 
-                if (solutionItem.IsCollection)
+                if (solutionItem.IsEphemeralCollection)
                 {
                     foreach (var item in solutionItem.Items.Safe())
                     {
@@ -152,7 +152,7 @@ namespace Automate.CLI.Domain
                     }
                 }
 
-                if (solutionItem.IsCollection)
+                if (solutionItem.IsEphemeralCollection)
                 {
                     foreach (var item in solutionItem.Items.Safe())
                     {
@@ -200,6 +200,7 @@ namespace Automate.CLI.Domain
                 result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced, latestToolkit.PatternName, latestToolkit.Version);
             }
 
+            Model.Migrate(latestToolkit, result);
             Toolkit.MigratePattern(latestToolkit, result);
 
             return result;

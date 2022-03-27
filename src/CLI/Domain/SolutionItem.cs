@@ -20,28 +20,29 @@ namespace Automate.CLI.Domain
         }
 
         private SolutionItem(ToolkitDefinition toolkit, IPatternSchema pattern)
+            : this(pattern.Name, toolkit, null, new SolutionItemSchema(pattern.Id, SolutionItemSchemaType.Pattern))
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             pattern.GuardAgainstNull(nameof(pattern));
 
-            Id = IdGenerator.Create();
-            Name = pattern.Name;
-            Toolkit = toolkit;
-            Schema = new SolutionItemSchema(pattern.Id, SolutionItemSchemaType.Pattern);
-            IsMaterialised = true;
-            Value = null;
-            this.properties = new Dictionary<string, SolutionItem>();
-            pattern.Attributes.ToListSafe()
-                .ForEach(attr =>
-                {
-                    this.properties.Add(attr.Name,
-                        new SolutionItem(toolkit, attr, this));
-                });
-            pattern.Elements.ToListSafe()
-                .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(toolkit, ele, this)); });
-            this.items = null;
-            Parent = null;
-            this.artifactLinks = new List<ArtifactLink>();
+            Materialise(toolkit, pattern, false);
+        }
+
+        public SolutionItem(ToolkitDefinition toolkit, Element element, SolutionItem parent, bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent, isCollectionItem)
+        {
+        }
+
+        private SolutionItem(ToolkitDefinition toolkit, IElementSchema element, SolutionItem parent, bool isCollectionItem)
+            : this(element.Name, toolkit, parent, new SolutionItemSchema(element.Id, isCollectionItem
+                ? SolutionItemSchemaType.CollectionItem
+                : element.IsCollection
+                    ? SolutionItemSchemaType.EphemeralCollection
+                    : SolutionItemSchemaType.Element))
+        {
+            toolkit.GuardAgainstNull(nameof(toolkit));
+            element.GuardAgainstNull(nameof(element));
+
+            UnMaterialise();
         }
 
         public SolutionItem(ToolkitDefinition toolkit, Attribute attribute, SolutionItem parent) : this(toolkit, attribute.ToSchema(), parent)
@@ -49,57 +50,26 @@ namespace Automate.CLI.Domain
         }
 
         private SolutionItem(ToolkitDefinition toolkit, IAttributeSchema attribute, SolutionItem parent)
+            : this(attribute.Name, toolkit, parent, new SolutionItemSchema(attribute.Id, SolutionItemSchemaType.Attribute))
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             attribute.GuardAgainstNull(nameof(attribute));
 
-            Id = IdGenerator.Create();
-            Name = attribute.Name;
-            Toolkit = toolkit;
-            Schema = new SolutionItemSchema(attribute.Id, SolutionItemSchemaType.Attribute);
-            IsMaterialised = attribute.DefaultValue.HasValue();
-            SetValue(attribute.DefaultValue, attribute.DataType);
-            this.properties = null;
-            this.items = null;
-            Parent = parent;
-            this.artifactLinks = new List<ArtifactLink>();
-        }
-
-        public SolutionItem(ToolkitDefinition toolkit, Element element, SolutionItem parent, bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent, isCollectionItem)
-        {
-        }
-
-        private SolutionItem(ToolkitDefinition toolkit, IElementSchema element, SolutionItem parent, bool isCollectionItem = false)
-        {
-            toolkit.GuardAgainstNull(nameof(toolkit));
-            element.GuardAgainstNull(nameof(element));
-
-            Id = IdGenerator.Create();
-            Name = element.Name;
-            Toolkit = toolkit;
-            Schema = new SolutionItemSchema(element.Id, isCollectionItem
-                ? SolutionItemSchemaType.CollectionItem
-                : element.IsCollection
-                    ? SolutionItemSchemaType.EphemeralCollection
-                    : SolutionItemSchemaType.Element);
-            IsMaterialised = false;
-            Value = null;
-            this.properties = null;
-            this.items = null;
-            Parent = parent;
-            this.artifactLinks = new List<ArtifactLink>();
+            Materialise(attribute);
         }
 
         public SolutionItem(object value, string dataType, SolutionItem parent)
+            : this(null, null, parent, SolutionItemSchema.None)
+        {
+            Materialise(value, dataType);
+        }
+
+        private SolutionItem(string name, ToolkitDefinition toolkit, SolutionItem parent, SolutionItemSchema schema)
         {
             Id = IdGenerator.Create();
-            Name = null;
-            Toolkit = null;
-            Schema = SolutionItemSchema.None;
-            IsMaterialised = true;
-            SetValue(value, dataType);
-            this.properties = null;
-            this.items = null;
+            Name = name;
+            Toolkit = toolkit;
+            Schema = schema;
             Parent = parent;
             this.artifactLinks = new List<ArtifactLink>();
         }
@@ -148,7 +118,7 @@ namespace Automate.CLI.Domain
 
         public bool IsElement => Schema.SchemaType is SolutionItemSchemaType.Element or SolutionItemSchemaType.CollectionItem;
 
-        public bool IsCollection => Schema.SchemaType == SolutionItemSchemaType.EphemeralCollection;
+        public bool IsEphemeralCollection => Schema.SchemaType == SolutionItemSchemaType.EphemeralCollection;
 
         public bool IsAttribute => Schema.SchemaType == SolutionItemSchemaType.Attribute;
 
@@ -184,27 +154,14 @@ namespace Automate.CLI.Domain
                     ExceptionMessages.SolutionItem_PatternAlreadyMaterialised.Format(PatternSchema.Name));
             }
 
-            if (IsElement)
+            if (IsElement || IsEphemeralCollection)
             {
-                this.properties = new Dictionary<string, SolutionItem>();
-                ElementSchema.Attributes.ToListSafe().ForEach(
-                    attr => { this.properties.Add(attr.Name, new SolutionItem(Toolkit, attr, this)); });
-                ElementSchema.Elements.ToListSafe().ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(Toolkit, ele, this)); });
-                this.items = null;
-                IsMaterialised = true;
-            }
-
-            if (IsCollection)
-            {
-                this.properties = new Dictionary<string, SolutionItem>();
-                this.items = new List<SolutionItem>();
-                IsMaterialised = true;
+                Materialise(Toolkit, ElementSchema, IsEphemeralCollection);
             }
 
             if (IsAttribute)
             {
-                SetValue(value, AttributeSchema.DataType);
-                IsMaterialised = true;
+                Materialise(AttributeSchema, value);
             }
 
             if (IsValue)
@@ -217,11 +174,12 @@ namespace Automate.CLI.Domain
 
         /// <summary>
         ///     Creates a new instance in the <see cref="Items" /> of this "ephemeral" collection.
-        ///     This collection is never actually operated upon. Only <see cref="Items" /> in its collection are operated on.
+        ///     This ephemeral collection is never actually operated upon. Only <see cref="Items" /> in its collection are operated
+        ///     on.
         /// </summary>
         public SolutionItem MaterialiseCollectionItem()
         {
-            if (!IsCollection)
+            if (!IsEphemeralCollection)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
             }
@@ -287,7 +245,7 @@ namespace Automate.CLI.Domain
                         solutionItem.Properties.SelectMany(prop => ValidateDescendants(prop.Value, subContext, false).Results));
                 }
 
-                if (solutionItem.IsElement || solutionItem.IsCollection)
+                if (solutionItem.IsElement || solutionItem.IsEphemeralCollection)
                 {
                     var subContext = new ValidationContext(validationContext);
                     subContext.Add(isItem
@@ -306,7 +264,7 @@ namespace Automate.CLI.Domain
                             }
                         }
 
-                        if (solutionItem.IsCollection)
+                        if (solutionItem.IsEphemeralCollection)
                         {
                             if (solutionItem.ElementSchema.HasCardinalityOfAtLeastOne())
                             {
@@ -380,7 +338,7 @@ namespace Automate.CLI.Domain
         /// </param>
         public LazySolutionItemDictionary GetConfiguration(bool includeAncestry)
         {
-            if (!IsPattern && !IsElement && !IsCollection)
+            if (!IsPattern && !IsElement && !IsEphemeralCollection)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_ConfigurationForNonElement);
             }
@@ -403,12 +361,10 @@ namespace Automate.CLI.Domain
             return command.Execute(solution, this);
         }
 
-        public ArtifactLink AddArtifactLink(string commandId, string path, string tag)
+        public void AddArtifactLink(string commandId, string path, string tag)
         {
             var link = new ArtifactLink(commandId, path, tag);
             this.artifactLinks.Add(link);
-
-            return link;
         }
 
         public void SetAncestry(ToolkitDefinition toolkit, SolutionItem parent)
@@ -459,7 +415,321 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public void Migrate(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+        {
+            MigrateDescendants(this);
+
+            void MigrateDescendants(SolutionItem solutionItem)
+            {
+                var removeItem = false;
+                if (solutionItem.IsPattern)
+                {
+                    solutionItem.Properties.ToListSafe()
+                        .ForEach(prop => MigrateDescendants(prop.Value));
+                    AddNewAttributes(solutionItem);
+                }
+
+                if (solutionItem.IsElement)
+                {
+                    if (solutionItem.IsMaterialised)
+                    {
+                        var latestSchema = solutionItem.Schema.ResolveSchema<IElementSchema>(latestToolkit, false);
+                        if (latestSchema.NotExists())
+                        {
+                            removeItem = true;
+                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, solutionItem.GetPath());
+                        }
+                        else
+                        {
+                            solutionItem.Properties.ToListSafe()
+                                .ForEach(prop => MigrateDescendants(prop.Value));
+                        }
+                    }
+                }
+
+                if (solutionItem.IsEphemeralCollection)
+                {
+                    if (solutionItem.IsMaterialised)
+                    {
+                        var latestSchema = solutionItem.Schema.ResolveSchema<IElementSchema>(latestToolkit, false);
+                        if (latestSchema.NotExists())
+                        {
+                            removeItem = true;
+                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, solutionItem.GetPath());
+                        }
+                        else
+                        {
+                            solutionItem.Items.ToListSafe()
+                                .ForEach(MigrateDescendants);
+                        }
+                    }
+                }
+
+                if (solutionItem.IsAttribute)
+                {
+                    var latestSchema = solutionItem.Schema.ResolveSchema<IAttributeSchema>(latestToolkit, false);
+                    if (latestSchema.NotExists())
+                    {
+                        removeItem = true;
+                        result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDeleted, solutionItem.GetPath());
+                    }
+                    else
+                    {
+                        var newName = latestSchema.Name;
+                        var oldName = solutionItem.AttributeSchema.Name;
+                        var newDefaultValue = latestSchema.DefaultValue;
+                        var oldDefaultValue = solutionItem.AttributeSchema.DefaultValue;
+                        var oldDataType = solutionItem.AttributeSchema.DataType;
+                        var newDataType = latestSchema.DataType;
+                        var oldChoices = solutionItem.AttributeSchema.Choices;
+                        var newChoices = latestSchema.Choices;
+                        var value = solutionItem.Value;
+
+                        if (oldName.NotEqualsOrdinal(newName))
+                        {
+                            removeItem = true;
+                            var property = solutionItem.Parent.AddProperty(latestToolkit, latestSchema);
+                            property.SetValue(value, newDataType);
+                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeNameChanged, solutionItem.GetPath(), oldName, newName);
+                        }
+
+                        if (oldDataType.NotEqualsOrdinal(newDataType))
+                        {
+                            if (value.Exists())
+                            {
+                                if (!latestSchema.IsValidDataType(value.ToString()))
+                                {
+                                    if (newDefaultValue.HasValue())
+                                    {
+                                        if (latestSchema.IsValidDataType(newDefaultValue))
+                                        {
+                                            solutionItem.SetValue(newDefaultValue, newDataType);
+                                        }
+                                        else
+                                        {
+                                            solutionItem.SetValue(null, newDataType);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        solutionItem.SetValue(null, newDataType);
+                                    }
+                                }
+                            }
+                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDataTypeChanged, solutionItem.GetPath(), oldDataType, newDataType);
+                        }
+
+                        if (oldChoices.HasNone() && newChoices.HasAny())
+                        {
+                            if (value.Exists())
+                            {
+                                if (!latestSchema.Choices.Contains(value.ToString()))
+                                {
+                                    solutionItem.SetValue(null, newDataType);
+                                }
+                                result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeChoicesAdded, solutionItem.GetPath(), solutionItem.Value);
+                            }
+                        }
+                        if (oldChoices.HasAny() && newChoices.HasNone())
+                        {
+                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesDeleted, solutionItem.GetPath());
+                        }
+                        if (oldChoices.HasAny() && newChoices.HasAny())
+                        {
+                            if (!oldChoices.SequenceEqual(newChoices))
+                            {
+                                if (value.Exists())
+                                {
+                                    if (!latestSchema.Choices.Contains(value.ToString()))
+                                    {
+                                        if (latestSchema.Choices.Contains(newDefaultValue))
+                                        {
+                                            solutionItem.SetValue(newDefaultValue, newDataType);
+                                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, solutionItem.GetPath(), value, newDefaultValue);
+                                        }
+                                        else
+                                        {
+                                            solutionItem.SetValue(null, newDataType);
+                                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, solutionItem.GetPath(), value, null);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (newDefaultValue.NotEqualsOrdinal(oldDefaultValue))
+                        {
+                            if (value.Exists())
+                            {
+                                if (value.ToString().EqualsIgnoreCase(oldDefaultValue))
+                                {
+                                    solutionItem.SetValue(newDefaultValue, newDataType);
+                                    result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, solutionItem.GetPath(), value, newDefaultValue);
+                                }
+                            }
+                            else
+                            {
+                                solutionItem.SetValue(newDefaultValue, newDataType);
+                                result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, solutionItem.GetPath(), value, newDefaultValue);
+                            }
+                        }
+                    }
+                }
+
+                if (removeItem)
+                {
+                    solutionItem.Parent.RemoveProperty(solutionItem.Name);
+                }
+            }
+
+            void AddNewAttributes(SolutionItem solutionItem)
+            {
+                var latestSchema = solutionItem.Schema.ResolveSchema<IPatternSchema>(latestToolkit, false);
+                if (latestSchema.Exists())
+                {
+                    latestSchema.Attributes
+                        .Remainder(solutionItem.PatternSchema.Attributes, schema => schema.Id)
+                        .ToList()
+                        .ForEach(attr =>
+                        {
+                            var property = solutionItem.AddProperty(latestToolkit, attr);
+                            result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeAdded, property.GetPath(), property.Value);
+                        });
+                }
+            }
+        }
+
         public string Id { get; }
+
+        private SolutionItem AddProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
+        {
+            var property = new SolutionItem(toolkit, schema, this);
+            this.properties.Add(schema.Name, property);
+
+            return property;
+        }
+
+        private string GetPath()
+        {
+            return GetAncestorPath(this);
+
+            string GetAncestorPath(SolutionItem solutionItem)
+            {
+                if (solutionItem.IsPattern)
+                {
+                    return solutionItem.Name;
+                }
+
+                if (solutionItem.IsElement || solutionItem.IsEphemeralCollection)
+                {
+                    if (solutionItem.Parent.Exists())
+                    {
+                        if (solutionItem.Parent.IsEphemeralCollection)
+                        {
+                            return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Id}";
+                        }
+
+                        return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
+                    }
+                }
+
+                if (solutionItem.IsAttribute)
+                {
+                    if (solutionItem.Parent.Exists())
+                    {
+                        if (solutionItem.Parent.IsEphemeralCollection)
+                        {
+                            return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Id}";
+                        }
+
+                        return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
+                    }
+                }
+
+                throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
+            }
+        }
+
+        private void RemoveProperty(string propertyName)
+        {
+            if (Properties.HasAny())
+            {
+                if (Properties.Any(prop => prop.Key.EqualsIgnoreCase(propertyName)))
+                {
+                    this.properties.Remove(propertyName);
+                }
+            }
+        }
+
+        private void Materialise(ToolkitDefinition toolkit, IPatternElementSchema schema, bool isCollection)
+        {
+            this.properties = new Dictionary<string, SolutionItem>();
+            if (isCollection)
+            {
+                this.items = new List<SolutionItem>();
+            }
+            else
+            {
+                schema.Attributes.ToListSafe()
+                    .ForEach(attr => { this.properties.Add(attr.Name, new SolutionItem(toolkit, attr, this)); });
+                schema.Elements.ToListSafe()
+                    .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(toolkit, ele, this, false)); });
+                this.items = null;
+            }
+            IsMaterialised = true;
+            Value = null;
+        }
+
+        private void Materialise(IAttributeSchema schema, object value = null)
+        {
+            this.properties = null;
+            this.items = null;
+            IsMaterialised = value.Exists()
+                ? true
+                : schema.DefaultValue.HasValue();
+            SetValue(value.Exists()
+                    ? schema.IsValidDataType(value.ToString()) ? value : null
+                    : schema.IsValidDataType(schema.DefaultValue)
+                        ? schema.DefaultValue
+                        : null,
+                schema.DataType);
+        }
+
+        private void Materialise(object value, string dataType)
+        {
+            this.properties = null;
+            this.items = null;
+            IsMaterialised = true;
+            SetValue(value, dataType);
+        }
+
+        private void UnMaterialise()
+        {
+            if (IsPattern)
+            {
+                throw new AutomateException(
+                    ExceptionMessages.SolutionItem_UnMaterialisationOnPatternForbidden.Format(PatternSchema.Name));
+            }
+
+            if (IsElement || IsEphemeralCollection)
+            {
+                Value = null;
+            }
+
+            if (IsAttribute)
+            {
+                SetValue(null, AttributeSchema.DataType);
+            }
+
+            if (IsValue)
+            {
+                throw new AutomateException(ExceptionMessages.SolutionItem_UnMaterialisationOnValueForbidden);
+            }
+
+            this.properties = null;
+            this.items = null;
+            IsMaterialised = false;
+        }
 
         private SolutionItem CreateEphemeralCollectionItem()
         {
@@ -482,7 +752,7 @@ namespace Automate.CLI.Domain
                 automations = ElementSchema.Automation.ToListSafe();
             }
 
-            if (IsCollection || IsAttribute || IsValue)
+            if (IsEphemeralCollection || IsAttribute || IsValue)
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_HasNoAutomations);
             }
@@ -492,7 +762,7 @@ namespace Automate.CLI.Domain
 
         private void SetValue(object value, string dataType)
         {
-            Value = Attribute.SetValue(dataType, value);
+            this._value = Attribute.SetValue(dataType, value);
         }
     }
 
@@ -532,7 +802,7 @@ namespace Automate.CLI.Domain
 
         public void SetProperty(object value)
         {
-            this.item.Value = Attribute.SetValue(DataType, value);
+            this.item.Value = value;
         }
     }
 
@@ -577,7 +847,7 @@ namespace Automate.CLI.Domain
             return new SolutionItemSchema(properties, factory);
         }
 
-        public TSchema ResolveSchema<TSchema>(ToolkitDefinition toolkit) where TSchema : ISchema
+        public TSchema ResolveSchema<TSchema>(ToolkitDefinition toolkit, bool throwOnNotFound = true) where TSchema : ISchema
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
 
@@ -595,7 +865,7 @@ namespace Automate.CLI.Domain
                     return (TSchema)((PatternDefinition)target).ToSchema();
                 }
             }
-            if (typeof(TSchema) == typeof(IElementSchema))
+            else if (typeof(TSchema) == typeof(IElementSchema))
             {
                 target = toolkit.Pattern.FindSchema<Element>(SchemaId);
                 if (target.Exists())
@@ -605,7 +875,7 @@ namespace Automate.CLI.Domain
                         : (TSchema)((Element)target).ToSchema();
                 }
             }
-            if (typeof(TSchema) == typeof(IAttributeSchema))
+            else if (typeof(TSchema) == typeof(IAttributeSchema))
             {
                 target = toolkit.Pattern.FindSchema<Attribute>(SchemaId);
                 if (target.Exists())
@@ -613,8 +883,17 @@ namespace Automate.CLI.Domain
                     return (TSchema)((Attribute)target).ToSchema();
                 }
             }
+            else
+            {
+                throw new NotSupportedException();
+            }
 
-            throw new AutomateException(ExceptionMessages.SolutionItem_UnknownSchema.Format(SchemaId, SchemaType));
+            if (throwOnNotFound)
+            {
+                throw new AutomateException(ExceptionMessages.SolutionItem_UnknownSchema.Format(SchemaId, SchemaType));
+            }
+
+            return default;
         }
     }
 
@@ -727,13 +1006,13 @@ namespace Automate.CLI.Domain
 
         private IEnumerable<DictionaryEntry> GetPairs()
         {
-            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsCollection)
+            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection)
             {
                 yield return new DictionaryEntry(FormatName(nameof(SolutionItem.Id)), this.solutionItem.Id);
             }
             if (this.includeAncestry)
             {
-                if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsCollection || this.solutionItem.IsAttribute)
+                if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection || this.solutionItem.IsAttribute)
                 {
                     if (this.solutionItem.Parent.Exists())
                     {
@@ -741,7 +1020,7 @@ namespace Automate.CLI.Domain
                     }
                 }
             }
-            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsCollection)
+            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection)
             {
                 if (this.solutionItem.Properties.HasAny())
                 {
@@ -755,14 +1034,14 @@ namespace Automate.CLI.Domain
                                 yield return new DictionaryEntry(FormatName(name), item.Value);
                             }
                         }
-                        if (item.IsElement || item.IsCollection)
+                        if (item.IsElement || item.IsEphemeralCollection)
                         {
                             yield return new DictionaryEntry(FormatName(name), new LazySolutionItemDictionary(item, this.includeAncestry));
                         }
                     }
                 }
             }
-            if (this.solutionItem.IsCollection)
+            if (this.solutionItem.IsEphemeralCollection)
             {
                 if (this.solutionItem.Items.HasAny())
                 {

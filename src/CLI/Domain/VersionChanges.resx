@@ -33,6 +33,21 @@
     <data name="PatternElement_Attribute_Delete" xml:space="preserve">
         <value>Attribute (ID: {AttributeId}) was deleted from element {ParentId}</value>
     </data>
+    <data name="PatternElement_Attribute_Update_Name" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its name</value>
+    </data>
+    <data name="PatternElement_Attribute_Update_DefaultValue" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its default value</value>
+    </data>
+    <data name="PatternElement_Attribute_Update_Required" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed whether it is required</value>
+    </data>
+    <data name="PatternElement_Attribute_Update_DataType" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its data type</value>
+    </data>
+    <data name="PatternElement_Attribute_Update_Choices" xml:space="preserve">
+        <value>Attribute (ID: {AttributeId}) was updated on element {ParentId}, and changed its choices</value>
+    </data>
     <data name="PatternElement_Element_Add" xml:space="preserve">
         <value>Element/Collection (ID: {ElementId}) was added to element {ParentId}</value>
     </data>

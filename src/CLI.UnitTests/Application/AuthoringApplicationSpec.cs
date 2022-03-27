@@ -185,7 +185,7 @@ namespace CLI.UnitTests.Application
             attribute.DataType.Should().Be("string");
             attribute.DefaultValue.Should().Be("adefaultvalue");
             attribute.IsRequired.Should().BeFalse();
-            attribute.Choices.Should().BeNull();
+            attribute.Choices.Should().BeEmpty();
             result.Parent.Id.Should().Be(this.store.GetCurrent().Id);
         }
 

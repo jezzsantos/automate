@@ -196,6 +196,12 @@
     <data name="SolutionItem_ValueAlreadyMaterialised" xml:space="preserve">
         <value>The Value has already been materialized</value>
     </data>
+    <data name="SolutionItem_UnMaterialisationOnPatternForbidden" xml:space="preserve">
+        <value>Cannot un-materialize the pattern</value>
+    </data>
+    <data name="SolutionItem_UnMaterialisationOnValueForbidden" xml:space="preserve">
+        <value>Cannot un-materialize a value</value>
+    </data>
     <data name="SolutionItem_MaterialiseNotACollection" xml:space="preserve">
         <value>Cannot materialise item in an non-collection element</value>
     </data>
@@ -266,5 +272,8 @@
     </data>
     <data name="SolutionItem_UnknownSchema" xml:space="preserve">
         <value>Cannot find the associated schema in the toolkit of this solution which matches the ID: {0}, for an: '{1}'</value>
+    </data>
+    <data name="SolutionItem_UnknownPath" xml:space="preserve">
+        <value>This item does not have a path</value>
     </data>
 </root>

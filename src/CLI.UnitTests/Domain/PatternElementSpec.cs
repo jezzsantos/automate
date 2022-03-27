@@ -81,7 +81,7 @@ namespace CLI.UnitTests.Domain
             result.DataType.Should().Be("string");
             result.DefaultValue.Should().Be("adefaultvalue");
             result.IsRequired.Should().BeFalse();
-            result.Choices.Should().BeNull();
+            result.Choices.Should().BeEmpty();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
@@ -94,7 +94,7 @@ namespace CLI.UnitTests.Domain
             result.DataType.Should().Be("string");
             result.DefaultValue.Should().BeNull();
             result.IsRequired.Should().BeFalse();
-            result.Choices.Should().BeNull();
+            result.Choices.Should().BeEmpty();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 

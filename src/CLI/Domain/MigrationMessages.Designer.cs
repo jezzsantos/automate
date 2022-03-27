@@ -88,7 +88,97 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added new Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;).
+        ///   Looks up a localized string similar to Added attribute &apos;{Path}&apos; to solution, with value of &apos;{NewValue}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeAdded {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added Choices to attribute &apos;{Path}&apos;, and changed current value to &apos;{Value}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeChoicesAdded {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeChoicesAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed Choices of attribute &apos;{Path}&apos;, and changed current value from &apos;{Value}&apos; to &apos;{NewChoice}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeChoicesChanged {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeChoicesChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Choices from attribute &apos;{Path}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeChoicesDeleted {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeChoicesDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed DataTye of attribute &apos;{Path}&apos; from &apos;{OldDataType}&apos; to &apos;{NewDataType}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeDataTypeChanged {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeDataTypeChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed DefaultValue of attribute &apos;{Path}&apos;, and changed the current default value from &apos;{Value}&apos; to &apos;{NewDefault}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeDefaultValueChanged {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeDefaultValueChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted attribute &apos;{Path}&apos; from solution.
+        /// </summary>
+        internal static string SolutionItem_AttributeDeleted {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed Name of attribute &apos;{Path}&apos; from &apos;{OldName}&apos; to &apos;{NewName}&apos;.
+        /// </summary>
+        internal static string SolutionItem_AttributeNameChanged {
+            get {
+                return ResourceManager.GetString("SolutionItem_AttributeNameChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added element &apos;{Path}&apos; to solution.
+        /// </summary>
+        internal static string SolutionItem_ElementAdded {
+            get {
+                return ResourceManager.GetString("SolutionItem_ElementAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted element &apos;{Path}&apos; from solution.
+        /// </summary>
+        internal static string SolutionItem_ElementDeleted {
+            get {
+                return ResourceManager.GetString("SolutionItem_ElementDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added new Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to solution.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_Added {
             get {
@@ -97,7 +187,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Changed contents of Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;).
+        ///   Looks up a localized string similar to Changed contents of Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) in solution.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_ContentUpgraded {
             get {
@@ -106,7 +196,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;).
+        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) from solution.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_Deleted {
             get {

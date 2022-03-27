@@ -78,12 +78,8 @@ namespace Automate.CLI.Domain
 
         public void MigratePattern(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
         {
-            //TODO: complete the migration (https://github.com/jezzsantos/automate/issues/32)
-            MigrateCodeTemplates(latestToolkit, result);
-
-            // results = Model.Migrate(latestToolkit); //navigate solutionitems and compare old and new schema. Auto-fix, reset or delete each solutionitem.
-            // result.Append(results);
-            // write the new tookit.pattern over the top of existing and save the solution
+            MigrateCodeTemplateFiles(latestToolkit, result);
+            
             Pattern = latestToolkit.Pattern;
             Version = latestToolkit.Pattern.ToolkitVersion.Current;
         }
@@ -112,7 +108,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        private void MigrateCodeTemplates(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+        private void MigrateCodeTemplateFiles(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
         {
             latestToolkit.GuardAgainstNull(nameof(latestToolkit));
 

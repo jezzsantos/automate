@@ -114,7 +114,7 @@ namespace Automate.CLI.Domain
                     }
                     PopulatePatternElement(solutionItem, solutionItem.ElementSchema, instanceCountAtThisLevel);
                 }
-                if (solutionItem.IsCollection)
+                if (solutionItem.IsEphemeralCollection)
                 {
                     solutionItem.MaterialiseCollectionItem();
                     var existingCount = solutionItem.Items.Safe().Count();

@@ -655,11 +655,38 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This item does not have a path.
+        /// </summary>
+        internal static string SolutionItem_UnknownPath {
+            get {
+                return ResourceManager.GetString("SolutionItem_UnknownPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find the associated schema in the toolkit of this solution which matches the ID: {0}, for an: &apos;{1}&apos;.
         /// </summary>
         internal static string SolutionItem_UnknownSchema {
             get {
                 return ResourceManager.GetString("SolutionItem_UnknownSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot un-materialize the pattern.
+        /// </summary>
+        internal static string SolutionItem_UnMaterialisationOnPatternForbidden {
+            get {
+                return ResourceManager.GetString("SolutionItem_UnMaterialisationOnPatternForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot un-materialize a value.
+        /// </summary>
+        internal static string SolutionItem_UnMaterialisationOnValueForbidden {
+            get {
+                return ResourceManager.GetString("SolutionItem_UnMaterialisationOnValueForbidden", resourceCulture);
             }
         }
         

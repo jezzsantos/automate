@@ -12,6 +12,7 @@ namespace Automate.CLI.Domain
             DefaultType, "bool", "int", "decimal", "DateTime"
         };
         public static readonly string[] ReservedAttributeNames = { nameof(Id) };
+        private List<string> choices;
 
         public Attribute(string name, string dataType = DefaultType, bool isRequired = false,
             string defaultValue = null, List<string> choices = null)
@@ -53,9 +54,9 @@ namespace Automate.CLI.Domain
             DataType = resolvedDataType;
             IsRequired = isRequired;
             DefaultValue = defaultValue;
-            Choices = choices.HasAny()
+            this.choices = choices.HasAny()
                 ? choices
-                : null;
+                : new List<string>();
         }
 
         private Attribute(PersistableProperties properties, IPersistableFactory factory)
@@ -65,16 +66,16 @@ namespace Automate.CLI.Domain
             DataType = properties.Rehydrate<string>(factory, nameof(DataType));
             IsRequired = properties.Rehydrate<bool>(factory, nameof(IsRequired));
             DefaultValue = properties.Rehydrate<string>(factory, nameof(DefaultValue));
-            Choices = properties.Rehydrate<List<string>>(factory, nameof(Choices));
+            this.choices = properties.Rehydrate<List<string>>(factory, nameof(Choices));
         }
 
         public string DataType { get; private set; }
 
-        public bool IsRequired { get; }
+        public bool IsRequired { get; private set; }
 
-        public string DefaultValue { get; }
+        public string DefaultValue { get; private set; }
 
-        public IReadOnlyList<string> Choices { get; }
+        public IReadOnlyList<string> Choices => this.choices;
 
         public PersistableProperties Dehydrate()
         {
@@ -125,37 +126,6 @@ namespace Automate.CLI.Domain
             }
         }
 
-        private static bool IsValidDataType(string dataType, object value)
-        {
-            if (value.IsNull())
-            {
-                return true;
-            }
-
-            switch (dataType)
-            {
-                case "string":
-                    return value is string;
-
-                case "bool":
-                    return value is bool;
-
-                case "int":
-                    return value is int;
-
-                case "decimal":
-                    return value is decimal;
-
-                case "DateTime":
-                    return value is DateTime;
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
-                            SupportedDataTypes.Join(", ")));
-            }
-        }
-
         public static object SetValue(string dataType, object value)
         {
             if (value.IsNull())
@@ -189,12 +159,56 @@ namespace Automate.CLI.Domain
 
         public void SetDataType(string dataType)
         {
+            dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
+                ValidationMessages.Attribute_UnsupportedDataType, SupportedDataTypes.Join(", "));
+
             DataType = dataType;
+        }
+
+        public void SetName(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+
+            Name = name;
+        }
+
+        public void SetRequired(bool isRequired)
+        {
+            IsRequired = isRequired;
+        }
+
+        public void SetDefaultValue(string defaultValue)
+        {
+            defaultValue.GuardAgainstInvalid(
+                dv => Validations.IsValueOfDataType(dv, DataType),
+                nameof(defaultValue),
+                ValidationMessages.Attribute_InvalidDefaultValue, DataType);
+            if (Choices.HasAny())
+            {
+                defaultValue.GuardAgainstInvalid(this.choices.Contains, nameof(defaultValue),
+                    ValidationMessages.Attribute_DefaultValueIsNotAChoice, Choices.SafeJoin("; "));
+            }
+
+            DefaultValue = defaultValue;
+        }
+
+        // ReSharper disable once ParameterHidesMember
+        public void SetChoices(List<string> choices)
+        {
+            choices.GuardAgainstNull(nameof(choices));
+            choices.ForEach(choice =>
+                choice.GuardAgainstInvalid(
+                    _ => Validations.IsValueOfDataType(choice, DataType), nameof(choices),
+                    ValidationMessages.Attribute_WrongDataTypeChoice.Format(choice, DataType)));
+
+            this.choices = choices;
         }
 
         public string Id { get; }
 
-        public string Name { get; }
+        public string Name { get; private set; }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {
@@ -216,6 +230,37 @@ namespace Automate.CLI.Domain
             }
 
             return results;
+        }
+
+        private static bool IsValidDataType(string dataType, object value)
+        {
+            if (value.IsNull())
+            {
+                return true;
+            }
+
+            switch (dataType)
+            {
+                case "string":
+                    return value is string;
+
+                case "bool":
+                    return value is bool;
+
+                case "int":
+                    return value is int;
+
+                case "decimal":
+                    return value is decimal;
+
+                case "DateTime":
+                    return value is DateTime;
+
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
+                            SupportedDataTypes.Join(", ")));
+            }
         }
     }
 }
