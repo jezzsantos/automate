@@ -9,7 +9,8 @@ namespace Automate.CLI.Domain
     {
         Unknown = 0,
         CodeTemplateCommand = 1,
-        CommandLaunchPoint = 2,
+        CliCommand = 2,
+        CommandLaunchPoint = 10,
         TestingOnly = 100
     }
 
@@ -71,6 +72,12 @@ namespace Automate.CLI.Domain
                 case AutomationType.CodeTemplateCommand:
                 {
                     var automation = CodeTemplateCommand.FromAutomation(this);
+                    return automation.Execute(solution, target);
+                }
+
+                case AutomationType.CliCommand:
+                {
+                    var automation = CliCommand.FromAutomation(this);
                     return automation.Execute(solution, target);
                 }
 

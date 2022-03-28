@@ -36,6 +36,20 @@
     <data name="CodeTemplateCommand_Log_Warning_Moved" xml:space="preserve">
         <value>Previously generated file: '{0}' was moved to: '{1}'</value>
     </data>
+    <data name="CliCommand_Log_ExecutionSucceeded" xml:space="preserve">
+        <value>Executed command line: '{0} {1}', output:
+{2}</value>
+    </data>
+    <data name="CliCommand_Log_ExecutionFailed" xml:space="preserve">
+        <value>Command line: '{0} {1}' failed execution. Errors were:
+{2}</value>
+    </data>
+    <data name="CliCommand_Log_Hung" xml:space="preserve">
+        <value>The application hung, and did not complete within: {0}s</value>
+    </data>
+    <data name="CliCommand_Log_ProcessExited" xml:space="preserve">
+        <value>The application unexpected completed with exit code: '{0}'</value>
+    </data>
     <data name="CommandLaunchPoint_CommandIdFailedExecution" xml:space="preserve">
         <value>Command: '{0}' failed to execute. Errors were:
 {1}</value>
@@ -45,6 +59,12 @@
     </data>
     <data name="CodeTemplateCommand_TemplateContent_Description" xml:space="preserve">
         <value>CodeTemplate ({0}) template</value>
+    </data>
+    <data name="CliCommand_ApplicationName_Description" xml:space="preserve">
+        <value>CliCommand ({0}) application name</value>
+    </data>
+    <data name="CliCommand_Arguments_Description" xml:space="preserve">
+        <value>CliCommand ({0}) arguments</value>
     </data>
     <data name="AuthoringApplication_TestCodeTemplate_Description" xml:space="preserve">
         <value>CodeTemplate ({0}) template</value>

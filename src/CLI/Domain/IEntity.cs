@@ -47,6 +47,12 @@ namespace Automate.CLI.Domain
 
         public void DeleteCodeTemplateCommand(string id, bool includeReferencingAutomation);
 
+        Automation AddCliCommand(string name, string applicationName, string arguments);
+
+        Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments);
+
+        public void DeleteCliCommand(string id);
+
         Automation AddCommandLaunchPoint(string name, List<string> commandIds);
 
         Automation UpdateCommandLaunchPoint(string launchPointName, List<string> commandIds, IPatternElement sourceElement);

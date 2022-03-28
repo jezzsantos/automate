@@ -203,6 +203,19 @@ namespace Automate.CLI.Application
             return command;
         }
 
+        public Automation AddCliCommand(string applicationName, string arguments, string name, string parentExpression)
+        {
+            applicationName.GuardAgainstNull(nameof(applicationName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var command = target.AddCliCommand(name, applicationName, arguments);
+            this.store.Save(pattern);
+
+            return command;
+        }
+
         public Automation AddCommandLaunchPoint(string name, List<string> commandIds, string parentExpression)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));

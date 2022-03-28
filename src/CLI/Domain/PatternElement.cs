@@ -104,6 +104,12 @@ namespace Automate.CLI.Domain
             RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CodeTemplateCommand_Delete, command.Id, Id);
         }
 
+        public void DeleteCliCommand(CliCommand command)
+        {
+            this.automations.Remove(command.AsAutomation());
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CliCommand_Delete, command.Id, Id);
+        }
+
         public void DeleteCommandLaunchPoint(CommandLaunchPoint launchPoint)
         {
             this.automations.Remove(launchPoint.AsAutomation());
@@ -307,16 +313,16 @@ namespace Automate.CLI.Domain
                 throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName));
             }
 
-            var templateName = name.HasValue()
+            var commandName = name.HasValue()
                 ? name
                 : $"CodeTemplateCommand{Automation.ToListSafe().Count + 1}";
-            if (AutomationExistsByName(this, templateName))
+            if (AutomationExistsByName(this, commandName))
             {
                 throw new AutomateException(
-                    ExceptionMessages.PatternElement_AutomationByNameExists.Format(templateName));
+                    ExceptionMessages.PatternElement_AutomationByNameExists.Format(commandName));
             }
 
-            var automation = new CodeTemplateCommand(templateName, codeTemplate.Id, isTearOff, filePath).AsAutomation();
+            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isTearOff, filePath).AsAutomation();
             AddAutomation(automation);
 
             return automation;
@@ -324,7 +330,7 @@ namespace Automate.CLI.Domain
 
         public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath)
         {
-            var automation = GetAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
+            var automation = FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
             if (automation.NotExists())
             {
                 throw new AutomateException(
@@ -352,7 +358,7 @@ namespace Automate.CLI.Domain
         {
             id.GuardAgainstNullOrEmpty(nameof(id));
 
-            var command = FindCodeTemplateCommand(id);
+            var command = FindAutomationById(this, id, auto => auto.Type == AutomationType.CodeTemplateCommand);
             if (command.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand, id));
@@ -373,6 +379,65 @@ namespace Automate.CLI.Domain
                         }
                     });
             }
+        }
+
+        public Automation AddCliCommand(string name, string applicationName, string arguments)
+        {
+            applicationName.GuardAgainstNull(nameof(applicationName));
+
+            var commandName = name.HasValue()
+                ? name
+                : $"CliCommand{Automation.ToListSafe().Count + 1}";
+            if (AutomationExistsByName(this, commandName))
+            {
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationByNameExists.Format(commandName));
+            }
+
+            var automation = new CliCommand(commandName, applicationName, arguments).AsAutomation();
+            AddAutomation(automation);
+
+            return automation;
+        }
+
+        public Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments)
+        {
+            var automation = FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CliCommand);
+            if (automation.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand, commandName));
+            }
+
+            var command = CliCommand.FromAutomation(automation);
+            if (name.HasValue())
+            {
+                command.ChangeName(name);
+            }
+            if (applicationName.HasValue())
+            {
+                command.ChangeApplicationName(applicationName);
+            }
+            if (arguments.HasValue())
+            {
+                command.ChangeArguments(arguments);
+            }
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, command.Id, Id);
+
+            return command.AsAutomation();
+        }
+
+        public void DeleteCliCommand(string id)
+        {
+            id.GuardAgainstNullOrEmpty(nameof(id));
+
+            var command = FindAutomationById(this, id, auto => auto.Type == AutomationType.CliCommand);
+            if (command.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, id));
+            }
+
+            DeleteCliCommand(CliCommand.FromAutomation(command));
         }
 
         public Automation AddCommandLaunchPoint(string name, List<string> commandIds)
@@ -443,7 +508,7 @@ namespace Automate.CLI.Domain
                 });
             }
 
-            var automation = GetAutomationByName(this, launchPointName, auto => auto.Type == AutomationType.CommandLaunchPoint);
+            var automation = FindAutomationByName(this, launchPointName, auto => auto.Type == AutomationType.CommandLaunchPoint);
             if (automation.NotExists())
             {
                 throw new AutomateException(
@@ -460,7 +525,7 @@ namespace Automate.CLI.Domain
         {
             id.GuardAgainstNullOrEmpty(nameof(id));
 
-            var launchPoint = FindLaunchPoint(id);
+            var launchPoint = FindAutomationById(this, id, auto => auto.Type == AutomationType.CommandLaunchPoint);
             if (launchPoint.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CommandLaunchPoint, id));
@@ -487,16 +552,6 @@ namespace Automate.CLI.Domain
                 .Where(auto => auto.IsLaunchable())
                 .Select(auto => auto.Id)
                 .ToList();
-        }
-
-        private Automation FindCodeTemplateCommand(string id)
-        {
-            return Automation.FirstOrDefault(cmd => cmd.Id == id && cmd.Type == AutomationType.CodeTemplateCommand);
-        }
-
-        private Automation FindLaunchPoint(string id)
-        {
-            return Automation.FirstOrDefault(cmd => cmd.Id == id && cmd.Type == AutomationType.CommandLaunchPoint);
         }
 
         private void RecordChange(VersionChange change, string description, params object[] args)
@@ -547,10 +602,16 @@ namespace Automate.CLI.Domain
             return element.Automation.Safe().Any(ele => ele.Name.EqualsIgnoreCase(automationName));
         }
 
-        private static Automation GetAutomationByName(IAutomationContainer element, string name, Predicate<Automation> where)
+        private static Automation FindAutomationByName(IAutomationContainer element, string name, Predicate<Automation> where)
         {
             return element.Automation.Safe()
                 .FirstOrDefault(auto => auto.Name.EqualsIgnoreCase(name) && where(auto));
+        }
+
+        private static Automation FindAutomationById(IAutomationContainer element, string name, Predicate<Automation> where)
+        {
+            return element.Automation.Safe()
+                .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(name) && where(auto));
         }
 
         private static bool CodeTemplateExistsByName(IAutomationContainer element, string templateName)

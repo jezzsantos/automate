@@ -69,7 +69,7 @@ namespace CLI.UnitTests.Domain
                 var solutionPathResolver = new Mock<ISolutionPathResolver>();
                 solutionPathResolver
                     .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
-                    .Returns((string description, string expr, SolutionItem item) => expr);
+                    .Returns((string _, string expr, SolutionItem _) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
                 this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,

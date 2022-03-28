@@ -313,7 +313,20 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.FormatTemplate(command.Name, command.Id, "anewpath", true));
         }
-        
+
+        [Fact]
+        public void WhenAddCliCommand_ThenAddsCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"AnApplication\"");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CliCommandAdded.FormatTemplate("CliCommand1",
+                        this.setup.Patterns.Single().Automation.Single().Id));
+        }
 
         [Fact]
         public void WhenAddCommandLaunchPointWithAllCommands_ThenAddsLaunchPoint()

@@ -4,6 +4,8 @@
     <option name="locations">
       <list>
         <option value="$PROJECT_DIR$/CLI/bin/Release/net5.0/publish" />
+        <option value="$PROJECT_DIR$/../../../../endgame/Boost/tools/TestApp" />
+        <option value="$PROJECT_DIR$/../tools/TestApp" />
       </list>
     </option>
   </component>

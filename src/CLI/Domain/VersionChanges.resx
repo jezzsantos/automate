@@ -72,4 +72,7 @@
     <data name="PatternElement_CommandLaunchPoint_Delete" xml:space="preserve">
         <value>CommandLaunchPoint (ID: {AutomationId}) was deleted from element {ParentId}</value>
     </data>
+    <data name="PatternElement_CliCommand_Delete" xml:space="preserve">
+        <value>CliCommand (ID: {AutomationId}) was deleted from element {ParentId}</value>
+    </data>
 </root>

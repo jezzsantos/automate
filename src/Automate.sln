@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{40F768D5-C510-4828-B2EF-AE6BCA79755D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +31,9 @@ Global
 		{6D74849D-0E82-4738-A6B1-0AACB8FCF14E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D74849D-0E82-4738-A6B1-0AACB8FCF14E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D74849D-0E82-4738-A6B1-0AACB8FCF14E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40F768D5-C510-4828-B2EF-AE6BCA79755D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F768D5-C510-4828-B2EF-AE6BCA79755D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40F768D5-C510-4828-B2EF-AE6BCA79755D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40F768D5-C510-4828-B2EF-AE6BCA79755D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

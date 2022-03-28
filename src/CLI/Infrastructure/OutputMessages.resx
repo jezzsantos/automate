@@ -153,4 +153,7 @@
         <value>Failed to upgrade Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
+    <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
+        <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
+    </data>
 </root>

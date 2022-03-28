@@ -252,6 +252,81 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenDeleteCodeTemplateCommandAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.DeleteCodeTemplateCommand("anid", false))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand, "anid"));
+        }
+
+        [Fact]
+        public void WhenAddCliCommandAndAlreadyExists_ThenThrows()
+        {
+            this.element.AddCliCommand("acommandname", "anapplicationname", "anargument");
+
+            this.element
+                .Invoking(x => x.AddCliCommand("acommandname", "anapplicationname", "anargument"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationByNameExists.Format("acommandname"));
+        }
+
+        [Fact]
+        public void WhenAddCliCommand_TheAddsAutomationToElement()
+        {
+            var result =
+                this.element.AddCliCommand("acommandname", "anapplicationname", "anargument");
+
+            result.Name.Should().Be("acommandname");
+            result.Metadata[nameof(CliCommand.ApplicationName)].Should().Be("anapplicationname");
+            result.Metadata[nameof(CliCommand.Arguments)].Should().Be("anargument");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenAddCliCommandAndNoName_TheAddsAutomationWithDefaultName()
+        {
+            var result = this.element.AddCliCommand(null, "anapplicationname", "anargument");
+
+            result.Name.Should().Be("CliCommand1");
+            result.Metadata[nameof(CliCommand.ApplicationName)].Should().Be("anapplicationname");
+            result.Metadata[nameof(CliCommand.Arguments)].Should().Be("anargument");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenUpdateCliCommandAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.UpdateCliCommand("acommandname", null, "anapplicationname", "anargument"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand, "acommandname"));
+        }
+
+        [Fact]
+        public void WhenUpdateCliCommand_ThenUpdates()
+        {
+            this.element.AddCliCommand("acommandname", "anapplicationname", "anargument");
+
+            var result = this.element.UpdateCliCommand("acommandname", "anewname", "anewapplicationname", "anewargument");
+
+            result.Should().Be(this.element.Automation[0]);
+            result.Name.Should().Be("anewname");
+            result.Metadata[nameof(CliCommand.ApplicationName)].Should().Be("anewapplicationname");
+            result.Metadata[nameof(CliCommand.Arguments)].Should().Be("anewargument");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenDeleteCliCommandAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.DeleteCliCommand("anid"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, "anid"));
+        }
+
+        [Fact]
         public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
         {
             this.element.AddCodeTemplate("atemplatename", "afullpath", "anextension");
@@ -487,15 +562,6 @@ namespace CLI.UnitTests.Domain
                 x.Key == nameof(CommandLaunchPoint.CommandIds)
                 && (string)x.Value == new List<string> { command3.Id }.Join(""));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
-        }
-
-        [Fact]
-        public void WhenDeleteCodeTemplateCommandAndNotExists_ThenThrows()
-        {
-            this.element
-                .Invoking(x => x.DeleteCodeTemplateCommand("anid", false))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand, "anid"));
         }
 
         [Fact]

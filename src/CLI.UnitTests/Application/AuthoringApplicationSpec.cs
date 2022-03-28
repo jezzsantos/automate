@@ -533,6 +533,64 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenAddCliCommandAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.AddCliCommand("anapplicationname", null, "acommandname", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenAddCliCommandAndParentNotExists_ThenThrows()
+        {
+            this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
+                .Returns((PatternDefinition)null);
+
+            this.application.CreateNewPattern("apatternname");
+
+            this.application
+                .Invoking(x =>
+                    x.AddCliCommand("anapplicationname", null, "acommandname", "anunknownparent"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
+        }
+
+        [Fact]
+        public void WhenAddCliCommand_TheAddsAutomationToPattern()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+
+            var result =
+                this.application.AddCliCommand("anapplicationname", "anargument", "acommandname", null);
+
+            var automation = this.store.GetCurrent().Automation.Single();
+            automation.Name.Should().Be("acommandname");
+            automation.Metadata[nameof(CliCommand.ApplicationName)].Should().Be("anapplicationname");
+            automation.Metadata[nameof(CliCommand.Arguments)].Should().Be("anargument");
+            result.Id.Should().Be(automation.Id);
+        }
+
+        [Fact]
+        public void WhenAddCliCommandOnDescendantElement_ThenAddsAutomationToElement()
+        {
+            this.application.CreateNewPattern("apatternname");
+            this.application.AddElement("anelementname", null, null, false, ElementCardinality.Single, null);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
+                .Returns(this.application.GetCurrentPattern().Elements.Single);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
+
+            var result = this.application.AddCliCommand("anapplicationname", null, "acommandname",
+                "{apatternname.anelementname}");
+
+            result.Name.Should().Be("acommandname");
+            this.application.GetCurrentPattern().Elements.Single().Automation.Single().Id.Should().Be(result.Id);
+        }
+
+        [Fact]
         public void WhenAddCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
         {
             this.application

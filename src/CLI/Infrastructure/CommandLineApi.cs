@@ -121,6 +121,17 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection on which the command exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCodeTemplateCommand)),
+                new Command("add-cli-command", "Adds a command that executes another command line application")
+                    {
+                        new Argument("ApplicationName", "The name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable"),
+                        new Option("--arguments", "The arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
+                            typeof(string), arity: ArgumentArity.ZeroOrOne),
+                        new Option("--name", "A name for the command", typeof(string),
+                            arity: ArgumentArity.ZeroOrOne),
+                        new Option("--aschildof", "The expression of the element/collection on which the command exists",
+                            typeof(string), arity: ArgumentArity.ZeroOrOne)
+                    }
+                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCliCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
                     new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
@@ -414,6 +425,13 @@ namespace Automate.CLI.Infrastructure
         {
             private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
 
+            internal static void HandleAddCliCommand(string applicationName, string arguments, string name, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
+                    command.Name, command.Id);
+            }
+
             internal static void HandleBuild(string asversion, bool force, bool outputStructured, IConsole console)
             {
                 var package = Authoring.PackageToolkit(asversion, force);
@@ -657,6 +675,10 @@ namespace Automate.CLI.Infrastructure
                         output.Append(
                             $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, tearOff: {automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})" +
                             Environment.NewLine);
+                    }
+                    else if (automation.Type == AutomationType.CliCommand)
+                    {
+                        output.Append($" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})" + Environment.NewLine);
                     }
                     else if (automation.Type == AutomationType.CommandLaunchPoint)
                     {

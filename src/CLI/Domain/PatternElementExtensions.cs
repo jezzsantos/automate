@@ -13,7 +13,9 @@ namespace Automate.CLI.Domain
 
         public static bool IsLaunchable(this Automation automation)
         {
-            return automation.Type != AutomationType.Unknown && automation.Type != AutomationType.TestingOnly && automation.Type != AutomationType.CommandLaunchPoint;
+            return automation.Type != AutomationType.Unknown
+                   && automation.Type != AutomationType.TestingOnly
+                   && automation.Type != AutomationType.CommandLaunchPoint;
         }
 
         public static IPatternSchema ToSchema(this PatternDefinition pattern)

@@ -14,9 +14,11 @@ namespace CLI.IntegrationTests
     public class RuntimeSpec
     {
         private readonly CliTestSetup setup;
+        private readonly string testApplicationName;
 
         public RuntimeSpec(CliTestSetup setup)
         {
+            this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "../../../../../tools/TestApp/TestApp.exe"));
             this.setup = setup;
             this.setup.ResetRepository();
             DeleteCodeFolder();
@@ -354,7 +356,8 @@ namespace CLI.IntegrationTests
                         $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.a_property3}}}}namingtest.cs){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint1 [{pattern.Automation[1].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id}){Environment.NewLine}" +
                         $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.}}}}invalid.cs){Environment.NewLine}" +
-                        $"\t\t- ALaunchPoint2 [{pattern.Automation[3].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id}){Environment.NewLine}" +
+                        $"\t\t- CliCommand4 [{pattern.Automation[3].Id}] (CliCommand) (app: {this.testApplicationName}, args: --succeeds){Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint2 [{pattern.Automation[4].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id};{pattern.Automation[3].Id}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
                         $"\t\t- AProperty1 (string, required){Environment.NewLine}" +
                         $"\t- Elements:{Environment.NewLine}" +
@@ -437,7 +440,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenExecuteLaunchPointAndHasFails_ThenDisplaysResults()
+        public void WhenExecuteLaunchPointAndFails_ThenDisplaysResults()
         {
             var testDirectory = Environment.CurrentDirectory;
             CreateSolutionFromBuiltToolkit();
@@ -457,7 +460,8 @@ namespace CLI.IntegrationTests
                     "* " + DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(commandId,
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
                             $"((21:0,21),(22:0,22)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
-                            $"((20:0,20),(20:0,20)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}{Environment.NewLine}"))));
+                            $"((20:0,20),(20:0,20)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
+                            "* " + DomainMessages.CliCommand_Log_ExecutionSucceeded.Format(this.testApplicationName, "--succeeds", "Success") + $"{Environment.NewLine}"))));
         }
 
         [Fact]
@@ -642,7 +646,10 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.}}}}invalid.cs\"");
             var commandId2 = this.setup.Patterns.Single().Automation[2].Id;
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2} --name ALaunchPoint2");
+                $"{CommandLineApi.EditCommandName} add-cli-command \"{this.testApplicationName}\" --arguments \"--succeeds\"");
+            var commandId3 = this.setup.Patterns.Single().Automation[3].Id;
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint2");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
@@ -653,9 +660,9 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ACodeTemplate2 --aschildof {{APattern.AnElement1}}");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate2\" --withpath \"~/code/parentsubstitutiontest.cs\" --aschildof {{APattern.AnElement1}}");
-            var commandId3 = this.setup.Patterns.Single().Elements.First().Automation.Single().Id;
+            var commandId4 = this.setup.Patterns.Single().Elements.First().Automation.Single().Id;
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId3} --name ALaunchPoint3 --aschildof {{APattern.AnElement1}}");
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId4} --name ALaunchPoint3 --aschildof {{APattern.AnElement1}}");
 
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
@@ -669,7 +676,7 @@ namespace CLI.IntegrationTests
             return BuildPatternVersionAndInstallToolkit();
         }
 
-        private string BuildPatternVersionAndInstallToolkit(string versionInstruction = "auto")
+        private string BuildPatternVersionAndInstallToolkit(string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Patterns.Single().ToolkitVersion.Current;

@@ -142,6 +142,15 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CliCommand (ID: {AutomationId}) was deleted from element {ParentId}.
+        /// </summary>
+        internal static string PatternElement_CliCommand_Delete {
+            get {
+                return ResourceManager.GetString("PatternElement_CliCommand_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CodeTemplate (ID: {TemplateId}) was added to element {ParentId}.
         /// </summary>
         internal static string PatternElement_CodeTemplate_Add {
