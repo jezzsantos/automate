@@ -4,7 +4,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class Attribute : INamedEntity, IValidateable, IPersistable
+    internal class Attribute : INamedEntity, IValidateable, IPersistable, IPatternVisitable
     {
         public const string DefaultType = "string";
         public static readonly string[] SupportedDataTypes =
@@ -261,6 +261,11 @@ namespace Automate.CLI.Domain
                         ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
                             SupportedDataTypes.Join(", ")));
             }
+        }
+
+        public bool Accept(IPatternVisitor visitor)
+        {
+            return visitor.VisitAttribute(this);
         }
     }
 }

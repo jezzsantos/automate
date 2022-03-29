@@ -45,6 +45,16 @@ namespace Automate.CLI.Domain
             return new Element(properties, factory);
         }
 
+        public override bool Accept(IPatternVisitor visitor)
+        {
+            if (visitor.VisitElementEnter(this))
+            {
+                base.Accept(visitor);
+            }
+
+            return visitor.VisitElementExit(this);
+        }
+
         public ValidationResults Validate(ValidationContext context, object value)
         {
             return ValidationResults.None;

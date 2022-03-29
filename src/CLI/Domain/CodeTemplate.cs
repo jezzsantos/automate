@@ -4,7 +4,7 @@ using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
-    internal class CodeTemplate : INamedEntity, IPersistable
+    internal class CodeTemplate : INamedEntity, IPersistable, IPatternVisitable
     {
         public CodeTemplate(string name, string fullPath, string fileExtension)
         {
@@ -49,6 +49,11 @@ namespace Automate.CLI.Domain
         public string Id { get; }
 
         public string Name { get; }
+
+        public bool Accept(IPatternVisitor visitor)
+        {
+            return visitor.VisitCodeTemplate(this);
+        }
     }
 
     internal class CodeTemplateMetadata

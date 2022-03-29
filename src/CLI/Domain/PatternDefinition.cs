@@ -47,60 +47,85 @@ namespace Automate.CLI.Domain
 
         public List<(CodeTemplate Template, IPatternElement Parent)> GetAllCodeTemplates()
         {
-            var templates = new List<(CodeTemplate Template, IPatternElement Parent)>();
-            AggregateDescendantTemplates(this);
-
-            void AggregateDescendantTemplates(IPatternElement element)
-            {
-                element.CodeTemplates.ToListSafe().ForEach(tem => templates.Add((tem, element)));
-                element.Elements.ToListSafe().ForEach(AggregateDescendantTemplates);
-            }
-
-            return templates;
+            var aggregator = new CodeTemplateAggregator();
+            TraversePattern(aggregator);
+            return aggregator.CodeTemplates;
         }
 
         public List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)> GetAllLaunchPoints()
         {
-            var launchPoints = new List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)>();
-            AggregateDescendantLaunchPoints(this);
-
-            void AggregateDescendantLaunchPoints(IPatternElement element)
-            {
-                element.Automation
-                    .Where(auto => auto.Type == AutomationType.CommandLaunchPoint)
-                    .ToListSafe().ForEach(auto => { launchPoints.Add((CommandLaunchPoint.FromAutomation(auto), element)); });
-                element.Elements.ToListSafe().ForEach(AggregateDescendantLaunchPoints);
-            }
-
-            return launchPoints;
+            var aggregator = new LaunchPointAggregator();
+            TraversePattern(aggregator);
+            return aggregator.LaunchPoints;
         }
 
         public Automation FindAutomation(string id, Predicate<Automation> where)
         {
-            return FindDescendantAutomation(this);
-
-            Automation FindDescendantAutomation(IPatternElement element)
-            {
-                var automation = element.Automation.Safe()
-                    .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(id) && where(auto));
-                if (automation.Exists())
-                {
-                    return automation;
-                }
-                return element.Elements.Safe()
-                    .Select(FindDescendantAutomation)
-                    .FirstOrDefault(auto => auto.Exists());
-            }
+            var finder = new AutomationFinder(id, where);
+            TraversePattern(finder);
+            return finder.Automation;
         }
 
         public SolutionDefinition CreateTestSolution()
         {
-            const int maxNumberInstances = 3;
-            var solution = new SolutionDefinition(new ToolkitDefinition(this));
+            var creator = new TestDataCreator(this);
+            TraversePattern(creator);
+            return creator.Solution;
+        }
 
-            PopulateDescendants(solution.Model, 1);
+        public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
+        {
+            return ToolkitVersion.UpdateVersion(instruction);
+        }
 
-            void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
+        public TSchema FindSchema<TSchema>(string id) where TSchema : IIdentifiableEntity
+        {
+            var finder = new SchemaFinder<TSchema>(id);
+            TraversePattern(finder);
+            return finder.Schema;
+        }
+
+        public override bool Accept(IPatternVisitor visitor)
+        {
+            if (visitor.VisitPatternEnter(this))
+            {
+                base.Accept(visitor);
+            }
+
+            return visitor.VisitPatternExit(this);
+        }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            return ValidationResults.None;
+        }
+
+        internal void TraversePattern(IPatternVisitor visitor)
+        {
+            Accept(visitor);
+        }
+
+        private void PopulateAncestry()
+        {
+            var populator = new AncestryPopulator();
+            TraversePattern(populator);
+        }
+
+        private class TestDataCreator : IPatternVisitor
+        {
+            private const int MaxNumberInstances = 3;
+
+            public TestDataCreator(PatternDefinition pattern)
+            {
+                pattern.GuardAgainstNull(nameof(pattern));
+                Solution = new SolutionDefinition(new ToolkitDefinition(pattern));
+
+                PopulateDescendants(Solution.Model, 1);
+            }
+
+            public SolutionDefinition Solution { get; }
+
+            private void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
             {
                 if (solutionItem.IsPattern)
                 {
@@ -118,9 +143,9 @@ namespace Automate.CLI.Domain
                 {
                     solutionItem.MaterialiseCollectionItem();
                     var existingCount = solutionItem.Items.Safe().Count();
-                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
+                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < MaxNumberInstances)
                     {
-                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, maxNumberInstances - existingCount);
+                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, MaxNumberInstances - existingCount);
                     }
 
                     var counter = 0;
@@ -128,15 +153,13 @@ namespace Automate.CLI.Domain
                 }
             }
 
-            return solution;
-
-            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
+            private void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
             {
                 schema.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
                 schema.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
             }
 
-            void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
+            private void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
             {
                 var prop = solutionItem.GetProperty(schema.Name);
                 if (!prop.HasDefaultValue)
@@ -164,97 +187,215 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
+        private class AncestryPopulator : IPatternVisitor
         {
-            return ToolkitVersion.UpdateVersion(instruction);
-        }
+            private readonly Queue<PatternElement> ancestry = new Queue<PatternElement>();
 
-        public TSchema FindSchema<TSchema>(string id) where TSchema : IIdentifiableEntity
-        {
-            return FindDescendantSchema(this);
-
-            TSchema FindDescendantSchema(object descendant)
+            public bool VisitPatternEnter(PatternDefinition pattern)
             {
-                if (descendant is PatternDefinition pattern)
-                {
-                    if (pattern.Id.EqualsIgnoreCase(id))
-                    {
-                        return pattern is TSchema schema
-                            ? schema
-                            : default;
-                    }
-                    var elementOrAttribute = FindDescendantPatternElementSchema(pattern);
-                    if (elementOrAttribute.Exists())
-                    {
-                        return elementOrAttribute;
-                    }
-                }
-                else if (descendant is Element element)
-                {
-                    if (element.Id.EqualsIgnoreCase(id))
-                    {
-                        return element is TSchema schema
-                            ? schema
-                            : default;
-                    }
-
-                    var elementOrAttribute = FindDescendantPatternElementSchema(element);
-                    if (elementOrAttribute.Exists())
-                    {
-                        return elementOrAttribute;
-                    }
-                }
-                else if (descendant is Attribute attribute)
-                {
-                    if (attribute.Id.EqualsIgnoreCase(id))
-                    {
-                        return attribute is TSchema schema
-                            ? schema
-                            : default;
-                    }
-                }
-
-                return default;
+                this.ancestry.Enqueue(pattern);
+                return true;
             }
 
-            TSchema FindDescendantPatternElementSchema(IPatternElement patternElement)
+            public bool VisitPatternExit(PatternDefinition pattern)
             {
-                var element = patternElement.Elements.Safe()
-                    .Select(FindDescendantSchema)
-                    .FirstOrDefault(schema => schema.Exists());
-                if (element.Exists())
-                {
-                    return element;
-                }
-                var attribute = patternElement.Attributes.Safe()
-                    .Select(FindDescendantSchema)
-                    .FirstOrDefault(schema => schema.Exists());
-                if (attribute.Exists())
-                {
-                    return attribute;
-                }
-
-                return default;
+                this.ancestry.Clear();
+                return true;
             }
-        }
 
-        public ValidationResults Validate(ValidationContext context, object value)
-        {
-            return ValidationResults.None;
-        }
-
-        private void PopulateAncestry()
-        {
-            PopulateDescendantParents(this, null);
-
-            void PopulateDescendantParents(PatternElement element, PatternElement parent)
+            public bool VisitElementEnter(Element element)
             {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+                this.ancestry.Enqueue(element);
+
                 element.SetParent(parent);
-                var elements = element.Elements.Safe();
-                foreach (var ele in elements)
+
+                return true;
+            }
+
+            public bool VisitElementExit(Element element)
+            {
+                this.ancestry.Dequeue();
+                return true;
+            }
+        }
+
+        private class AutomationFinder : IPatternVisitor
+        {
+            private readonly string id;
+            private readonly Predicate<Automation> where;
+
+            public AutomationFinder(string id, Predicate<Automation> where)
+            {
+                id.GuardAgainstNullOrEmpty(nameof(id));
+                where.GuardAgainstNull(nameof(where));
+                this.id = id;
+                this.where = where;
+                Automation = null;
+            }
+
+            public Automation Automation { get; private set; }
+
+            public bool VisitAutomation(Automation automation)
+            {
+                if (automation.Id.EqualsIgnoreCase(this.id) && this.where(automation))
                 {
-                    PopulateDescendantParents(ele, element);
+                    Automation = automation;
+                    return false;
                 }
+
+                return true;
+            }
+        }
+
+        private class SchemaFinder<TSchema> : IPatternVisitor
+        {
+            private readonly string id;
+
+            public SchemaFinder(string id)
+            {
+                id.GuardAgainstNullOrEmpty(nameof(id));
+
+                this.id = id;
+                Schema = default;
+            }
+
+            public TSchema Schema { get; private set; }
+
+            public bool VisitPatternEnter(PatternDefinition pattern)
+            {
+                return VisitNode(pattern);
+            }
+
+            public bool VisitElementEnter(Element element)
+            {
+                return VisitNode(element);
+            }
+
+            public bool VisitAttribute(Attribute attribute)
+            {
+                return VisitNode(attribute);
+            }
+
+            private bool VisitNode(IIdentifiableEntity node)
+            {
+                if (node.Id.EqualsIgnoreCase(this.id))
+                {
+                    if (node is TSchema schema)
+                    {
+                        Schema = schema;
+                    }
+                    else
+                    {
+                        Schema = default;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        private class LaunchPointAggregator : IPatternVisitor
+        {
+            private IPatternElement parent;
+
+            public LaunchPointAggregator()
+            {
+                LaunchPoints = new List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)>();
+            }
+
+            public List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)> LaunchPoints { get; }
+
+            public bool VisitAutomation(Automation automation)
+            {
+                if (this.parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                if (automation.Type == AutomationType.CommandLaunchPoint)
+                {
+                    LaunchPoints.Add((CommandLaunchPoint.FromAutomation(automation), this.parent));
+                }
+
+                return true;
+            }
+
+            public bool VisitPatternEnter(PatternDefinition pattern)
+            {
+                this.parent = pattern;
+                return true;
+            }
+
+            public bool VisitPatternExit(PatternDefinition pattern)
+            {
+                this.parent = null;
+                return true;
+            }
+
+            public bool VisitElementEnter(Element element)
+            {
+                this.parent = element;
+                return true;
+            }
+
+            public bool VisitElementExit(Element element)
+            {
+                this.parent = null;
+                return true;
+            }
+        }
+
+        private class CodeTemplateAggregator : IPatternVisitor
+        {
+            private IPatternElement parent;
+
+            public CodeTemplateAggregator()
+            {
+                CodeTemplates = new List<(CodeTemplate Template, IPatternElement Parent)>();
+            }
+
+            public List<(CodeTemplate Template, IPatternElement Parent)> CodeTemplates { get; }
+
+            public bool VisitCodeTemplate(CodeTemplate codeTemplate)
+            {
+                if (this.parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                CodeTemplates.Add((codeTemplate, this.parent));
+                return true;
+            }
+
+            public bool VisitPatternEnter(PatternDefinition pattern)
+            {
+                this.parent = pattern;
+                return true;
+            }
+
+            public bool VisitPatternExit(PatternDefinition pattern)
+            {
+                this.parent = null;
+                return true;
+            }
+
+            public bool VisitElementEnter(Element element)
+            {
+                this.parent = element;
+                return true;
+            }
+
+            public bool VisitElementExit(Element element)
+            {
+                this.parent = null;
+                return true;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Automate.CLI.Domain
         TestingOnly = 100
     }
 
-    internal class Automation : IPersistable
+    internal class Automation : IPersistable, IPatternVisitable
     {
         private static int testTurn;
         private readonly Dictionary<string, object> metadata;
@@ -119,6 +119,11 @@ namespace Automate.CLI.Domain
                 ValidationMessages.InvalidNameIdentifier);
 
             Name = name;
+        }
+
+        public bool Accept(IPatternVisitor visitor)
+        {
+            return visitor.VisitAutomation(this);
         }
     }
 }

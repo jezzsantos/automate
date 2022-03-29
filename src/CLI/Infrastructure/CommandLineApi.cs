@@ -11,7 +11,6 @@ using System.Text;
 using Automate.CLI.Application;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
-using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -565,130 +564,16 @@ namespace Automate.CLI.Infrastructure
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, result.Template.Id, result.Output);
             }
 
-            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool includeAll)
+            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool isDetailed)
             {
                 if (outputStructured)
                 {
                     return pattern.ToJson(PersistenceFactory);
                 }
 
-                var output = new StringBuilder();
-                DisplayDescendantConfiguration(pattern, 0);
-
-                return output.ToString();
-
-                void DisplayDescendantConfiguration(IPatternElement element, int indentLevel)
-                {
-                    output.Append(indentLevel > 0
-                        ? new string('\t', indentLevel)
-                        : "");
-                    DisplayElement(element, indentLevel);
-                }
-
-                void DisplayElement(IPatternElement element, int indentLevel)
-                {
-                    var subHeadingLevel = indentLevel + 1;
-                    var subItemLevel = indentLevel + (includeAll
-                        ? 2
-                        : 1);
-
-                    output.Append($"- {element.Name}");
-                    if (includeAll)
-                    {
-                        output.Append($" [{element.Id}]");
-                    }
-                    output.Append(
-                        $" ({(element is PatternDefinition ? "root element" : ((Element)element).IsCollection ? "collection" : "element")})");
-
-                    if (element.CodeTemplates.HasAny())
-                    {
-                        if (includeAll)
-                        {
-                            output.Append(Environment.NewLine);
-                            output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- CodeTemplates:" + Environment.NewLine);
-                            element.CodeTemplates.ToListSafe().ForEach(ct => DisplayCodeTemplate(ct, subItemLevel));
-                        }
-                        else
-                        {
-                            output.Append($" (attached with {element.CodeTemplates.ToListSafe().Count} code templates)" + Environment.NewLine);
-                        }
-                    }
-                    else
-                    {
-                        output.Append(Environment.NewLine);
-                    }
-
-                    if (element.Automation.HasAny())
-                    {
-                        if (includeAll)
-                        {
-                            output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Automation:" + Environment.NewLine);
-                            element.Automation.ToListSafe().ForEach(auto => DisplayAutomation(auto, subItemLevel));
-                        }
-                    }
-
-                    if (element.Attributes.HasAny())
-                    {
-                        if (includeAll)
-                        {
-                            output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Attributes:" + Environment.NewLine);
-                        }
-                        element.Attributes.ToListSafe().ForEach(a => DisplayAttribute(a, subItemLevel));
-                    }
-                    if (element.Elements.HasAny())
-                    {
-                        if (includeAll)
-                        {
-                            output.Append(new string('\t', subHeadingLevel));
-                            output.Append("- Elements:" + Environment.NewLine);
-                        }
-                        element.Elements.ToListSafe()
-                            .ForEach(e => DisplayDescendantConfiguration(e, subItemLevel));
-                    }
-                }
-
-                void DisplayAttribute(Attribute attribute, int indentLevel)
-                {
-                    output.Append(new string('\t', indentLevel));
-                    output.Append(
-                        $"- {attribute.Name}{(includeAll ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})" +
-                        Environment.NewLine);
-                }
-
-                void DisplayCodeTemplate(CodeTemplate template, int indentLevel)
-                {
-                    output.Append(new string('\t', indentLevel));
-                    output.Append(
-                        $"- {template.Name} [{template.Id}] (file: {template.Metadata.OriginalFilePath}, ext: {template.Metadata.OriginalFileExtension})" + Environment.NewLine);
-                }
-
-                void DisplayAutomation(Automation automation, int indentLevel)
-                {
-                    output.Append(new string('\t', indentLevel));
-                    output.Append(
-                        $"- {automation.Name} [{automation.Id}] ({automation.Type})");
-                    if (automation.Type == AutomationType.CodeTemplateCommand)
-                    {
-                        output.Append(
-                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, tearOff: {automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})" +
-                            Environment.NewLine);
-                    }
-                    else if (automation.Type == AutomationType.CliCommand)
-                    {
-                        output.Append($" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})" + Environment.NewLine);
-                    }
-                    else if (automation.Type == AutomationType.CommandLaunchPoint)
-                    {
-                        output.Append($" (ids: {automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]})" + Environment.NewLine);
-                    }
-                    else
-                    {
-                        output.Append(Environment.NewLine);
-                    }
-                }
+                var configuration = new PatternConfigurationVisitor(isDetailed);
+                pattern.TraversePattern(configuration);
+                return configuration.ToString();
             }
         }
 

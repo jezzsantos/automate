@@ -5,7 +5,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal abstract class PatternElement : IPatternElement
+    internal abstract class PatternElement : IPatternElement, IPatternVisitable
     {
         internal const string LaunchPointSelectionWildcard = "*";
         private readonly List<Attribute> attributes;
@@ -545,6 +545,63 @@ namespace Automate.CLI.Domain
         public IReadOnlyList<CodeTemplate> CodeTemplates => this.codeTemplates;
 
         public IReadOnlyList<Automation> Automation => this.automations;
+
+        public virtual bool Accept(IPatternVisitor visitor)
+        {
+            var abort = false;
+            foreach (var template in CodeTemplates)
+            {
+                if (!template.Accept(visitor))
+                {
+                    abort = true;
+                    break;
+                }
+            }
+
+            if (abort)
+            {
+                return false;
+            }
+
+            foreach (var automation in Automation)
+            {
+                if (!automation.Accept(visitor))
+                {
+                    abort = true;
+                    break;
+                }
+            }
+
+            if (abort)
+            {
+                return false;
+            }
+
+            foreach (var attribute in Attributes)
+            {
+                if (!attribute.Accept(visitor))
+                {
+                    abort = true;
+                    break;
+                }
+            }
+
+            if (abort)
+            {
+                return false;
+            }
+
+            foreach (var element in Elements)
+            {
+                if (!element.Accept(visitor))
+                {
+                    abort = true;
+                    break;
+                }
+            }
+
+            return !abort;
+        }
 
         private static List<string> GetAllLaunchableAutomation(IReadOnlyList<Automation> automation)
         {

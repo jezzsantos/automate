@@ -55,7 +55,8 @@ namespace CLI.UnitTests.Domain
 
             var result = this.pattern.GetAllCodeTemplates();
 
-            result.Should().ContainSingle(tem => tem.Template.Id == template.Id);
+            result.Count.Should().Be(1);
+            result.Should().ContainSingle(tem => tem.Template.Id == template.Id && tem.Parent == this.pattern);
         }
 
         [Fact]
@@ -72,8 +73,31 @@ namespace CLI.UnitTests.Domain
 
             var result = this.pattern.GetAllCodeTemplates();
 
-            result.Should().Contain(tem => tem.Template.Id == template1.Id);
-            result.Should().Contain(tem => tem.Template.Id == template2.Id);
+            result.Count.Should().Be(2);
+            result.Should().Contain(tem => tem.Template.Id == template1.Id && tem.Parent == element2);
+            result.Should().Contain(tem => tem.Template.Id == template2.Id && tem.Parent == this.pattern);
+        }
+
+        [Fact]
+        public void WhenGetAllCodeTemplatesAndFoundOnPatternAndDescendantElements_ThenReturnsAutomation()
+        {
+            var template1 = new CodeTemplate("aname1", "afullpath", "anextension");
+            var template2 = new CodeTemplate("aname1", "afullpath", "anextension");
+            var template3 = new CodeTemplate("aname2", "afullpath", "anextension");
+            var element1 = new Element("anelementname1");
+            var element2 = new Element("anelementname2");
+            element2.AddCodeTemplate(template3);
+            element1.AddElement(element2);
+            element1.AddCodeTemplate(template2);
+            this.pattern.AddElement(element1);
+            this.pattern.AddCodeTemplate(template1);
+
+            var result = this.pattern.GetAllCodeTemplates();
+
+            result.Count.Should().Be(3);
+            result.Should().Contain(tem => tem.Template.Id == template1.Id && tem.Parent == this.pattern);
+            result.Should().Contain(tem => tem.Template.Id == template2.Id && tem.Parent == element1);
+            result.Should().Contain(tem => tem.Template.Id == template3.Id && tem.Parent == element2);
         }
 
         [Fact]

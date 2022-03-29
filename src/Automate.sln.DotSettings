@@ -1091,6 +1091,7 @@ namespace $NAMESPACE$
 	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C2A67BDE45A535439EDEFFF8E19B9B72/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;BUG)(\W|$)(.*)</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C2A67BDE45A535439EDEFFF8E19B9B72/TodoIconStyle/@EntryValue">Edit</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Launchable/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Populator/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Scriban/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Validateable/@EntryIndexedValue">True</s:Boolean>
 	</wpf:ResourceDictionary>
