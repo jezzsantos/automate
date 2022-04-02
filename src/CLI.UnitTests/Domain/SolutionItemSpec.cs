@@ -37,18 +37,6 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenConstructedWithValue_ThenValueAssigned()
-        {
-            var parent = new SolutionItem(this.toolkit, new Element("anelementname"), null);
-            var result = new SolutionItem("avalue", Attribute.DefaultType, parent);
-
-            result.Id.Should().NotBeNull();
-            result.IsMaterialised.Should().BeTrue();
-            result.Value.Should().Be("avalue");
-            result.Parent.Should().Be(parent);
-        }
-
-        [Fact]
         public void WhenConstructedWithAttributeWithoutDefaultValue_ThenAttributeAssigned()
         {
             var attribute = new Attribute("aname");
@@ -151,15 +139,6 @@ namespace CLI.UnitTests.Domain
             solutionElement1.IsMaterialised.Should().BeFalse();
             solutionElement1.Items.Should().BeNull();
             solutionElement1.Properties.Should().BeNull();
-        }
-
-        [Fact]
-        public void WhenMaterialiseAndValue_ThenThrows()
-        {
-            new SolutionItem(25, "int", null)
-                .Invoking(x => x.Materialise(99))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
         }
 
         [Fact]
@@ -348,24 +327,6 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenHasAttributeAndValue_ThenReturnsFalse()
-        {
-            var result = new SolutionItem("avalue", Attribute.DefaultType, null)
-                .HasAttribute("anattributename");
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void WhenGetPropertyAndNotExists_ThenThrows()
-        {
-            new SolutionItem("avalue", Attribute.DefaultType, null)
-                .Invoking(x => x.GetProperty("anunknownname"))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionItem_NotAProperty.Format("anunknownname"));
-        }
-
-        [Fact]
         public void WhenGetPropertyAndNotAnAttribute_ThenThrows()
         {
             var element = new Element("anelementname");
@@ -411,7 +372,7 @@ namespace CLI.UnitTests.Domain
             this.pattern.AddAttribute(new Attribute("anattributename", isRequired: true));
 
             var result = new SolutionItem(this.toolkit, this.pattern)
-                .Validate(new ValidationContext());
+                .Validate();
 
             result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
             result.Results.Single().Message.Should()
@@ -424,10 +385,10 @@ namespace CLI.UnitTests.Domain
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
 
-            var result = new SolutionItem(this.toolkit, element, null)
-                .Validate(new ValidationContext());
+            var result = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["anelementname"].Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{anelementname}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anelementname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "anelementname"));
@@ -439,10 +400,10 @@ namespace CLI.UnitTests.Domain
             var element = new Element("acollectionname", isCollection: true, cardinality: ElementCardinality.OneOrMany);
             this.pattern.AddElement(element);
 
-            var result = new SolutionItem(this.toolkit, element, null)
-                .Validate(new ValidationContext());
+            var result = new SolutionItem(this.toolkit, element, new SolutionItem(this.toolkit, this.pattern))
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.acollectionname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "acollectionname"));
@@ -455,11 +416,11 @@ namespace CLI.UnitTests.Domain
             element.AddAttribute(new Attribute("anattributename", isRequired: true));
             this.pattern.AddElement(element);
 
-            var result = new SolutionItem(this.toolkit, element, null)
+            var result = new SolutionItem(this.toolkit, element, new SolutionItem(this.toolkit, this.pattern))
                 .Materialise()
-                .Validate(new ValidationContext());
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{anelementname.anattributename}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anelementname.anattributename}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("anattributename"));
         }
@@ -472,11 +433,11 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = new SolutionItem(this.toolkit, element1, null)
+            var result = new SolutionItem(this.toolkit, element1, new SolutionItem(this.toolkit, this.pattern))
                 .Materialise()
-                .Validate(new ValidationContext());
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{anelementname1.anelementname2}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anelementname1.anelementname2}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "anelementname2"));
@@ -489,11 +450,11 @@ namespace CLI.UnitTests.Domain
                 cardinality: ElementCardinality.OneOrMany);
             this.pattern.AddElement(collection);
 
-            var result = new SolutionItem(this.toolkit, collection, null)
+            var result = new SolutionItem(this.toolkit, collection, new SolutionItem(this.toolkit, this.pattern))
                 .Materialise()
-                .Validate(new ValidationContext());
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.acollectionname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance.Format(
                     "acollectionname"));
@@ -506,13 +467,13 @@ namespace CLI.UnitTests.Domain
                 cardinality: ElementCardinality.Single);
             this.pattern.AddElement(collection);
 
-            var solutionItem = new SolutionItem(this.toolkit, collection, null);
+            var solutionItem = new SolutionItem(this.toolkit, collection, new SolutionItem(this.toolkit, this.pattern));
             solutionItem.MaterialiseCollectionItem();
             solutionItem.MaterialiseCollectionItem();
 
-            var result = solutionItem.Validate(new ValidationContext());
+            var result = solutionItem.Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{acollectionname}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.acollectionname}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance.Format(
                     "acollectionname"));
@@ -528,12 +489,12 @@ namespace CLI.UnitTests.Domain
             collection.AddElement(element);
             this.pattern.AddElement(collection);
 
-            var solutionItem = new SolutionItem(this.toolkit, collection, null);
+            var solutionItem = new SolutionItem(this.toolkit, collection, new SolutionItem(this.toolkit, this.pattern));
             solutionItem.MaterialiseCollectionItem();
 
-            var result = solutionItem.Validate(new ValidationContext());
+            var result = solutionItem.Validate();
 
-            result.Results.Single().Context.Path.Should().Be($"{{acollectionname.{solutionItem.Items.Single().Id}.anelementname}}");
+            result.Results.Single().Context.Path.Should().Be($"{{apatternname.acollectionname.{solutionItem.Items.Single().Id}.anelementname}}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
@@ -544,10 +505,10 @@ namespace CLI.UnitTests.Domain
             var attribute = new Attribute("anattributename", isRequired: true);
             this.pattern.AddAttribute(attribute);
 
-            var result = new SolutionItem(this.toolkit, attribute, null)
-                .Validate(new ValidationContext());
+            var result = new SolutionItem(this.toolkit, attribute, new SolutionItem(this.toolkit, this.pattern))
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{anattributename}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue.Format("anattributename"));
         }
@@ -557,16 +518,16 @@ namespace CLI.UnitTests.Domain
         {
             var attribute = new Attribute("anattributename");
             this.pattern.AddAttribute(attribute);
-            var solutionItem = new SolutionItem(this.toolkit, attribute, null)
+            var solutionItem = new SolutionItem(this.toolkit, attribute, new SolutionItem(this.toolkit, this.pattern))
             {
                 Value = "awrongvalue"
             };
             attribute.SetDataType("int");
 
             var result = solutionItem
-                .Validate(new ValidationContext());
+                .Validate();
 
-            result.Results.Single().Context.Path.Should().Be("{anattributename}");
+            result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.Attribute_ValidationRule_WrongDataTypeValue.Format("awrongvalue", "int"));
         }
@@ -874,12 +835,12 @@ namespace CLI.UnitTests.Domain
             var collection = this.pattern.AddElement("acollectionname", isCollection: true);
             collection.AddElement("anelementname");
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
-            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
-            solutionItem.Properties["acollectionname"].Items[0].Properties["anelementname"].Materialise();
-            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
-            solutionItem.Properties["acollectionname"].Items[1].Properties["anelementname"].Materialise();
-            solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
-            solutionItem.Properties["acollectionname"].Items[2].Properties["anelementname"].Materialise();
+            var item1 = solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            item1.Properties["anelementname"].Materialise();
+            var item2 = solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            item2.Properties["anelementname"].Materialise();
+            var item3 = solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            item3.Properties["anelementname"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.Elements.Single().DeleteElement("anelementname");
@@ -897,7 +858,15 @@ namespace CLI.UnitTests.Domain
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
                 && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
-                && (string)x.Arguments[0] == "apatternname.acollectionname.anelementname");
+                && (string)x.Arguments[0] == $"apatternname.acollectionname.{item1.Id}.anelementname");
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == $"apatternname.acollectionname.{item2.Id}.anelementname");
+            result.Log.Should().Contain(x =>
+                x.Type == MigrationChangeType.Breaking
+                && x.MessageTemplate == MigrationMessages.SolutionItem_ElementDeleted
+                && (string)x.Arguments[0] == $"apatternname.acollectionname.{item3.Id}.anelementname");
         }
 
         [Fact]

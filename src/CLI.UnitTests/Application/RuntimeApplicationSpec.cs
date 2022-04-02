@@ -476,7 +476,7 @@ namespace CLI.UnitTests.Application
             var result = this.application.Validate("{anelementname}");
 
             result.Results.Count.Should().Be(1);
-            result.Results.Should().Contain(r => r.Context.Path == "{anelementname1}" &&
+            result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&
                                                  r.Message == ValidationMessages
                                                      .SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }

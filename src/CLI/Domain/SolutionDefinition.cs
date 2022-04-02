@@ -5,7 +5,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionDefinition : INamedEntity, IPersistable
+    internal class SolutionDefinition : INamedEntity, IPersistable, ISolutionVisitable
     {
         public SolutionDefinition(ToolkitDefinition toolkit, string name = null)
         {
@@ -58,124 +58,21 @@ namespace Automate.CLI.Domain
 
         public List<SolutionItemCommandPair> FindByAutomation(string automationId)
         {
-            return FindDescendantAutomation(Model);
-
-            List<SolutionItemCommandPair> FindDescendantAutomation(SolutionItem solutionItem)
-            {
-                var pairs = new List<SolutionItemCommandPair>();
-
-                if (solutionItem.IsPattern)
-                {
-                    var automation = solutionItem.PatternSchema.FindAutomationById(automationId);
-                    if (automation.Exists())
-                    {
-                        pairs.Add(new SolutionItemCommandPair(automation, solutionItem));
-                    }
-                }
-
-                if (solutionItem.IsElement)
-                {
-                    var automation = solutionItem.ElementSchema.Automation.Safe()
-                        .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(automationId));
-                    if (automation.Exists())
-                    {
-                        pairs.Add(new SolutionItemCommandPair(automation, solutionItem));
-                    }
-                }
-
-                if (solutionItem.IsPattern || solutionItem.IsElement)
-                {
-                    foreach (var (_, value) in solutionItem.Properties.Safe())
-                    {
-                        var result = FindDescendantAutomation(value);
-                        if (result.HasAny())
-                        {
-                            pairs.AddRange(result);
-                        }
-                    }
-                }
-
-                if (solutionItem.IsEphemeralCollection)
-                {
-                    foreach (var item in solutionItem.Items.Safe())
-                    {
-                        var result = FindDescendantAutomation(item);
-                        if (result.HasAny())
-                        {
-                            pairs.AddRange(result);
-                        }
-                    }
-                }
-
-                if (solutionItem.IsAttribute || solutionItem.IsValue)
-                {
-                    return new List<SolutionItemCommandPair>();
-                }
-
-                return pairs;
-            }
+            var aggregator = new AutomationAggregator(automationId);
+            TraverseSolution(aggregator);
+            return aggregator.Automation;
         }
 
         public SolutionItem FindByCodeTemplate(string codeTemplateId)
         {
-            return FindDescendantCodeTemplate(Model);
-
-            SolutionItem FindDescendantCodeTemplate(SolutionItem solutionItem)
-            {
-                if (solutionItem.IsPattern)
-                {
-                    var codeTemplate = solutionItem.PatternSchema.FindCodeTemplateById(codeTemplateId);
-                    if (codeTemplate.Exists())
-                    {
-                        return solutionItem;
-                    }
-                }
-
-                if (solutionItem.IsElement)
-                {
-                    var codeTemplate = solutionItem.ElementSchema.FindCodeTemplateById(codeTemplateId);
-                    if (codeTemplate.Exists())
-                    {
-                        return solutionItem;
-                    }
-                }
-
-                if (solutionItem.IsPattern || solutionItem.IsElement)
-                {
-                    foreach (var (_, value) in solutionItem.Properties.Safe())
-                    {
-                        var result = FindDescendantCodeTemplate(value);
-                        if (result.Exists())
-                        {
-                            return result;
-                        }
-                    }
-                }
-
-                if (solutionItem.IsEphemeralCollection)
-                {
-                    foreach (var item in solutionItem.Items.Safe())
-                    {
-                        var result = FindDescendantCodeTemplate(item);
-                        if (result.Exists())
-                        {
-                            return result;
-                        }
-                    }
-                }
-
-                if (solutionItem.IsAttribute || solutionItem.IsValue)
-                {
-                    return default;
-                }
-
-                return default;
-            }
+            var finder = new CodeTemplateFinder(codeTemplateId);
+            TraverseSolution(finder);
+            return finder.SolutionItem;
         }
 
-        public ValidationResults Validate(ValidationContext context)
+        public ValidationResults Validate()
         {
-            return Model.Validate(context);
+            return Model.Validate();
         }
 
         public SolutionUpgradeResult Upgrade(ToolkitDefinition latestToolkit, bool force)
@@ -215,30 +112,209 @@ namespace Automate.CLI.Domain
 
         public string Name { get; }
 
+        public bool Accept(ISolutionVisitor visitor)
+        {
+            if (visitor.VisitSolutionEnter(this))
+            {
+                Model.Accept(visitor);
+            }
+
+            return visitor.VisitSolutionExit(this);
+        }
+
+        private void TraverseSolution(ISolutionVisitor visitor)
+        {
+            Accept(visitor);
+        }
+
         private void PopulateAncestry()
         {
-            PopulateDescendantParents(Model, null);
-
-            void PopulateDescendantParents(SolutionItem solutionItem, SolutionItem parent)
-            {
-                solutionItem.SetAncestry(Toolkit, parent);
-                var properties = solutionItem.Properties.Safe();
-                foreach (var property in properties)
-                {
-                    PopulateDescendantParents(property.Value, solutionItem);
-                }
-                var items = solutionItem.Items.Safe();
-                foreach (var item in items)
-                {
-                    PopulateDescendantParents(item, solutionItem);
-                }
-            }
+            var populator = new AncestryPopulator(Toolkit);
+            TraverseSolution(populator);
         }
 
         private static string GetRandomNumber()
         {
             var number = DateTime.Now.Ticks.ToString();
             return number.Substring(number.Length - 3);
+        }
+
+        private class AncestryPopulator : ISolutionVisitor
+        {
+            private readonly Stack<SolutionItem> ancestry = new Stack<SolutionItem>();
+            private readonly ToolkitDefinition toolkit;
+
+            public AncestryPopulator(ToolkitDefinition toolkit)
+            {
+                toolkit.GuardAgainstNull(nameof(toolkit));
+
+                this.toolkit = toolkit;
+            }
+
+            public bool VisitPatternEnter(SolutionItem item)
+            {
+                this.ancestry.Push(item);
+
+                item.SetAncestry(this.toolkit, null);
+                return true;
+            }
+
+            public bool VisitPatternExit(SolutionItem item)
+            {
+                this.ancestry.Clear();
+                return true;
+            }
+
+            public bool VisitElementEnter(SolutionItem item)
+            {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+                this.ancestry.Push(item);
+
+                item.SetAncestry(this.toolkit, parent);
+                return true;
+            }
+
+            public bool VisitElementExit(SolutionItem item)
+            {
+                this.ancestry.Pop();
+                return true;
+            }
+
+            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+                this.ancestry.Push(item);
+
+                item.SetAncestry(this.toolkit, parent);
+                return true;
+            }
+
+            public bool VisitEphemeralCollectionExit(SolutionItem item)
+            {
+                this.ancestry.Pop();
+                return true;
+            }
+
+            public bool VisitAttributeEnter(SolutionItem item)
+            {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                item.SetAncestry(this.toolkit, parent);
+                return true;
+            }
+
+            public bool VisitAttributeExit(SolutionItem item)
+            {
+                return true;
+            }
+        }
+
+        private class CodeTemplateFinder : ISolutionVisitor
+        {
+            private readonly string codeTemplateId;
+
+            public CodeTemplateFinder(string codeTemplateId)
+            {
+                codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
+                this.codeTemplateId = codeTemplateId;
+                SolutionItem = null;
+            }
+
+            public SolutionItem SolutionItem { get; private set; }
+
+            public bool VisitPatternEnter(SolutionItem item)
+            {
+                var codeTemplate = item.PatternSchema.FindCodeTemplateById(this.codeTemplateId);
+                if (codeTemplate.Exists())
+                {
+                    SolutionItem = item;
+                    return false;
+                }
+
+                return true;
+            }
+
+            public bool VisitPatternExit(SolutionItem item)
+            {
+                return true;
+            }
+
+            public bool VisitElementEnter(SolutionItem item)
+            {
+                var codeTemplate = item.ElementSchema.FindCodeTemplateById(this.codeTemplateId);
+                if (codeTemplate.Exists())
+                {
+                    SolutionItem = item;
+                    return false;
+                }
+
+                return true;
+            }
+
+            public bool VisitElementExit(SolutionItem item)
+            {
+                return true;
+            }
+        }
+
+        private class AutomationAggregator : ISolutionVisitor
+        {
+            private readonly string automationId;
+
+            public AutomationAggregator(string automationId)
+            {
+                automationId.GuardAgainstNullOrEmpty(nameof(automationId));
+
+                this.automationId = automationId;
+                Automation = new List<SolutionItemCommandPair>();
+            }
+
+            public List<SolutionItemCommandPair> Automation { get; }
+
+            public bool VisitPatternEnter(SolutionItem item)
+            {
+                var automation = item.PatternSchema.FindAutomationById(this.automationId);
+                if (automation.Exists())
+                {
+                    Automation.Add(new SolutionItemCommandPair(automation, item));
+                }
+
+                return true;
+            }
+
+            public bool VisitPatternExit(SolutionItem item)
+            {
+                return true;
+            }
+
+            public bool VisitElementEnter(SolutionItem item)
+            {
+                var automation = item.ElementSchema.Automation.Safe()
+                    .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(this.automationId));
+                if (automation.Exists())
+                {
+                    Automation.Add(new SolutionItemCommandPair(automation, item));
+                }
+
+                return true;
+            }
+
+            public bool VisitElementExit(SolutionItem item)
+            {
+                return true;
+            }
         }
     }
 

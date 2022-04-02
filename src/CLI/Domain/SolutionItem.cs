@@ -6,7 +6,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionItem : IIdentifiableEntity, IPersistable
+    internal class SolutionItem : IIdentifiableEntity, IPersistable, ISolutionItemVisitable
     {
         private readonly List<ArtifactLink> artifactLinks;
 
@@ -56,12 +56,6 @@ namespace Automate.CLI.Domain
             attribute.GuardAgainstNull(nameof(attribute));
 
             Materialise(attribute);
-        }
-
-        public SolutionItem(object value, string dataType, SolutionItem parent)
-            : this(null, null, parent, SolutionItemSchema.None)
-        {
-            Materialise(value, dataType);
         }
 
         private SolutionItem(string name, ToolkitDefinition toolkit, SolutionItem parent, SolutionItemSchema schema)
@@ -122,9 +116,11 @@ namespace Automate.CLI.Domain
 
         public bool IsAttribute => Schema.SchemaType == SolutionItemSchemaType.Attribute;
 
-        public bool IsValue => Schema.SchemaType == SolutionItemSchemaType.None;
-
         public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
+
+        public string FullyQualifiedPath => GetPath(false);
+
+        public string PathReference => GetPath(true);
 
         public PersistableProperties Dehydrate()
         {
@@ -158,13 +154,11 @@ namespace Automate.CLI.Domain
             {
                 Materialise(Toolkit, ElementSchema, IsEphemeralCollection);
             }
-
-            if (IsAttribute)
+            else if (IsAttribute)
             {
                 Materialise(AttributeSchema, value);
             }
-
-            if (IsValue)
+            else
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
             }
@@ -229,102 +223,11 @@ namespace Automate.CLI.Domain
             return new SolutionItemProperty(Properties[name]);
         }
 
-        public ValidationResults Validate(ValidationContext context)
+        public ValidationResults Validate()
         {
-            context.GuardAgainstNull(nameof(context));
-
-            return ValidateDescendants(this, context, false);
-
-            ValidationResults ValidateDescendants(SolutionItem solutionItem, ValidationContext validationContext, bool isItem)
-            {
-                if (solutionItem.IsPattern)
-                {
-                    var subContext = new ValidationContext(validationContext);
-                    subContext.Add($"{solutionItem.PatternSchema.Name}");
-                    return new ValidationResults(
-                        solutionItem.Properties.SelectMany(prop => ValidateDescendants(prop.Value, subContext, false).Results));
-                }
-
-                if (solutionItem.IsElement || solutionItem.IsEphemeralCollection)
-                {
-                    var subContext = new ValidationContext(validationContext);
-                    subContext.Add(isItem
-                        ? $"{solutionItem.Id}"
-                        : $"{solutionItem.ElementSchema.Name}");
-                    var results = ValidationResults.None;
-
-                    if (solutionItem.IsMaterialised)
-                    {
-                        if (solutionItem.IsElement)
-                        {
-                            if (solutionItem.Properties.HasAny())
-                            {
-                                results.AddRange(
-                                    solutionItem.Properties.SelectMany(prop => ValidateDescendants(prop.Value, subContext, false).Results));
-                            }
-                        }
-
-                        if (solutionItem.IsEphemeralCollection)
-                        {
-                            if (solutionItem.ElementSchema.HasCardinalityOfAtLeastOne())
-                            {
-                                if (solutionItem.Items.HasNone())
-                                {
-                                    results.Add(subContext,
-                                        ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
-                                            .Format(solutionItem.Name));
-                                }
-                            }
-                            if (solutionItem.ElementSchema.HasCardinalityOfAtMostOne())
-                            {
-                                if (solutionItem.Items.HasAny() && solutionItem.Items.Count > 1)
-                                {
-                                    results.Add(subContext,
-                                        ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
-                                            .Format(solutionItem.Name));
-                                }
-                            }
-                            if (solutionItem.Items.HasAny())
-                            {
-                                results.AddRange(solutionItem.Items.SelectMany(item => ValidateDescendants(item, subContext, true).Results));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (solutionItem.ElementSchema.HasCardinalityOfAtLeastOne())
-                        {
-                            results.Add(subContext,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
-                                    .Format(solutionItem.Name));
-                        }
-                        if (solutionItem.ElementSchema.HasCardinalityOfAtMostOne())
-                        {
-                            if (solutionItem.Items.HasAny() && solutionItem.Items.Count > 1)
-                            {
-                                results.Add(subContext,
-                                    ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
-                                        .Format(solutionItem.Name));
-                            }
-                        }
-                    }
-
-                    return results;
-                }
-
-                if (solutionItem.IsAttribute)
-                {
-                    var subContext = new ValidationContext(validationContext);
-                    subContext.Add($"{solutionItem.AttributeSchema.Name}");
-                    var results = ValidationResults.None;
-
-                    results.AddRange(solutionItem.AttributeSchema.Validate(subContext, solutionItem.Value));
-
-                    return results;
-                }
-
-                return ValidationResults.None;
-            }
+            var validator = new SchemaValidator();
+            TraverseDescendants(validator);
+            return validator.Validations;
         }
 
         /// <summary>
@@ -371,7 +274,7 @@ namespace Automate.CLI.Domain
         {
             Toolkit = toolkit;
             Parent = Schema.SchemaType == SolutionItemSchemaType.CollectionItem
-                ? parent?.Parent
+                ? parent?.Parent //HACK: this needs to be the next ancestor that is not an ephemeral collection. Problem with nested collections
                 : parent;
         }
 
@@ -417,189 +320,103 @@ namespace Automate.CLI.Domain
 
         public void Migrate(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
         {
-            MigrateDescendants(this);
-
-            void MigrateDescendants(SolutionItem solutionItem)
-            {
-                var removeItem = false;
-                if (solutionItem.IsPattern)
-                {
-                    solutionItem.Properties.ToListSafe()
-                        .ForEach(prop => MigrateDescendants(prop.Value));
-                    AddNewAttributes(solutionItem);
-                }
-
-                if (solutionItem.IsElement)
-                {
-                    if (solutionItem.IsMaterialised)
-                    {
-                        var latestSchema = solutionItem.Schema.ResolveSchema<IElementSchema>(latestToolkit, false);
-                        if (latestSchema.NotExists())
-                        {
-                            removeItem = true;
-                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, solutionItem.GetPath());
-                        }
-                        else
-                        {
-                            solutionItem.Properties.ToListSafe()
-                                .ForEach(prop => MigrateDescendants(prop.Value));
-                        }
-                    }
-                }
-
-                if (solutionItem.IsEphemeralCollection)
-                {
-                    if (solutionItem.IsMaterialised)
-                    {
-                        var latestSchema = solutionItem.Schema.ResolveSchema<IElementSchema>(latestToolkit, false);
-                        if (latestSchema.NotExists())
-                        {
-                            removeItem = true;
-                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, solutionItem.GetPath());
-                        }
-                        else
-                        {
-                            solutionItem.Items.ToListSafe()
-                                .ForEach(MigrateDescendants);
-                        }
-                    }
-                }
-
-                if (solutionItem.IsAttribute)
-                {
-                    var latestSchema = solutionItem.Schema.ResolveSchema<IAttributeSchema>(latestToolkit, false);
-                    if (latestSchema.NotExists())
-                    {
-                        removeItem = true;
-                        result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDeleted, solutionItem.GetPath());
-                    }
-                    else
-                    {
-                        var newName = latestSchema.Name;
-                        var oldName = solutionItem.AttributeSchema.Name;
-                        var newDefaultValue = latestSchema.DefaultValue;
-                        var oldDefaultValue = solutionItem.AttributeSchema.DefaultValue;
-                        var oldDataType = solutionItem.AttributeSchema.DataType;
-                        var newDataType = latestSchema.DataType;
-                        var oldChoices = solutionItem.AttributeSchema.Choices;
-                        var newChoices = latestSchema.Choices;
-                        var value = solutionItem.Value;
-
-                        if (oldName.NotEqualsOrdinal(newName))
-                        {
-                            removeItem = true;
-                            var property = solutionItem.Parent.AddProperty(latestToolkit, latestSchema);
-                            property.SetValue(value, newDataType);
-                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeNameChanged, solutionItem.GetPath(), oldName, newName);
-                        }
-
-                        if (oldDataType.NotEqualsOrdinal(newDataType))
-                        {
-                            if (value.Exists())
-                            {
-                                if (!latestSchema.IsValidDataType(value.ToString()))
-                                {
-                                    if (newDefaultValue.HasValue())
-                                    {
-                                        if (latestSchema.IsValidDataType(newDefaultValue))
-                                        {
-                                            solutionItem.SetValue(newDefaultValue, newDataType);
-                                        }
-                                        else
-                                        {
-                                            solutionItem.SetValue(null, newDataType);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        solutionItem.SetValue(null, newDataType);
-                                    }
-                                }
-                            }
-                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDataTypeChanged, solutionItem.GetPath(), oldDataType, newDataType);
-                        }
-
-                        if (oldChoices.HasNone() && newChoices.HasAny())
-                        {
-                            if (value.Exists())
-                            {
-                                if (!latestSchema.Choices.Contains(value.ToString()))
-                                {
-                                    solutionItem.SetValue(null, newDataType);
-                                }
-                                result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeChoicesAdded, solutionItem.GetPath(), solutionItem.Value);
-                            }
-                        }
-                        if (oldChoices.HasAny() && newChoices.HasNone())
-                        {
-                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesDeleted, solutionItem.GetPath());
-                        }
-                        if (oldChoices.HasAny() && newChoices.HasAny())
-                        {
-                            if (!oldChoices.SequenceEqual(newChoices))
-                            {
-                                if (value.Exists())
-                                {
-                                    if (!latestSchema.Choices.Contains(value.ToString()))
-                                    {
-                                        if (latestSchema.Choices.Contains(newDefaultValue))
-                                        {
-                                            solutionItem.SetValue(newDefaultValue, newDataType);
-                                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, solutionItem.GetPath(), value, newDefaultValue);
-                                        }
-                                        else
-                                        {
-                                            solutionItem.SetValue(null, newDataType);
-                                            result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, solutionItem.GetPath(), value, null);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (newDefaultValue.NotEqualsOrdinal(oldDefaultValue))
-                        {
-                            if (value.Exists())
-                            {
-                                if (value.ToString().EqualsIgnoreCase(oldDefaultValue))
-                                {
-                                    solutionItem.SetValue(newDefaultValue, newDataType);
-                                    result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, solutionItem.GetPath(), value, newDefaultValue);
-                                }
-                            }
-                            else
-                            {
-                                solutionItem.SetValue(newDefaultValue, newDataType);
-                                result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, solutionItem.GetPath(), value, newDefaultValue);
-                            }
-                        }
-                    }
-                }
-
-                if (removeItem)
-                {
-                    solutionItem.Parent.RemoveProperty(solutionItem.Name);
-                }
-            }
-
-            void AddNewAttributes(SolutionItem solutionItem)
-            {
-                var latestSchema = solutionItem.Schema.ResolveSchema<IPatternSchema>(latestToolkit, false);
-                if (latestSchema.Exists())
-                {
-                    latestSchema.Attributes
-                        .Remainder(solutionItem.PatternSchema.Attributes, schema => schema.Id)
-                        .ToList()
-                        .ForEach(attr =>
-                        {
-                            var property = solutionItem.AddProperty(latestToolkit, attr);
-                            result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeAdded, property.GetPath(), property.Value);
-                        });
-                }
-            }
+            var migrator = new SchemaMigrator(latestToolkit, result);
+            TraverseDescendants(migrator);
         }
 
         public string Id { get; }
+
+        public bool Accept(ISolutionItemVisitor visitor)
+        {
+            if (IsPattern)
+            {
+                if (visitor.VisitPatternEnter(this))
+                {
+                    foreach (var (_, value) in Properties.ToListSafe())
+                    {
+                        if (!value.Accept(visitor))
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                return visitor.VisitPatternExit(this);
+            }
+
+            if (IsElement)
+            {
+                if (visitor.VisitElementEnter(this))
+                {
+                    foreach (var (_, value) in Properties.ToListSafe())
+                    {
+                        if (!value.Accept(visitor))
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                return visitor.VisitElementExit(this);
+            }
+
+            if (IsEphemeralCollection)
+            {
+                if (visitor.VisitEphemeralCollectionEnter(this))
+                {
+                    var abort = false;
+                    foreach (var (_, value) in Properties.ToListSafe())
+                    {
+                        if (!value.Accept(visitor))
+                        {
+                            abort = true;
+                            break;
+                        }
+                    }
+
+                    if (!abort)
+                    {
+                        foreach (var item in Items.ToListSafe())
+                        {
+                            if (!item.Accept(visitor))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return visitor.VisitEphemeralCollectionExit(this);
+            }
+
+            if (IsAttribute)
+            {
+                if (visitor.VisitAttributeEnter(this))
+                {
+                    visitor.Visit(Value);
+                }
+
+                return visitor.VisitAttributeExit(this);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="SolutionItem" />
+        ///     that themselves are composed of other nodes or composite nodes.
+        ///     Once 'entered' a specific composite node, we traverse each of its child nodes (and their child nodes), before
+        ///     'exiting' this specific composite node.
+        ///     In this way we can tell the difference between a sibling node and a child node (of the same type).
+        ///     Furthermore, each visit returns to us whether we are to abort visiting that branch of the graph, and we return up
+        ///     to the root node, or continue down that branch, and on to sibling branches.
+        ///     In other words, an aborted 'enter', must result in an 'exit', but then followed by returning up that branch of
+        ///     nodes to the root of the graph, before exiting the traversal.
+        /// </summary>
+        private void TraverseDescendants(ISolutionItemVisitor visitor)
+        {
+            Accept(visitor);
+        }
 
         private SolutionItem AddProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
         {
@@ -609,9 +426,16 @@ namespace Automate.CLI.Domain
             return property;
         }
 
-        private string GetPath()
+        /// <summary>
+        ///     Cannot use the <see cref="ISolutionItemVisitor" /> to traverse up the hierarchy,
+        ///     so we have to traverse up using a custom iterator
+        /// </summary>
+        private string GetPath(bool asReference)
         {
-            return GetAncestorPath(this);
+            var path = GetAncestorPath(this);
+            return asReference
+                ? $"{{{path}}}"
+                : path;
 
             string GetAncestorPath(SolutionItem solutionItem)
             {
@@ -624,28 +448,20 @@ namespace Automate.CLI.Domain
                 {
                     if (solutionItem.Parent.Exists())
                     {
-                        if (solutionItem.Parent.IsEphemeralCollection)
-                        {
-                            return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Id}";
-                        }
-
-                        return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
+                        return solutionItem.Schema.SchemaType == SolutionItemSchemaType.CollectionItem
+                            ? $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.ElementSchema.Name}.{solutionItem.Id}"
+                            : $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
                     }
+                    throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
                 }
-
                 if (solutionItem.IsAttribute)
                 {
                     if (solutionItem.Parent.Exists())
                     {
-                        if (solutionItem.Parent.IsEphemeralCollection)
-                        {
-                            return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Id}";
-                        }
-
                         return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
                     }
+                    throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
                 }
-
                 throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
             }
         }
@@ -695,14 +511,6 @@ namespace Automate.CLI.Domain
                 schema.DataType);
         }
 
-        private void Materialise(object value, string dataType)
-        {
-            this.properties = null;
-            this.items = null;
-            IsMaterialised = true;
-            SetValue(value, dataType);
-        }
-
         private void UnMaterialise()
         {
             if (IsPattern)
@@ -715,13 +523,11 @@ namespace Automate.CLI.Domain
             {
                 Value = null;
             }
-
-            if (IsAttribute)
+            else if (IsAttribute)
             {
                 SetValue(null, AttributeSchema.DataType);
             }
-
-            if (IsValue)
+            else
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_UnMaterialisationOnValueForbidden);
             }
@@ -741,18 +547,16 @@ namespace Automate.CLI.Domain
 
         private IAutomationSchema GetAutomationByName(string name)
         {
-            var automations = new List<IAutomationSchema>();
+            List<IAutomationSchema> automations;
             if (IsPattern)
             {
                 automations = PatternSchema.Automation.ToListSafe();
             }
-
-            if (IsElement)
+            else if (IsElement)
             {
                 automations = ElementSchema.Automation.ToListSafe();
             }
-
-            if (IsEphemeralCollection || IsAttribute || IsValue)
+            else
             {
                 throw new AutomateException(ExceptionMessages.SolutionItem_HasNoAutomations);
             }
@@ -763,6 +567,340 @@ namespace Automate.CLI.Domain
         private void SetValue(object value, string dataType)
         {
             this._value = Attribute.SetValue(dataType, value);
+        }
+
+        private class SchemaMigrator : ISolutionItemVisitor
+        {
+            private readonly Stack<List<string>> deletedAttributes;
+            private readonly Stack<List<string>> deletedElements;
+            private readonly ToolkitDefinition latestToolkit;
+            private readonly SolutionUpgradeResult result;
+
+            public SchemaMigrator(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+            {
+                latestToolkit.GuardAgainstNull(nameof(latestToolkit));
+                result.GuardAgainstNull(nameof(result));
+                this.latestToolkit = latestToolkit;
+                this.result = result;
+                this.deletedAttributes = new Stack<List<string>>();
+                this.deletedElements = new Stack<List<string>>();
+            }
+
+            public bool VisitPatternEnter(SolutionItem item)
+            {
+                this.deletedAttributes.Push(new List<string>());
+                this.deletedElements.Push(new List<string>());
+                return true;
+            }
+
+            public bool VisitPatternExit(SolutionItem item)
+            {
+                DeleteAttributes(item, this.deletedAttributes.Pop());
+                DeleteElements(item, this.deletedElements.Pop());
+                AddNewAttributes(item, item.PatternSchema);
+
+                return true;
+            }
+
+            public bool VisitElementEnter(SolutionItem item)
+            {
+                var elementToDelete = string.Empty;
+                if (item.IsMaterialised)
+                {
+                    var latestSchema = item.Schema.ResolveSchema<IElementSchema>(this.latestToolkit, false);
+                    if (latestSchema.NotExists())
+                    {
+                        elementToDelete = item.ElementSchema.Name;
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, item.FullyQualifiedPath);
+                    }
+                }
+
+                if (elementToDelete.HasValue())
+                {
+                    this.deletedElements.Peek().Add(item.ElementSchema.Name);
+                }
+
+                this.deletedAttributes.Push(new List<string>());
+                this.deletedElements.Push(new List<string>());
+
+                return true;
+            }
+
+            public bool VisitElementExit(SolutionItem item)
+            {
+                DeleteAttributes(item, this.deletedAttributes.Pop());
+                DeleteElements(item, this.deletedElements.Pop());
+                AddNewAttributes(item, item.ElementSchema);
+
+                return true;
+            }
+
+            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            {
+                var elementToDelete = string.Empty;
+                if (item.IsMaterialised)
+                {
+                    var latestSchema = item.Schema.ResolveSchema<IElementSchema>(this.latestToolkit, false);
+                    if (latestSchema.NotExists())
+                    {
+                        elementToDelete = item.ElementSchema.Name;
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted, item.FullyQualifiedPath);
+                    }
+                }
+
+                if (elementToDelete.HasValue())
+                {
+                    this.deletedElements.Peek().Add(item.ElementSchema.Name);
+                }
+                this.deletedAttributes.Push(new List<string>());
+                this.deletedElements.Push(new List<string>());
+
+                return true;
+            }
+
+            public bool VisitEphemeralCollectionExit(SolutionItem item)
+            {
+                DeleteAttributes(item, this.deletedAttributes.Pop());
+                DeleteElements(item, this.deletedElements.Pop());
+                AddNewAttributes(item, item.ElementSchema);
+
+                return true;
+            }
+
+            public bool VisitAttributeEnter(SolutionItem item)
+            {
+                var attributeToDelete = string.Empty;
+
+                var latestSchema = item.Schema.ResolveSchema<IAttributeSchema>(this.latestToolkit, false);
+                if (latestSchema.NotExists())
+                {
+                    attributeToDelete = item.AttributeSchema.Name;
+                    this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDeleted, item.FullyQualifiedPath);
+                }
+                else
+                {
+                    var newName = latestSchema.Name;
+                    var oldName = item.AttributeSchema.Name;
+                    var newDefaultValue = latestSchema.DefaultValue;
+                    var oldDefaultValue = item.AttributeSchema.DefaultValue;
+                    var oldDataType = item.AttributeSchema.DataType;
+                    var newDataType = latestSchema.DataType;
+                    var oldChoices = item.AttributeSchema.Choices;
+                    var newChoices = latestSchema.Choices;
+                    var value = item.Value;
+
+                    if (oldName.NotEqualsOrdinal(newName))
+                    {
+                        attributeToDelete = item.AttributeSchema.Name;
+                        var property = item.Parent.AddProperty(this.latestToolkit, latestSchema);
+                        property.SetValue(value, newDataType);
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeNameChanged, item.FullyQualifiedPath, oldName, newName);
+                    }
+
+                    if (oldDataType.NotEqualsOrdinal(newDataType))
+                    {
+                        if (value.Exists())
+                        {
+                            if (!latestSchema.IsValidDataType(value.ToString()))
+                            {
+                                if (newDefaultValue.HasValue())
+                                {
+                                    if (latestSchema.IsValidDataType(newDefaultValue))
+                                    {
+                                        item.SetValue(newDefaultValue, newDataType);
+                                    }
+                                    else
+                                    {
+                                        item.SetValue(null, newDataType);
+                                    }
+                                }
+                                else
+                                {
+                                    item.SetValue(null, newDataType);
+                                }
+                            }
+                        }
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDataTypeChanged, item.FullyQualifiedPath, oldDataType, newDataType);
+                    }
+
+                    if (oldChoices.HasNone() && newChoices.HasAny())
+                    {
+                        if (value.Exists())
+                        {
+                            if (!latestSchema.Choices.Contains(value.ToString()))
+                            {
+                                item.SetValue(null, newDataType);
+                            }
+                            this.result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeChoicesAdded, item.FullyQualifiedPath, item.Value);
+                        }
+                    }
+                    if (oldChoices.HasAny() && newChoices.HasNone())
+                    {
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesDeleted, item.FullyQualifiedPath);
+                    }
+                    if (oldChoices.HasAny() && newChoices.HasAny())
+                    {
+                        if (!oldChoices.SequenceEqual(newChoices))
+                        {
+                            if (value.Exists())
+                            {
+                                if (!latestSchema.Choices.Contains(value.ToString()))
+                                {
+                                    if (latestSchema.Choices.Contains(newDefaultValue))
+                                    {
+                                        item.SetValue(newDefaultValue, newDataType);
+                                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, item.FullyQualifiedPath, value, newDefaultValue);
+                                    }
+                                    else
+                                    {
+                                        item.SetValue(null, newDataType);
+                                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeChoicesChanged, item.FullyQualifiedPath, value, null);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (newDefaultValue.NotEqualsOrdinal(oldDefaultValue))
+                    {
+                        if (value.Exists())
+                        {
+                            if (value.ToString().EqualsIgnoreCase(oldDefaultValue))
+                            {
+                                item.SetValue(newDefaultValue, newDataType);
+                                this.result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, item.FullyQualifiedPath, value, newDefaultValue);
+                            }
+                        }
+                        else
+                        {
+                            item.SetValue(newDefaultValue, newDataType);
+                            this.result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeDefaultValueChanged, item.FullyQualifiedPath, value, newDefaultValue);
+                        }
+                    }
+                }
+
+                if (attributeToDelete.HasValue())
+                {
+                    this.deletedAttributes.Peek().Add(attributeToDelete);
+                }
+
+                return true;
+            }
+
+            private static void DeleteElements(SolutionItem item, IEnumerable<string> elementNames)
+            {
+                elementNames.ToListSafe()
+                    .ForEach(item.RemoveProperty);
+            }
+
+            private static void DeleteAttributes(SolutionItem item, IEnumerable<string> attributeNames)
+            {
+                attributeNames.ToListSafe()
+                    .ForEach(item.RemoveProperty);
+            }
+
+            private void AddNewAttributes<TSchema>(SolutionItem item, TSchema existingSchema)
+                where TSchema : IPatternElementSchema
+            {
+                var latestSchema = item.Schema.ResolveSchema<TSchema>(this.latestToolkit, false);
+                if (latestSchema.Exists())
+                {
+                    latestSchema.Attributes
+                        .Remainder(existingSchema.Attributes, schema => schema.Id)
+                        .ToList()
+                        .ForEach(attr =>
+                        {
+                            var property = item.AddProperty(this.latestToolkit, attr);
+                            this.result.Add(MigrationChangeType.NonBreaking, MigrationMessages.SolutionItem_AttributeAdded, property.FullyQualifiedPath, property.Value);
+                        });
+                }
+            }
+        }
+
+        private class SchemaValidator : ISolutionItemVisitor
+        {
+            public SchemaValidator()
+            {
+                Validations = new ValidationResults();
+            }
+
+            public ValidationResults Validations { get; }
+
+            public bool VisitElementEnter(SolutionItem item)
+            {
+                if (!item.IsMaterialised)
+                {
+                    if (item.ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        Validations.Add(item,
+                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                .Format(item.Name));
+                    }
+                    if (item.ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (item.Items.HasAny() && item.Items.Count > 1)
+                        {
+                            Validations.Add(item,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(item.Name));
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            {
+                if (item.IsMaterialised)
+                {
+                    if (item.ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        if (item.Items.HasNone())
+                        {
+                            Validations.Add(item,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    .Format(item.Name));
+                        }
+                    }
+                    if (item.ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (item.Items.HasAny() && item.Items.Count > 1)
+                        {
+                            Validations.Add(item,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(item.Name));
+                        }
+                    }
+                }
+                else
+                {
+                    if (item.ElementSchema.HasCardinalityOfAtLeastOne())
+                    {
+                        Validations.Add(item,
+                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                .Format(item.Name));
+                    }
+                    if (item.ElementSchema.HasCardinalityOfAtMostOne())
+                    {
+                        if (item.Items.HasAny() && item.Items.Count > 1)
+                        {
+                            Validations.Add(item,
+                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                    .Format(item.Name));
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            public bool VisitAttributeEnter(SolutionItem item)
+            {
+                Validations.AddRange(item.AttributeSchema.Validate(item, item.Value));
+
+                return true;
+            }
         }
     }
 

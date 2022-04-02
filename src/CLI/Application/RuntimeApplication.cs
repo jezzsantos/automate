@@ -162,7 +162,7 @@ namespace Automate.CLI.Application
             var solution = EnsureCurrentSolutionExists();
             var target = ResolveTargetItem(solution, itemExpression);
 
-            return target.Validate(new ValidationContext());
+            return target.Validate();
         }
 
         public CommandExecutionResult ExecuteLaunchPoint(string name, string itemExpression)
@@ -170,7 +170,7 @@ namespace Automate.CLI.Application
             var solution = EnsureCurrentSolutionExists();
             var target = ResolveTargetItem(solution, itemExpression);
 
-            var validationResults = solution.Validate(new ValidationContext());
+            var validationResults = solution.Validate();
             if (validationResults.Any())
             {
                 return new CommandExecutionResult(name, validationResults);

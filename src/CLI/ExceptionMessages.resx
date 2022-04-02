@@ -276,4 +276,7 @@
     <data name="SolutionItem_UnknownPath" xml:space="preserve">
         <value>This item does not have a path</value>
     </data>
+    <data name="SolutionItem_MissingParent" xml:space="preserve">
+        <value>This item does not have a parent item</value>
+    </data>
 </root>

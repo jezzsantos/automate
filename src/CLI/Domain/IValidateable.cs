@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Automate.CLI.Extensions;
-using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
@@ -14,24 +12,9 @@ namespace Automate.CLI.Domain
 
     internal class ValidationResults : Collection<ValidationResult>
     {
-        public ValidationResults()
-        {
-        }
-
-        public ValidationResults(IEnumerable<ValidationResult> results)
-        {
-            results.GuardAgainstNull(nameof(results));
-            results.Safe().ToList().ForEach(Add);
-        }
-
         public static ValidationResults None => new ValidationResults();
 
         public List<ValidationResult> Results => Items.ToList();
-
-        public void Add(ValidationContext context, string message)
-        {
-            Items.Add(new ValidationResult(context, message));
-        }
 
         public void AddRange(IEnumerable<ValidationResult> results)
         {
@@ -59,35 +42,12 @@ namespace Automate.CLI.Domain
 
     internal class ValidationContext
     {
-        private readonly List<string> pathParts = new List<string>();
-
-        public ValidationContext(ValidationContext context)
+        public ValidationContext(string path)
         {
-            this.pathParts = new List<string>(context.pathParts);
+            path.GuardAgainstNullOrEmpty(nameof(path));
+            Path = path;
         }
 
-        public ValidationContext(string path = null)
-        {
-            if (path.HasValue())
-            {
-                AddParts(path);
-            }
-        }
-
-        public string Path => $"{{{this.pathParts.Join(".")}}}";
-
-        public void Add(string path)
-        {
-            if (path.HasValue())
-            {
-                AddParts(path);
-            }
-        }
-
-        private void AddParts(string path)
-        {
-            var parts = path.Split(".", StringSplitOptions.RemoveEmptyEntries);
-            this.pathParts.AddRange(parts);
-        }
+        public string Path { get; }
     }
 }

@@ -610,6 +610,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This item does not have a parent item.
+        /// </summary>
+        internal static string SolutionItem_MissingParent {
+            get {
+                return ResourceManager.GetString("SolutionItem_MissingParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The property: &apos;{0}&apos; is not an attribute.
         /// </summary>
         internal static string SolutionItem_NotAnAttribute {

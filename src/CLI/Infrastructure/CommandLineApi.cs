@@ -572,7 +572,7 @@ namespace Automate.CLI.Infrastructure
                 }
 
                 var configuration = new PatternConfigurationVisitor(isDetailed);
-                pattern.TraversePattern(configuration);
+                pattern.TraverseDescendants(configuration);
                 return configuration.ToString();
             }
         }

@@ -48,84 +48,33 @@ namespace Automate.CLI.Domain
         public List<(CodeTemplate Template, IPatternElement Parent)> GetAllCodeTemplates()
         {
             var aggregator = new CodeTemplateAggregator();
-            TraversePattern(aggregator);
+            TraverseDescendants(aggregator);
             return aggregator.CodeTemplates;
         }
 
         public List<(CommandLaunchPoint LaunchPoint, IPatternElement Parent)> GetAllLaunchPoints()
         {
             var aggregator = new LaunchPointAggregator();
-            TraversePattern(aggregator);
+            TraverseDescendants(aggregator);
             return aggregator.LaunchPoints;
         }
 
         public Automation FindAutomation(string id, Predicate<Automation> where)
         {
             var finder = new AutomationFinder(id, where);
-            TraversePattern(finder);
+            TraverseDescendants(finder);
             return finder.Automation;
         }
 
         public SolutionDefinition CreateTestSolution()
         {
-            var creator = new TestDataCreator(this);
-            TraversePattern(creator);
-            return creator.Solution;
-        }
+            const int maxNumberInstances = 3;
 
-        public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
-        {
-            return ToolkitVersion.UpdateVersion(instruction);
-        }
+            var solution = new SolutionDefinition(new ToolkitDefinition(this));
+            PopulateDescendants(solution.Model, 1);
+            return solution;
 
-        public TSchema FindSchema<TSchema>(string id) where TSchema : IIdentifiableEntity
-        {
-            var finder = new SchemaFinder<TSchema>(id);
-            TraversePattern(finder);
-            return finder.Schema;
-        }
-
-        public override bool Accept(IPatternVisitor visitor)
-        {
-            if (visitor.VisitPatternEnter(this))
-            {
-                base.Accept(visitor);
-            }
-
-            return visitor.VisitPatternExit(this);
-        }
-
-        public ValidationResults Validate(ValidationContext context, object value)
-        {
-            return ValidationResults.None;
-        }
-
-        internal void TraversePattern(IPatternVisitor visitor)
-        {
-            Accept(visitor);
-        }
-
-        private void PopulateAncestry()
-        {
-            var populator = new AncestryPopulator();
-            TraversePattern(populator);
-        }
-
-        private class TestDataCreator : IPatternVisitor
-        {
-            private const int MaxNumberInstances = 3;
-
-            public TestDataCreator(PatternDefinition pattern)
-            {
-                pattern.GuardAgainstNull(nameof(pattern));
-                Solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-
-                PopulateDescendants(Solution.Model, 1);
-            }
-
-            public SolutionDefinition Solution { get; }
-
-            private void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
+            void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
             {
                 if (solutionItem.IsPattern)
                 {
@@ -143,9 +92,9 @@ namespace Automate.CLI.Domain
                 {
                     solutionItem.MaterialiseCollectionItem();
                     var existingCount = solutionItem.Items.Safe().Count();
-                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < MaxNumberInstances)
+                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
                     {
-                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, MaxNumberInstances - existingCount);
+                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, maxNumberInstances - existingCount);
                     }
 
                     var counter = 0;
@@ -153,13 +102,13 @@ namespace Automate.CLI.Domain
                 }
             }
 
-            private void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
+            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
             {
                 schema.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
                 schema.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
             }
 
-            private void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
+            void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
             {
                 var prop = solutionItem.GetProperty(schema.Name);
                 if (!prop.HasDefaultValue)
@@ -187,13 +136,63 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public VersionUpdateResult UpdateToolkitVersion(VersionInstruction instruction)
+        {
+            return ToolkitVersion.UpdateVersion(instruction);
+        }
+
+        public TSchema FindSchema<TSchema>(string id) where TSchema : IIdentifiableEntity
+        {
+            var finder = new SchemaFinder<TSchema>(id);
+            TraverseDescendants(finder);
+            return finder.Schema;
+        }
+
+        public override bool Accept(IPatternVisitor visitor)
+        {
+            if (visitor.VisitPatternEnter(this))
+            {
+                base.Accept(visitor);
+            }
+
+            return visitor.VisitPatternExit(this);
+        }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            return ValidationResults.None;
+        }
+
+        /// <summary>
+        ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the
+        ///     <see cref="PatternDefinition" /> and <see cref="PatternElement" />) that themselves are composed of other nodes or
+        ///     composite nodes.
+        ///     Once 'entered' a specific composite node, we traverse each of its child nodes (and their child nodes), before
+        ///     'exiting' this specific composite node.
+        ///     In this way we can tell the difference between a sibling node and a child node (of the same type).
+        ///     Furthermore, each visit returns to us whether we are to abort visiting that branch of the graph, and we return up
+        ///     to the root node, or continue down that branch, and on to sibling branches.
+        ///     In other words, an aborted 'enter', must result in an 'exit', but then followed by returning up that branch of
+        ///     nodes to the root of the graph, before exiting the traversal.
+        /// </summary>
+        internal void TraverseDescendants(IPatternVisitor visitor)
+        {
+            Accept(visitor);
+        }
+
+        private void PopulateAncestry()
+        {
+            var populator = new AncestryPopulator();
+            TraverseDescendants(populator);
+        }
+
         private class AncestryPopulator : IPatternVisitor
         {
-            private readonly Queue<PatternElement> ancestry = new Queue<PatternElement>();
+            private readonly Stack<PatternElement> ancestry = new Stack<PatternElement>();
 
             public bool VisitPatternEnter(PatternDefinition pattern)
             {
-                this.ancestry.Enqueue(pattern);
+                this.ancestry.Push(pattern);
                 return true;
             }
 
@@ -210,7 +209,7 @@ namespace Automate.CLI.Domain
                 {
                     throw new InvalidOperationException();
                 }
-                this.ancestry.Enqueue(element);
+                this.ancestry.Push(element);
 
                 element.SetParent(parent);
 
@@ -219,7 +218,7 @@ namespace Automate.CLI.Domain
 
             public bool VisitElementExit(Element element)
             {
-                this.ancestry.Dequeue();
+                this.ancestry.Pop();
                 return true;
             }
         }
