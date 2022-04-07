@@ -21,7 +21,7 @@ namespace CLI.UnitTests.Domain
             }
         }
 
-        [Trait("Category", "Unit")]
+        [Trait("Category", "Unit.NOCI")]
         public class GivenACommand
         {
             private readonly Mock<ISolutionPathResolver> solutionPathResolver;
