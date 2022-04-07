@@ -352,5 +352,68 @@ namespace CLI.UnitTests.Domain
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
+
+        [Fact]
+        public void WhenPopulateAncestry_ThenSetsAncestry()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element1 = new Element("anelementname1");
+            element1.AddAttribute("anattributename1");
+            pattern.AddElement(element1);
+
+            var element2 = new Element("anelementname2");
+            var collection1 = new Element("acollectionname1", isCollection: true);
+            collection1.AddAttribute("anattributename1");
+            element2.AddElement(collection1);
+            pattern.AddElement(element2);
+
+            var collection2 = new Element("acollectionname2", isCollection: true);
+            var element3 = new Element("anelementname3");
+            element3.AddAttribute("anattributename3");
+            collection2.AddElement(element3);
+            pattern.AddElement(collection2);
+
+            var collection3 = new Element("acollectionname3", isCollection: true);
+            var collection4 = new Element("acollectionname4", isCollection: true);
+            collection3.AddElement(collection4);
+            var collection5 = new Element("acollectionname5", isCollection: true);
+            collection5.AddAttribute("anattributename4");
+            collection4.AddElement(collection5);
+            pattern.AddElement(collection3);
+
+            var toolkit = new ToolkitDefinition(pattern);
+            var solution = new SolutionDefinition(toolkit);
+
+            solution.Model.Properties["anelementname1"].Materialise();
+            solution.Model.Properties["anelementname2"].Materialise();
+            solution.Model.Properties["anelementname2"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            solution.Model.Properties["acollectionname2"].MaterialiseCollectionItem();
+            solution.Model.Properties["acollectionname2"].Items[0].Properties["anelementname3"].Materialise();
+            solution.Model.Properties["acollectionname3"].MaterialiseCollectionItem();
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].MaterialiseCollectionItem();
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].MaterialiseCollectionItem();
+
+            solution.PopulateAncestry();
+
+            solution.Model.Parent.Should().BeNull();
+            solution.Model.Properties["anelementname1"].Parent.Should().Be(solution.Model);
+
+            solution.Model.Properties["anelementname2"].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["anelementname2"].Properties["acollectionname1"].Parent.Should().Be(solution.Model.Properties["anelementname2"]);
+            solution.Model.Properties["anelementname2"].Properties["acollectionname1"].Items[0].Parent.Should().Be(solution.Model.Properties["anelementname2"]);
+
+            solution.Model.Properties["acollectionname2"].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["acollectionname2"].Items[0].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["acollectionname2"].Items[0].Properties["anelementname3"].Parent.Should().Be(solution.Model.Properties["acollectionname2"].Items[0]);
+
+            solution.Model.Properties["acollectionname3"].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["acollectionname3"].Items[0].Parent.Should().Be(solution.Model);
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Parent.Should().Be(solution.Model.Properties["acollectionname3"].Items[0]);
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Parent.Should().Be(solution.Model.Properties["acollectionname3"].Items[0]);
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].Parent.Should()
+                .Be(solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]);
+            solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].Items[0].Parent.Should()
+                .Be(solution.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]);
+        }
     }
 }

@@ -274,7 +274,7 @@ namespace Automate.CLI.Domain
         {
             Toolkit = toolkit;
             Parent = Schema.SchemaType == SolutionItemSchemaType.CollectionItem
-                ? parent?.Parent //HACK: this needs to be the next ancestor that is not an ephemeral collection. Problem with nested collections
+                ? parent?.Parent
                 : parent;
         }
 
@@ -401,6 +401,8 @@ namespace Automate.CLI.Domain
 
             return true;
         }
+
+
 
         /// <summary>
         ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="SolutionItem" />

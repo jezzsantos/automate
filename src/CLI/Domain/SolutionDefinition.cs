@@ -127,7 +127,7 @@ namespace Automate.CLI.Domain
             Accept(visitor);
         }
 
-        private void PopulateAncestry()
+        internal void PopulateAncestry()
         {
             var populator = new AncestryPopulator(Toolkit);
             TraverseSolution(populator);
