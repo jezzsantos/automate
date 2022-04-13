@@ -51,7 +51,7 @@
     <data name="CommandLine_Output_CodeTemplateTestExported" xml:space="preserve">
         <value>Data from testing Code Template '{Name}' (ID: {Id}) has been exported to: '{Exported}'</value>
     </data>
-    <data name="CommandLine_Output_PatternTree" xml:space="preserve">
+    <data name="CommandLine_Output_PatternConfiguration" xml:space="preserve">
         <value>Pattern is configured as:
 {Tree}</value>
     </data>
@@ -155,5 +155,9 @@
     </data>
     <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
         <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
+    </data>
+    <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">
+        <value>Toolkit pattern is defined as:
+{Tree}</value>
     </data>
 </root>

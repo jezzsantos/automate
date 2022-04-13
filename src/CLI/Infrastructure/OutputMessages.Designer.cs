@@ -316,6 +316,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pattern is configured as:
+        ///{Tree}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternConfiguration {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
@@ -330,16 +340,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_PatternSwitched {
             get {
                 return ResourceManager.GetString("CommandLine_Output_PatternSwitched", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pattern is configured as:
-        ///{Tree}.
-        /// </summary>
-        internal static string CommandLine_Output_PatternTree {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternTree", resourceCulture);
             }
         }
         
@@ -417,6 +417,16 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_SolutionValidationSuccess {
             get {
                 return ResourceManager.GetString("CommandLine_Output_SolutionValidationSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolkit pattern is defined as:
+        ///{Tree}.
+        /// </summary>
+        internal static string CommandLine_Output_ToolkitConfiguration {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ToolkitConfiguration", resourceCulture);
             }
         }
     }

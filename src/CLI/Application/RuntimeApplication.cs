@@ -142,7 +142,7 @@ namespace Automate.CLI.Application
         }
 
         public (string Configuration, PatternDefinition Pattern, ValidationResults Validation)
-            GetConfiguration(bool includeSchema, bool includeValidationResults)
+            GetSolutionConfiguration(bool includeSchema, bool includeValidationResults)
         {
             var solution = EnsureCurrentSolutionExists();
 
@@ -155,6 +155,13 @@ namespace Automate.CLI.Application
                 : null;
 
             return (solution.GetConfiguration(), schema, validation);
+        }
+
+        public ToolkitDefinition GetCurrentToolkit()
+        {
+            var solution = EnsureCurrentSolutionExists();
+
+            return solution.Toolkit;
         }
 
         public ValidationResults Validate(string itemExpression)

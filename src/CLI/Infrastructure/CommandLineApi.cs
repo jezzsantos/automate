@@ -230,14 +230,18 @@ namespace Automate.CLI.Infrastructure
             };
             var viewCommands = new Command(ViewCommandName, "Viewing patterns and solutions")
             {
-                new Command("pattern", "View the configuration of the pattern")
+                new Command("pattern", "View the configuration of the current pattern")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
-                new Command("solution", "View the configuration of the solution")
+                new Command("toolkit", "View the configuration of the current toolkit")
+                {
+                    new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewToolkit)),
+                new Command("solution", "View the configuration of the current solution")
                 {
                     new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewConfiguration))
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewSolution))
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
             {
@@ -525,7 +529,7 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternTree, FormatPatternConfiguration(outputStructured, pattern, all));
+                    OutputMessages.CommandLine_Output_PatternConfiguration, FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
             internal static void HandleSwitch(string name, bool outputStructured, IConsole console)
@@ -698,9 +702,9 @@ namespace Automate.CLI.Infrastructure
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
             }
 
-            internal static void HandleViewConfiguration(bool todo, bool outputStructured, IConsole console)
+            internal static void HandleViewSolution(bool todo, bool outputStructured, IConsole console)
             {
-                var (configuration, pattern, validation) = Runtime.GetConfiguration(todo, todo);
+                var (configuration, pattern, validation) = Runtime.GetSolutionConfiguration(todo, todo);
 
                 var solutionId = Runtime.CurrentSolutionId;
                 var solutionName = Runtime.CurrentSolutionName;
@@ -711,7 +715,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutputLine();
                     console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_PatternTree, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                        OutputMessages.CommandLine_Output_PatternConfiguration, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
                 }
 
                 if (todo)
@@ -727,6 +731,14 @@ namespace Automate.CLI.Infrastructure
                         console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
                     }
                 }
+            }
+
+            internal static void HandleViewToolkit(bool all, bool outputStructured, IConsole console)
+            {
+                var pattern = Runtime.GetCurrentToolkit().Pattern;
+
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
             internal static void HandleValidate(string on,

@@ -348,7 +348,7 @@ namespace CLI.IntegrationTests
             var element1 = this.setup.Patterns.Single().Elements.First();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_PatternTree.FormatTemplate(
+                    OutputMessages.CommandLine_Output_PatternConfiguration.FormatTemplate(
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +
                         $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code){Environment.NewLine}" +
@@ -613,6 +613,28 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " + MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name, codeTemplate.Id) + $"{Environment.NewLine}"));
+        }
+
+        [Fact]
+        public void WhenViewToolkit_ThenDisplaysPatternTree()
+        {
+            CreateSolutionFromBuiltToolkit();
+
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration.FormatTemplate(
+                        $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
+                        $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
+                        $"\t- AnElement1 (element) (attached with 1 code templates){Environment.NewLine}" +
+                        $"\t\t- AProperty3 (attribute) (string, oneof: A;B;C){Environment.NewLine}" +
+                        $"\t\t- ACollection1 (collection){Environment.NewLine}" +
+                        $"\t- ACollection2 (collection){Environment.NewLine}" +
+                        $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}"
+                        ,
+                        this.setup.Patterns.Single().Id));
         }
 
         private static void DeleteCodeFolder()

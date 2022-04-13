@@ -358,7 +358,7 @@ namespace CLI.UnitTests.Application
         public void WhenGetConfigurationAndCurrentSolutionNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.GetConfiguration(false, false))
+                .Invoking(x => x.GetSolutionConfiguration(false, false))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
         }
@@ -381,7 +381,7 @@ namespace CLI.UnitTests.Application
 
             this.solutionStore.Save(solution);
 
-            var result = this.application.GetConfiguration(false, false);
+            var result = this.application.GetSolutionConfiguration(false, false);
 
             result.Pattern.Should().BeNull();
             result.Validation.Should().BeEquivalentTo(ValidationResults.None);
@@ -419,7 +419,7 @@ namespace CLI.UnitTests.Application
 
             this.solutionStore.Save(solution);
 
-            var result = this.application.GetConfiguration(true, true);
+            var result = this.application.GetSolutionConfiguration(true, true);
 
             result.Pattern.Should().Be(this.pattern);
             result.Validation.Results.Should().BeEmpty();
