@@ -6,19 +6,19 @@
 
 **Question to a Team Developer:**
 
-What if I gave you a command line tool, that wrote most of your code for you? and it took about ~5 commands (or less)? to build an API endpoint, or all the scaffolding for a UI page?
+What if I gave you a command line tool, that wrote a lot of your code for you? and it took about ~5 commands (or so)? to build an API endpoint, or all the scaffolding for a UI page?
 
 * You would use this tool _once per_ API or once per UI page.
 
 **Question to the Team's Tech Lead:**
 
-What if I gave you a command line tool, that built that command line tool for your developer? and it took about ~15 commands (or less) to build it?
+What if I gave you a command line tool, that built that command line tool for your developer? and it took about ~15 commands (or so) to build it?
 
 * You would only need to do this _once per codebase_ you work together on.
 
-What if that command line tool was updated (by you) as your codebase evolved? and it refactored and fixed the code for the developer automatically?
+What if that command line tool was updated (by you) as the codebase evolved? and it refactored and automatically fixed the code for the developer automatically over time?
 
-What if you had a library of these tools that could be used on other codebases?
+What if you had a library of these tools for this codebase and others that you work on?
 
 ## What is Automate?
 
