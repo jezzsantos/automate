@@ -84,7 +84,7 @@ If this sounds like your situation then maybe we can help you define (and enforc
 
 # Getting Started
 
-This project is in early prototype stage. Take a look at our [prototype scenario](discovery/prototypes/cli/Syntax.md) for a detailed example of use.
+See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on how things work
 
 1. Install the tool:
     * Installers are here: `https://github.com/jezzsantos/automate/releases`
@@ -109,3 +109,5 @@ This project is in early prototype stage. Take a look at our [prototype scenario
 # Learn more
 
 At present we are in a validation stage. Validation, viability and research work is captured in the `docs` and `discovery` folders.
+
+There is a detailed prototype walkthrough available which you can follow: [prototype scenario](discovery/prototypes/cli/Syntax.md) to see how things are done.
