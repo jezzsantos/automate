@@ -1,4 +1,5 @@
-﻿using Automate.CLI.Domain;
+﻿using System.Collections.Generic;
+using Automate.CLI.Domain;
 
 namespace Automate.CLI.Application
 {
@@ -17,5 +18,7 @@ namespace Automate.CLI.Application
         string UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file);
 
         byte[] DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate);
+
+        List<PatternDefinition> ListAll();
     }
 }

@@ -11,9 +11,13 @@ namespace Automate.CLI.Application
     internal class AuthoringApplication
     {
         private readonly IFilePathResolver fileResolver;
+
         private readonly IPatternToolkitPackager packager;
+
         private readonly IPatternPathResolver patternResolver;
+
         private readonly IPatternStore store;
+
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
         public AuthoringApplication(string currentDirectory) : this(currentDirectory,
@@ -68,6 +72,11 @@ namespace Automate.CLI.Application
 
             var current = this.store.Find(name);
             this.store.ChangeCurrent(current.Id);
+        }
+
+        public List<PatternDefinition> ListPatterns()
+        {
+            return this.store.ListAll();
         }
 
         public (IPatternElement Parent, Attribute Attribute) AddAttribute(string name, string type, string defaultValue,
@@ -229,16 +238,16 @@ namespace Automate.CLI.Application
             return launchPoint;
         }
 
-        public Automation UpdateCommandLaunchPoint(string name, List<string> commandIds, string sourceExpression, string parentExpression)
+        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, string sourceExpression, string parentExpression)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
+            launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
             commandIds.GuardAgainstNull(nameof(commandIds));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
             var source = ResolveTargetElement(pattern, sourceExpression);
 
-            var launchPoint = target.UpdateCommandLaunchPoint(name, commandIds, source);
+            var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
             this.store.Save(pattern);
 
             return launchPoint;

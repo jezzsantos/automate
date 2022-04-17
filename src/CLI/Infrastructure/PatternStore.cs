@@ -111,6 +111,11 @@ namespace Automate.CLI.Infrastructure
             return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplate.Id, codeTemplate.Metadata.OriginalFileExtension);
         }
 
+        public List<PatternDefinition> ListAll()
+        {
+            return this.patternRepository.ListPatterns();
+        }
+
         private bool ExistsByName(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));

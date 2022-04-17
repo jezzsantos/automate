@@ -481,7 +481,7 @@ namespace Automate.CLI.Domain
             return automation;
         }
 
-        public Automation UpdateCommandLaunchPoint(string launchPointName, List<string> commandIds, IPatternElement sourceElement)
+        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, IPatternElement sourceElement)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
             commandIds.GuardAgainstNull(nameof(commandIds));
@@ -514,8 +514,13 @@ namespace Automate.CLI.Domain
                 throw new AutomateException(
                     ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint, launchPointName));
             }
+
             var launchPoint = CommandLaunchPoint.FromAutomation(automation);
             launchPoint.AppendCommandIds(commandIds);
+            if (name.HasValue())
+            {
+                launchPoint.ChangeName(name);
+            }
             RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, launchPoint.Id, Id);
 
             return launchPoint.AsAutomation();

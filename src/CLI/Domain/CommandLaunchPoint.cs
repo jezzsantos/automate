@@ -74,6 +74,11 @@ namespace Automate.CLI.Domain
             this.automation.UpdateMetadata(nameof(CommandIds), updated.Join(CommandIdDelimiter));
         }
 
+        public void ChangeName(string name)
+        {
+            this.automation.ChangeName(name);
+        }
+
         public string Id => this.automation.Id;
 
         public string Name => this.automation.Name;

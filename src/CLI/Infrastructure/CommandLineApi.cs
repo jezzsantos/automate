@@ -46,14 +46,6 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Argument("Name", "The name of the existing pattern to edit")
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleSwitch)),
-                new Command("add-codetemplate", "Adds a code template to an element")
-                {
-                    new Argument("FilePath", "A relative path to the code file, from the current directory"),
-                    new Option("--name", "A friendly name for the code template",
-                        arity: ArgumentArity.ZeroOrOne),
-                    new Option("--aschildof", "The expression of the element/collection to add the launch point to",
-                        typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -67,6 +59,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the attribute to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddAttribute)),
+
+                //TODO: update-attribute
                 new Command("delete-attribute", "Deletes an attribute from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -83,6 +77,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the element to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
+
+                //TODO: update-element
+                //TODO: delete-element
                 new Command("add-collection", "Adds a collection to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the collection"),
@@ -95,6 +92,21 @@ namespace Automate.CLI.Infrastructure
                     new Option("--ality", "The number of instances of this element in this collection that must exist",
                         typeof(ElementCardinality), () => ElementCardinality.ZeroOrMany, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
+
+                //TODO: update-collection
+                //TODO: delete-collection
+                new Command("add-codetemplate", "Adds a code template to an element")
+                {
+                    new Argument("FilePath", "A relative path to the code file, from the current directory"),
+                    new Option("--name", "A friendly name for the code template",
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
+
+                //TODO: update-codetemplate
+                //TODO: edit-codetemplate (open in editor, by name)
+                //TODO: delete-codetemplate
                 new Command("add-codetemplate-command", "Adds a command that renders a code template")
                 {
                     new Argument("CodeTemplateName", "The name of the code template"),
@@ -131,6 +143,9 @@ namespace Automate.CLI.Infrastructure
                             typeof(string), arity: ArgumentArity.ZeroOrOne)
                     }
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCliCommand)),
+
+                //TODO: update-cli-command
+                //TODO: delete-command (by ID, all kinds)
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
                     new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
@@ -142,6 +157,8 @@ namespace Automate.CLI.Infrastructure
                 new Command("update-command-launchpoint", "Updates an existing launch point")
                 {
                     new Argument("LaunchPointName", "The name of the launch point to update"),
+                    new Option("--name", "A new name for the launch point", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
                     new Option("--add", "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
                         typeof(string), arity: ArgumentArity.ExactlyOne),
                     new Option("--from", "The expression of the element/collection to add commands from",
@@ -149,6 +166,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection on which the launch point exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCommandLaunchPoint))
+
+                //TODO: delete-command-launchpoint
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
             {
@@ -222,10 +241,10 @@ namespace Automate.CLI.Infrastructure
             };
             var executeCommands = new Command(ExecuteCommandName, "Executing automation on patterns from toolkits")
             {
-                new Command("command", "Executes the command on the solution")
+                new Command("command", "Executes the launch point on the solution")
                 {
-                    new Argument("Name", "The name of the command to execute"),
-                    new Option("--on", "The expression of the element/collection containing the command to execute", arity: ArgumentArity.ZeroOrOne)
+                    new Argument("Name", "The name of the launch point to execute"),
+                    new Option("--on", "The expression of the element/collection containing the launch point to execute", arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand))
             };
             var viewCommands = new Command(ViewCommandName, "Viewing patterns and solutions")
@@ -245,9 +264,11 @@ namespace Automate.CLI.Infrastructure
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
             {
+                new Command("patterns", "Lists all patterns being edited")
+                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListPatterns)),
                 new Command("toolkits", "Lists all installed toolkits")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
-                new Command("solutions", "Lists all created solutions")
+                new Command("solutions", "Lists all solutions being configured")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
             };
             var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and solutions")
@@ -472,11 +493,11 @@ namespace Automate.CLI.Infrastructure
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
-            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string add, string from, string asChildOf,
+            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string name, string add, string from, string asChildOf,
                 bool outputStructured, IConsole console)
             {
                 var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, cmdIds, from, asChildOf);
+                var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
@@ -566,6 +587,21 @@ namespace Automate.CLI.Infrastructure
                 }
 
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, result.Template.Id, result.Output);
+            }
+
+            internal static void HandleListPatterns(bool outputStructured, IConsole console)
+            {
+                var patterns = Authoring.ListPatterns();
+                if (patterns.Any())
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_EditablePatternsListed,
+                        patterns.ToMultiLineText(pattern =>
+                            $"{{\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\"}}"));
+                }
+                else
+                {
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoEditablePatterns);
+                }
             }
 
             internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool isDetailed)

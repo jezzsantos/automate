@@ -419,7 +419,7 @@ namespace CLI.UnitTests.Domain
         public void WhenUpdateCommandLaunchPointAndNoCommands_ThenThrows()
         {
             this.element
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string>(), this.element))
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string>(), this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_NoCommandIds);
         }
@@ -428,7 +428,7 @@ namespace CLI.UnitTests.Domain
         public void WhenUpdateCommandLaunchPointAndCommandNotExists_ThenThrows()
         {
             this.element
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { "acmdid" }, this.element))
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_CommandIdNotFound.Format("acmdid"));
@@ -441,7 +441,7 @@ namespace CLI.UnitTests.Domain
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
 
             this.element
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.element))
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { command1.Id }, this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint, "alaunchpointname"));
         }
@@ -454,9 +454,10 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
 
-            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
+            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname", new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
 
             result.Should().Be(this.element.Automation[0]);
+            result.Name.Should().Be("anewname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
@@ -469,9 +470,10 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
 
-            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { command2.Id }, this.element);
+            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname", new List<string> { command2.Id }, this.element);
 
             result.Should().Be(this.element.Automation[0]);
+            result.Name.Should().Be("anewname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }

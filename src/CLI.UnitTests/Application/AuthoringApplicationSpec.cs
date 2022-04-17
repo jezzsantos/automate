@@ -656,7 +656,7 @@ namespace CLI.UnitTests.Application
         public void WhenUpdateCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { "acmdid" }, null, null))
+                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -671,7 +671,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.UpdateCommandLaunchPoint("alaunchpointname", new List<string> { "acmdid1" }, null, "anunknownparent"))
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid1" }, null, "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
@@ -687,10 +687,10 @@ namespace CLI.UnitTests.Application
             var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, null);
 
             var result =
-                this.application.UpdateCommandLaunchPoint(launchPoint.Name, new List<string> { command1.Id, command2.Id }, null, null);
+                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname", new List<string> { command1.Id, command2.Id }, null, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
-            automation.Name.Should().Be("alaunchpointname");
+            automation.Name.Should().Be("anewname");
             automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
             result.Id.Should().Be(automation.Id);
         }
@@ -709,10 +709,11 @@ namespace CLI.UnitTests.Application
             var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, "{apatternname.anelementname}");
 
             var result =
-                this.application.UpdateCommandLaunchPoint(launchPoint.Name,
+                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname",
                     new List<string> { command1.Id, command2.Id }, null, "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
+            automation.Name.Should().Be("anewname");
             automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
             result.Id.Should().Be(automation.Id);
         }

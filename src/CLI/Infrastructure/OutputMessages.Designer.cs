@@ -218,6 +218,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Editable patterns:
+        ///{Patterns}.
+        /// </summary>
+        internal static string CommandLine_Output_EditablePatternsListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_EditablePatternsListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
@@ -271,6 +281,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_LaunchPointUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_LaunchPointUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no editable Patterns yet.
+        /// </summary>
+        internal static string CommandLine_Output_NoEditablePatterns {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoEditablePatterns", resourceCulture);
             }
         }
         

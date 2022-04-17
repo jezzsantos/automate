@@ -107,6 +107,35 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenListPatternsAndNone_ThenDisplaysNone()
+        {
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} patterns");
+
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_NoEditablePatterns);
+        }
+
+        [Fact]
+        public void WhenListPatternsAndSome_ThenDisplaysList()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern2");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} patterns");
+
+            var pattern1 = this.setup.Patterns.First();
+            var pattern2 = this.setup.Patterns.Last();
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_EditablePatternsListed.FormatTemplate(
+                        $"{{\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\"}}{Environment.NewLine}" +
+                        $"{{\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\"}}"));
+        }
+
+        [Fact]
         public void WhenAddCodeTemplateAndNoCurrentPattern_ThenDisplaysError()
         {
             this.setup.RunCommand(
