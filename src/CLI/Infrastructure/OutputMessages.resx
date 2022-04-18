@@ -68,6 +68,12 @@
     <data name="CommandLine_Output_AttributeDeleted" xml:space="preserve">
         <value>Deleted Attribute: '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>
+    <data name="CommandLine_Output_ElementDeleted" xml:space="preserve">
+        <value>Deleted Element: '{Name}' from element {ParentId}, with ID: {Id}</value>
+    </data>
+    <data name="CommandLine_Output_CollectionDeleted" xml:space="preserve">
+        <value>Deleted Collection: '{Name}' from element {ParentId}, with ID: {Id}</value>
+    </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
         <value>Added Element: '{Name}' to element '{ParentId}', with ID: {Id}</value>
     </data>

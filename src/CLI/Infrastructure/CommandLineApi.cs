@@ -79,7 +79,12 @@ namespace Automate.CLI.Infrastructure
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
 
                 //TODO: update-element
-                //TODO: delete-element
+                new Command("delete-element", "Deletes an element from an element/collection in the pattern")
+                {
+                    new Argument("Name", "The name of the element"),
+                    new Option("--aschildof", "The expression of the element/collection to delete the element from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteElement)),
                 new Command("add-collection", "Adds a collection to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the collection"),
@@ -94,7 +99,12 @@ namespace Automate.CLI.Infrastructure
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
 
                 //TODO: update-collection
-                //TODO: delete-collection
+                new Command("delete-collection", "Deletes a collection from an element/collection in the pattern")
+                {
+                    new Argument("Name", "The name of the collection"),
+                    new Option("--aschildof", "The expression of the element/collection to delete the collection from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteCollection)),
                 new Command("add-codetemplate", "Adds a code template to an element")
                 {
                     new Argument("FilePath", "A relative path to the code file, from the current directory"),
@@ -536,6 +546,22 @@ namespace Automate.CLI.Infrastructure
                     Authoring.DeleteAttribute(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeDeleted, name,
                     parent.Id, attribute.Id);
+            }
+
+            internal static void HandleDeleteElement(string name, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var (parent, element) =
+                    Authoring.DeleteElement(name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementDeleted, name,
+                    parent.Id, element.Id);
+            }
+
+            internal static void HandleDeleteCollection(string name, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var (parent, element) =
+                    Authoring.DeleteElement(name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionDeleted, name,
+                    parent.Id, element.Id);
             }
 
             internal static void HandleCreate(string name, bool outputStructured, IConsole console)

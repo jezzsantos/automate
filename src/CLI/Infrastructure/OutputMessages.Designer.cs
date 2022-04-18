@@ -171,6 +171,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted Collection: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_CollectionDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CollectionDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; did not completely succeed. Some commands failed:
         ///{Log}.
         /// </summary>
@@ -233,6 +242,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_ElementAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ElementAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Element: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_ElementDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementDeleted", resourceCulture);
             }
         }
         
