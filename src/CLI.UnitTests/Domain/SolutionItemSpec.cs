@@ -85,7 +85,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithElement_ThenElementAssigned()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
             this.pattern.AddElement(element);
 
@@ -102,7 +102,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithCollection_ThenCollectionAssigned()
         {
-            var element = new Element("acollectionname", "adisplayname", "adescription", true);
+            var element = new Element("acollectionname", displayName: "adisplayname", description: "adescription");
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
             this.pattern.AddElement(element);
 
@@ -119,11 +119,11 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithDescendantSchema_ThenDescendantElementsAssigned()
         {
-            var element3 = new Element("anelementname3", "adisplayname3", "adescription3", true);
+            var element3 = new Element("anelementname3", displayName: "adisplayname3", description: "adescription3");
             element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
-            var element2 = new Element("anelementname2", "adisplayname2", "adescription2", true);
+            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
             element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
-            var element1 = new Element("anelementname1", "adisplayname1", "adescription1", true);
+            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
             element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
             element2.AddElement(element3);
             element1.AddElement(element2);
@@ -153,7 +153,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndElement_ThenMaterialises()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
@@ -171,7 +171,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseAndCollection_ThenMaterialises()
         {
-            var collection = new Element("acollectionname", isCollection: true);
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             var element = new Element("anelementname");
             collection.AddAttribute(attribute);
@@ -205,7 +205,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItemAndNotACollection_ThenThrows()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
 
             new SolutionItem(this.toolkit, element, null)
                 .Invoking(x => x.MaterialiseCollectionItem())
@@ -216,7 +216,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItem_ThenMaterialisesNewElement()
         {
-            var collection = new Element("acollectionname", isCollection: true);
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             collection.AddAttribute(attribute);
             this.pattern.AddElement(collection);
@@ -229,6 +229,8 @@ namespace CLI.UnitTests.Domain
             result.IsMaterialised.Should().BeTrue();
             result.IsEphemeralCollection.Should().BeFalse();
             result.ElementSchema.Name.Should().Be("acollectionname");
+            result.ElementSchema.HasCardinalityOfAtLeastOne().Should().BeTrue();
+            result.ElementSchema.HasCardinalityOfAtMostOne().Should().BeTrue();
             result.Value.Should().BeNull();
             result.Items.Should().BeNull();
             result.Properties.Should().ContainSingle(prop =>
@@ -241,10 +243,10 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMaterialiseCollectionItemAndHasChildCollection_ThenMaterialisesNewElement()
         {
-            var collection1 = new Element("acollectionname1", isCollection: true);
+            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             collection1.AddAttribute(attribute);
-            var collection2 = new Element("acollectionname2", isCollection: true);
+            var collection2 = new Element("acollectionname2", ElementCardinality.OneOrMany);
             collection1.AddElement(collection2);
             this.pattern.AddElement(collection1);
 
@@ -256,6 +258,8 @@ namespace CLI.UnitTests.Domain
             result1.IsMaterialised.Should().BeTrue();
             result1.IsEphemeralCollection.Should().BeFalse();
             result1.ElementSchema.Name.Should().Be("acollectionname1");
+            result1.ElementSchema.HasCardinalityOfAtLeastOne().Should().BeTrue();
+            result1.ElementSchema.HasCardinalityOfAtMostOne().Should().BeTrue();
             result1.Value.Should().BeNull();
             result1.Items.Should().BeNull();
             result1.Properties.Should().Contain(prop =>
@@ -267,6 +271,8 @@ namespace CLI.UnitTests.Domain
             result2.IsMaterialised.Should().BeTrue();
             result2.IsEphemeralCollection.Should().BeFalse();
             result2.ElementSchema.Name.Should().Be("acollectionname2");
+            result2.ElementSchema.HasCardinalityOfAtLeastOne().Should().BeTrue();
+            result2.ElementSchema.HasCardinalityOfAtMostOne().Should().BeTrue();
             result2.Value.Should().BeNull();
             result2.Items.Should().BeNull();
             result2.Properties.Should().BeEmpty();
@@ -291,7 +297,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyInElementSchema_ThenReturnsTrue()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
@@ -305,7 +311,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenHasAttributeAndPropertyNotInSchema_ThenReturnsFalse()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
             this.pattern.AddElement(element);
 
             var result = new SolutionItem(this.toolkit, element, null)
@@ -380,7 +386,19 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsElementAndNotMaterialised_ThenReturnsErrors()
+        public void WhenValidateAndIsOptionalElementAndNotMaterialised_ThenSucceeds()
+        {
+            var element = new Element("anelementname", ElementCardinality.ZeroOrOne);
+            this.pattern.AddElement(element);
+
+            var result = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["anelementname"].Validate();
+
+            result.Results.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenValidateAndIsOneOnlyOneElementAndNotMaterialised_ThenReturnsErrors()
         {
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
@@ -395,9 +413,21 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsCollectionAndNotMaterialised_ThenReturnsErrors()
+        public void WhenValidateAndIsCollectionWithZeroAndNotMaterialised_ThenSucceeds()
         {
-            var element = new Element("acollectionname", isCollection: true, cardinality: ElementCardinality.OneOrMany);
+            var element = new Element("acollectionname", ElementCardinality.ZeroOrMany);
+            this.pattern.AddElement(element);
+
+            var result = new SolutionItem(this.toolkit, element, new SolutionItem(this.toolkit, this.pattern))
+                .Validate();
+
+            result.Results.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WhenValidateAndIsCollectionWithOneAndNotMaterialised_ThenReturnsErrors()
+        {
+            var element = new Element("acollectionname", ElementCardinality.OneOrMany);
             this.pattern.AddElement(element);
 
             var result = new SolutionItem(this.toolkit, element, new SolutionItem(this.toolkit, this.pattern))
@@ -446,8 +476,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndIsCollectionWithRequiredItems_ThenReturnsErrors()
         {
-            var collection = new Element("acollectionname", isCollection: true,
-                cardinality: ElementCardinality.OneOrMany);
+            var collection = new Element("acollectionname",
+                ElementCardinality.OneOrMany);
             this.pattern.AddElement(collection);
 
             var result = new SolutionItem(this.toolkit, collection, new SolutionItem(this.toolkit, this.pattern))
@@ -461,28 +491,9 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsCollectionWithTooManyItems_ThenReturnsErrors()
-        {
-            var collection = new Element("acollectionname", isCollection: true,
-                cardinality: ElementCardinality.Single);
-            this.pattern.AddElement(collection);
-
-            var solutionItem = new SolutionItem(this.toolkit, collection, new SolutionItem(this.toolkit, this.pattern));
-            solutionItem.MaterialiseCollectionItem();
-            solutionItem.MaterialiseCollectionItem();
-
-            var result = solutionItem.Validate();
-
-            result.Results.Single().Context.Path.Should().Be("{apatternname.acollectionname}");
-            result.Results.Single().Message.Should()
-                .Be(ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance.Format(
-                    "acollectionname"));
-        }
-
-        [Fact]
         public void WhenValidateAndIsDescendantCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
         {
-            var collection = new Element("acollectionname", isCollection: true);
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", isRequired: true);
             element.AddAttribute(attribute);
@@ -538,9 +549,9 @@ namespace CLI.UnitTests.Domain
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
             var attribute3 = new Attribute("anattributename3", "int", false, "25");
-            var elementLevel1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var elementLevel2 = new Element("anelementname2", "adisplayname2", "adescription2");
-            var collectionLevel1 = new Element("acollectionname2", "adisplayname1", "adescription1", true);
+            var elementLevel1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var elementLevel2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
+            var collectionLevel1 = new Element("acollectionname2", ElementCardinality.OneOrMany, "adisplayname1", "adescription1");
             elementLevel2.AddAttribute(attribute2);
             collectionLevel1.AddAttribute(attribute3);
             elementLevel1.AddElement(elementLevel2);
@@ -751,7 +762,7 @@ namespace CLI.UnitTests.Domain
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.AddElement("acollectionname", isCollection: true);
+            latestPattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -809,7 +820,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateCollectionOfPatternWithItemsAndHasBeenDeleted_ThenRemovesCollectionAndAllItems()
         {
-            this.pattern.AddElement("acollectionname", isCollection: true);
+            this.pattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
             solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
@@ -832,7 +843,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateElementOfCollectionOfPatternAndHasBeenDeleted_ThenRemovesElementsOfCollectionItems()
         {
-            var collection = this.pattern.AddElement("acollectionname", isCollection: true);
+            var collection = this.pattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
             collection.AddElement("anelementname");
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             var item1 = solutionItem.Properties["acollectionname"].MaterialiseCollectionItem();
@@ -918,7 +929,7 @@ namespace CLI.UnitTests.Domain
         public void WhenMigrateDescendantCollectionAndHasBeenDeleted_ThenRemovesElement()
         {
             var element = this.pattern.AddElement("anelementname");
-            element.AddElement("acollectionname", isCollection: true);
+            element.AddElement("acollectionname", ElementCardinality.OneOrMany);
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anelementname"].Materialise();
             solutionItem.Properties["anelementname"].Properties["acollectionname"].Materialise();

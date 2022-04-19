@@ -4,13 +4,12 @@ namespace Automate.CLI.Domain
 {
     internal class Element : PatternElement, IValidateable, IPersistable
     {
-        public Element(string name, string displayName = null, string description = null, bool isCollection = false,
-            ElementCardinality? cardinality = null) : base(name)
+        public Element(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null, string description = null) : base(name)
         {
             DisplayName = displayName;
             Description = description;
-            IsCollection = isCollection;
-            Cardinality = cardinality.HasValue ? cardinality.Value : isCollection ? ElementCardinality.OneOrMany : ElementCardinality.Single;
+            IsCollection = cardinality is ElementCardinality.OneOrMany or ElementCardinality.ZeroOrMany;
+            Cardinality = cardinality;
         }
 
         private Element(PersistableProperties properties, IPersistableFactory factory) : base(properties, factory)
@@ -18,14 +17,14 @@ namespace Automate.CLI.Domain
             DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
             Description = properties.Rehydrate<string>(factory, nameof(Description));
             IsCollection = properties.Rehydrate<bool>(factory, nameof(IsCollection));
-            Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality)).ToEnumOrDefault(ElementCardinality.Single);
+            Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality)).ToEnumOrDefault(ElementCardinality.One);
         }
 
         public ElementCardinality Cardinality { get; private set; }
 
-        public string DisplayName { get; }
+        public string DisplayName { get; private set; }
 
-        public string Description { get; }
+        public string Description { get; private set; }
 
         public bool IsCollection { get; private set; }
 

@@ -135,7 +135,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddElement_TheAddsElementToElement()
         {
-            var result = this.element.AddElement("anelementname", "adisplayname", "adescription");
+            var result = this.element.AddElement("anelementname", ElementCardinality.One, "adisplayname", "adescription");
 
             result.Name.Should().Be("anelementname");
             result.DisplayName.Should().Be("adisplayname");

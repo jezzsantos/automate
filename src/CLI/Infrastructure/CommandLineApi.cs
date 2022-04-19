@@ -75,7 +75,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--describedas", "A description for the element", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the element to",
-                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--isrequired", "Whether the element will be required or not",
+                        typeof(bool), () => true, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
 
                 //TODO: update-element
@@ -94,8 +96,8 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the collection to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--ality", "The number of instances of this element in this collection that must exist",
-                        typeof(ElementCardinality), () => ElementCardinality.ZeroOrMany, ArgumentArity.ZeroOrOne)
+                    new Option("--isrequired", "Whether at least one item in the collection will be required or not",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
 
                 //TODO: update-collection
@@ -513,18 +515,22 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
-                bool outputStructured, IConsole console)
+                bool isRequired, bool outputStructured, IConsole console)
             {
-                var (parent, element) = Authoring.AddElement(name, displayedAs, describedAs, false,
-                    ElementCardinality.Single, asChildOf);
+                var (parent, element) = Authoring.AddElement(name,
+                    isRequired
+                        ? ElementCardinality.One
+                        : ElementCardinality.ZeroOrOne, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id,
                     element.Id);
             }
 
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
-                string asChildOf, ElementCardinality ality, bool outputStructured, IConsole console)
+                string asChildOf, bool isRequired, bool outputStructured, IConsole console)
             {
-                var (parent, collection) = Authoring.AddElement(name, displayedAs, describedAs, true, ality, asChildOf);
+                var (parent, collection) = Authoring.AddElement(name, isRequired
+                    ? ElementCardinality.OneOrMany
+                    : ElementCardinality.ZeroOrMany, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
                     parent.Id, collection.Id);
             }

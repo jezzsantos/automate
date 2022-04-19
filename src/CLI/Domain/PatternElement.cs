@@ -224,7 +224,7 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
-        public Element AddElement(string name, string displayName = null, string description = null, bool isCollection = false, ElementCardinality cardinality = ElementCardinality.Single)
+        public Element AddElement(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null, string description = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
@@ -238,7 +238,7 @@ namespace Automate.CLI.Domain
                 throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format(name));
             }
 
-            var element = new Element(name, displayName, description, isCollection, cardinality);
+            var element = new Element(name, cardinality, displayName, description);
             AddElement(element);
 
             return element;

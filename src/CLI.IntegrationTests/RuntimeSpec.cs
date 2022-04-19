@@ -689,7 +689,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --ality OneOrMany");
+                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --isrequired");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.ACollection2}} --defaultvalueis ADefaultValue4");
 

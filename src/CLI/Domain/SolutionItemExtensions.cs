@@ -6,12 +6,12 @@ namespace Automate.CLI.Domain
     {
         public static bool HasCardinalityOfAtLeastOne(this Element element)
         {
-            return element.Cardinality is ElementCardinality.Single or ElementCardinality.OneOrMany;
+            return element.Cardinality is ElementCardinality.One or ElementCardinality.OneOrMany;
         }
 
         public static bool HasCardinalityOfAtMostOne(this Element element)
         {
-            return element.Cardinality is ElementCardinality.Single or ElementCardinality.ZeroOrOne;
+            return element.Cardinality is ElementCardinality.One or ElementCardinality.ZeroOrOne;
         }
 
         public static bool HasCardinalityOfMany(this Element element)
@@ -28,6 +28,5 @@ namespace Automate.CLI.Domain
         {
             return attribute.Validate(new ValidationContext(solutionItem.PathReference), value);
         }
-
     }
 }

@@ -194,9 +194,9 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenCreateTestSolutionAndDescendantCollections_ThenReturnsTestPattern()
         {
-            var collection1 = new Element("acollection1", isCollection: true);
-            var collection2 = new Element("acollection2", isCollection: true);
-            var collection3 = new Element("acollection3", isCollection: true);
+            var collection1 = new Element("acollection1", ElementCardinality.OneOrMany);
+            var collection2 = new Element("acollection2", ElementCardinality.OneOrMany);
+            var collection3 = new Element("acollection3", ElementCardinality.OneOrMany);
             var attribute1 = new Attribute("anattribute1");
             var attribute2 = new Attribute("anattribute2", "int");
             var attribute3 = new Attribute("anattribute3", "bool");

@@ -2,7 +2,7 @@
 {
     internal enum ElementCardinality
     {
-        Single, //One and only one
+        One,
         ZeroOrOne,
         ZeroOrMany,
         OneOrMany

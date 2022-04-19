@@ -90,7 +90,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndCollectionItemExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var collection = new Element("acollectionname", isCollection: true);
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
             var element = new Element("anelementname");
             collection.AddElement(element);
             pattern.AddElement(collection);

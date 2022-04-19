@@ -51,21 +51,21 @@ namespace Automate.CLI.Domain
             Object = element;
         }
 
-        public bool IsCollection => Object.IsCollection;
+        public virtual bool IsCollection => Object.IsCollection;
 
         public Element Object { get; }
 
-        public bool HasCardinalityOfAtLeastOne()
+        public virtual bool HasCardinalityOfAtLeastOne()
         {
             return Object.HasCardinalityOfAtLeastOne();
         }
 
-        public bool HasCardinalityOfAtMostOne()
+        public virtual bool HasCardinalityOfAtMostOne()
         {
             return Object.HasCardinalityOfAtMostOne();
         }
 
-        public bool HasCardinalityOfMany()
+        public virtual bool HasCardinalityOfMany()
         {
             return Object.HasCardinalityOfMany();
         }
@@ -77,19 +77,19 @@ namespace Automate.CLI.Domain
         {
         }
 
-        public new bool IsCollection => false;
+        public override bool IsCollection => false;
 
-        public new bool HasCardinalityOfAtLeastOne()
+        public override bool HasCardinalityOfAtLeastOne()
         {
             return true;
         }
 
-        public new bool HasCardinalityOfAtMostOne()
+        public override bool HasCardinalityOfAtMostOne()
         {
             return true;
         }
 
-        public new bool HasCardinalityOfMany()
+        public override bool HasCardinalityOfMany()
         {
             return false;
         }

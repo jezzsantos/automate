@@ -58,7 +58,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenExecuteAndCommandOnPattern_ThenExecutesCommandOnSingleElement()
+        public void WhenExecuteAndCommandOnPattern_ThenExecutesCommandOnOnlyOneElement()
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
@@ -75,7 +75,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenExecuteAndCommandOnDescendantElement_ThenExecutesCommandOnSingleElement()
+        public void WhenExecuteAndCommandOnDescendantElement_ThenExecutesCommandOnOnlyOneElement()
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
@@ -102,7 +102,7 @@ namespace CLI.UnitTests.Domain
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
-            var collection1 = new Element("acollectionname1", isCollection: true);
+            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");
@@ -127,7 +127,7 @@ namespace CLI.UnitTests.Domain
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object> { { "FailTurn", 2 } });
             var element1 = new Element("anelementname1");
-            var collection1 = new Element("acollectionname1", isCollection: true);
+            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
             var pattern = new PatternDefinition("apatternname");

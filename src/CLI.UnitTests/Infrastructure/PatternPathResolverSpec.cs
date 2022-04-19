@@ -128,7 +128,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndCollectionExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var collection = new Element("acollectionname", null, null, true);
+            var collection = new Element("acollectionname", displayName: null, description: null);
             pattern.AddElement(collection);
 
             var result = this.resolver.Resolve(pattern, "{apatternname.acollectionname}");
@@ -140,9 +140,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDescendantCollectionExpressionNotExist_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
-            var collectionLevel1 = new Element("acollectionname1", null, null, true);
+            var collectionLevel1 = new Element("acollectionname1", displayName: null, description: null);
             pattern.AddElement(collectionLevel1);
-            var collectionLevel2 = new Element("acollectionname2", null, null, true);
+            var collectionLevel2 = new Element("acollectionname2", displayName: null, description: null);
             collectionLevel1.AddElement(collectionLevel2);
 
             var result = this.resolver.Resolve(pattern,
@@ -155,11 +155,11 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDescendantCollectionExpressionExists_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
-            var collectionLevel1 = new Element("acollectionname1", null, null, true);
+            var collectionLevel1 = new Element("acollectionname1", displayName: null, description: null);
             pattern.AddElement(collectionLevel1);
-            var collectionLevel2 = new Element("acollectionname2", null, null, true);
+            var collectionLevel2 = new Element("acollectionname2", displayName: null, description: null);
             collectionLevel1.AddElement(collectionLevel2);
-            var collectionLevel3 = new Element("acollectionname3", null, null, true);
+            var collectionLevel3 = new Element("acollectionname3", displayName: null, description: null);
             collectionLevel2.AddElement(collectionLevel3);
 
             var result = this.resolver.Resolve(pattern,

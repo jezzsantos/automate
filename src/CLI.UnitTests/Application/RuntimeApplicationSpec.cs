@@ -274,7 +274,7 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionWithNewCollectionElement_ThenReturnsSolution()
         {
             this.application.CreateSolution("apatternname", null);
-            this.pattern.AddElement("anelementname", isCollection: true);
+            this.pattern.AddElement("anelementname", ElementCardinality.OneOrMany);
             var solutionItem = new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solutionItem);
@@ -368,8 +368,8 @@ namespace CLI.UnitTests.Application
         {
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
-            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
             element2.AddAttribute(attribute2);
             element1.AddElement(element2);
             this.pattern.AddAttribute(attribute1);
@@ -406,8 +406,8 @@ namespace CLI.UnitTests.Application
         {
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
-            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
             element2.AddAttribute(attribute2);
             element1.AddElement(element2);
             this.pattern.AddAttribute(attribute1);
@@ -464,8 +464,8 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenValidateElement_ThenReturnsResults()
         {
-            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var element2 = new Element("anelementname2", "adisplayname2", "adescription2");
+            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
             this.pattern.AddElement(element1);
             this.pattern.AddElement(element2);
             UpdateToolkit();
@@ -486,9 +486,9 @@ namespace CLI.UnitTests.Application
         {
             var attribute1 = new Attribute("anattributename1", null, true, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, true, "adefaultvalue2");
-            var element1 = new Element("anelementname1", "adisplayname1", "adescription1");
-            var collection2 = new Element("acollectionname2", "adisplayname2", "adescription2", true,
-                ElementCardinality.OneOrMany);
+            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var collection2 = new Element("acollectionname2",
+                ElementCardinality.OneOrMany, "adisplayname2", "adescription2");
             collection2.AddAttribute(attribute2);
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
@@ -534,7 +534,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
         {
-            var element = new Element("anelementname", "adisplayname", "adescription");
+            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element.AddAutomation(automation);
             this.pattern.AddElement(element);

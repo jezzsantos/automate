@@ -106,16 +106,15 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
-        public (IPatternElement Parent, Element Element) AddElement(string name, string displayName,
-            string description, bool isCollection, ElementCardinality cardinality,
-            string parentExpression)
+        public (IPatternElement Parent, Element Element) AddElement(string name, ElementCardinality cardinality,
+            string displayName, string description, string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var element = target.AddElement(name, displayName, description, isCollection, cardinality);
+            var element = target.AddElement(name, cardinality, displayName, description);
             this.store.Save(pattern);
 
             return (target, element);
