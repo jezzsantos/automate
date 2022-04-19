@@ -50,25 +50,7 @@ At some point later, you will want to update the pattern. Refactor it, modify it
 2. They download and run the upgraded toolkit (CLI or IDE plugin) and upgrade their codebase.
 2. The toolkit automatically detects the previous files/folders that were written before, and detects the previous attribute configuration that was used before. The toolkit re-applies the upgraded pattern. The codebase evolves.
 
-## What problem does it solve?
-
-Often, for many software teams (that include individuals varying degrees of expertise from novice to expert) a Tech Lead/Lead Dev/Tech Consultant needs to make some key technical decisions about how things need to get done in that codebase. Architecturally , structurally or in the details of the implementation - all these decisions are constraints on the codebase. Keeping things small, well defined, and consistent is often the key to managing complexity over time. So that contributors to this codebase can have a single, unified and simpler understanding of the codebase -> A reasonable, shared mental model of the codebase, so that they can move freely across the codebase and not fear changing any part of it.
-
-Being able to construct codebases in this way is earned over the years of doing similar things in other codebases over and over again. As this is done patterns emerge and they are adapted and improved for each codebase where they are applied. No two codebases are the same, but the patterns are often very similar. Often improving over time as those that define and refine them learn more each time they are applied from the context of the current codebase.
-
-The primary challenge a Tech Lead/Lead Dev/Tech Consultant has is: communicating this knowledge in a form that can be learnt and reused by others, and also adapted for the current codebase. Learning by doing is key, but learning from experience through demonstration is an effective way we can avoid repeating the lessons learned and expensive mistakes from the past.
-
-One of the main challenges in codebases for team is that others in the codebase will naturally re-invent unfamiliar or more novel code patterns because they lack the knowledge that other team members have, or they are unaware that the other team members already possesses this kind of knowledge. Teams are also fluid over time, with members coming and going. So the learning process is continuous and relentless.
-
-Another major challenge is not knowing how to solve certain problems in the codebase nor where to put certain solutions in the code. This results in solutions being peppered around the codebase as workarounds are introduced, and pilled upon each other. This leads to the big-ball-of-mud which becomes un-navigable for a team as time moves forward.
-
-A Tech Lead/Lead Dev/Tech Consultant needs to remain vigilant to ensure that established patterns and architectures are not violated because of lack of knowledge of other team members. Whilst, they also need to change as the software evolves, and as new constraints are defined.
-
-Today's, languages and development tools (IDEs) are so *general purpose* that they cannot be used to help enforce or constrict the programmer from working around these implied constraints. Codebase specific tools, fit for purpose, must be used to enforce these constraints.
-
-Tech Lead/Lead Dev/Tech Consultant could use a little help from their codebase specific tools.
-
-### Does this apply to you?
+### Does automate apply to you?
 
 If these assumptions about your software team are **all true**, then you might consider taking a look at this tool.
 
