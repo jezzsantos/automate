@@ -66,27 +66,57 @@ If this sounds like your situation then maybe we can help you define (and enforc
 
 # Getting Started
 
-See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on how things work
+See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on each of the commands below.
 
-1. Install the tool:
+1. Install the **automate** tool:
     * Installers are here: `https://github.com/jezzsantos/automate/releases`
     * Otherwise, if .NET installed: `dotnet tool install --global automate`
 
-2. Navigate to your codebase, and harvest your first pattern from it.
+2. Navigate to your codebase, and harvest your first pattern from it:
 
    `automate create pattern "MyPattern1"`
 
-3. Add attributes, elements and code templates, and make it programmable.
+3. Add attributes, code templates, and automation to make it programmable:
 
-   `automate edit add-attribute "Name" --isrequired`
-   `automate edit add-codetemplate "backend/controllers/BookingController.cs"`
-   etc.
+   * `automate edit add-attribute "Name" --isrequired`
+   * `automate edit add-codetemplate "Controllers/BookingController.cs"`
+   * `automate edit add-codetemplate-command` "CodeTemplate1" --withpath "~/Controllers/{{name}}Controller.cs"
+   * `automate edit add-command-launchpoint "*" --name "Generate"`
 
-5. Generate a toolkit/plugin for applying the pattern.
+4. Edit the contents of the code template:
 
-   `automate build toolkit`
+  * Edit the codetemplate located at: `automate/patterns/<PATTERNID>/CodeTemplates/<CODETEMPLATEID>.cs`
+  * Add the following snippet somewhere in this file: 
+  ```
+  Here is the {{name}}Contoller.
+  ```
 
-6. Share the built toolkit with your team/community to re-use.
+6. Generate a toolkit for applying the pattern by others on your team:
+
+   `automate build toolkit` this will build, version and export the toolkit to the desktop folder on your machine.
+
+Share the built toolkit over email/slack/etc with someone on your team.
+
+Now that person, needs to:
+
+1. Install the **automate** tool:
+    * Installers are here: `https://github.com/jezzsantos/automate/releases`
+    * Otherwise, if .NET installed: `dotnet tool install --global automate`
+
+2.  Install the toolkit, fetched from above (i.e email/slack/etc):
+  
+  * `automate install toolkit "<DOWNLOADLOCATION>/MyPattern1_0.1.0.toolkit"`
+
+3. Create a new solution from this installed toolkit:
+
+  * `automate configure on "{MyPattern1}" --and-set "Name=Banana"`
+
+4. Now run the automation:
+
+  * `automate execute command "Generate"` this command will generate the code from the code template into the destination folder (`--withpath`), using the value of the `Name` property which you configured as `Banana`
+  * You should be able to see the value of Name in the contents of the file.
+
+The pattern and code templates can now be edited (by its author), and the toolkit can be rebuilt and redeployed (by its author), and reinstalled (by its user) to rewrite new and improved code, using the changes in it.
 
 # Learn more
 
