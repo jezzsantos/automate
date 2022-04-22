@@ -80,7 +80,7 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
    * `automate edit add-attribute "Name" --isrequired`
    * `automate edit add-codetemplate "Controllers/BookingController.cs"`
-   * `automate edit add-codetemplate-command` "CodeTemplate1" --withpath "~/Controllers/{{name}}Controller.cs"
+   * `automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/Controllers/{{name}}Controller.cs"`
    * `automate edit add-command-launchpoint "*" --name "Generate"`
 
 4. Edit the contents of the code template:
