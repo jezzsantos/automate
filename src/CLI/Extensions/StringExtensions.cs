@@ -131,7 +131,7 @@ namespace Automate.CLI.Extensions
                 {
                     paramIndex++;
                     return args.Length >= paramIndex
-                        ? args[paramIndex - 1].ToString()
+                        ? args[paramIndex - 1]?.ToString()
                         : null;
                 });
 
