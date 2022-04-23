@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
@@ -38,6 +39,7 @@ namespace CLI.UnitTests.Domain
                 { codeTemplate2.Id, new byte[] { 0x04, 0x05, 0x06 } }
             });
             var solution = new SolutionDefinition(originalToolkit);
+            Thread.Sleep(TimeSpan.FromSeconds(1)); // Delay for LastModified comparisons
             var updatedToolkit = MakeDetachedToolkit(pattern, new Dictionary<string, byte[]>
             {
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
@@ -164,22 +166,33 @@ namespace CLI.UnitTests.Domain
 
         private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern, Dictionary<string, byte[]> codeTemplateFiles = null)
         {
-            var toolkit = new ToolkitDefinition(oldPattern);
-            oldPattern.UpdateToolkitVersion(new VersionInstruction());
-            toolkit.Pack((_, codeTemplate) =>
+            var (_, toolkit) = PatternToolkitPackager.Pack(oldPattern, new VersionInstruction(), GetTemplateContent());
+
+            Func<PatternDefinition, CodeTemplate, CodeTemplateContent> GetTemplateContent()
             {
-                if (codeTemplateFiles.NotExists())
+                return (_, codeTemplate) =>
                 {
-                    return Array.Empty<byte>();
-                }
+                    if (codeTemplateFiles.NotExists())
+                    {
+                        return new CodeTemplateContent
+                        {
+                            Content = Array.Empty<byte>(),
+                            LastModifiedUtc = codeTemplate.LastModifiedUtc
+                        };
+                    }
 
-                if (!codeTemplateFiles.ContainsKey(codeTemplate.Id))
-                {
-                    throw new Exception($"No content for codetemplate: {codeTemplate.Id}");
-                }
+                    if (!codeTemplateFiles.ContainsKey(codeTemplate.Id))
+                    {
+                        throw new Exception($"No content for codetemplate: {codeTemplate.Id}");
+                    }
 
-                return codeTemplateFiles[codeTemplate.Id];
-            });
+                    return new CodeTemplateContent
+                    {
+                        Content = codeTemplateFiles[codeTemplate.Id],
+                        LastModifiedUtc = DateTime.UtcNow
+                    };
+                };
+            }
 
             var factory = new AutomatePersistableFactory();
             return toolkit.ToJson(factory).FromJson<ToolkitDefinition>(factory);

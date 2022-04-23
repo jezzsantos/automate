@@ -104,6 +104,10 @@ namespace Automate.CLI.Domain
             instruction.GuardAgainstNull(nameof(instruction));
 
             var result = CalculateNewVersion(instruction);
+            if (Current == result.Version)
+            {
+                return result;
+            }
 
             this.changeLog.Add(new VersionChangeLog(VersionChange.NoChange, VersionChanges.ToolkitVersion_NewVersion, Current, result.Version));
             Current = result.Version;
@@ -121,9 +125,14 @@ namespace Automate.CLI.Domain
         {
             var currentVersion = new Version(Current);
 
-            var expectedNewVersion = LastChanges == VersionChange.Breaking
-                ? currentVersion.RevMajor()
-                : currentVersion.RevMinor();
+            var expectedNewVersion = LastChanges switch
+            {
+                VersionChange.NonBreaking => currentVersion.RevMinor(),
+                VersionChange.Breaking => currentVersion.RevMajor(),
+                _ => Current == InitialVersionNumber.ToString(VersionFieldCount)
+                    ? currentVersion.RevMinor()
+                    : currentVersion
+            };
 
             if (instruction.Instruction.HasNoValue())
             {

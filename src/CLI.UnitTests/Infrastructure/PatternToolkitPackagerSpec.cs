@@ -30,28 +30,77 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
-        public void WhenPackAndVersionInstruction_ThenPackagesFirstVersionOfToolkit()
+        public void WhenPackAndExportAndNoVersion_ThenPackagesFirstVersionOfToolkit()
         {
             var pattern = new PatternDefinition("apatternname");
 
-            var result = this.packager.Pack(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+            var result = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
 
             result.Toolkit.Version.Should().Be("0.1.0");
+            this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "0.1.0")));
         }
 
         [Fact]
-        public void WhenPackAndVersionInstructionIsAVersion_ThenPackagesVersionOfToolkit()
+        public void WhenPackAndExportAndNoVersionWithInstruction_ThenPackagesFirstVersionOfToolkit()
+        {
+            var pattern = new PatternDefinition("apatternname");
+
+            var result = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+
+            result.Toolkit.Version.Should().Be("0.1.0");
+            this.patternStore.Verify(ps => ps.Save(It.Is<PatternDefinition>(pat => pat.ToolkitVersion.Current == "0.1.0")));
+            this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "0.1.0")));
+        }
+
+        [Fact]
+        public void WhenPackAndExportWithAnyVersionAndNoChanges_ThenPackagesLastVersionOfToolkit()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var result1 = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+
+            var result2 = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+
+            result1.Toolkit.Version.Should().Be("0.1.0");
+            result2.Toolkit.Version.Should().Be("0.1.0");
+            this.patternStore.Verify(ps => ps.Save(It.Is<PatternDefinition>(pat => pat.ToolkitVersion.Current == "0.1.0")));
+            this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "0.1.0")), Times.Exactly(2));
+        }
+
+        [Fact]
+        public void WhenPackAndExportWithAnyVersionAndChangesToCodeTemplates_ThenPackagesNextVersionOfToolkit()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            pattern.AddCodeTemplate(new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1"));
+            this.patternStore.Setup(ps => ps.GetCurrent())
+                .Returns(pattern);
+            var fileContents = new byte[] { 0x01 };
+            this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
+                .Returns(new CodeTemplateContent { Content = fileContents, LastModifiedUtc = DateTime.UtcNow });
+            var result1 = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+
+            var result2 = this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+
+            result1.Toolkit.Version.Should().Be("0.1.0");
+            result2.Toolkit.Version.Should().Be("0.1.0");
+            this.patternStore.Verify(ps => ps.Save(It.Is<PatternDefinition>(pat => pat.ToolkitVersion.Current == "0.1.0")));
+            this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "0.1.0")), Times.Exactly(2));
+        }
+
+        [Fact]
+        public void WhenPackAndExportAndVersionInstructionIsAVersion_ThenPackagesVersionOfToolkit()
         {
             var pattern = new PatternDefinition("apatternname");
             pattern.UpdateToolkitVersion(new VersionInstruction("1.0.0"));
 
-            var result = this.packager.Pack(pattern, new VersionInstruction("2.1.0"));
+            var result = this.packager.PackAndExport(pattern, new VersionInstruction("2.1.0"));
 
             result.Toolkit.Version.Should().Be("2.1.0");
+            this.patternStore.Verify(ps => ps.Save(It.Is<PatternDefinition>(pat => pat.ToolkitVersion.Current == "2.1.0")));
+            this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "2.1.0")));
         }
 
         [Fact]
-        public void WhenPackAndCodeTemplates_ThenReturnsPackage()
+        public void WhenPackAndExportAndCodeTemplates_ThenReturnsPackage()
         {
             var pattern = new PatternDefinition("apatternname");
             pattern.AddCodeTemplate(new CodeTemplate("acodetemplatename1", "afullpath1", "anextension1"));
@@ -62,9 +111,9 @@ namespace CLI.UnitTests.Infrastructure
             this.patternStore.Setup(ps => ps.GetCurrent())
                 .Returns(pattern);
             this.patternStore.Setup(ps => ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
-                .Returns(fileContents);
+                .Returns(new CodeTemplateContent { Content = fileContents });
 
-            var result = this.packager.Pack(pattern, new VersionInstruction());
+            var result = this.packager.PackAndExport(pattern, new VersionInstruction());
 
             result.Toolkit.CodeTemplateFiles.Should().ContainSingle(ctf =>
                 ctf.Id == pattern.CodeTemplates.Single().Id && ctf.Contents == fileContents);
@@ -78,19 +127,20 @@ namespace CLI.UnitTests.Infrastructure
             )));
             this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.CodeTemplates.Single()));
             this.patternStore.Verify(ps => ps.DownloadCodeTemplate(pattern, pattern.Elements.Single().CodeTemplates.Single()));
+            this.patternStore.Verify(ps => ps.Save(It.Is<PatternDefinition>(pat => pat.ToolkitVersion.Current == "0.1.0")));
         }
 
         [Fact]
-        public void WhenPack_ThenReturnsPackage()
+        public void WhenPackAndExport_ThenReturnsPackage()
         {
             var pattern = new PatternDefinition("apatternname");
 
-            var result = this.packager.Pack(pattern, new VersionInstruction());
+            var result = this.packager.PackAndExport(pattern, new VersionInstruction());
 
             result.Toolkit.Id.Should().NotBeNull();
             result.Toolkit.Version.Should().Be("0.1.0");
             result.Toolkit.PatternName.Should().Be("apatternname");
-            result.BuiltLocation.Should().Be("alocation");
+            result.ExportedLocation.Should().Be("alocation");
             this.toolkitStore.Verify(repo => repo.Export(It.Is<ToolkitDefinition>(toolkit =>
                 toolkit.Version == "0.1.0"
                 && toolkit.Pattern == pattern

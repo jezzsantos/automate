@@ -73,4 +73,11 @@ namespace Automate.CLI.Domain
 
         public string OriginalFileExtension { get; set; }
     }
+
+    internal class CodeTemplateContent
+    {
+        public byte[] Content { get; set; }
+
+        public DateTime LastModifiedUtc { get; set; }
+    }
 }

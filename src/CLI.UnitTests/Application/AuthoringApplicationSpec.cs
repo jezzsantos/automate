@@ -722,7 +722,7 @@ namespace CLI.UnitTests.Application
         public void WhenBuildToolkitAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.PackageToolkit(null, false))
+                .Invoking(x => x.BuildAndExportToolkit(null, false))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -731,15 +731,15 @@ namespace CLI.UnitTests.Application
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
             this.application.CreateNewPattern("apatternname");
-            this.builder.Setup(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
+            this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
                 .Returns((PatternDefinition pattern, VersionInstruction version) =>
                     new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)), "abuildlocation", null));
 
-            var toolkit = this.application.PackageToolkit("2.0.0", false);
+            var toolkit = this.application.BuildAndExportToolkit("2.0.0", false);
 
-            this.builder.Verify(bdr => bdr.Pack(It.IsAny<PatternDefinition>(), It.Is<VersionInstruction>(vi =>
+            this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.Is<VersionInstruction>(vi =>
                 vi.Instruction == "2.0.0")));
-            toolkit.BuiltLocation.Should().Be("abuildlocation");
+            toolkit.ExportedLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");
             toolkit.Toolkit.Version.Should().Be("2.0.0");
         }

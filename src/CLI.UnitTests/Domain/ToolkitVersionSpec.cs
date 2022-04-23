@@ -78,6 +78,18 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
+            public void WhenUpdateVersionAndNoZeroVersionAndNoChanges_ThenReturnsCurrentVersion()
+            {
+                var result = this.version.UpdateVersion(new VersionInstruction("auto"));
+
+                result.Version.Should().Be("0.1.0");
+                result.Message.Should().BeNull();
+                this.version.Current.Should().Be(result.Version);
+                this.version.LastChanges.Should().Be(VersionChange.NoChange);
+                this.version.ChangeLog.Should().BeEmpty();
+            }
+
+            [Fact]
             public void WhenUpdateVersionWithOneDotNumber_ThenReturnsVersion()
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("1.1"));

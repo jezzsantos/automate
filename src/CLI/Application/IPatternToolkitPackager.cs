@@ -4,7 +4,7 @@ namespace Automate.CLI.Application
 {
     internal interface IPatternToolkitPackager
     {
-        ToolkitPackage Pack(PatternDefinition pattern, VersionInstruction instruction);
+        ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction);
 
         ToolkitDefinition UnPack(IFile installer);
     }

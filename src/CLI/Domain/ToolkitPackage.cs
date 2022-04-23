@@ -9,14 +9,14 @@ namespace Automate.CLI.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             buildLocation.GuardAgainstNullOrEmpty(nameof(buildLocation));
 
-            BuiltLocation = buildLocation;
+            ExportedLocation = buildLocation;
             Toolkit = toolkit;
             Message = message;
         }
 
         public ToolkitDefinition Toolkit { get; }
 
-        public string BuiltLocation { get; }
+        public string ExportedLocation { get; }
 
         public string Message { get; }
     }

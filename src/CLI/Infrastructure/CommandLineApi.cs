@@ -470,9 +470,9 @@ namespace Automate.CLI.Infrastructure
 
             internal static void HandleBuild(string asversion, bool force, bool outputStructured, IConsole console)
             {
-                var package = Authoring.PackageToolkit(asversion, force);
+                var package = Authoring.BuildAndExportToolkit(asversion, force);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
-                    package.Toolkit.PatternName, package.Toolkit.Version, package.BuiltLocation);
+                    package.Toolkit.PatternName, package.Toolkit.Version, package.ExportedLocation);
                 if (package.Message.HasValue())
                 {
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning, package.Message);

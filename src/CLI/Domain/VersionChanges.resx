@@ -75,4 +75,7 @@
     <data name="PatternElement_CliCommand_Delete" xml:space="preserve">
         <value>CliCommand (ID: {AutomationId}) was deleted from element {ParentId}</value>
     </data>
+    <data name="Pattern_CodeTemplates_Update" xml:space="preserve">
+        <value>CodeTemplate (ID: {TemplateId}) was modified on element {ParentId}</value>
+    </data>
 </root>

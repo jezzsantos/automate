@@ -564,7 +564,39 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitWithCurrentVersion_ThenBuildsToolkitOnDesktopAndWarns()
+        public void WhenBuildToolkitFirstTimeWithNoChanges_ThenBuildsToolkitOnDesktop()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0", location));
+        }
+
+        [Fact]
+        public void WhenBuildToolkitFirstTimeWithAChange_ThenBuildsToolkitOnDesktop()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0", location));
+        }
+
+        [Fact]
+        public void WhenBuildToolkitWithAChangeAndSameVersion_ThenBuildsToolkitOnDesktopAndWarns()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -589,6 +621,24 @@ namespace CLI.IntegrationTests
                                 VersionChanges.PatternElement_CodeTemplate_Add
                                     .FormatTemplate(codeTemplate.Id, pattern.Id)
                             }.ToBulletList())));
+        }
+
+        [Fact]
+        public void WhenBuildToolkitSecondTimeWithNoChanges_ThenBuildsToolkitOnDesktop()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0", location));
         }
 
         [Fact]

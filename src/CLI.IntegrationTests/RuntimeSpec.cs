@@ -75,10 +75,12 @@ namespace CLI.IntegrationTests
         public void WhenInstallToolkitWithSameToolkitNextVersionAgain_ThenInstallsToolkit()
         {
             ConfigureBuildPatternAndInstallToolkit();
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var locationV2 = Path.Combine(desktopFolder, "APattern_0.2.0.toolkit");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var locationV2 = Path.Combine(desktopFolder, "APattern_0.2.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
 
             this.setup.Should().DisplayNoError();
@@ -531,7 +533,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndToolkitUpgradedNoChanges_ThenDisplaysSuccess()
+        public void WhenUpgradeSolutionAndToolkitUpgradedWithChanges_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
@@ -539,6 +541,7 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             BuildPatternVersionAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
@@ -546,7 +549,8 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solutions.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.2.0", ""));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.2.0",
+                    $"* {MigrationChangeType.NonBreaking}: " + MigrationMessages.SolutionItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
         }
 
         [Fact]

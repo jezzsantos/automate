@@ -19,20 +19,14 @@ namespace Automate.CLI.Infrastructure
             this.toolkitStore = toolkitStore;
         }
 
-        public ToolkitPackage Pack(PatternDefinition pattern, VersionInstruction instruction)
+        public ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction)
         {
-            pattern.GuardAgainstNull(nameof(pattern));
-
-            var version = pattern.UpdateToolkitVersion(instruction);
-
+            var (version, toolkit) = Pack(pattern, instruction, (pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
             this.store.Save(pattern);
 
-            var toolkit = new ToolkitDefinition(pattern);
-            toolkit.Pack((pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
+            var exportedLocation = this.toolkitStore.Export(toolkit);
 
-            var location = this.toolkitStore.Export(toolkit);
-
-            return new ToolkitPackage(toolkit, location, version.Message);
+            return new ToolkitPackage(toolkit, exportedLocation, version.Message);
         }
 
         public ToolkitDefinition UnPack(IFile installer)
@@ -41,10 +35,22 @@ namespace Automate.CLI.Infrastructure
 
             var toolkit = UnpackToolkit(installer);
 
-            //TODO: we will need to worry about existing versions of this toolkit, and existing products created from them  
             this.toolkitStore.Import(toolkit);
 
             return toolkit;
+        }
+
+        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(PatternDefinition pattern, VersionInstruction instruction, Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
+        {
+            pattern.GuardAgainstNull(nameof(pattern));
+
+            pattern.RegisterCodeTemplatesChanges(getContent);
+            var version = pattern.UpdateToolkitVersion(instruction);
+
+            var toolkit = new ToolkitDefinition(pattern);
+            toolkit.Pack(getContent);
+
+            return (version, toolkit);
         }
 
         private static ToolkitDefinition UnpackToolkit(IFile installer)

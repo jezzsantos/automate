@@ -61,6 +61,15 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate (ID: {TemplateId}) was modified on element {ParentId}.
+        /// </summary>
+        internal static string Pattern_CodeTemplates_Update {
+            get {
+                return ResourceManager.GetString("Pattern_CodeTemplates_Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attribute (ID: {AttributeId}) was added to element {ParentId}.
         /// </summary>
         internal static string PatternElement_Attribute_Add {
