@@ -23,6 +23,6 @@ namespace Automate.CLI.Infrastructure
 
         string UploadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile source);
 
-        byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension);
+        CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension);
     }
 }

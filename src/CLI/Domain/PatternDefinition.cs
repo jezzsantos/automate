@@ -158,6 +158,22 @@ namespace Automate.CLI.Domain
             return visitor.VisitPatternExit(this);
         }
 
+        public void RegisterCodeTemplatesChanges(Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
+        {
+            GetAllCodeTemplates()
+                .ForEach(template =>
+                {
+                    var lastModified = template.Template.LastModifiedUtc;
+                    var lastChangedInStore = getTemplateContent(this, template.Template).LastModifiedUtc;
+
+                    if (!lastModified.IsNear(lastChangedInStore, TimeSpan.FromSeconds(1)))
+                    {
+                        template.Template.UpdateLastModified(lastChangedInStore);
+                        ToolkitVersion.RegisterChange(VersionChange.NonBreaking, VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
+                    }
+                });
+        }
+
         public ValidationResults Validate(ValidationContext context, object value)
         {
             return ValidationResults.None;

@@ -1,4 +1,6 @@
-﻿namespace Automate.CLI.Domain
+﻿using System;
+
+namespace Automate.CLI.Domain
 {
     internal interface IFile
     {
@@ -9,6 +11,8 @@
         void CopyTo(string destination);
 
         byte[] GetContents();
+
+        DateTime LastModifiedUtc { get; }
     }
 
     internal interface IFilePathResolver

@@ -87,9 +87,13 @@ namespace Automate.CLI.Infrastructure
             return InMemoryLocation;
         }
 
-        public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
         {
-            return this.inMemoryCodeTemplates[codeTemplateId];
+            return new CodeTemplateContent
+            {
+                Content = this.inMemoryCodeTemplates[codeTemplateId],
+                LastModifiedUtc = DateTime.UtcNow
+            };
         }
 
         public string SolutionLocation => InMemoryLocation;

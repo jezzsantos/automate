@@ -106,7 +106,7 @@ namespace Automate.CLI.Infrastructure
             return this.patternRepository.UploadPatternCodeTemplate(pattern, codeTemplateId, source);
         }
 
-        public byte[] DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)
+        public CodeTemplateContent DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)
         {
             return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplate.Id, codeTemplate.Metadata.OriginalFileExtension);
         }

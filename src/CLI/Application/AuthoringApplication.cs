@@ -297,7 +297,7 @@ namespace Automate.CLI.Application
             string GetTemplateContent()
             {
                 var byteContents = this.store.DownloadCodeTemplate(pattern, codeTemplate);
-                var contents = CodeTemplateFile.Encoding.GetString(byteContents);
+                var contents = CodeTemplateFile.Encoding.GetString(byteContents.Content);
                 return contents;
             }
 
@@ -350,11 +350,11 @@ namespace Automate.CLI.Application
             }
         }
 
-        public ToolkitPackage PackageToolkit(string versionInstruction, bool forceVersion)
+        public ToolkitPackage BuildAndExportToolkit(string versionInstruction, bool forceVersion)
         {
             var pattern = EnsureCurrentPatternExists();
 
-            return this.packager.Pack(pattern, new VersionInstruction(versionInstruction, forceVersion));
+            return this.packager.PackAndExport(pattern, new VersionInstruction(versionInstruction, forceVersion));
         }
 
         private IPatternElement ResolveTargetElement(PatternDefinition pattern, string parentExpression)

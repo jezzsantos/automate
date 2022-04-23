@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 
@@ -17,6 +18,8 @@ namespace Automate.CLI.Infrastructure
         public string FullPath { get; }
 
         public string Extension => Path.GetExtension(FullPath);
+
+        public DateTime LastModifiedUtc => File.GetLastWriteTimeUtc(FullPath);
 
         public void CopyTo(string destination)
         {

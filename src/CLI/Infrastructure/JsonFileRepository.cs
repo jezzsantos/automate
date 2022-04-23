@@ -113,10 +113,15 @@ namespace Automate.CLI.Infrastructure
             return uploadedFilePath;
         }
 
-        public byte[] DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
         {
             var path = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
-            return new SystemIoFile(path).GetContents();
+            var file = new SystemIoFile(path);
+            return new CodeTemplateContent
+            {
+                Content = file.GetContents(),
+                LastModifiedUtc = file.LastModifiedUtc
+            };
         }
 
         public void DestroyAll()

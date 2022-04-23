@@ -58,7 +58,7 @@ namespace Automate.CLI.Domain
             files.ForEach(AddCodeTemplateFile);
         }
 
-        public void Pack(Func<PatternDefinition, CodeTemplate, byte[]> getTemplateContent)
+        public void Pack(Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
         {
             var codeTemplates = Pattern.GetAllCodeTemplates();
             if (codeTemplates.HasNone())
@@ -71,7 +71,7 @@ namespace Automate.CLI.Domain
                     .Select(template =>
                     {
                         var contents = getTemplateContent(Pattern, template.Template);
-                        return new CodeTemplateFile(contents, template.Template.Id);
+                        return new CodeTemplateFile(contents.Content, template.Template.Id);
                     })
                     .ToList());
         }
