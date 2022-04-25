@@ -50,6 +50,7 @@ namespace CLI.UnitTests.Application
             this.application.CurrentSolutionId.Should().BeNull();
         }
 
+        
         [Fact]
         public void WhenInstallToolkitAndFileNotExist_ThenThrows()
         {
@@ -112,6 +113,28 @@ namespace CLI.UnitTests.Application
             result.Should().Contain(solution);
         }
 
+        [Fact]
+        public void WhenGetCurrentToolkitAndNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.GetCurrentToolkit())
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+        }
+
+        [Fact]
+        public void WhenGetCurrentToolkitAndToolkitUpgraded_ThenThrows()
+        {
+            ResetToolkit();
+            var solution = this.application.CreateSolution("apatternname", null);
+            this.toolkitStore.Import(new ToolkitDefinition(this.pattern, new Version("0.2.0")));
+
+            this.application
+                .Invoking(x => x.GetCurrentToolkit())
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, "0.0.0", "0.2.0"));
+        }
+        
         [Fact]
         public void WhenSwitchCurrentSolutionAndSolutionNotExists_ThenThrows()
         {
@@ -232,7 +255,7 @@ namespace CLI.UnitTests.Application
         {
             var attribute = new Attribute("anattributename", null);
             this.pattern.AddAttribute(attribute);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
 
             var result = this.application.ConfigureSolution(null, null, null,
@@ -321,7 +344,7 @@ namespace CLI.UnitTests.Application
             var element = new Element("anelementname");
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"];
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -341,7 +364,7 @@ namespace CLI.UnitTests.Application
             var element = new Element("anelementname");
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             var solutionItem = solution.Model.Properties["anelementname"].Materialise();
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -374,7 +397,7 @@ namespace CLI.UnitTests.Application
             element1.AddElement(element2);
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -412,7 +435,7 @@ namespace CLI.UnitTests.Application
             element1.AddElement(element2);
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             solution.Model.Properties["anelementname1"].Materialise();
             solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -468,7 +491,7 @@ namespace CLI.UnitTests.Application
             var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
             this.pattern.AddElement(element1);
             this.pattern.AddElement(element2);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model.Properties["anelementname1"]);
@@ -493,7 +516,7 @@ namespace CLI.UnitTests.Application
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
             this.pattern.AddElement(collection2);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model);
@@ -538,7 +561,7 @@ namespace CLI.UnitTests.Application
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element.AddAutomation(automation);
             this.pattern.AddElement(element);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
 
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
@@ -555,7 +578,7 @@ namespace CLI.UnitTests.Application
         {
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
-            UpdateToolkit();
+            ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
             this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
                 .Returns(solution.Model);
@@ -589,7 +612,7 @@ namespace CLI.UnitTests.Application
             result.Solution.Id.Should().Be(this.application.CurrentSolutionId);
         }
 
-        private void UpdateToolkit()
+        private void ResetToolkit()
         {
             this.toolkitStore.DestroyAll();
             this.toolkitStore.Import(new ToolkitDefinition(this.pattern));

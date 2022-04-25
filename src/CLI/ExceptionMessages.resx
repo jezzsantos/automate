@@ -151,6 +151,10 @@
     <data name="RuntimeApplication_NoCurrentSolution" xml:space="preserve">
         <value>Solution does not yet exist</value>
     </data>
+    <data name="RuntimeApplication_CurrentSolutionUpgraded" xml:space="preserve">
+        <value>The installed toolkit for this solution '{0}' (ID: '{1}') has been upgraded from version: '{2}' to version: '{3}'. Please upgrade this solution with command:
+`automate upgrade solution`</value>
+    </data>
     <data name="RuntimeApplication_SolutionNotFound" xml:space="preserve">
         <value>No solution with ID: '{0}' has been created.</value>
     </data>

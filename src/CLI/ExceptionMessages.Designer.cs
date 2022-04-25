@@ -493,6 +493,16 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The installed toolkit for this solution &apos;{0}&apos; (ID: &apos;{1}&apos;) has been upgraded from version: &apos;{2}&apos; to version: &apos;{3}&apos;. Please upgrade this solution with command:
+        ///`automate upgrade solution`.
+        /// </summary>
+        internal static string RuntimeApplication_CurrentSolutionUpgraded {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_CurrentSolutionUpgraded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
         /// </summary>
         internal static string RuntimeApplication_ItemExpressionNotFound {

@@ -191,7 +191,7 @@ namespace Automate.CLI.Application
 
         public SolutionUpgradeResult UpgradeSolution(bool force)
         {
-            var solution = EnsureCurrentSolutionExists();
+            var solution = EnsureCurrentSolutionExists(true);
 
             var latestToolkit = this.toolkitStore.FindById(solution.Toolkit.Id);
 
@@ -280,12 +280,25 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        private SolutionDefinition EnsureCurrentSolutionExists()
+        private SolutionDefinition EnsureCurrentSolutionExists(bool skipVersionCheck = false)
         {
             var solution = this.solutionStore.GetCurrent();
             if (solution.NotExists())
             {
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+            }
+
+            if (skipVersionCheck)
+            {
+                return solution;
+            }
+
+            var currentVersion = solution.Toolkit.Version;
+            var toolkit = this.toolkitStore.FindById(solution.Toolkit.Id);
+            var installedVersion = toolkit.Version;
+            if (currentVersion != installedVersion)
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, currentVersion, installedVersion));
             }
 
             return solution;

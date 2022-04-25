@@ -51,7 +51,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkit_ThenInstallsToolkit()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
 
             this.setup.Should()
                 .DisplayMessage(
@@ -61,7 +61,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkitWithSameToolkitSameVersionAgain_ThenInstallsToolkit()
         {
-            var location = ConfigureBuildPatternAndInstallToolkit();
+            var location = ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
@@ -74,7 +74,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkitWithSameToolkitNextVersionAgain_ThenInstallsToolkit()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
@@ -102,7 +102,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListInstalledToolkitsAndOne_ThenDisplaysOne()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} toolkits");
 
@@ -118,7 +118,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenCreateSolution_ThenCreatesSolution()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
@@ -134,7 +134,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenSwitchSolution_ThenSwitchesSolution()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
@@ -152,7 +152,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListInstalledSolutionsAndNone_ThenDisplaysNone()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
 
@@ -165,7 +165,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenListCreatedSolutionsAndOne_ThenDisplaysOne()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
@@ -179,6 +179,21 @@ namespace CLI.IntegrationTests
                         $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}"));
         }
 
+        [Fact]
+        public void WhenConfigureSolutionAndToolkitUpgraded_ThenDisplaysError()
+        {
+            CreateSolutionFromBuiltToolkit();
+
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
+            BuildReversionAndInstallToolkit();
+
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue2\"");
+
+            var solution = this.setup.Solutions.Single();
+            this.setup.Should().DisplayError(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, "0.1.0", "0.2.0"));
+        }
+        
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnPattern_ThenDisplaysSuccess()
         {
@@ -542,7 +557,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
-            BuildPatternVersionAndInstallToolkit();
+            BuildReversionAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
 
@@ -563,7 +578,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
-            BuildPatternVersionAndInstallToolkit();
+            BuildReversionAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
 
@@ -584,7 +599,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
-            BuildPatternVersionAndInstallToolkit();
+            BuildReversionAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution --force");
 
@@ -607,7 +622,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate3");
-            BuildPatternVersionAndInstallToolkit();
+            BuildReversionAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
 
@@ -652,13 +667,13 @@ namespace CLI.IntegrationTests
 
         private void CreateSolutionFromBuiltToolkit()
         {
-            ConfigureBuildPatternAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             this.setup.Should().DisplayNoError();
         }
 
-        private string ConfigureBuildPatternAndInstallToolkit()
+        private string ConfigureBuildAndInstallToolkit()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -699,10 +714,10 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
 
-            return BuildPatternVersionAndInstallToolkit();
+            return BuildReversionAndInstallToolkit();
         }
 
-        private string BuildPatternVersionAndInstallToolkit(string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
+        private string BuildReversionAndInstallToolkit(string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Patterns.Single().ToolkitVersion.Current;
