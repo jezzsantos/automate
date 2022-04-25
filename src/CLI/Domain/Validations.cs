@@ -8,9 +8,11 @@ namespace Automate.CLI.Domain
 {
     internal static class Validations
     {
+        private const string NameIdentifierExpression = @"[a-zA-Z0-9_\.]+";
+
         public static bool IsNameIdentifier(string value)
         {
-            return Regex.IsMatch(value, @"^[a-zA-Z0-9\.]+$");
+            return Regex.IsMatch(value, $@"^{NameIdentifierExpression}$");
         }
 
         public static bool IsIdentifiers(List<string> values)
@@ -35,12 +37,36 @@ namespace Automate.CLI.Domain
 
         public static bool IsRuntimeFilePath(string path)
         {
-            return Regex.IsMatch(path, @"^[~]{0,1}[\/\\\._ A-Za-z0-9\(\)\{\}]+$");
+            if (path.NotExists())
+            {
+                return false;
+            }
+
+            var remainingPath = RemoveSolutionRoot();
+            remainingPath = ReplaceTemplatingExpressions();
+            if (remainingPath.NotExists())
+            {
+                return true;
+            }
+
+            return Uri.IsWellFormedUriString($"{Uri.UriSchemeFile}{remainingPath}", UriKind.RelativeOrAbsolute);
+
+            string RemoveSolutionRoot()
+            {
+                return path.StartsWith("~")
+                    ? path.Substring(1)
+                    : path;
+            }
+
+            string ReplaceTemplatingExpressions()
+            {
+                return Regex.Replace(remainingPath, $@"{{{{{NameIdentifierExpression}}}}}", "anexpression");
+            }
         }
 
         public static bool IsPropertyAssignment(string name, string value)
         {
-            const string propertyNameExpression = @"[\w]+";
+            var propertyNameExpression = $@"{NameIdentifierExpression}";
             const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
             return Regex.IsMatch(name, propertyNameExpression) && Regex.IsMatch(value, propertyValueExpression);
         }
