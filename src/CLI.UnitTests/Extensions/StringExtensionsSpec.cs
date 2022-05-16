@@ -72,5 +72,45 @@ namespace CLI.UnitTests.Extensions
                 .Be(
                     "{\"message\":\"amessage{atoken1}{atoken2}{atoken3}\",\"values\":{\"atoken1\":\"anarg1\",\"atoken2\":\"anarg2\"}}");
         }
+
+        [Fact]
+        public void WhenToCamelCaseAndNull_ThenReturnsNull()
+        {
+            var result = ((string)null).ToCamelCase();
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenToCamelCaseAndLowercase_ThenReturnsCamelCased()
+        {
+            var result = "avalue".ToCamelCase();
+
+            result.Should().Be("avalue");
+        }
+
+        [Fact]
+        public void WhenToCamelCaseAndCapitalized_ThenReturnsCamelCased()
+        {
+            var result = "Avalue".ToCamelCase();
+
+            result.Should().Be("avalue");
+        }
+
+        [Fact]
+        public void WhenToCamelCaseAndPascalCased_ThenReturnsCamelCased()
+        {
+            var result = "OneTwoThree".ToCamelCase();
+
+            result.Should().Be("oneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToCamelCaseAndSentence_ThenReturnsCamelCased()
+        {
+            var result = "One Two Three".ToCamelCase();
+
+            result.Should().Be("one Two Three");
+        }
     }
 }

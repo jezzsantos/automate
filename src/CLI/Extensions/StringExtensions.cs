@@ -130,7 +130,7 @@ namespace Automate.CLI.Extensions
             return builder.ToString();
         }
 
-        private static string ToCamelCase(this string value)
+        public static string ToCamelCase(this string value)
         {
             return JsonNamingPolicy.CamelCase.ConvertName(value);
         }
