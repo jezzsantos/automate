@@ -7,6 +7,8 @@ namespace Automate.CLI.Infrastructure
 {
     internal static class TextTemplatingExtensions
     {
+        private const string FunctionQualifyingNamespace = "automate";
+
         public static string Transform(this object source, string description, string textTemplate,
             bool modelPrefix = false)
         {
@@ -30,7 +32,7 @@ namespace Automate.CLI.Infrastructure
                 customFunctions.Import(typeof(CustomScribanStringFunctions));
 
                 var stringFunctions = new ScriptObject();
-                stringFunctions.SetValue("string", customFunctions, true);
+                stringFunctions.SetValue(FunctionQualifyingNamespace, customFunctions, true);
 
                 var sourceData = new ScriptObject();
                 sourceData.Import(model);

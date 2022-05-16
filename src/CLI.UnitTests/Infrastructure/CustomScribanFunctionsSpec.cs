@@ -16,7 +16,7 @@ namespace CLI.UnitTests.Infrastructure
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | camelcase}}\\n{{aproperty | string.camelcase}}");
+                model.Transform("adescription", "{{aproperty | camelcase}}\\n{{aproperty | automate.camelcase}}");
 
             result.Should().Be("oneTwoThree\\noneTwoThree");
         }
