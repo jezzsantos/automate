@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Automate.CLI.Extensions;
-using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
@@ -59,7 +58,7 @@ namespace Automate.CLI.Domain
 
             return properties;
         }
-        
+
         public static Automation Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
             return new Automation(properties, factory);

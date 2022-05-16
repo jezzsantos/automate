@@ -130,7 +130,8 @@ namespace Automate.CLI.Extensions
             }
         }
 
-        public static IEnumerable<T> Remainder<T, TResult>(this IEnumerable<T> source, IEnumerable<T> target, Expression<Func<T, TResult>> comparer)
+        public static IEnumerable<T> Remainder<T, TResult>(this IEnumerable<T> source, IEnumerable<T> target,
+            Expression<Func<T, TResult>> comparer)
         {
             var predicate = comparer.Compile();
             var difference = source.Safe()

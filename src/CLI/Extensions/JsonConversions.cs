@@ -2,32 +2,18 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ServiceStack.Text;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Automate.CLI.Extensions
 {
     internal static class JsonConversions
     {
-        public static string ToJson<T>(this T instance) where T : new()
+        public static string ToJson<T>(this T instance, bool indent = true)
         {
-            using (var scope = JsConfig.BeginScope())
+            return JsonSerializer.Serialize(instance, new JsonSerializerOptions
             {
-                scope.AssumeUtc = true;
-                scope.AlwaysUseUtc = true;
-                scope.Indent = true;
-                return ServiceStack.StringExtensions.ToJson(instance);
-            }
-        }
-
-        public static T FromJson<T>(this string json) where T : new()
-        {
-            using (var scope = JsConfig.BeginScope())
-            {
-                scope.AssumeUtc = true;
-                scope.AlwaysUseUtc = true;
-                return ServiceStack.StringExtensions.FromJson<T>(json);
-            }
+                WriteIndented = indent,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
         }
 
         public static Dictionary<string, object> FromJson(this string value)
@@ -40,7 +26,8 @@ namespace Automate.CLI.Extensions
 
     internal class DictionaryStringObjectJsonConverter : JsonConverter<Dictionary<string, object>>
     {
-        public override Dictionary<string, object> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override Dictionary<string, object> Read(ref Utf8JsonReader reader, Type typeToConvert,
+            JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -75,7 +62,8 @@ namespace Automate.CLI.Extensions
             return dictionary;
         }
 
-        public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value,
+            JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, value, options);
         }

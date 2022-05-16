@@ -2,7 +2,6 @@
 using System.Text;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
-using ServiceStack;
 using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
@@ -131,7 +130,9 @@ namespace Automate.CLI.Infrastructure
                     }
                     else if (automation.Type == AutomationType.CliCommand)
                     {
-                        PrintInline($" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})", true);
+                        PrintInline(
+                            $" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})",
+                            true);
                     }
                     else if (automation.Type == AutomationType.CommandLaunchPoint)
                     {
@@ -158,7 +159,8 @@ namespace Automate.CLI.Infrastructure
             {
                 if (this.isDetailed)
                 {
-                    PrintIndented($"- {codeTemplate.Name} [{codeTemplate.Id}] (file: {codeTemplate.Metadata.OriginalFilePath}, ext: {codeTemplate.Metadata.OriginalFileExtension})");
+                    PrintIndented(
+                        $"- {codeTemplate.Name} [{codeTemplate.Id}] (file: {codeTemplate.Metadata.OriginalFilePath}, ext: {codeTemplate.Metadata.OriginalFileExtension})");
                 }
             });
 

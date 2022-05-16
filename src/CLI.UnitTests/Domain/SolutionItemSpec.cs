@@ -8,7 +8,6 @@ using Automate.CLI.Infrastructure;
 using FluentAssertions;
 using Xunit;
 using Attribute = Automate.CLI.Domain.Attribute;
-using StringExtensions = ServiceStack.StringExtensions;
 
 namespace CLI.UnitTests.Domain
 {
@@ -505,7 +504,8 @@ namespace CLI.UnitTests.Domain
 
             var result = solutionItem.Validate();
 
-            result.Results.Single().Context.Path.Should().Be($"{{apatternname.acollectionname.{solutionItem.Items.Single().Id}.anelementname}}");
+            result.Results.Single().Context.Path.Should()
+                .Be($"{{apatternname.acollectionname.{solutionItem.Items.Single().Id}.anelementname}}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
@@ -549,9 +549,12 @@ namespace CLI.UnitTests.Domain
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
             var attribute3 = new Attribute("anattributename3", "int", false, "25");
-            var elementLevel1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
-            var elementLevel2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
-            var collectionLevel1 = new Element("acollectionname2", ElementCardinality.OneOrMany, "adisplayname1", "adescription1");
+            var elementLevel1 =
+                new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var elementLevel2 =
+                new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
+            var collectionLevel1 = new Element("acollectionname2", ElementCardinality.OneOrMany, "adisplayname1",
+                "adescription1");
             elementLevel2.AddAttribute(attribute2);
             collectionLevel1.AddAttribute(attribute3);
             elementLevel1.AddElement(elementLevel2);
@@ -564,9 +567,9 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             solutionItem.Properties["acollectionname2"].MaterialiseCollectionItem();
 
-            var result = StringExtensions.ToJson(solutionItem.GetConfiguration(false));
+            var result = solutionItem.GetConfiguration(false).ToJson();
 
-            result.Should().Be(StringExtensions.ToJson(new Dictionary<string, object>
+            result.Should().Be(new Dictionary<string, object>
             {
                 { "id", solutionItem.Id },
                 { "anattributename1", "adefaultvalue1" },
@@ -599,7 +602,7 @@ namespace CLI.UnitTests.Domain
                         }
                     }
                 }
-            }));
+            }.ToJson());
         }
 
         [Fact]
@@ -608,7 +611,8 @@ namespace CLI.UnitTests.Domain
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
 
             solutionItem
-                .Invoking(x => x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(this.pattern)), "acommandname"))
+                .Invoking(x =>
+                    x.ExecuteCommand(new SolutionDefinition(new ToolkitDefinition(this.pattern)), "acommandname"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.SolutionItem_UnknownAutomation.Format("acommandname"));
         }
@@ -616,7 +620,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteCommand_ThenReturnsResult()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             var solution = new SolutionDefinition(new ToolkitDefinition(this.pattern));
@@ -672,7 +677,9 @@ namespace CLI.UnitTests.Domain
                     { "anunknownattribute", "avalue" }
                 }))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyNotExists.Format("apatternname", "anunknownattribute"));
+                .WithMessage(
+                    ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyNotExists.Format("apatternname",
+                        "anunknownattribute"));
         }
 
         [Fact]
@@ -687,7 +694,8 @@ namespace CLI.UnitTests.Domain
                     { "anattributename", "awrongvalue" }
                 }))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf.Format("apatternname", "anattributename", new List<string> { "avalue" }.Join(";"), "awrongvalue"));
+                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf.Format(
+                    "apatternname", "anattributename", new List<string> { "avalue" }.Join(";"), "awrongvalue"));
         }
 
         [Fact]
@@ -702,7 +710,9 @@ namespace CLI.UnitTests.Domain
                     { "anattributename", "astring" }
                 }))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible.Format("apatternname", "anattributename", "int", "astring"));
+                .WithMessage(
+                    ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible.Format(
+                        "apatternname", "anattributename", "int", "astring"));
         }
 
         [Fact]
@@ -862,9 +872,12 @@ namespace CLI.UnitTests.Domain
 
             solutionItem.Properties.ContainsKey("acollectionname").Should().BeTrue();
             solutionItem.Properties["acollectionname"].Items.Count.Should().Be(3);
-            solutionItem.Properties["acollectionname"].Items[0].Properties.ContainsKey("anelementname").Should().BeFalse();
-            solutionItem.Properties["acollectionname"].Items[1].Properties.ContainsKey("anelementname").Should().BeFalse();
-            solutionItem.Properties["acollectionname"].Items[2].Properties.ContainsKey("anelementname").Should().BeFalse();
+            solutionItem.Properties["acollectionname"].Items[0].Properties.ContainsKey("anelementname").Should()
+                .BeFalse();
+            solutionItem.Properties["acollectionname"].Items[1].Properties.ContainsKey("anelementname").Should()
+                .BeFalse();
+            solutionItem.Properties["acollectionname"].Items[2].Properties.ContainsKey("anelementname").Should()
+                .BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1046,7 +1059,8 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
+        public void
+            WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
         {
             this.pattern.AddAttribute("anattributename", "int");
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
@@ -1070,7 +1084,8 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasIncorrectDefaultValue_ThenResetsValue()
+        public void
+            WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasIncorrectDefaultValue_ThenResetsValue()
         {
             this.pattern.AddAttribute("anattributename", "int");
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
@@ -1102,7 +1117,8 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anattributename"].Value = "achoice2";
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            latestPattern.UpdateAttribute("anattributename",
+                choices: new List<string> { "achoice1", "achoice2", "achoice3" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -1125,7 +1141,8 @@ namespace CLI.UnitTests.Domain
             solutionItem.Properties["anattributename"].Value = "notachoice";
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            latestPattern.UpdateAttribute("anattributename",
+                choices: new List<string> { "achoice1", "achoice2", "achoice3" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -1143,7 +1160,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateAttributeAndChoicesChangedToScalar_ThenLeavesValue()
         {
-            this.pattern.AddAttribute("anattributename", choices: new List<string> { "achoice1", "achoice2", "achoice3" });
+            this.pattern.AddAttribute("anattributename",
+                choices: new List<string> { "achoice1", "achoice2", "achoice3" });
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anattributename"].Value = "achoice2";
 
@@ -1165,12 +1183,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateAttributeAndChoicesChangedAndNoValue_ThenLeavesValue()
         {
-            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice1", "achoice1" });
+            this.pattern.AddAttribute("anattributename", "string", false, null,
+                new List<string> { "achoice1", "achoice1", "achoice1" });
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anattributename"].Value = null;
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            latestPattern.UpdateAttribute("anattributename",
+                choices: new List<string> { "achoice9", "achoice8", "achoice7" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -1184,12 +1204,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateAttributeAndChoicesChangedAndHasIncorrectValueAndNoDefaultValue_ThenResetsValue()
         {
-            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            this.pattern.AddAttribute("anattributename", "string", false, null,
+                new List<string> { "achoice1", "achoice2", "achoice3" });
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anattributename"].Value = "achoice1";
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            latestPattern.UpdateAttribute("anattributename",
+                choices: new List<string> { "achoice9", "achoice8", "achoice7" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -1206,12 +1228,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateAttributeAndChoicesChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
         {
-            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            this.pattern.AddAttribute("anattributename", "string", false, null,
+                new List<string> { "achoice1", "achoice2", "achoice3" });
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anattributename"].Value = "achoice1";
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", defaultValue: "achoice9", choices: new List<string> { "achoice9", "achoice8", "achoice7" });
+            latestPattern.UpdateAttribute("anattributename", defaultValue: "achoice9",
+                choices: new List<string> { "achoice9", "achoice8", "achoice7" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 
@@ -1228,12 +1252,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenMigrateAttributeAndChoicesChangedAndHasCorrectValue_ThenLeavesValue()
         {
-            this.pattern.AddAttribute("anattributename", "string", false, null, new List<string> { "achoice1", "achoice2", "achoice3" });
+            this.pattern.AddAttribute("anattributename", "string", false, null,
+                new List<string> { "achoice1", "achoice2", "achoice3" });
             var solutionItem = new SolutionItem(this.toolkit, this.pattern);
             solutionItem.Properties["anattributename"].Value = "achoice3";
 
             var latestPattern = ClonePattern(this.pattern);
-            latestPattern.UpdateAttribute("anattributename", choices: new List<string> { "achoice3", "achoice4", "achoice5" });
+            latestPattern.UpdateAttribute("anattributename",
+                choices: new List<string> { "achoice3", "achoice4", "achoice5" });
             var latestToolkit = new ToolkitDefinition(latestPattern);
             var result = new SolutionUpgradeResult(new SolutionDefinition(latestToolkit), "0", "1");
 

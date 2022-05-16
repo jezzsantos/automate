@@ -1,12 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Automate.CLI.Extensions
 {
     internal static class StringExtensions
     {
+        public static int ToInt(this string text)
+        {
+            return text == null
+                ? default
+                : int.Parse(text);
+        }
+
+        public static int ToInt(this string text, int defaultValue)
+        {
+            return int.TryParse(text, out var ret)
+                ? ret
+                : defaultValue;
+        }
+
+        public static TEnum ToEnumOrDefault<TEnum>(this string value, TEnum defaultValue)
+        {
+            if (value.HasNoValue())
+            {
+                return defaultValue;
+            }
+
+            return (TEnum)Enum.Parse(typeof(TEnum), value, true);
+        }
+
         public static string WithoutTrailingSlash(this string path)
         {
             return path.Trim('/');
@@ -80,18 +106,46 @@ namespace Automate.CLI.Extensions
 
         public static string ToSnakeCase(this string value)
         {
-            return ServiceStack.StringExtensions.ToLowercaseUnderscore(value);
+            if (value.HasNoValue())
+            {
+                return value;
+            }
+
+            value = value.ToCamelCase();
+
+            var builder = new StringBuilder();
+            foreach (var character in value)
+            {
+                if (char.IsDigit(character)
+                    || (char.IsLetter(character) && char.IsLower(character)) || character == '_')
+                {
+                    builder.Append(character);
+                }
+                else
+                {
+                    builder.Append('_');
+                    builder.Append(char.ToLower(character));
+                }
+            }
+            return builder.ToString();
+        }
+
+        private static string ToCamelCase(this string value)
+        {
+            return JsonNamingPolicy.CamelCase.ConvertName(value);
         }
 
         private static string FormatStructuredMessage(string messageTemplate, params object[] args)
         {
             messageTemplate.GuardAgainstNullOrEmpty(nameof(messageTemplate));
 
-            return ServiceStack.StringExtensions.ToJson(new
+            var instance = new
             {
                 message = messageTemplate,
                 values = GetMessageTemplateTokens(messageTemplate, args)
-            });
+            };
+
+            return instance.ToJson(false);
         }
 
         private static string FormatMessageTemplate(string messageTemplate, params object[] args)
@@ -133,7 +187,9 @@ namespace Automate.CLI.Extensions
                     return args.Length >= paramIndex
                         ? args[paramIndex - 1]?.ToString()
                         : null;
-                });
+                })
+                .Where(pair => pair.Value.HasValue())
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return replacements;
         }

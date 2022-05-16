@@ -1,10 +1,11 @@
-﻿using ServiceStack;
+﻿using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
     internal class Element : PatternElement, IValidateable, IPersistable
     {
-        public Element(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null, string description = null) : base(name)
+        public Element(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null,
+            string description = null) : base(name)
         {
             DisplayName = displayName;
             Description = description;
@@ -17,7 +18,8 @@ namespace Automate.CLI.Domain
             DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
             Description = properties.Rehydrate<string>(factory, nameof(Description));
             IsCollection = properties.Rehydrate<bool>(factory, nameof(IsCollection));
-            Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality)).ToEnumOrDefault(ElementCardinality.One);
+            Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality))
+                .ToEnumOrDefault(ElementCardinality.One);
         }
 
         public ElementCardinality Cardinality { get; private set; }

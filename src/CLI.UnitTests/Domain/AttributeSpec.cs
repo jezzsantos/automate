@@ -4,10 +4,8 @@ using System.Linq;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using FluentAssertions;
-using ServiceStack;
 using Xunit;
 using Attribute = Automate.CLI.Domain.Attribute;
-using CollectionExtensions = Automate.CLI.Extensions.CollectionExtensions;
 
 namespace CLI.UnitTests.Domain
 {
@@ -28,7 +26,7 @@ namespace CLI.UnitTests.Domain
             FluentActions.Invoking(() => new Attribute("aname", "aninvalidtype", true))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(ValidationMessages.Attribute_UnsupportedDataType.Format("aninvalidtype",
-                    CollectionExtensions.Join(Attribute.SupportedDataTypes, ", ") + "*"));
+                    Attribute.SupportedDataTypes.Join(", ") + "*"));
         }
 
         [Fact]
@@ -68,7 +66,7 @@ namespace CLI.UnitTests.Domain
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ValidationMessages.Attribute_DefaultValueIsNotAChoice.Format("notachoice",
-                        ListExtensions.Join(new[] { "achoice1", "achoice2" }, "; ")) +
+                        new[] { "achoice1", "achoice2" }.Join("; ")) +
                     "*");
         }
 

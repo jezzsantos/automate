@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
-using CollectionExtensions = ServiceStack.CollectionExtensions;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -23,7 +22,7 @@ namespace Automate.CLI.Infrastructure
                     ExceptionMessages.SolutionPathResolver_InvalidExpression.Format(expression));
             }
 
-            var expressionParts = CollectionExtensions.ToArray(expressionPath.SafeSplit("."));
+            var expressionParts = expressionPath.SafeSplit(".").ToArray();
             if (expressionParts.HasNone())
             {
                 throw new AutomateException(

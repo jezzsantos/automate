@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Automate.CLI.Extensions;
-using ServiceStack;
 
 namespace Automate.CLI.Domain
 {
@@ -29,10 +28,13 @@ namespace Automate.CLI.Domain
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
             LastModifiedUtc = properties.Rehydrate<DateTime>(factory, nameof(LastModifiedUtc));
-            Metadata = properties.Rehydrate<Dictionary<string, object>>(factory, nameof(Metadata)).FromObjectDictionary<CodeTemplateMetadata>();
+            Metadata = properties.Rehydrate<Dictionary<string, object>>(factory, nameof(Metadata))
+                .FromObjectDictionary<CodeTemplateMetadata>();
         }
 
         public CodeTemplateMetadata Metadata { get; }
+
+        public DateTime LastModifiedUtc { get; private set; }
 
         public PersistableProperties Dehydrate()
         {
@@ -50,20 +52,18 @@ namespace Automate.CLI.Domain
             return new CodeTemplate(properties, factory);
         }
 
+        public void UpdateLastModified(DateTime modifiedUtc)
+        {
+            LastModifiedUtc = modifiedUtc;
+        }
+
         public string Id { get; }
 
         public string Name { get; }
 
-        public DateTime LastModifiedUtc { get; private set; }
-
         public bool Accept(IPatternVisitor visitor)
         {
             return visitor.VisitCodeTemplate(this);
-        }
-
-        public void UpdateLastModified(DateTime modifiedUtc)
-        {
-            LastModifiedUtc = modifiedUtc;
         }
     }
 

@@ -19,6 +19,7 @@ namespace Automate.CLI.Infrastructure
             return JsonSerializer.Serialize(dictionary, new JsonSerializerOptions
             {
                 WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 Converters = { new ListConverter(), new DictionaryConverter() }
             });
         }
