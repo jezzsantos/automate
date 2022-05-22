@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Automate.CLI.Extensions
 {
     internal static class StringExtensions
     {
+        private const int LowerCaseOffset = 'a' - 'A';
+
         public static int ToInt(this string text)
         {
             return text == null
@@ -132,7 +133,115 @@ namespace Automate.CLI.Extensions
 
         public static string ToCamelCase(this string value)
         {
-            return JsonNamingPolicy.CamelCase.ConvertName(value);
+            if (value.HasNoValue())
+            {
+                return value;
+            }
+
+            if (value.IndexOf('_') >= 0)
+            {
+                var parts = value.Split('_');
+                var sb = new StringBuilder();
+                var firstPart = true;
+                foreach (var part in parts)
+                {
+                    if (part.HasNoValue())
+                    {
+                        continue;
+                    }
+                    var camelCased = part.ToCamelCase();
+                    if (firstPart)
+                    {
+                        sb.Append(camelCased);
+                        firstPart = false;
+                    }
+                    else
+                    {
+                        sb.Append(char.ToUpper(camelCased[0]) + camelCased.SafeSubstring(1, camelCased.Length));
+                    }
+                }
+                return sb.ToString();
+            }
+            else
+            {
+                var valueLength = value.Length;
+                var newValue = new char[valueLength];
+                var firstPart = true;
+                for (var index = 0; index < valueLength; ++index)
+                {
+                    var currentCharacter = value[index];
+                    var nextCharacter = index < valueLength - 1
+                        ? value[index + 1]
+                        : 'A';
+                    var isCurrentUpper = currentCharacter is >= 'A' and <= 'Z';
+                    var isNextUpper = nextCharacter is >= 'A' and <= 'Z';
+
+                    if (firstPart
+                        && isCurrentUpper
+                        && (isNextUpper || index == 0))
+                    {
+                        currentCharacter = (char)(currentCharacter + LowerCaseOffset);
+                    }
+                    else
+                    {
+                        firstPart = false;
+                    }
+
+                    newValue[index] = currentCharacter;
+                }
+
+                return new string(newValue)
+                    .Replace(" ", string.Empty);
+            }
+        }
+
+        public static string ToPascalCase(this string value)
+        {
+            if (value.HasNoValue())
+            {
+                return value;
+            }
+
+            if (value.IndexOf('_') >= 0)
+            {
+                var parts = value.Split('_');
+                var sb = new StringBuilder();
+                foreach (var part in parts)
+                {
+                    if (part.HasNoValue())
+                    {
+                        continue;
+                    }
+                    var camelCased = part.ToCamelCase();
+                    sb.Append(char.ToUpper(camelCased[0]) + camelCased.SafeSubstring(1, camelCased.Length));
+                }
+                return sb.ToString();
+            }
+
+            var camelCase = value.ToCamelCase();
+            return char.ToUpper(camelCase[0]) + camelCase.SafeSubstring(1, camelCase.Length);
+        }
+
+        private static string SafeSubstring(this string value, int startIndex, int length)
+        {
+            if (value.HasNoValue() || length <= 0)
+            {
+                return string.Empty;
+            }
+
+            if (startIndex < 0)
+            {
+                startIndex = 0;
+            }
+
+            if (value.Length >= startIndex + length)
+            {
+                return value.Substring(startIndex, length);
+            }
+
+            return value.Length > startIndex
+                ? value.Substring(startIndex)
+                : string.Empty;
         }
 
         private static string FormatStructuredMessage(string messageTemplate, params object[] args)

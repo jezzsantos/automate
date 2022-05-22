@@ -106,11 +106,67 @@ namespace CLI.UnitTests.Extensions
         }
 
         [Fact]
+        public void WhenToCamelCaseAndSnakeCased_ThenReturnsCamelCased()
+        {
+            var result = "one_two_three".ToCamelCase();
+
+            result.Should().Be("oneTwoThree");
+        }
+
+        [Fact]
         public void WhenToCamelCaseAndSentence_ThenReturnsCamelCased()
         {
             var result = "One Two Three".ToCamelCase();
 
-            result.Should().Be("one Two Three");
+            result.Should().Be("oneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndNull_ThenReturnsNull()
+        {
+            var result = ((string)null).ToPascalCase();
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndLowercase_ThenReturnsPascalCased()
+        {
+            var result = "avalue".ToPascalCase();
+
+            result.Should().Be("Avalue");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndCapitalized_ThenReturnsPascalCased()
+        {
+            var result = "Avalue".ToPascalCase();
+
+            result.Should().Be("Avalue");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndPascalCased_ThenReturnsPascalCased()
+        {
+            var result = "OneTwoThree".ToPascalCase();
+
+            result.Should().Be("OneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndSnakeCased_ThenReturnsCamelCased()
+        {
+            var result = "one_two_three".ToPascalCase();
+
+            result.Should().Be("OneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndSentence_ThenReturnsPascalCased()
+        {
+            var result = "One Two Three".ToPascalCase();
+
+            result.Should().Be("OneTwoThree");
         }
     }
 }

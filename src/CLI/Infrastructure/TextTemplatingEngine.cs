@@ -45,5 +45,23 @@ namespace Automate.CLI.Infrastructure
         {
             return text?.ToCamelCase();
         }
+
+        /// <summary>
+        ///     Converts the string to pascal case.
+        /// </summary>
+        /// <param name="text">The input string</param>
+        /// <returns>The pascal cased input string</returns>
+        /// <remarks>
+        ///     ```scriban-html
+        ///     {{ "TestWord" | string.pascalcase }}
+        ///     ```
+        ///     ```html
+        ///     testWord
+        ///     ```
+        /// </remarks>
+        public static string Pascalcase(string text)
+        {
+            return text?.ToPascalCase();
+        }
     }
 }
