@@ -214,6 +214,42 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its cardinality.
+        /// </summary>
+        internal static string PatternElement_Element_Update_Cardinality {
+            get {
+                return ResourceManager.GetString("PatternElement_Element_Update_Cardinality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its description.
+        /// </summary>
+        internal static string PatternElement_Element_Update_Description {
+            get {
+                return ResourceManager.GetString("PatternElement_Element_Update_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name.
+        /// </summary>
+        internal static string PatternElement_Element_Update_DisplayName {
+            get {
+                return ResourceManager.GetString("PatternElement_Element_Update_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its name.
+        /// </summary>
+        internal static string PatternElement_Element_Update_Name {
+            get {
+                return ResourceManager.GetString("PatternElement_Element_Update_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit was upgraded from v.{Old} to v.{New}.
         /// </summary>
         internal static string ToolkitVersion_NewVersion {

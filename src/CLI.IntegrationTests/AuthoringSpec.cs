@@ -167,7 +167,8 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} pattern --all");
 
             var pattern = this.setup.Patterns.Single();
-            var codeTemplatePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
+            var codeTemplatePath =
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -291,6 +292,27 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenUpdateAttribute_ThenUpdatesAttribute()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired false");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-attribute AProperty1 --name AProperty2 --isrequired true --isoftype int --defaultvalueis 25");
+
+            var attribute = this.setup.Patterns.Single().Attributes.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_AttributeUpdated.FormatTemplate(attribute.Name,
+                        this.setup.Patterns.Single().Id, attribute.Id));
+            attribute.Name.Should().Be("AProperty2");
+            attribute.IsRequired.Should().BeTrue();
+            attribute.DataType.Should().Be("int");
+            attribute.DefaultValue.Should().Be("25");
+        }
+
+        [Fact]
         public void WhenDeleteAttribute_ThenDeletesAttribute()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
@@ -344,6 +366,28 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("AnElement3",
                         this.setup.Patterns.Single().Elements.Single().Elements.Single().Id,
                         this.setup.Patterns.Single().Elements.Single().Elements.Single().Elements.Single().Id));
+        }
+
+        [Fact]
+        public void WhenUpdateElement_ThenUpdatesElement()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1 --isrequired false");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-element AnElement1 --name AnElement2 --isrequired true --displayedas adisplayname --describedas adescription");
+
+            var element = this.setup.Patterns.Single().Elements.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ElementUpdated.FormatTemplate(element.Name,
+                        this.setup.Patterns.Single().Id, element.Id));
+            element.Name.Should().Be("AnElement2");
+            element.DisplayName.Should().Be("adisplayname");
+            element.Description.Should().Be("adescription");
+            element.Cardinality.Should().Be(ElementCardinality.One);
+            element.IsCollection.Should().BeFalse();
         }
 
         [Fact]
@@ -474,7 +518,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.FormatTemplate(command.Name, command.Id, "anewpath", true));
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.FormatTemplate(command.Name,
+                        command.Id, "anewpath", true));
         }
 
         [Fact]
@@ -508,7 +553,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id, commandId));
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id,
+                        commandId));
         }
 
         [Fact]
@@ -528,7 +574,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id, commandId));
+                    OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id,
+                        commandId));
         }
 
         [Fact]
@@ -552,7 +599,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_LaunchPointUpdated.FormatTemplate(launchPoint.Name, launchPoint.Id, new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
+                    OutputMessages.CommandLine_Output_LaunchPointUpdated.FormatTemplate(launchPoint.Name,
+                        launchPoint.Id, new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
         }
 
         [Fact]
@@ -642,7 +690,8 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitWithCurrentVersionAndBreakingChangesAndForceVersion_ThenBuildsToolkitOnDesktopAndWarns()
+        public void
+            WhenBuildToolkitWithCurrentVersionAndBreakingChangesAndForceVersion_ThenBuildsToolkitOnDesktopAndWarns()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -670,7 +719,8 @@ namespace CLI.IntegrationTests
                             .Format("0.1.0", new[]
                             {
                                 VersionChanges.PatternElement_Attribute_Add.FormatTemplate(attribute.Id, pattern.Id),
-                                VersionChanges.PatternElement_CodeTemplate_Add.FormatTemplate(codeTemplate.Id, pattern.Id),
+                                VersionChanges.PatternElement_CodeTemplate_Add.FormatTemplate(codeTemplate.Id,
+                                    pattern.Id),
                                 VersionChanges.PatternElement_Attribute_Delete.FormatTemplate(attribute.Id, pattern.Id)
                             }.ToBulletList())));
         }

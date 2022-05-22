@@ -322,6 +322,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an element.
+        /// </summary>
+        internal static string PatternElement_ElementNameReserved {
+            get {
+                return ResourceManager.GetString("PatternElement_ElementNameReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No commands were added to the launch point.
         /// </summary>
         internal static string PatternElement_NoCommandIds {

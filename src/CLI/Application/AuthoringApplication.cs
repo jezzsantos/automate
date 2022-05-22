@@ -33,7 +33,8 @@ namespace Automate.CLI.Application
         }
 
         internal AuthoringApplication(IPatternStore store, IFilePathResolver fileResolver,
-            IPatternPathResolver patternResolver, IPatternToolkitPackager packager, ITextTemplatingEngine textTemplatingEngine)
+            IPatternPathResolver patternResolver, IPatternToolkitPackager packager,
+            ITextTemplatingEngine textTemplatingEngine)
         {
             store.GuardAgainstNull(nameof(store));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
@@ -93,6 +94,20 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
+        public (IPatternElement Parent, Attribute Attribute) UpdateAttribute(string attributeName, string name,
+            string type, string defaultValue, bool? isRequired, List<string> choices, string parentExpression)
+        {
+            attributeName.GuardAgainstNullOrEmpty(nameof(attributeName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var attribute = target.UpdateAttribute(attributeName, name, type, isRequired, defaultValue, choices);
+            this.store.Save(pattern);
+
+            return (target, attribute);
+        }
+
         public (IPatternElement Parent, Attribute Attribute) DeleteAttribute(string name, string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
@@ -115,6 +130,20 @@ namespace Automate.CLI.Application
             var target = ResolveTargetElement(pattern, parentExpression);
 
             var element = target.AddElement(name, cardinality, displayName, description);
+            this.store.Save(pattern);
+
+            return (target, element);
+        }
+
+        public (IPatternElement Parent, Element Element) UpdateElement(string elementName, string name,
+            bool? isRequired, string displayName, string description, string parentExpression)
+        {
+            elementName.GuardAgainstNullOrEmpty(nameof(elementName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var element = target.UpdateElement(elementName, name, isRequired, displayName, description);
             this.store.Save(pattern);
 
             return (target, element);
@@ -190,15 +219,18 @@ namespace Automate.CLI.Application
                 if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName))
                 {
                     throw new AutomateException(parentExpression.HasValue()
-                        ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName, parentExpression)
-                        : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
+                        ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName,
+                            parentExpression)
+                        : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName,
+                            parentExpression));
                 }
 
                 throw;
             }
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath, string parentExpression)
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath,
+            string parentExpression)
         {
             commandName.GuardAgainstNullOrEmpty(nameof(commandName));
 
@@ -237,7 +269,8 @@ namespace Automate.CLI.Application
             return launchPoint;
         }
 
-        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, string sourceExpression, string parentExpression)
+        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
+            string sourceExpression, string parentExpression)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
             commandIds.GuardAgainstNull(nameof(commandIds));
@@ -252,19 +285,23 @@ namespace Automate.CLI.Application
             return launchPoint;
         }
 
-        public CodeTemplateTest TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath, string importedRelativeFilePath, string exportedRelativeFilePath)
+        public CodeTemplateTest TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath,
+            string importedRelativeFilePath, string exportedRelativeFilePath)
         {
             codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var codeTemplate = target.CodeTemplates.Safe().FirstOrDefault(template => template.Name.EqualsIgnoreCase(codeTemplateName));
+            var codeTemplate = target.CodeTemplates.Safe()
+                .FirstOrDefault(template => template.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(parentExpression.HasValue()
-                    ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName, parentExpression)
-                    : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName, parentExpression));
+                    ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName,
+                        parentExpression)
+                    : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName,
+                        parentExpression));
             }
 
             var textTemplate = GetTemplateContent();
@@ -286,12 +323,16 @@ namespace Automate.CLI.Application
 
             string GenerateImportedCode(Dictionary<string, object> data)
             {
-                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), textTemplate, data);
+                return this.textTemplatingEngine.Transform(
+                    DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
+                    textTemplate, data);
             }
 
             string GenerateGeneratedCode(LazySolutionItemDictionary data)
             {
-                return this.textTemplatingEngine.Transform(DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id), textTemplate, data);
+                return this.textTemplatingEngine.Transform(
+                    DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
+                    textTemplate, data);
             }
 
             string GetTemplateContent()
@@ -331,7 +372,9 @@ namespace Automate.CLI.Application
                 var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
                 if (solutionItem.NotExists())
                 {
-                    throw new AutomateException(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution.Format(codeTemplate.Id));
+                    throw new AutomateException(
+                        ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution
+                            .Format(codeTemplate.Id));
                 }
                 return solutionItem.GetConfiguration(true);
             }
@@ -341,11 +384,14 @@ namespace Automate.CLI.Application
                 var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
                 try
                 {
-                    this.fileResolver.CreateFileAtPath(fullPath, SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
+                    this.fileResolver.CreateFileAtPath(fullPath,
+                        SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
                 }
                 catch (Exception ex)
                 {
-                    throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format(fullPath, ex.Message));
+                    throw new AutomateException(
+                        ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile
+                            .Format(fullPath, ex.Message));
                 }
             }
         }

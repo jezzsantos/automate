@@ -83,13 +83,15 @@ namespace Automate.CLI.Domain
         public void AddCodeTemplate(CodeTemplate codeTemplate)
         {
             this.codeTemplates.Add(codeTemplate);
-            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_CodeTemplate_Add, codeTemplate.Id, Id);
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_CodeTemplate_Add, codeTemplate.Id,
+                Id);
         }
 
         public void DeleteCodeTemplate(CodeTemplate codeTemplate)
         {
             this.codeTemplates.Remove(codeTemplate);
-            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CodeTemplate_Delete, codeTemplate.Id, Id);
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CodeTemplate_Delete, codeTemplate.Id,
+                Id);
         }
 
         public void AddAutomation(Automation automation)
@@ -101,7 +103,8 @@ namespace Automate.CLI.Domain
         public void DeleteCodeTemplateCommand(CodeTemplateCommand command)
         {
             this.automations.Remove(command.AsAutomation());
-            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CodeTemplateCommand_Delete, command.Id, Id);
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CodeTemplateCommand_Delete, command.Id,
+                Id);
         }
 
         public void DeleteCliCommand(CliCommand command)
@@ -113,7 +116,8 @@ namespace Automate.CLI.Domain
         public void DeleteCommandLaunchPoint(CommandLaunchPoint launchPoint)
         {
             this.automations.Remove(launchPoint.AsAutomation());
-            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CommandLaunchPoint_Delete, launchPoint.Id, Id);
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_CommandLaunchPoint_Delete,
+                launchPoint.Id, Id);
         }
 
         public void SetParent(PatternElement parent)
@@ -121,7 +125,8 @@ namespace Automate.CLI.Domain
             Parent = parent;
         }
 
-        public Attribute AddAttribute(string name, string type = Attribute.DefaultType, bool isRequired = false, string defaultValue = null, List<string> choices = null)
+        public Attribute AddAttribute(string name, string type = Attribute.DefaultType, bool isRequired = false,
+            string defaultValue = null, List<string> choices = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
@@ -137,7 +142,8 @@ namespace Automate.CLI.Domain
 
             if (ElementExistsByName(this, name))
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(name));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(name));
             }
 
             var attribute = new Attribute(name, type, isRequired, defaultValue, choices);
@@ -146,14 +152,16 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
-        public void UpdateAttribute(string attributeName, string name = null, string type = null, bool? isRequired = false, string defaultValue = null, List<string> choices = null)
+        public Attribute UpdateAttribute(string attributeName, string name = null, string type = null,
+            bool? isRequired = false, string defaultValue = null, List<string> choices = null)
         {
             attributeName.GuardAgainstNullOrEmpty(nameof(attributeName));
 
             var attribute = GetAttributeByName(this, attributeName);
             if (attribute.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameNotExists.Format(attributeName));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AttributeByNameNotExists.Format(attributeName));
             }
 
             if (name.HasValue())
@@ -162,28 +170,33 @@ namespace Automate.CLI.Domain
                 {
                     if (AttributeNameIsReserved(name))
                     {
-                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved.Format(name));
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved
+                            .Format(name));
                     }
 
                     if (AttributeExistsByName(this, name))
                     {
-                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExists.Format(name));
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExists
+                            .Format(name));
                     }
 
                     if (ElementExistsByName(this, name))
                     {
-                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format(name));
+                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement
+                            .Format(name));
                     }
 
                     attribute.SetName(name);
-                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name, attribute.Id, Id);
+                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name,
+                        attribute.Id, Id);
                 }
             }
 
             if (type.HasValue() && type != attribute.DataType)
             {
                 attribute.SetDataType(type);
-                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType, attribute.Id, Id);
+                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType,
+                    attribute.Id, Id);
             }
 
             if (choices.Exists())
@@ -199,14 +212,18 @@ namespace Automate.CLI.Domain
             if (isRequired.HasValue && attribute.IsRequired != isRequired.Value)
             {
                 attribute.SetRequired(isRequired.Value);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required, attribute.Id, Id);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required,
+                    attribute.Id, Id);
             }
 
             if (defaultValue.HasValue() && attribute.DefaultValue.NotEqualsOrdinal(defaultValue))
             {
                 attribute.SetDefaultValue(defaultValue);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue, attribute.Id, Id);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue,
+                    attribute.Id, Id);
             }
+
+            return attribute;
         }
 
         public Attribute DeleteAttribute(string name)
@@ -224,7 +241,8 @@ namespace Automate.CLI.Domain
             return attribute;
         }
 
-        public Element AddElement(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null, string description = null)
+        public Element AddElement(string name, ElementCardinality cardinality = ElementCardinality.One,
+            string displayName = null, string description = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
@@ -235,11 +253,103 @@ namespace Automate.CLI.Domain
 
             if (AttributeExistsByName(this, name))
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format(name));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format(name));
             }
 
             var element = new Element(name, cardinality, displayName, description);
             AddElement(element);
+
+            return element;
+        }
+
+        public Element UpdateElement(string elementName, string name = null, bool? isRequired = null,
+            string displayName = null, string description = null)
+        {
+            elementName.GuardAgainstNullOrEmpty(nameof(elementName));
+
+            var element = GetElementByName(this, elementName);
+            if (element.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_ElementByNameNotExists.Format(elementName));
+            }
+
+            if (name.HasValue())
+            {
+                if (name.NotEqualsIgnoreCase(element.Name))
+                {
+                    if (ElementNameIsReserved(name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_ElementNameReserved.Format(name));
+                    }
+
+                    if (ElementExistsByName(this, name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExists.Format(name));
+                    }
+
+                    if (AttributeExistsByName(this, name))
+                    {
+                        throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute
+                            .Format(name));
+                    }
+
+                    element.SetName(name);
+                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Name, element.Id,
+                        Id);
+                }
+            }
+
+            if (isRequired.HasValue)
+            {
+                if (element.IsCollection)
+                {
+                    if (isRequired.Value
+                        && element.Cardinality == ElementCardinality.ZeroOrMany)
+                    {
+                        element.SetCardinality(ElementCardinality.OneOrMany);
+                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                            element.Id, Id);
+                    }
+                    if (!isRequired.Value
+                        && element.Cardinality == ElementCardinality.OneOrMany)
+                    {
+                        element.SetCardinality(ElementCardinality.ZeroOrMany);
+                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                            element.Id, Id);
+                    }
+                }
+                else
+                {
+                    if (isRequired.Value
+                        && element.Cardinality == ElementCardinality.ZeroOrOne)
+                    {
+                        element.SetCardinality(ElementCardinality.One);
+                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                            element.Id, Id);
+                    }
+                    if (!isRequired.Value
+                        && element.Cardinality == ElementCardinality.One)
+                    {
+                        element.SetCardinality(ElementCardinality.ZeroOrOne);
+                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                            element.Id, Id);
+                    }
+                }
+            }
+            if (displayName.HasValue() && displayName != element.DisplayName)
+            {
+                element.SetDisplayName(displayName);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Element_Update_DisplayName,
+                    element.Id, Id);
+            }
+            if (description.HasValue() && description != element.Description)
+            {
+                element.SetDescription(description);
+                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Element_Update_Description,
+                    element.Id, Id);
+            }
 
             return element;
         }
@@ -310,7 +420,8 @@ namespace Automate.CLI.Domain
             var codeTemplate = CodeTemplates.FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName));
             }
 
             var commandName = name.HasValue()
@@ -330,11 +441,13 @@ namespace Automate.CLI.Domain
 
         public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath)
         {
-            var automation = FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
+            var automation =
+                FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
             if (automation.NotExists())
             {
                 throw new AutomateException(
-                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CodeTemplateCommand, commandName));
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(
+                        AutomationType.CodeTemplateCommand, commandName));
             }
             var command = CodeTemplateCommand.FromAutomation(automation);
             if (name.HasValue())
@@ -361,7 +474,9 @@ namespace Automate.CLI.Domain
             var command = FindAutomationById(this, id, auto => auto.Type == AutomationType.CodeTemplateCommand);
             if (command.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand, id));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand,
+                        id));
             }
 
             DeleteCodeTemplateCommand(CodeTemplateCommand.FromAutomation(command));
@@ -406,7 +521,8 @@ namespace Automate.CLI.Domain
             if (automation.NotExists())
             {
                 throw new AutomateException(
-                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand, commandName));
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand,
+                        commandName));
             }
 
             var command = CliCommand.FromAutomation(automation);
@@ -434,7 +550,8 @@ namespace Automate.CLI.Domain
             var command = FindAutomationById(this, id, auto => auto.Type == AutomationType.CliCommand);
             if (command.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, id));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, id));
             }
 
             DeleteCliCommand(CliCommand.FromAutomation(command));
@@ -481,7 +598,8 @@ namespace Automate.CLI.Domain
             return automation;
         }
 
-        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, IPatternElement sourceElement)
+        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
+            IPatternElement sourceElement)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
             commandIds.GuardAgainstNull(nameof(commandIds));
@@ -508,11 +626,13 @@ namespace Automate.CLI.Domain
                 });
             }
 
-            var automation = FindAutomationByName(this, launchPointName, auto => auto.Type == AutomationType.CommandLaunchPoint);
+            var automation = FindAutomationByName(this, launchPointName,
+                auto => auto.Type == AutomationType.CommandLaunchPoint);
             if (automation.NotExists())
             {
                 throw new AutomateException(
-                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint, launchPointName));
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint,
+                        launchPointName));
             }
 
             var launchPoint = CommandLaunchPoint.FromAutomation(automation);
@@ -521,7 +641,8 @@ namespace Automate.CLI.Domain
             {
                 launchPoint.ChangeName(name);
             }
-            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, launchPoint.Id, Id);
+            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, launchPoint.Id,
+                Id);
 
             return launchPoint.AsAutomation();
         }
@@ -533,7 +654,9 @@ namespace Automate.CLI.Domain
             var launchPoint = FindAutomationById(this, id, auto => auto.Type == AutomationType.CommandLaunchPoint);
             if (launchPoint.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CommandLaunchPoint, id));
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CommandLaunchPoint,
+                        id));
             }
 
             DeleteCommandLaunchPoint(CommandLaunchPoint.FromAutomation(launchPoint));
@@ -541,7 +664,7 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
-        public string Name { get; }
+        public string Name { get; protected set; }
 
         public IReadOnlyList<Element> Elements => this.elements;
 
@@ -649,6 +772,11 @@ namespace Automate.CLI.Domain
             return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
         }
 
+        private static bool ElementNameIsReserved(string attributeName)
+        {
+            return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
+        }
+
         private static bool ElementExistsByName(IElementContainer element, string elementName)
         {
             return element.Elements.Safe().Any(ele => ele.Name.EqualsIgnoreCase(elementName));
@@ -664,13 +792,15 @@ namespace Automate.CLI.Domain
             return element.Automation.Safe().Any(ele => ele.Name.EqualsIgnoreCase(automationName));
         }
 
-        private static Automation FindAutomationByName(IAutomationContainer element, string name, Predicate<Automation> where)
+        private static Automation FindAutomationByName(IAutomationContainer element, string name,
+            Predicate<Automation> where)
         {
             return element.Automation.Safe()
                 .FirstOrDefault(auto => auto.Name.EqualsIgnoreCase(name) && where(auto));
         }
 
-        private static Automation FindAutomationById(IAutomationContainer element, string name, Predicate<Automation> where)
+        private static Automation FindAutomationById(IAutomationContainer element, string name,
+            Predicate<Automation> where)
         {
             return element.Automation.Safe()
                 .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(name) && where(auto));

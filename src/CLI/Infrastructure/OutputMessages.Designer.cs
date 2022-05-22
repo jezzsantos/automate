@@ -79,6 +79,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated Attribute: &apos;{Name}&apos; with ID: {Id}, successfully.
+        /// </summary>
+        internal static string CommandLine_Output_AttributeUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_AttributeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command:
         ///`automate install toolkit &quot;{&lt;FilePath&gt;}&quot;`.
         /// </summary>
@@ -180,6 +189,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated Collection: &apos;{Name}&apos; with ID: {Id}, successfully.
+        /// </summary>
+        internal static string CommandLine_Output_CollectionUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CollectionUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; did not completely succeed. Some commands failed:
         ///{Log}.
         /// </summary>
@@ -251,6 +269,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_ElementDeleted {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ElementDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Element: &apos;{Name}&apos; with ID: {Id}, successfully.
+        /// </summary>
+        internal static string CommandLine_Output_ElementUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementUpdated", resourceCulture);
             }
         }
         

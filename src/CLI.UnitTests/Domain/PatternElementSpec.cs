@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -99,6 +100,68 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenUpdateAttributeAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.UpdateAttribute("anattributename"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AttributeByNameNotExists.Format("anattributename"));
+        }
+
+        [Fact]
+        public void WhenUpdateAttributeAndNewNameIsReserved_ThenThrows()
+        {
+            this.element.AddAttribute("anattributename");
+
+            this.element
+                .Invoking(x => x.UpdateAttribute("anattributename", Attribute.ReservedAttributeNames.First()))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AttributeNameReserved.Format(
+                        Attribute.ReservedAttributeNames.First()));
+        }
+
+        [Fact]
+        public void WhenUpdateAttributeAndNewNameAlreadyExists_ThenThrows()
+        {
+            this.element.AddAttribute("anattributename");
+            this.element.AddAttribute("anotherattributename");
+
+            this.element
+                .Invoking(x => x.UpdateAttribute("anattributename", "anotherattributename"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AttributeByNameExists.Format("anotherattributename"));
+        }
+
+        [Fact]
+        public void WhenUpdateAttributeAndNewNameExistsAsElement_ThenThrows()
+        {
+            this.element.AddAttribute("anattributename");
+            this.element.AddElement("anelementname");
+
+            this.element
+                .Invoking(x => x.UpdateAttribute("anattributename", "anelementname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement.Format("anelementname"));
+        }
+
+        [Fact]
+        public void WhenUpdateAttribute_ThenUpdates()
+        {
+            this.element.AddAttribute("anattributename1", "int");
+
+            var result = this.element.UpdateAttribute("anattributename1", "anattributename2", "string", true, "one",
+                new List<string> { "one", "two" });
+
+            result.Name.Should().Be("anattributename2");
+            result.DataType.Should().Be("string");
+            result.IsRequired.Should().BeTrue();
+            result.DefaultValue.Should().Be("one");
+            result.Choices.Should().Contain("one", "two");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
         public void WhenDeleteAttribute_TheDeletesAttributeFromElement()
         {
             var attribute = this.element.AddAttribute("anattributename", "string", false, "adefaultvalue");
@@ -135,7 +198,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenAddElement_TheAddsElementToElement()
         {
-            var result = this.element.AddElement("anelementname", ElementCardinality.One, "adisplayname", "adescription");
+            var result =
+                this.element.AddElement("anelementname", ElementCardinality.One, "adisplayname", "adescription");
 
             result.Name.Should().Be("anelementname");
             result.DisplayName.Should().Be("adisplayname");
@@ -143,6 +207,120 @@ namespace CLI.UnitTests.Domain
             result.IsCollection.Should().BeFalse();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
+
+        [Fact]
+        public void WhenUpdateElementAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.UpdateElement("anelementname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_ElementByNameNotExists.Format("anelementname"));
+        }
+
+        [Fact]
+        public void WhenUpdateElementAndNewNameIsReserved_ThenThrows()
+        {
+            this.element.AddElement("anelementname");
+
+            this.element
+                .Invoking(x => x.UpdateElement("anelementname", Attribute.ReservedAttributeNames.First()))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.PatternElement_ElementNameReserved.Format(
+                        Attribute.ReservedAttributeNames.First()));
+        }
+
+        [Fact]
+        public void WhenUpdateElementAndNewNameAlreadyExists_ThenThrows()
+        {
+            this.element.AddElement("anelementname");
+            this.element.AddElement("anotherelementname");
+
+            this.element
+                .Invoking(x => x.UpdateElement("anelementname", "anotherelementname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_ElementByNameExists.Format("anotherelementname"));
+        }
+
+        [Fact]
+        public void WhenUpdateElementAndNewNameExistsAsElement_ThenThrows()
+        {
+            this.element.AddElement("anelementname");
+            this.element.AddAttribute("anattributename");
+
+            this.element
+                .Invoking(x => x.UpdateElement("anelementname", "anattributename"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format("anattributename"));
+        }
+
+        [Fact]
+        public void WhenUpdateElementForElementAndNotRequired_ThenUpdates()
+        {
+            this.element.AddElement("anelement1");
+
+            var result = this.element.UpdateElement("anelement1", "anelement2", false,
+                "adisplayname", "adescription");
+
+            result.Name.Should().Be("anelement2");
+            result.Cardinality.Should().Be(ElementCardinality.ZeroOrOne);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenUpdateElementForElementAndRequired_ThenUpdates()
+        {
+            this.element.AddElement("anelement1", ElementCardinality.ZeroOrOne);
+
+            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+                "adisplayname", "adescription");
+
+            result.Name.Should().Be("anelement2");
+            result.Cardinality.Should().Be(ElementCardinality.One);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenUpdateElementForCollectionAndNotRequired_ThenUpdates()
+        {
+            this.element.AddElement("anelement1", ElementCardinality.OneOrMany);
+
+            var result = this.element.UpdateElement("anelement1", "anelement2", false,
+                "adisplayname", "adescription");
+
+            result.Name.Should().Be("anelement2");
+            result.Cardinality.Should().Be(ElementCardinality.ZeroOrMany);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenUpdateElementForCollectionAndRequired_ThenUpdates()
+        {
+            this.element.AddElement("anelement1", ElementCardinality.ZeroOrMany);
+
+            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+                "adisplayname", "adescription");
+
+            result.Name.Should().Be("anelement2");
+            result.Cardinality.Should().Be(ElementCardinality.OneOrMany);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenUpdateElement_ThenUpdates()
+        {
+            this.element.AddElement("anelement1");
+
+            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+                "adisplayname", "adescription");
+
+            result.Name.Should().Be("anelement2");
+            result.Cardinality.Should().Be(ElementCardinality.One);
+            result.DisplayName.Should().Be("adisplayname");
+            result.Description.Should().Be("adescription");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
 
         [Fact]
         public void WhenDeleteElement_TheDeletesElementFromElement()
@@ -233,7 +411,9 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.UpdateCodeTemplateCommand("acommandname", null, null, null))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CodeTemplateCommand, "acommandname"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(
+                        AutomationType.CodeTemplateCommand, "acommandname"));
         }
 
         [Fact]
@@ -257,7 +437,9 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.DeleteCodeTemplateCommand("anid", false))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand, "anid"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CodeTemplateCommand,
+                        "anid"));
         }
 
         [Fact]
@@ -300,7 +482,9 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.UpdateCliCommand("acommandname", null, "anapplicationname", "anargument"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand, "acommandname"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CliCommand,
+                        "acommandname"));
         }
 
         [Fact]
@@ -308,7 +492,8 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddCliCommand("acommandname", "anapplicationname", "anargument");
 
-            var result = this.element.UpdateCliCommand("acommandname", "anewname", "anewapplicationname", "anewargument");
+            var result =
+                this.element.UpdateCliCommand("acommandname", "anewname", "anewapplicationname", "anewargument");
 
             result.Should().Be(this.element.Automation[0]);
             result.Name.Should().Be("anewname");
@@ -323,7 +508,8 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.DeleteCliCommand("anid"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, "anid"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, "anid"));
         }
 
         [Fact]
@@ -366,7 +552,8 @@ namespace CLI.UnitTests.Domain
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
-            var result = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id });
+            var result =
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id });
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -380,7 +567,8 @@ namespace CLI.UnitTests.Domain
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
-            var result = this.pattern.AddCommandLaunchPoint("alaunchpointname", new List<string> { PatternElement.LaunchPointSelectionWildcard });
+            var result = this.pattern.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { PatternElement.LaunchPointSelectionWildcard });
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -394,7 +582,8 @@ namespace CLI.UnitTests.Domain
             var command1 = this.element.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
             var command2 = this.element.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
-            var result = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { PatternElement.LaunchPointSelectionWildcard });
+            var result = this.element.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { PatternElement.LaunchPointSelectionWildcard });
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -428,7 +617,8 @@ namespace CLI.UnitTests.Domain
         public void WhenUpdateCommandLaunchPointAndCommandNotExists_ThenThrows()
         {
             this.element
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, this.element))
+                .Invoking(x =>
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_CommandIdNotFound.Format("acmdid"));
@@ -441,9 +631,13 @@ namespace CLI.UnitTests.Domain
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
 
             this.element
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { command1.Id }, this.element))
+                .Invoking(x =>
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { command1.Id },
+                        this.element))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint, "alaunchpointname"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.CommandLaunchPoint,
+                        "alaunchpointname"));
         }
 
         [Fact]
@@ -454,11 +648,13 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
 
-            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname", new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
+            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname",
+                new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
 
             result.Should().Be(this.element.Automation[0]);
             result.Name.Should().Be("anewname");
-            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
+            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should()
+                .Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
@@ -470,11 +666,13 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
 
-            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname", new List<string> { command2.Id }, this.element);
+            var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname",
+                new List<string> { command2.Id }, this.element);
 
             result.Should().Be(this.element.Automation[0]);
             result.Name.Should().Be("anewname");
-            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
+            result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should()
+                .Be(new[] { command1.Id, command2.Id }.Join(CommandLaunchPoint.CommandIdDelimiter));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
@@ -514,7 +712,8 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenDeleteCodeTemplateAndIncludeAutomationAndHasReferencingCodeTemplateCommand_ThenDeletesTemplateAndCommand()
+        public void
+            WhenDeleteCodeTemplateAndIncludeAutomationAndHasReferencingCodeTemplateCommand_ThenDeletesTemplateAndCommand()
         {
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
@@ -528,7 +727,8 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenDeleteCodeTemplateAndIncludeAutomationAndHasDedicatedReferencingLaunchPoint_ThenDeletesTemplateAndCommandAndLaunchPoint()
+        public void
+            WhenDeleteCodeTemplateAndIncludeAutomationAndHasDedicatedReferencingLaunchPoint_ThenDeletesTemplateAndCommandAndLaunchPoint()
         {
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
@@ -543,7 +743,8 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenDeleteCodeTemplateAndIncludeAutomationAndHasReferencingLaunchPointToOtherCommands_ThenDeletesTemplateAndCommand()
+        public void
+            WhenDeleteCodeTemplateAndIncludeAutomationAndHasReferencingLaunchPointToOtherCommands_ThenDeletesTemplateAndCommand()
         {
             var codeTemplate1 = new CodeTemplate("aname1", "afullpath", "afileextension");
             var codeTemplate2 = new CodeTemplate("aname2", "afullpath", "afileextension");
@@ -552,7 +753,8 @@ namespace CLI.UnitTests.Domain
             var command1 = this.element.AddCodeTemplateCommand("acommandname1", codeTemplate1.Name, false, "afilepath");
             var command2 = this.element.AddCodeTemplateCommand("acommandname2", codeTemplate1.Name, false, "afilepath");
             var command3 = this.element.AddCodeTemplateCommand("acommandname3", codeTemplate2.Name, false, "afilepath");
-            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id, command3.Id });
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { command1.Id, command2.Id, command3.Id });
 
             this.element.DeleteCodeTemplate(codeTemplate1.Id, true);
 
@@ -572,7 +774,9 @@ namespace CLI.UnitTests.Domain
             this.element
                 .Invoking(x => x.DeleteCommandLaunchPoint("anid"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CommandLaunchPoint, "anid"));
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CommandLaunchPoint,
+                        "anid"));
         }
 
         [Fact]

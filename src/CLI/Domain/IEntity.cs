@@ -33,9 +33,17 @@ namespace Automate.CLI.Domain
     {
         Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices);
 
-        void UpdateAttribute(string attributeName, string name, string type, bool? isRequired, string defaultValue, List<string> choices);
+        Attribute UpdateAttribute(string attributeName, string name, string type, bool? isRequired, string defaultValue,
+            List<string> choices);
+
+        Attribute DeleteAttribute(string name);
 
         Element AddElement(string name, ElementCardinality cardinality, string displayName, string description);
+
+        Element UpdateElement(string elementName, string name, bool? isRequired, string displayName,
+            string description);
+
+        Element DeleteElement(string name);
 
         CodeTemplate AddCodeTemplate(string name, string fullPath, string extension);
 
@@ -58,10 +66,6 @@ namespace Automate.CLI.Domain
         Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, IPatternElement sourceElement);
 
         public void DeleteCommandLaunchPoint(string id);
-
-        Attribute DeleteAttribute(string name);
-
-        Element DeleteElement(string name);
     }
 
     internal interface INamedEntity : IIdentifiableEntity

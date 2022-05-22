@@ -51,6 +51,18 @@
     <data name="PatternElement_Element_Add" xml:space="preserve">
         <value>Element/Collection (ID: {ElementId}) was added to element {ParentId}</value>
     </data>
+    <data name="PatternElement_Element_Update_Name" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its name</value>
+    </data>
+    <data name="PatternElement_Element_Update_Cardinality" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its cardinality</value>
+    </data>
+    <data name="PatternElement_Element_Update_DisplayName" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name</value>
+    </data>
+    <data name="PatternElement_Element_Update_Description" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its description</value>
+    </data>
     <data name="PatternElement_Element_Delete" xml:space="preserve">
         <value>Element (ID: {ElementId}) was deleted from element {ParentId}</value>
     </data>

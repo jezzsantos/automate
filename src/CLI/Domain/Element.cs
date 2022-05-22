@@ -60,5 +60,33 @@ namespace Automate.CLI.Domain
         {
             return ValidationResults.None;
         }
+
+        public void SetName(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+
+            Name = name;
+        }
+
+        public void SetCardinality(ElementCardinality cardinality)
+        {
+            Cardinality = cardinality;
+        }
+
+        public void SetDisplayName(string displayName)
+        {
+            displayName.GuardAgainstNullOrEmpty(nameof(displayName));
+
+            DisplayName = displayName;
+        }
+
+        public void SetDescription(string description)
+        {
+            description.GuardAgainstNullOrEmpty(nameof(description));
+
+            Description = description;
+        }
     }
 }

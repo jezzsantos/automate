@@ -28,8 +28,8 @@ namespace Automate.CLI.Infrastructure
         public const string ExecuteCommandName = "execute";
         public const string ViewCommandName = "view";
         public const string UpgradeCommandName = "upgrade";
-        private static readonly AuthoringApplication Authoring = new AuthoringApplication(Environment.CurrentDirectory);
-        private static readonly RuntimeApplication Runtime = new RuntimeApplication(Environment.CurrentDirectory);
+        private static readonly AuthoringApplication Authoring = new(Environment.CurrentDirectory);
+        private static readonly RuntimeApplication Runtime = new(Environment.CurrentDirectory);
 
         public static int Execute(string[] args)
         {
@@ -59,8 +59,22 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the attribute to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddAttribute)),
-
-                //TODO: update-attribute
+                new Command("update-attribute", "Updates an attribute on an element/collection in the pattern")
+                {
+                    new Argument("AttributeName", "The name of the attribute"),
+                    new Option("--name", "A new name for the attribute", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--isoftype", "The type of the attribute", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--defaultvalueis", "The default value for the attribute", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--isrequired", "Whether an attribute value will be required", typeof(bool?),
+                        () => null, ArgumentArity.ZeroOrOne),
+                    new Option("--isoneof", "A list of semi-colon delimited values", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to update the attribute on",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateAttribute)),
                 new Command("delete-attribute", "Deletes an attribute from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -79,8 +93,20 @@ namespace Automate.CLI.Infrastructure
                     new Option("--isrequired", "Whether the element will be required or not",
                         typeof(bool), () => true, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
-
-                //TODO: update-element
+                new Command("update-element", "Updates an element on an element/collection in the pattern")
+                {
+                    new Argument("ElementName", "The name of the element"),
+                    new Option("--name", "A new name for the element", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--displayedas", "A friendly display name for the element", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--describedas", "A description for the element", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to update the element on",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--isrequired", "Whether the element will be required or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateElement)),
                 new Command("delete-element", "Deletes an element from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the element"),
@@ -99,8 +125,20 @@ namespace Automate.CLI.Infrastructure
                     new Option("--isrequired", "Whether at least one item in the collection will be required or not",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
-
-                //TODO: update-collection
+                new Command("update-collection", "Updates a collection on an element/collection in the pattern")
+                {
+                    new Argument("CollectionName", "The name of the collection"),
+                    new Option("--name", "A new name for the element", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--displayedas", "A friendly display name for the collection", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--describedas", "A description for the collection", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to update the collection on",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--isrequired", "Whether the collection will be required or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCollection)),
                 new Command("delete-collection", "Deletes a collection from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the collection"),
@@ -137,7 +175,8 @@ namespace Automate.CLI.Infrastructure
                     new Argument("CommandName", "The name of the command to update"),
                     new Option("--name", "A new name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--astearoff", "If you only want to generate the file once, and not overwrite the file if it already exists",
+                    new Option("--astearoff",
+                        "If you only want to generate the file once, and not overwrite the file if it already exists",
                         typeof(bool?), arity: ArgumentArity.ZeroOrOne),
                     new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
@@ -146,12 +185,15 @@ namespace Automate.CLI.Infrastructure
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCodeTemplateCommand)),
                 new Command("add-cli-command", "Adds a command that executes another command line application")
                     {
-                        new Argument("ApplicationName", "The name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable"),
-                        new Option("--arguments", "The arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
+                        new Argument("ApplicationName",
+                            "The name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable"),
+                        new Option("--arguments",
+                            "The arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
                             typeof(string), arity: ArgumentArity.ZeroOrOne),
                         new Option("--name", "A name for the command", typeof(string),
                             arity: ArgumentArity.ZeroOrOne),
-                        new Option("--aschildof", "The expression of the element/collection on which the command exists",
+                        new Option("--aschildof",
+                            "The expression of the element/collection on which the command exists",
                             typeof(string), arity: ArgumentArity.ZeroOrOne)
                     }
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCliCommand)),
@@ -160,7 +202,8 @@ namespace Automate.CLI.Infrastructure
                 //TODO: delete-command (by ID, all kinds)
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
-                    new Argument("CommandIdentifiers", "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
+                    new Argument("CommandIdentifiers",
+                        "A semi-colon delimited list of identifiers of the commands to launch (from anywhere in the pattern), or '*' to launch all commands found on the element/collection"),
                     new Option("--name", "A name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
@@ -171,11 +214,13 @@ namespace Automate.CLI.Infrastructure
                     new Argument("LaunchPointName", "The name of the launch point to update"),
                     new Option("--name", "A new name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--add", "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
+                    new Option("--add",
+                        "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
                         typeof(string), arity: ArgumentArity.ExactlyOne),
                     new Option("--from", "The expression of the element/collection to add commands from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--aschildof", "The expression of the element/collection on which the launch point exists",
+                    new Option("--aschildof",
+                        "The expression of the element/collection on which the launch point exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCommandLaunchPoint))
 
@@ -186,11 +231,14 @@ namespace Automate.CLI.Infrastructure
                 new Command("codetemplate", "Tests the code template")
                 {
                     new Argument("Name", "The name of the code template"),
-                    new Option("--aschildof", "The expression of the element/collection on which the code template exists",
+                    new Option("--aschildof",
+                        "The expression of the element/collection on which the code template exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--import-data", "Import the specified data for the test. A relative path to the JSON file, from the current directory",
+                    new Option("--import-data",
+                        "Import the specified data for the test. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--export-data", "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
+                    new Option("--export-data",
+                        "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplate))
             };
@@ -198,9 +246,11 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("toolkit", "Builds a pattern into a toolkit")
                 {
-                    new Option("--asversion", "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
+                    new Option("--asversion",
+                        "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--force", "Force the specified version number even it it violates breaking changes checks",
+                    new Option("--force",
+                        "Force the specified version number even it it violates breaking changes checks",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleBuild))
             };
@@ -248,7 +298,8 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("solution", "Validate the current solution")
                 {
-                    new Option("--on", "The expression of the element/collection to validate", arity: ArgumentArity.ZeroOrOne)
+                    new Option("--on", "The expression of the element/collection to validate",
+                        arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleValidate))
             };
             var executeCommands = new Command(ExecuteCommandName, "Executing automation on patterns from toolkits")
@@ -256,22 +307,27 @@ namespace Automate.CLI.Infrastructure
                 new Command("command", "Executes the launch point on the solution")
                 {
                     new Argument("Name", "The name of the launch point to execute"),
-                    new Option("--on", "The expression of the element/collection containing the launch point to execute", arity: ArgumentArity.ZeroOrOne)
+                    new Option("--on",
+                        "The expression of the element/collection containing the launch point to execute",
+                        arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand))
             };
             var viewCommands = new Command(ViewCommandName, "Viewing patterns and solutions")
             {
                 new Command("pattern", "View the configuration of the current pattern")
                 {
-                    new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                    new Option("--all", "Include additional configuration, like automation and code templates",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleViewPattern)),
                 new Command("toolkit", "View the configuration of the current toolkit")
                 {
-                    new Option("--all", "Include additional configuration, like automation and code templates", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                    new Option("--all", "Include additional configuration, like automation and code templates",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewToolkit)),
                 new Command("solution", "View the configuration of the current solution")
                 {
-                    new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                    new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool),
+                        () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewSolution))
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
@@ -328,7 +384,8 @@ namespace Automate.CLI.Infrastructure
                 if (Authoring.CurrentPatternId.Exists())
                 {
                     ConsoleExtensions.WriteOutput(
-                        OutputMessages.CommandLine_Output_CurrentPatternInUse.FormatTemplate(Authoring.CurrentPatternName,
+                        OutputMessages.CommandLine_Output_CurrentPatternInUse.FormatTemplate(
+                            Authoring.CurrentPatternName,
                             Authoring.CurrentPatternVersion), ConsoleColor.Gray);
                 }
                 else
@@ -343,7 +400,8 @@ namespace Automate.CLI.Infrastructure
                     if (Runtime.CurrentSolutionId.Exists())
                     {
                         ConsoleExtensions.WriteOutput(
-                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(Runtime.CurrentSolutionName, Runtime.CurrentSolutionId), ConsoleColor.Gray);
+                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(
+                                Runtime.CurrentSolutionName, Runtime.CurrentSolutionId), ConsoleColor.Gray);
                     }
                     else
                     {
@@ -359,7 +417,9 @@ namespace Automate.CLI.Infrastructure
                     var isDebug = IsDebugging(context, ex);
 
                     var message = ex.InnerException.Exists()
-                        ? isDebug ? ex.InnerException.ToString() : ex.InnerException.Message
+                        ? isDebug
+                            ? ex.InnerException.ToString()
+                            : ex.InnerException.Message
                         : isDebug
                             ? ex.ToString()
                             : ex.Message;
@@ -392,12 +452,19 @@ namespace Automate.CLI.Infrastructure
             Console.ResetColor();
         }
 
-        private static bool IsDebugging(InvocationContext context, Exception ex)
+        private static bool IsDebugging(
+
+            // ReSharper disable once UnusedParameter.Local
+            InvocationContext context,
+
+            // ReSharper disable once UnusedParameter.Local
+            Exception ex)
         {
 #if TESTINGONLY
             return true;
 #else
-            var debugOption = context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
+            var debugOption =
+ context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
             {
                 return (bool)context.ParseResult.FindResultFor(debugOption)!.GetValueOrDefault()!;
@@ -433,7 +500,8 @@ namespace Automate.CLI.Infrastructure
             var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
             var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
 
-            return args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand && !isListSolutionsCommand;
+            return args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand &&
+                   !isListSolutionsCommand;
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
@@ -451,7 +519,13 @@ namespace Automate.CLI.Infrastructure
 
         private class TestingOnlyHandlers
         {
-            internal static void HandleFail(bool outputStructured, IConsole console)
+            internal static void HandleFail(
+
+                // ReSharper disable once UnusedParameter.Local
+                bool outputStructured,
+
+                // ReSharper disable once UnusedParameter.Local
+                IConsole console)
             {
                 throw new Exception("testingonly");
             }
@@ -461,7 +535,8 @@ namespace Automate.CLI.Infrastructure
         {
             private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
 
-            internal static void HandleAddCliCommand(string applicationName, string arguments, string name, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleAddCliCommand(string applicationName, string arguments, string name,
+                string asChildOf, bool outputStructured, IConsole console)
             {
                 var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
@@ -475,7 +550,8 @@ namespace Automate.CLI.Infrastructure
                     package.Toolkit.PatternName, package.Toolkit.Version, package.ExportedLocation);
                 if (package.Message.HasValue())
                 {
-                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning, package.Message);
+                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning,
+                        package.Message);
                 }
             }
 
@@ -493,22 +569,26 @@ namespace Automate.CLI.Infrastructure
             {
                 var command = Authoring.UpdateCodeTemplateCommand(commandName, name, asTearOff, withPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
-                    command.Name, command.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)], command.Metadata[nameof(CodeTemplateCommand.IsTearOff)]);
+                    command.Name, command.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
+                    command.Metadata[nameof(CodeTemplateCommand.IsTearOff)]);
             }
 
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
+                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var launchPoint = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
-            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string name, string add, string from, string asChildOf,
+            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string name, string add,
+                string from, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
+                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
@@ -525,6 +605,17 @@ namespace Automate.CLI.Infrastructure
                     element.Id);
             }
 
+            internal static void HandleUpdateElement(string elementName, string name, string displayedAs,
+                string describedAs, string asChildOf,
+                bool? isRequired, bool outputStructured, IConsole console)
+            {
+                var (parent, element) = Authoring.UpdateElement(elementName, name,
+                    isRequired, displayedAs, describedAs, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
+                    parent.Id,
+                    element.Id);
+            }
+
             internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
                 string asChildOf, bool isRequired, bool outputStructured, IConsole console)
             {
@@ -533,6 +624,16 @@ namespace Automate.CLI.Infrastructure
                     : ElementCardinality.ZeroOrMany, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
                     parent.Id, collection.Id);
+            }
+
+            internal static void HandleUpdateCollection(string collectionName, string name, string displayedAs,
+                string describedAs, string asChildOf,
+                bool? isRequired, bool outputStructured, IConsole console)
+            {
+                var (parent, element) = Authoring.UpdateElement(collectionName, name,
+                    isRequired, displayedAs, describedAs, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
+                    parent.Id, element.Id);
             }
 
             internal static void HandleAddAttribute(string name, string isOfType, string defaultValueIs,
@@ -546,7 +647,21 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, attribute.Id);
             }
 
-            internal static void HandleDeleteAttribute(string name, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleUpdateAttribute(string attributeName, string name, string isOfType,
+                string defaultValueIs,
+                bool? isRequired, string isOneOf, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var choices = isOneOf.SafeSplit(";").ToList();
+                var (parent, attribute) =
+                    Authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
+                        asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeUpdated,
+                    attribute.Name,
+                    parent.Id, attribute.Id);
+            }
+
+            internal static void HandleDeleteAttribute(string name, string asChildOf, bool outputStructured,
+                IConsole console)
             {
                 var (parent, attribute) =
                     Authoring.DeleteAttribute(name, asChildOf);
@@ -554,7 +669,8 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, attribute.Id);
             }
 
-            internal static void HandleDeleteElement(string name, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleDeleteElement(string name, string asChildOf, bool outputStructured,
+                IConsole console)
             {
                 var (parent, element) =
                     Authoring.DeleteElement(name, asChildOf);
@@ -562,7 +678,8 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, element.Id);
             }
 
-            internal static void HandleDeleteCollection(string name, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleDeleteCollection(string name, string asChildOf, bool outputStructured,
+                IConsole console)
             {
                 var (parent, element) =
                     Authoring.DeleteElement(name, asChildOf);
@@ -582,7 +699,8 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternConfiguration, FormatPatternConfiguration(outputStructured, pattern, all));
+                    OutputMessages.CommandLine_Output_PatternConfiguration,
+                    FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
             internal static void HandleSwitch(string name, bool outputStructured, IConsole console)
@@ -602,23 +720,27 @@ namespace Automate.CLI.Infrastructure
                     uploaded.Template.Metadata.OriginalFilePath, uploaded.Location);
             }
 
-            internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData, string exportData, bool outputStructured, IConsole console)
+            internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData,
+                string exportData, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
                 var result = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported, name, result.Template.Id, exportData);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported,
+                        name, result.Template.Id, exportData);
                     console.WriteOutputLine();
                 }
 
                 if (importData.HasValue())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported, name, result.Template.Id, importData);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported,
+                        name, result.Template.Id, importData);
                     console.WriteOutputLine();
                 }
 
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name, result.Template.Id, result.Output);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name,
+                    result.Template.Id, result.Output);
             }
 
             internal static void HandleListPatterns(bool outputStructured, IConsole console)
@@ -636,7 +758,8 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern, bool isDetailed)
+            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern,
+                bool isDetailed)
             {
                 if (outputStructured)
                 {
@@ -658,19 +781,24 @@ namespace Automate.CLI.Infrastructure
                 {
                     if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
                     {
-                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning,
-                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                        console.WriteOutputWarning(outputStructured,
+                            OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning,
+                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName,
+                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                     }
                     else
                     {
-                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded,
-                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                        console.WriteOutput(outputStructured,
+                            OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded,
+                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName,
+                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                     }
                 }
                 else
                 {
                     console.WriteError(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeFailed,
-                        upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                        upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion,
+                        upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                 }
             }
 
@@ -696,10 +824,12 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleNewSolution(string patternName, string name, bool outputStructured, IConsole console)
+            internal static void HandleNewSolution(string patternName, string name, bool outputStructured,
+                IConsole console)
             {
                 var solution = Runtime.CreateSolution(patternName, name);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit, solution.Name, solution.Id, solution.PatternName);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit,
+                    solution.Name, solution.Id, solution.PatternName);
             }
 
             internal static void HandleListSolutions(bool outputStructured, IConsole console)
@@ -721,10 +851,12 @@ namespace Automate.CLI.Infrastructure
             {
                 Runtime.SwitchCurrentSolution(solutionId);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_SolutionSwitched, Runtime.CurrentSolutionName, Runtime.CurrentSolutionId);
+                    OutputMessages.CommandLine_Output_SolutionSwitched, Runtime.CurrentSolutionName,
+                    Runtime.CurrentSolutionId);
             }
 
-            internal static void HandleAddTo(string expression, string[] andSet, bool outputStructured, IConsole console)
+            internal static void HandleAddTo(string expression, string[] andSet, bool outputStructured,
+                IConsole console)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
@@ -737,10 +869,12 @@ namespace Automate.CLI.Infrastructure
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(expression, null, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
+                    solutionItem.Name, solutionItem.Id);
             }
 
-            internal static void HandleAddOneTo(string expression, string[] andSet, bool outputStructured, IConsole console)
+            internal static void HandleAddOneTo(string expression, string[] andSet, bool outputStructured,
+                IConsole console)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
@@ -752,7 +886,8 @@ namespace Automate.CLI.Infrastructure
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(null, expression, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
+                    solutionItem.Name, solutionItem.Id);
             }
 
             internal static void HandleSet(string expression, string[] andSet, bool outputStructured, IConsole console)
@@ -767,7 +902,8 @@ namespace Automate.CLI.Infrastructure
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(null, null, expression, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured, solutionItem.Name, solutionItem.Id);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
+                    solutionItem.Name, solutionItem.Id);
             }
 
             internal static void HandleViewSolution(bool todo, bool outputStructured, IConsole console)
@@ -783,7 +919,8 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutputLine();
                     console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_PatternConfiguration, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                        OutputMessages.CommandLine_Output_PatternConfiguration,
+                        AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
                 }
 
                 if (todo)
@@ -791,12 +928,14 @@ namespace Automate.CLI.Infrastructure
                     console.WriteOutputLine();
                     if (validation.HasAny())
                     {
-                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                        console.WriteOutputWarning(outputStructured,
+                            OutputMessages.CommandLine_Output_SolutionValidationFailed,
                             solutionName, solutionId, FormatValidationErrors(validation));
                     }
                     else
                     {
-                        console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
+                        console.WriteOutput(outputStructured,
+                            OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
                     }
                 }
             }
@@ -806,7 +945,8 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Runtime.GetCurrentToolkit().Pattern;
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration, AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration,
+                    AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
             internal static void HandleValidate(string on,
@@ -818,12 +958,14 @@ namespace Automate.CLI.Infrastructure
                 var solutionName = Runtime.CurrentSolutionName;
                 if (results.HasAny())
                 {
-                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                    console.WriteOutputWarning(outputStructured,
+                        OutputMessages.CommandLine_Output_SolutionValidationFailed,
                         solutionName, solutionId, FormatValidationErrors(results));
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess,
+                        solutionName, solutionId);
                 }
             }
 
@@ -840,12 +982,15 @@ namespace Automate.CLI.Infrastructure
                 {
                     if (execution.IsInvalid)
                     {
-                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                            Runtime.CurrentSolutionName, Runtime.CurrentSolutionId, FormatValidationErrors(execution.ValidationErrors));
+                        console.WriteOutputWarning(outputStructured,
+                            OutputMessages.CommandLine_Output_SolutionValidationFailed,
+                            Runtime.CurrentSolutionName, Runtime.CurrentSolutionId,
+                            FormatValidationErrors(execution.ValidationErrors));
                     }
                     else
                     {
-                        console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_CommandExecutionFailed,
+                        console.WriteOutputWarning(outputStructured,
+                            OutputMessages.CommandLine_Output_CommandExecutionFailed,
                             execution.CommandName, FormatExecutionLog(execution.Log));
                     }
                 }
@@ -874,7 +1019,11 @@ namespace Automate.CLI.Infrastructure
             {
                 var builder = new StringBuilder();
                 items.ToList()
-                    .ForEach(item => { builder.AppendLine($"* {item.Type}: {item.MessageTemplate.FormatTemplate(item.Arguments.ToArray())}"); });
+                    .ForEach(item =>
+                    {
+                        builder.AppendLine(
+                            $"* {item.Type}: {item.MessageTemplate.FormatTemplate(item.Arguments.ToArray())}");
+                    });
 
                 return builder.ToString();
             }

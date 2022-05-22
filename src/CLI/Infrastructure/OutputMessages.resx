@@ -65,6 +65,9 @@
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
         <value>Added Attribute: '{Name}' to element {ParentId}, with ID: {Id}</value>
     </data>
+    <data name="CommandLine_Output_AttributeUpdated" xml:space="preserve">
+        <value>Updated Attribute: '{Name}' with ID: {Id}, successfully</value>
+    </data>
     <data name="CommandLine_Output_AttributeDeleted" xml:space="preserve">
         <value>Deleted Attribute: '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>
@@ -77,8 +80,14 @@
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
         <value>Added Element: '{Name}' to element '{ParentId}', with ID: {Id}</value>
     </data>
+    <data name="CommandLine_Output_ElementUpdated" xml:space="preserve">
+        <value>Updated Element: '{Name}' with ID: {Id}, successfully</value>
+    </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
         <value>Added Collection: '{Name}' to element '{ParentId}', with ID: {Id}</value>
+    </data>
+    <data name="CommandLine_Output_CollectionUpdated" xml:space="preserve">
+        <value>Updated Collection: '{Name}' with ID: {Id}, successfully</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
         <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
