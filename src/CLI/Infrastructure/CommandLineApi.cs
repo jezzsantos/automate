@@ -153,8 +153,6 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
-
-                //TODO: update-codetemplate
                 //TODO: edit-codetemplate (open in editor, by name)
                 new Command("delete-codetemplate", "Deletes a code template from an element/collection in the pattern")
                 {
@@ -176,7 +174,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the command to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
-                new Command("update-codetemplate-command", "Updates an existing command")
+                new Command("update-codetemplate-command", "Updates an existing code template command")
                 {
                     new Argument("CommandName", "The name of the command to update"),
                     new Option("--name", "A new name for the command", typeof(string),
@@ -203,8 +201,21 @@ namespace Automate.CLI.Infrastructure
                             typeof(string), arity: ArgumentArity.ZeroOrOne)
                     }
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCliCommand)),
-
-                //TODO: update-cli-command
+                new Command("update-cli-command", "Updates an existing CLI command")
+                {
+                    new Argument("CommandName", "The name of the command to update"),
+                    new Option("--applicationName",
+                        "The name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--arguments",
+                        "The arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--name", "A new name for the command", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof",
+                        "The expression of the element/collection on which the command exists",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCliCommand)),
                 new Command("delete-command", "Deletes any command from an element/collection in the pattern")
                 {
                     new Argument("CommandName", "The name of the command"),
@@ -588,6 +599,16 @@ namespace Automate.CLI.Infrastructure
                 var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
                     command.Name, command.Id);
+            }
+
+            internal static void HandleUpdateCliCommand(string commandName, string applicationName, string arguments,
+                string name,
+                string asChildOf, bool outputStructured, IConsole console)
+            {
+                var command = Authoring.UpdateCliCommand(commandName, name, applicationName, arguments, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandUpdated,
+                    command.Name, command.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
+                    command.Metadata[nameof(CliCommand.Arguments)]);
             }
 
             internal static void HandleDeleteCommand(string commandName, string asChildOf, bool outputStructured,

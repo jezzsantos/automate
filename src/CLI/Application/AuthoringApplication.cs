@@ -270,6 +270,20 @@ namespace Automate.CLI.Application
             return command;
         }
 
+        public Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments,
+            string parentExpression)
+        {
+            applicationName.GuardAgainstNull(nameof(applicationName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var command = target.UpdateCliCommand(commandName, name, applicationName, arguments);
+            this.store.Save(pattern);
+
+            return command;
+        }
+
         public (IPatternElement Parent, Automation Command) DeleteCommand(string commandName, string parentExpression)
         {
             commandName.GuardAgainstNull(nameof(commandName));

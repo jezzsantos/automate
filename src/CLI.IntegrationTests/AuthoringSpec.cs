@@ -600,6 +600,23 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenUpdateCliCommand_ThenUpdatesCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"AnApplication1\"  --arguments \"Arguments1\" --name ACommandName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-cli-command \"ACommandName\" --applicationName \"AnApplication2\" --arguments \"Arguments2\"");
+
+            var command = this.setup.Pattern.Automation.First();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CliCommandUpdated.FormatTemplate(command.Name,
+                        command.Id, "AnApplication2", "Arguments2"));
+        }
+
+        [Fact]
         public void WhenDeleteCliCommand_ThenDeletesCommand()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");

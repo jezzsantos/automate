@@ -116,6 +116,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated CLI Command &apos;{Name}&apos; with ID: {Id}, with app: {ApplicationName}, and Arguments: {Arguments}.
+        /// </summary>
+        internal static string CommandLine_Output_CliCommandUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CliCommandUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; with ID: {CommandId}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {

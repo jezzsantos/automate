@@ -101,6 +101,9 @@
     <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
         <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
     </data>
+    <data name="CommandLine_Output_CliCommandUpdated" xml:space="preserve">
+        <value>Updated CLI Command '{Name}' with ID: {Id}, with app: {ApplicationName}, and Arguments: {Arguments}</value>
+    </data>
     <data name="CommandLine_Output_CommandDeleted" xml:space="preserve">
         <value>Deleted Command: '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>
