@@ -47,7 +47,7 @@ namespace Automate.CLI.Domain
 
         CodeTemplate AddCodeTemplate(string name, string fullPath, string extension);
 
-        void DeleteCodeTemplate(string id, bool includeReferencingAutomation);
+        CodeTemplate DeleteCodeTemplate(string name, bool includeReferencingAutomation);
 
         Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath);
 
@@ -59,7 +59,9 @@ namespace Automate.CLI.Domain
 
         Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments);
 
-        public void DeleteCliCommand(string id);
+        public void DeleteCliCommand(string id, bool includeReferencingAutomation);
+
+        Automation DeleteAutomation(string name);
 
         Automation AddCommandLaunchPoint(string name, List<string> commandIds);
 

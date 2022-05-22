@@ -46,7 +46,10 @@
 {Patterns}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added Code Template: '{Name}' (ID: {Id}) from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
+        <value>Added Code Template: '{Name}' from element {ParentId}, with ID: {Id} from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateDeleted" xml:space="preserve">
+        <value>Deleted Code Template: '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
         <value>Code Template '{Name}' (ID: {Id}) outputs:
@@ -95,11 +98,20 @@
     <data name="CommandLine_Output_CodeTemplateCommandUpdated" xml:space="preserve">
         <value>Updated Code Template Command '{Name}' with ID: {Id}, with path: {FilePath}, and TearOff: {TearOff}</value>
     </data>
+    <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
+        <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
+    </data>
+    <data name="CommandLine_Output_CommandDeleted" xml:space="preserve">
+        <value>Deleted Command: '{Name}' from element {ParentId}, with ID: {Id}</value>
+    </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
         <value>Added Launch Point '{Name}' with ID: {Id}, for commands: {Commands}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointUpdated" xml:space="preserve">
         <value>Updated Launch Point '{Name}' with ID: {Id}, with commands: {Commands}</value>
+    </data>
+    <data name="CommandLine_Output_LaunchPointDeleted" xml:space="preserve">
+        <value>Deleted Launch Point '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:
@@ -174,9 +186,6 @@
     <data name="CommandLine_Output_SolutionUpgradeFailed" xml:space="preserve">
         <value>Failed to upgrade Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
-    </data>
-    <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
-        <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
     </data>
     <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">
         <value>Toolkit pattern is defined as:

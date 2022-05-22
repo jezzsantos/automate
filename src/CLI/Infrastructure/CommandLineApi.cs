@@ -14,7 +14,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal class CommandLineApi
+    internal static class CommandLineApi
     {
         public const string CreateCommandName = "create";
         public const string EditCommandName = "edit";
@@ -150,13 +150,19 @@ namespace Automate.CLI.Infrastructure
                     new Argument("FilePath", "A relative path to the code file, from the current directory"),
                     new Option("--name", "A friendly name for the code template",
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                    new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
 
                 //TODO: update-codetemplate
                 //TODO: edit-codetemplate (open in editor, by name)
-                //TODO: delete-codetemplate
+                new Command("delete-codetemplate", "Deletes a code template from an element/collection in the pattern")
+                {
+                    new Argument("TemplateName", "The name of the code template"),
+                    new Option("--aschildof",
+                        "The expression of the element/collection to delete the code template from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteCodeTemplate)),
                 new Command("add-codetemplate-command", "Adds a command that renders a code template")
                 {
                     new Argument("CodeTemplateName", "The name of the code template"),
@@ -199,7 +205,12 @@ namespace Automate.CLI.Infrastructure
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCliCommand)),
 
                 //TODO: update-cli-command
-                //TODO: delete-command (by ID, all kinds)
+                new Command("delete-command", "Deletes any command from an element/collection in the pattern")
+                {
+                    new Argument("CommandName", "The name of the command"),
+                    new Option("--aschildof", "The expression of the element/collection to delete the command from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
                     new Argument("CommandIdentifiers",
@@ -222,9 +233,15 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof",
                         "The expression of the element/collection on which the launch point exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCommandLaunchPoint))
-
-                //TODO: delete-command-launchpoint
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateLaunchPoint)),
+                new Command("delete-command-launchpoint",
+                    "Deletes a launch point from an element/collection in the pattern")
+                {
+                    new Argument("LaunchPointName", "The name of the launch point"),
+                    new Option("--aschildof",
+                        "The expression of the element/collection to delete the launch point from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleDeleteLaunchPoint))
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
             {
@@ -535,14 +552,6 @@ namespace Automate.CLI.Infrastructure
         {
             private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
 
-            internal static void HandleAddCliCommand(string applicationName, string arguments, string name,
-                string asChildOf, bool outputStructured, IConsole console)
-            {
-                var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
-                    command.Name, command.Id);
-            }
-
             internal static void HandleBuild(string asversion, bool force, bool outputStructured, IConsole console)
             {
                 var package = Authoring.BuildAndExportToolkit(asversion, force);
@@ -573,6 +582,22 @@ namespace Automate.CLI.Infrastructure
                     command.Metadata[nameof(CodeTemplateCommand.IsTearOff)]);
             }
 
+            internal static void HandleAddCliCommand(string applicationName, string arguments, string name,
+                string asChildOf, bool outputStructured, IConsole console)
+            {
+                var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
+                    command.Name, command.Id);
+            }
+
+            internal static void HandleDeleteCommand(string commandName, string asChildOf, bool outputStructured,
+                IConsole console)
+            {
+                var (parent, command) = Authoring.DeleteCommand(commandName, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandDeleted,
+                    command.Name, parent.Id, command.Id);
+            }
+
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
@@ -583,7 +608,7 @@ namespace Automate.CLI.Infrastructure
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
-            internal static void HandleUpdateCommandLaunchPoint(string launchPointName, string name, string add,
+            internal static void HandleUpdateLaunchPoint(string launchPointName, string name, string add,
                 string from, string asChildOf,
                 bool outputStructured, IConsole console)
             {
@@ -592,6 +617,14 @@ namespace Automate.CLI.Infrastructure
                 var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
                     launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+            }
+
+            internal static void HandleDeleteLaunchPoint(string launchPointName, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var (parent, launchPoint) = Authoring.DeleteCommandLaunchPoint(launchPointName, asChildOf);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointDeleted,
+                    launchPoint.Name, parent.Id, launchPoint.Id);
             }
 
             internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
@@ -714,10 +747,19 @@ namespace Automate.CLI.Infrastructure
                 bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var uploaded = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, uploaded.Template.Name, uploaded.Template.Id,
-                    uploaded.Template.Metadata.OriginalFilePath, uploaded.Location);
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, parent.Id,
+                    template.Template.Id,
+                    template.Template.Metadata.OriginalFilePath, template.Location);
+            }
+
+            internal static void HandleDeleteCodeTemplate(string templateName, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var (parent, template) = Authoring.DeleteCodeTemplate(templateName, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, parent.Id, template.Id);
             }
 
             internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData,

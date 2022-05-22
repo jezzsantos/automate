@@ -12,6 +12,7 @@ namespace Automate.CLI.Domain
         private readonly List<Automation> automations;
         private readonly List<CodeTemplate> codeTemplates;
         private readonly List<Element> elements;
+        private readonly ICollectionAutoNamer autoNamer;
 
         protected PatternElement(string name)
         {
@@ -26,6 +27,7 @@ namespace Automate.CLI.Domain
             this.automations = new List<Automation>();
             this.attributes = new List<Attribute>();
             this.elements = new List<Element>();
+            this.autoNamer = new CollectionAutoNamer();
         }
 
         protected PatternElement(PersistableProperties properties, IPersistableFactory factory)
@@ -36,6 +38,7 @@ namespace Automate.CLI.Domain
             this.elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
             this.automations = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
             this.codeTemplates = properties.Rehydrate<List<CodeTemplate>>(factory, nameof(CodeTemplates));
+            this.autoNamer = new CollectionAutoNamer();
         }
 
         internal PatternElement Parent { get; private set; }
@@ -374,9 +377,7 @@ namespace Automate.CLI.Domain
             fullPath.GuardAgainstNullOrEmpty(nameof(fullPath));
             extension.GuardAgainstNullOrEmpty(nameof(extension));
 
-            var templateName = name.HasValue()
-                ? name
-                : $"CodeTemplate{CodeTemplates.ToListSafe().Count + 1}";
+            var templateName = this.autoNamer.GetNextCodeTemplateName(name, this);
             if (CodeTemplateExistsByName(this, templateName))
             {
                 throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateByNameExists
@@ -389,14 +390,14 @@ namespace Automate.CLI.Domain
             return codeTemplate;
         }
 
-        public void DeleteCodeTemplate(string id, bool includeReferencingAutomation)
+        public CodeTemplate DeleteCodeTemplate(string name, bool includeReferencingAutomation)
         {
-            id.GuardAgainstNullOrEmpty(nameof(id));
+            name.GuardAgainstNullOrEmpty(nameof(name));
 
-            var codeTemplate = this.codeTemplates.FirstOrDefault(temp => temp.Id == id);
+            var codeTemplate = this.codeTemplates.FirstOrDefault(temp => temp.Name == name);
             if (codeTemplate.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNotExistsById.Format(id));
+                throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNotExistsById.Format(name));
             }
 
             DeleteCodeTemplate(codeTemplate);
@@ -410,6 +411,8 @@ namespace Automate.CLI.Domain
                     .ToList()
                     .ForEach(cmd => { DeleteCodeTemplateCommand(cmd.Id, true); });
             }
+
+            return codeTemplate;
         }
 
         public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath)
@@ -424,9 +427,7 @@ namespace Automate.CLI.Domain
                     ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName));
             }
 
-            var commandName = name.HasValue()
-                ? name
-                : $"CodeTemplateCommand{Automation.ToListSafe().Count + 1}";
+            var commandName = this.autoNamer.GetNextAutomationName(AutomationType.CodeTemplateCommand, name, this);
             if (AutomationExistsByName(this, commandName))
             {
                 throw new AutomateException(
@@ -483,16 +484,7 @@ namespace Automate.CLI.Domain
 
             if (includeReferencingAutomation)
             {
-                Pattern.GetAllLaunchPoints()
-                    .Where(pair => pair.LaunchPoint.CommandIds.Contains(command.Id))
-                    .ToList().ForEach(pair =>
-                    {
-                        pair.LaunchPoint.RemoveCommandId(id);
-                        if (pair.LaunchPoint.CommandIds.HasNone())
-                        {
-                            pair.Parent.DeleteCommandLaunchPoint(pair.LaunchPoint.Id);
-                        }
-                    });
+                RemoveLaunchPointReferences(command.Id);
             }
         }
 
@@ -500,9 +492,7 @@ namespace Automate.CLI.Domain
         {
             applicationName.GuardAgainstNull(nameof(applicationName));
 
-            var commandName = name.HasValue()
-                ? name
-                : $"CliCommand{Automation.ToListSafe().Count + 1}";
+            var commandName = this.autoNamer.GetNextAutomationName(AutomationType.CliCommand, name, this);
             if (AutomationExistsByName(this, commandName))
             {
                 throw new AutomateException(
@@ -543,7 +533,7 @@ namespace Automate.CLI.Domain
             return command.AsAutomation();
         }
 
-        public void DeleteCliCommand(string id)
+        public void DeleteCliCommand(string id, bool includeReferencingAutomation)
         {
             id.GuardAgainstNullOrEmpty(nameof(id));
 
@@ -555,6 +545,11 @@ namespace Automate.CLI.Domain
             }
 
             DeleteCliCommand(CliCommand.FromAutomation(command));
+
+            if (includeReferencingAutomation)
+            {
+                RemoveLaunchPointReferences(command.Id);
+            }
         }
 
         public Automation AddCommandLaunchPoint(string name, List<string> commandIds)
@@ -583,9 +578,7 @@ namespace Automate.CLI.Domain
                 });
             }
 
-            var launchPointName = name.HasValue()
-                ? name
-                : $"LaunchPoint{Automation.ToListSafe().Count + 1}";
+            var launchPointName = this.autoNamer.GetNextAutomationName(AutomationType.CommandLaunchPoint, name, this);
             if (AutomationExistsByName(this, launchPointName))
             {
                 throw new AutomateException(
@@ -662,6 +655,35 @@ namespace Automate.CLI.Domain
             DeleteCommandLaunchPoint(CommandLaunchPoint.FromAutomation(launchPoint));
         }
 
+        public Automation DeleteAutomation(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var automation = FindAutomationByName(this, name, _ => true);
+            if (automation.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.Unknown, name));
+            }
+
+            switch (automation.Type)
+            {
+                case AutomationType.CodeTemplateCommand:
+                    DeleteCodeTemplateCommand(automation.Id, true);
+                    break;
+
+                case AutomationType.CliCommand:
+                    DeleteCliCommand(automation.Id, true);
+                    break;
+
+                case AutomationType.CommandLaunchPoint:
+                    DeleteCommandLaunchPoint(automation.Id);
+                    break;
+            }
+
+            return automation;
+        }
+
         public string Id { get; }
 
         public string Name { get; protected set; }
@@ -729,6 +751,20 @@ namespace Automate.CLI.Domain
             }
 
             return !abort;
+        }
+
+        private void RemoveLaunchPointReferences(string automationId)
+        {
+            Pattern.GetAllLaunchPoints()
+                .Where(pair => pair.LaunchPoint.CommandIds.Contains(automationId))
+                .ToList().ForEach(pair =>
+                {
+                    pair.LaunchPoint.RemoveCommandId(automationId);
+                    if (pair.LaunchPoint.CommandIds.HasNone())
+                    {
+                        pair.Parent.DeleteCommandLaunchPoint(pair.LaunchPoint.Id);
+                    }
+                });
         }
 
         private static List<string> GetAllLaunchableAutomation(IReadOnlyList<Automation> automation)
@@ -817,5 +853,6 @@ namespace Automate.CLI.Domain
                 ? this as PatternDefinition
                 : Parent.GetRoot();
         }
+
     }
 }

@@ -134,11 +134,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: {Id}) from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id} from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CodeTemplatedAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateDeleted", resourceCulture);
             }
         }
         
@@ -194,6 +203,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_CollectionUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CollectionUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Command: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandDeleted", resourceCulture);
             }
         }
         
@@ -317,6 +335,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_LaunchPointAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Launch Point &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        /// </summary>
+        internal static string CommandLine_Output_LaunchPointDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_LaunchPointDeleted", resourceCulture);
             }
         }
         

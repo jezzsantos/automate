@@ -72,7 +72,7 @@ namespace CLI.UnitTests.Domain
                 { codeTemplate.Id, new byte[] { 0x01, 0x02, 0x03 } }
             });
             var solution = new SolutionDefinition(originalToolkit);
-            pattern.DeleteCodeTemplate(codeTemplate.Id, true);
+            pattern.DeleteCodeTemplate(codeTemplate.Name, true);
             var updatedToolkit = MakeDetachedToolkit(pattern);
             var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
 
@@ -135,7 +135,7 @@ namespace CLI.UnitTests.Domain
             });
             var solution = new SolutionDefinition(originalToolkit);
             var codeTemplate3 = pattern.AddCodeTemplate("atemplatename3", "afullpath", "anextension");
-            pattern.DeleteCodeTemplate(codeTemplate2.Id, true);
+            pattern.DeleteCodeTemplate(codeTemplate2.Name, true);
             var updatedToolkit = MakeDetachedToolkit(pattern, new Dictionary<string, byte[]>
             {
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },

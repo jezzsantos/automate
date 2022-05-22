@@ -32,13 +32,19 @@ namespace CLI.IntegrationTests
 
         public StandardOutput Error { get; private set; }
 
+        internal PatternDefinition Pattern => Patterns.FirstOrDefault();
+
         internal List<PatternDefinition> Patterns => this.repository.ListPatterns();
 
         internal LocalState LocalState => this.repository.GetLocalState();
 
         public string Location => this.repository.PatternLocation;
 
+        internal SolutionDefinition Solution => Solutions.FirstOrDefault();
+
         internal List<SolutionDefinition> Solutions => this.repository.ListSolutions();
+
+        internal ToolkitDefinition Toolkit => Toolkits.FirstOrDefault();
 
         internal List<ToolkitDefinition> Toolkits => this.repository.ListToolkits();
 

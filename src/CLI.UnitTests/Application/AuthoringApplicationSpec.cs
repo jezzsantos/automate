@@ -133,9 +133,9 @@ namespace CLI.UnitTests.Application
 
             var result = this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
-            result.Template.Name.Should().Be("atemplatename");
-            result.Template.Metadata.OriginalFilePath.Should().Be("afullpath");
-            result.Location.Should().Be(MemoryRepository.InMemoryLocation);
+            result.Template.Template.Name.Should().Be("atemplatename");
+            result.Template.Template.Metadata.OriginalFilePath.Should().Be("afullpath");
+            result.Template.Location.Should().Be(MemoryRepository.InMemoryLocation);
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
             this.store.GetCurrent().CodeTemplates.Single().Metadata.OriginalFilePath.Should().Be("afullpath");
         }

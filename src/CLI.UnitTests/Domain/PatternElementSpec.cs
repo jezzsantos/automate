@@ -321,7 +321,6 @@ namespace CLI.UnitTests.Domain
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
 
-
         [Fact]
         public void WhenDeleteElement_TheDeletesElementFromElement()
         {
@@ -443,6 +442,60 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenDeleteCodeTemplateCommandAndNotIncludeReferencingLaunchPoints_ThenDeletesCommandOnly()
+        {
+            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            this.element.AddCodeTemplate(codeTemplate);
+            var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteCodeTemplateCommand(command.Id, false);
+
+            this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate.Id);
+            this.element.Automation.Should().ContainSingle(x => x.Id == launchPoint.Id);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void
+            WhenDeleteCodeTemplateCommandAndIncludeAutomationAndHasReferencingLaunchPoint_ThenDeletesCommandAndLaunchPoint()
+        {
+            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            this.element.AddCodeTemplate(codeTemplate);
+            var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteCodeTemplateCommand(command.Id, true);
+
+            this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate.Id);
+            this.element.Automation.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void
+            WhenDeleteCodeTemplateCommandAndIncludeAutomationAndHasReferencingLaunchPointToOtherCommands_ThenDeletesCommandOnly()
+        {
+            var codeTemplate = new CodeTemplate("aname1", "afullpath", "afileextension");
+            this.element.AddCodeTemplate(codeTemplate);
+            var command1 = this.element.AddCodeTemplateCommand("acommandname1", codeTemplate.Name, false, "afilepath");
+            var command2 = this.element.AddCodeTemplateCommand("acommandname2", codeTemplate.Name, false, "afilepath");
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { command1.Id, command2.Id });
+
+            this.element.DeleteCodeTemplateCommand(command1.Id, true);
+
+            this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate.Id);
+            this.element.Automation.Should().HaveCount(2);
+            this.element.Automation[0].Id.Should().Be(command2.Id);
+            this.element.Automation[1].Id.Should().Be(launchPoint.Id);
+            this.element.Automation[1].Metadata.Should().Contain(x =>
+                x.Key == nameof(CommandLaunchPoint.CommandIds)
+                && (string)x.Value == new List<string> { command2.Id }.Join(""));
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
         public void WhenAddCliCommandAndAlreadyExists_ThenThrows()
         {
             this.element.AddCliCommand("acommandname", "anapplicationname", "anargument");
@@ -506,12 +559,57 @@ namespace CLI.UnitTests.Domain
         public void WhenDeleteCliCommandAndNotExists_ThenThrows()
         {
             this.element
-                .Invoking(x => x.DeleteCliCommand("anid"))
+                .Invoking(x => x.DeleteCliCommand("anid", true))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_AutomationNotExistsById.Format(AutomationType.CliCommand, "anid"));
         }
 
+        [Fact]
+        public void WhenDeleteCliCommandAndNotIncludeReferencingLaunchPoints_ThenDeletesCommandOnly()
+        {
+            var command = this.element.AddCliCommand("acommandname", "anapplicationname", null);
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteCliCommand(command.Id, false);
+
+            this.element.Automation.Should().ContainSingle(x => x.Id == launchPoint.Id);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void
+            WhenDeleteCliCommandAndIncludeAutomationAndHasReferencingLaunchPoint_ThenDeletesCommandAndLaunchPoint()
+        {
+            var command = this.element.AddCliCommand("acommandname", "anapplicationname", null);
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteCliCommand(command.Id, true);
+
+            this.element.Automation.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void
+            WhenDeleteCliCommandAndIncludeAutomationAndHasReferencingLaunchPointToOtherCommands_ThenDeletesCommandOnly()
+        {
+            var command1 = this.element.AddCliCommand("acommandname1", "anapplicationname", null);
+            var command2 = this.element.AddCliCommand("acommandname2", "anapplicationname", null);
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { command1.Id, command2.Id });
+
+            this.element.DeleteCliCommand(command1.Id, true);
+
+            this.element.Automation.Should().HaveCount(2);
+            this.element.Automation[0].Id.Should().Be(command2.Id);
+            this.element.Automation[1].Id.Should().Be(launchPoint.Id);
+            this.element.Automation[1].Metadata.Should().Contain(x =>
+                x.Key == nameof(CommandLaunchPoint.CommandIds)
+                && (string)x.Value == new List<string> { command2.Id }.Join(""));
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+        
         [Fact]
         public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
         {
@@ -598,7 +696,7 @@ namespace CLI.UnitTests.Domain
 
             var result = this.element.AddCommandLaunchPoint(null, new List<string> { command.Id });
 
-            result.Name.Should().Be("LaunchPoint2");
+            result.Name.Should().Be("CommandLaunchPoint2");
             result.Should().Be(this.element.Automation[1]);
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command.Id}");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
@@ -691,7 +789,7 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
 
-            this.element.DeleteCodeTemplate(codeTemplate.Id, false);
+            this.element.DeleteCodeTemplate(codeTemplate.Name, false);
 
             this.element.CodeTemplates.Should().BeEmpty();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
@@ -704,7 +802,7 @@ namespace CLI.UnitTests.Domain
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
 
-            this.element.DeleteCodeTemplate(codeTemplate.Id, false);
+            this.element.DeleteCodeTemplate(codeTemplate.Name, false);
 
             this.element.CodeTemplates.Should().BeEmpty();
             this.element.Automation.Should().ContainSingle(x => x.Id == command.Id);
@@ -719,7 +817,7 @@ namespace CLI.UnitTests.Domain
             this.element.AddCodeTemplate(codeTemplate);
             this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
 
-            this.element.DeleteCodeTemplate(codeTemplate.Id, true);
+            this.element.DeleteCodeTemplate(codeTemplate.Name, true);
 
             this.element.CodeTemplates.Should().BeEmpty();
             this.element.Automation.Should().BeEmpty();
@@ -735,7 +833,7 @@ namespace CLI.UnitTests.Domain
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
 
-            this.element.DeleteCodeTemplate(codeTemplate.Id, true);
+            this.element.DeleteCodeTemplate(codeTemplate.Name, true);
 
             this.element.CodeTemplates.Should().BeEmpty();
             this.element.Automation.Should().BeEmpty();
@@ -756,7 +854,7 @@ namespace CLI.UnitTests.Domain
             var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
                 new List<string> { command1.Id, command2.Id, command3.Id });
 
-            this.element.DeleteCodeTemplate(codeTemplate1.Id, true);
+            this.element.DeleteCodeTemplate(codeTemplate1.Name, true);
 
             this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate2.Id);
             this.element.Automation.Should().HaveCount(2);
@@ -790,6 +888,56 @@ namespace CLI.UnitTests.Domain
             this.element.DeleteCommandLaunchPoint(launchPoint.Id);
 
             this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate.Id);
+            this.element.Automation.Should().ContainSingle(x => x.Id == command.Id);
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenDeleteAutomationAndNotExists_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.DeleteAutomation("anautomationname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.PatternElement_AutomationNotExistsByName.Format(AutomationType.Unknown,
+                        "anautomationname"));
+        }
+
+        [Fact]
+        public void WhenDeleteAutomationForCodeTemplateCommand_ThenDeletesCommand()
+        {
+            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            this.element.AddCodeTemplate(codeTemplate);
+            var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteAutomation(command.Name);
+
+            this.element.CodeTemplates.Should().ContainSingle(x => x.Id == codeTemplate.Id);
+            this.element.Automation.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenDeleteAutomationForCliCommand_ThenDeletesCommand()
+        {
+            var command = this.element.AddCliCommand("acommandname", "anapp", null);
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteAutomation(command.Name);
+
+            this.element.Automation.Should().BeEmpty();
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenDeleteAutomationForLaunchPoint_ThenDeletesLaunchPoint()
+        {
+            var command = this.element.AddCliCommand("acommandname", "anapp", null);
+            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+
+            this.element.DeleteAutomation(launchPoint.Name);
+
             this.element.Automation.Should().ContainSingle(x => x.Id == command.Id);
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }

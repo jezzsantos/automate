@@ -78,6 +78,9 @@
     <data name="PatternElement_Automation_Update" xml:space="preserve">
         <value>Automation (ID: {AutomationId}) was updated on element {ParentId}</value>
     </data>
+    <data name="PatternElement_Automation_Delete" xml:space="preserve">
+        <value>Automation (ID: {AutomationId}) was deleted from element {ParentId}</value>
+    </data>
     <data name="PatternElement_CodeTemplateCommand_Delete" xml:space="preserve">
         <value>CodeTemplateCommand (ID: {AutomationId}) was deleted from element {ParentId}</value>
     </data>

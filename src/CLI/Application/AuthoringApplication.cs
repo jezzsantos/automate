@@ -162,7 +162,8 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
-        public UploadedCodeTemplate AttachCodeTemplate(string rootPath, string relativeFilePath, string name,
+        public (IPatternElement Parent, UploadedCodeTemplate Template) AttachCodeTemplate(string rootPath,
+            string relativeFilePath, string name,
             string parentExpression)
         {
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
@@ -187,7 +188,20 @@ namespace Automate.CLI.Application
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
             var location = this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
-            return new UploadedCodeTemplate(codeTemplate, location);
+            return (target, new UploadedCodeTemplate(codeTemplate, location));
+        }
+
+        public (IPatternElement Parent, CodeTemplate Template) DeleteCodeTemplate(string name, string parentExpression)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var template = target.DeleteCodeTemplate(name, true);
+            this.store.Save(pattern);
+
+            return (target, template);
         }
 
         public List<CodeTemplate> ListCodeTemplates(string parentExpression)
@@ -256,6 +270,19 @@ namespace Automate.CLI.Application
             return command;
         }
 
+        public (IPatternElement Parent, Automation Command) DeleteCommand(string commandName, string parentExpression)
+        {
+            commandName.GuardAgainstNull(nameof(commandName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var command = target.DeleteAutomation(commandName);
+            this.store.Save(pattern);
+
+            return (target, command);
+        }
+
         public Automation AddCommandLaunchPoint(string name, List<string> commandIds, string parentExpression)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
@@ -283,6 +310,20 @@ namespace Automate.CLI.Application
             this.store.Save(pattern);
 
             return launchPoint;
+        }
+
+        public (IPatternElement Parent, Automation LaunchPoint) DeleteCommandLaunchPoint(string launchPointName,
+            string parentExpression)
+        {
+            launchPointName.GuardAgainstNull(nameof(launchPointName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var launchPoint = target.DeleteAutomation(launchPointName);
+            this.store.Save(pattern);
+
+            return (target, launchPoint);
         }
 
         public CodeTemplateTest TestCodeTemplate(string codeTemplateName, string parentExpression, string rootPath,
