@@ -181,7 +181,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--astearoff",
                         "If you only want to generate the file once, and not overwrite the file if it already exists",
-                        typeof(bool?), arity: ArgumentArity.ZeroOrOne),
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
                     new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the command exists",
