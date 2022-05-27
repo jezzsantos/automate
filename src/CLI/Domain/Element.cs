@@ -26,10 +26,6 @@ namespace Automate.CLI.Domain
 
         public ElementCardinality Cardinality { get; private set; }
 
-        public string DisplayName { get; private set; }
-
-        public string Description { get; private set; }
-
         public bool IsCollection { get; private set; }
 
         public override PersistableProperties Dehydrate()
@@ -58,15 +54,6 @@ namespace Automate.CLI.Domain
             return visitor.VisitElementExit(this);
         }
 
-        public void Rename(string name)
-        {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
-                ValidationMessages.InvalidNameIdentifier);
-
-            Name = name;
-            RecordChange(VersionChange.Breaking, VersionChanges.Element_Update_Name, Id, Parent.Id);
-        }
 
         public void SetCardinality(ElementCardinality cardinality)
         {
@@ -75,23 +62,6 @@ namespace Automate.CLI.Domain
                 Id, Parent.Id);
         }
 
-        public void SetDisplayName(string displayName)
-        {
-            displayName.GuardAgainstNullOrEmpty(nameof(displayName));
-
-            DisplayName = displayName;
-            RecordChange(VersionChange.NonBreaking, VersionChanges.Element_Update_DisplayName,
-                Id, Parent.Id);
-        }
-
-        public void SetDescription(string description)
-        {
-            description.GuardAgainstNullOrEmpty(nameof(description));
-
-            Description = description;
-            RecordChange(VersionChange.NonBreaking, VersionChanges.Element_Update_Description,
-                Id, Parent.Id);
-        }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {

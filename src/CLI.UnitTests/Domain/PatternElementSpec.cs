@@ -952,6 +952,79 @@ namespace CLI.UnitTests.Domain
             this.element.Automation.Should().ContainSingle(x => x.Id == command.Id);
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithEmptyName_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.RenameAndDescribe(string.Empty))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("") + "*");
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithInvalidName_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.RenameAndDescribe("^aninvalidname^"))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithNoDisplayName_ThenRenames()
+        {
+            this.element.RenameAndDescribe("OneTwoThree");
+
+            this.element.Name.Should().Be("OneTwoThree");
+            this.element.DisplayName.Should().Be("One Two Three");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithDisplayName_ThenRenames()
+        {
+            this.element.RenameAndDescribe("aname", "adisplayname");
+
+            this.element.Name.Should().Be("aname");
+            this.element.DisplayName.Should().Be("adisplayname");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithEmptyDisplayName_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.RenameAndDescribe(null, ""))
+                .Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribe_ThenSetsDisplayName()
+        {
+            this.element.RenameAndDescribe(null, "adisplayname");
+
+            this.element.Name.Should().Be("aname");
+            this.element.DisplayName.Should().Be("adisplayname");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithEmptyDescription_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.RenameAndDescribe(null, null, ""))
+                .Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WhenRenameAndDescribeWithDescription_ThenSetDescriptions()
+        {
+            this.element.RenameAndDescribe(null, null, "adescription");
+
+            this.element.Description.Should().Be("adescription");
+            this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
     }
 
     internal class TestPatternElement : Element

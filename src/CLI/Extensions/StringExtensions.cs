@@ -8,8 +8,6 @@ namespace Automate.CLI.Extensions
 {
     internal static class StringExtensions
     {
-        private const int LowerCaseOffset = 'a' - 'A';
-
         public static int ToInt(this string text)
         {
             return text == null
@@ -138,31 +136,19 @@ namespace Automate.CLI.Extensions
                 return value;
             }
 
-            if (value.IndexOf('_') >= 0)
+            if (value.Contains('_'))
             {
-                var parts = value.Split('_');
-                var sb = new StringBuilder();
-                var firstPart = true;
-                foreach (var part in parts)
-                {
-                    if (part.HasNoValue())
-                    {
-                        continue;
-                    }
-                    var camelCased = part.ToCamelCase();
-                    if (firstPart)
-                    {
-                        sb.Append(camelCased);
-                        firstPart = false;
-                    }
-                    else
-                    {
-                        sb.Append(char.ToUpper(camelCased[0]) + camelCased.SafeSubstring(1, camelCased.Length));
-                    }
-                }
-                return sb.ToString();
+                return FromSnakeCase(value);
             }
-            else
+
+            if (value.Contains(' '))
+            {
+                return FromSentence(value);
+            }
+
+            return FromWholeWord(value);
+
+            static string FromWholeWord(string value)
             {
                 var valueLength = value.Length;
                 var newValue = new char[valueLength];
@@ -173,14 +159,14 @@ namespace Automate.CLI.Extensions
                     var nextCharacter = index < valueLength - 1
                         ? value[index + 1]
                         : 'A';
-                    var isCurrentUpper = currentCharacter is >= 'A' and <= 'Z';
-                    var isNextUpper = nextCharacter is >= 'A' and <= 'Z';
+                    var isCurrentUpper = char.IsUpper(currentCharacter);
+                    var isNextUpper = char.IsUpper(nextCharacter);
 
                     if (firstPart
                         && isCurrentUpper
                         && (isNextUpper || index == 0))
                     {
-                        currentCharacter = (char)(currentCharacter + LowerCaseOffset);
+                        currentCharacter = char.ToLower(currentCharacter);
                     }
                     else
                     {
@@ -190,8 +176,39 @@ namespace Automate.CLI.Extensions
                     newValue[index] = currentCharacter;
                 }
 
-                return new string(newValue)
-                    .Replace(" ", string.Empty);
+                return new string(newValue);
+            }
+
+            static string FromSentence(string value)
+            {
+                var parts = value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                return FromWords(parts);
+            }
+
+            static string FromSnakeCase(string value)
+            {
+                var parts = value.Split('_', StringSplitOptions.RemoveEmptyEntries);
+                return FromWords(parts);
+            }
+
+            static string FromWords(string[] parts)
+            {
+                var sb = new StringBuilder();
+                var firstPart = true;
+                foreach (var part in parts)
+                {
+                    var camelCased = FromWholeWord(part);
+                    if (firstPart)
+                    {
+                        sb.Append(camelCased);
+                        firstPart = false;
+                    }
+                    else
+                    {
+                        sb.Append(camelCased.Capitalize());
+                    }
+                }
+                return sb.ToString();
             }
         }
 
@@ -202,24 +219,42 @@ namespace Automate.CLI.Extensions
                 return value;
             }
 
-            if (value.IndexOf('_') >= 0)
+            var camelCase = value.ToCamelCase();
+            return camelCase.Capitalize();
+        }
+
+        public static string ToCapitalizedWords(this string value)
+        {
+            if (value.HasNoValue())
             {
-                var parts = value.Split('_');
-                var sb = new StringBuilder();
-                foreach (var part in parts)
-                {
-                    if (part.HasNoValue())
-                    {
-                        continue;
-                    }
-                    var camelCased = part.ToCamelCase();
-                    sb.Append(char.ToUpper(camelCased[0]) + camelCased.SafeSubstring(1, camelCased.Length));
-                }
-                return sb.ToString();
+                return value;
             }
 
-            var camelCase = value.ToCamelCase();
-            return char.ToUpper(camelCase[0]) + camelCase.SafeSubstring(1, camelCase.Length);
+            var pascal = value.ToPascalCase();
+
+            var words = Regex.Split(pascal, @"(?<!^)(?=\p{Lu}\p{Ll})");
+            var sb = new StringBuilder();
+            var index = 0;
+            foreach (var word in words)
+            {
+                var space = ++index == 1
+                    ? string.Empty
+                    : " ";
+
+                sb.Append($"{space}{word.Trim(' ').Capitalize()}");
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Capitalize(this string value)
+        {
+            if (value.HasNoValue())
+            {
+                return value;
+            }
+
+            return char.ToUpper(value[0]) + value.SafeSubstring(1, value.Length);
         }
 
         private static string SafeSubstring(this string value, int startIndex, int length)

@@ -97,29 +97,29 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its name.
-        /// </summary>
-        internal static string Pattern_Name_Updated {
-            get {
-                return ResourceManager.GetString("Pattern_Name_Updated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its description.
         /// </summary>
-        internal static string Pattern_Update_Description {
+        internal static string Pattern_Description_Updated {
             get {
-                return ResourceManager.GetString("Pattern_Update_Description", resourceCulture);
+                return ResourceManager.GetString("Pattern_Description_Updated", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its display name.
         /// </summary>
-        internal static string Pattern_Update_DisplayName {
+        internal static string Pattern_DisplayName_Updated {
             get {
-                return ResourceManager.GetString("Pattern_Update_DisplayName", resourceCulture);
+                return ResourceManager.GetString("Pattern_DisplayName_Updated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its name.
+        /// </summary>
+        internal static string Pattern_Name_Updated {
+            get {
+                return ResourceManager.GetString("Pattern_Name_Updated", resourceCulture);
             }
         }
         

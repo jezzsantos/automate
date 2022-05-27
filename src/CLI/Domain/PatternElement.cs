@@ -45,6 +45,10 @@ namespace Automate.CLI.Domain
 
         internal PatternDefinition Pattern => GetRoot();
 
+        public string DisplayName { get; protected set; }
+
+        public string Description { get; protected set; }
+
         public virtual PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
@@ -127,6 +131,79 @@ namespace Automate.CLI.Domain
         public void SetParent(PatternElement parent)
         {
             Parent = parent;
+        }
+
+        public void RecordChange(VersionChange change, string description, params object[] args)
+        {
+            var pattern = Pattern;
+            if (pattern.NotExists())
+            {
+                return;
+            }
+
+            if (this == Pattern)
+            {
+                pattern.ToolkitVersion.RegisterChange(change, description, args);
+            }
+            else
+            {
+                pattern.RecordChange(change, description, args);
+            }
+        }
+
+        public void RenameAndDescribe(string name, string displayName = null, string description = null)
+        {
+            if (name.IsNotNull())
+            {
+                SetName(name);
+                if (displayName.HasNoValue())
+                {
+                    SetDisplayName(name.ToCapitalizedWords());
+                }
+            }
+
+            if (displayName.IsNotNull())
+            {
+                SetDisplayName(displayName);
+            }
+
+            if (description.IsNotNull())
+            {
+                SetDescription(description);
+            }
+
+            void SetName(string value)
+            {
+                value.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                    ValidationMessages.InvalidNameIdentifier);
+                if (value.NotEqualsOrdinal(Name))
+                {
+                    Name = value;
+                    RecordChange(VersionChange.Breaking, VersionChanges.Pattern_Name_Updated, Id);
+                }
+            }
+
+            void SetDisplayName(string value)
+            {
+                value.GuardAgainstNullOrEmpty(nameof(displayName));
+                if (value.NotEqualsOrdinal(DisplayName))
+                {
+                    DisplayName = value;
+                    RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_DisplayName_Updated,
+                        Id);
+                }
+            }
+
+            void SetDescription(string value)
+            {
+                value.GuardAgainstNullOrEmpty(nameof(description));
+                if (value.NotEqualsOrdinal(Description))
+                {
+                    Description = value;
+                    RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Description_Updated,
+                        Id);
+                }
+            }
         }
 
         public Attribute AddAttribute(string name, string type = Attribute.DefaultType, bool isRequired = false,
@@ -290,10 +367,9 @@ namespace Automate.CLI.Domain
                         throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute
                             .Format(name));
                     }
-
-                    element.Rename(name);
                 }
             }
+            element.RenameAndDescribe(name, displayName, description);
 
             if (isRequired.HasValue)
             {
@@ -323,14 +399,6 @@ namespace Automate.CLI.Domain
                         element.SetCardinality(ElementCardinality.ZeroOrOne);
                     }
                 }
-            }
-            if (displayName.HasValue() && displayName != element.DisplayName)
-            {
-                element.SetDisplayName(displayName);
-            }
-            if (description.HasValue() && description != element.Description)
-            {
-                element.SetDescription(description);
             }
 
             return element;
@@ -752,24 +820,6 @@ namespace Automate.CLI.Domain
                 .Where(auto => auto.IsLaunchable())
                 .Select(auto => auto.Id)
                 .ToList();
-        }
-
-        public void RecordChange(VersionChange change, string description, params object[] args)
-        {
-            var pattern = Pattern;
-            if (pattern.NotExists())
-            {
-                return;
-            }
-
-            if (this == Pattern)
-            {
-                pattern.ToolkitVersion.RegisterChange(change, description, args);
-            }
-            else
-            {
-                pattern.RecordChange(change, description, args);
-            }
         }
 
         private static bool AttributeExistsByName(IAttributeContainer element, string attributeName)

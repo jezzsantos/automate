@@ -22,10 +22,6 @@ namespace Automate.CLI.Domain
             ToolkitVersion = properties.Rehydrate<ToolkitVersion>(factory, nameof(ToolkitVersion));
         }
 
-        public string DisplayName { get; private set; }
-
-        public string Description { get; private set; }
-
         public ToolkitVersion ToolkitVersion { get; private set; }
 
         public override PersistableProperties Dehydrate()
@@ -183,34 +179,6 @@ namespace Automate.CLI.Domain
                             VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
                     }
                 });
-        }
-
-        public void Rename(string name)
-        {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
-                ValidationMessages.InvalidNameIdentifier);
-
-            Name = name;
-            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Name_Updated, Id);
-        }
-
-        public void SetDisplayName(string displayName)
-        {
-            displayName.GuardAgainstNullOrEmpty(nameof(displayName));
-
-            DisplayName = displayName;
-            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Update_DisplayName,
-                Id);
-        }
-
-        public void SetDescription(string description)
-        {
-            description.GuardAgainstNullOrEmpty(nameof(description));
-
-            Description = description;
-            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Update_Description,
-                Id);
         }
 
         public ValidationResults Validate(ValidationContext context, object value)

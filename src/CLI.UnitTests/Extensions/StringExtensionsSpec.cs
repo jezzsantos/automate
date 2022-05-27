@@ -122,6 +122,14 @@ namespace CLI.UnitTests.Extensions
         }
 
         [Fact]
+        public void WhenToCamelCaseAndLowercasedSentence_ThenReturnsCamelCased()
+        {
+            var result = "one  Two  three".ToCamelCase();
+
+            result.Should().Be("oneTwoThree");
+        }
+
+        [Fact]
         public void WhenToPascalCaseAndNull_ThenReturnsNull()
         {
             var result = ((string)null).ToPascalCase();
@@ -164,9 +172,73 @@ namespace CLI.UnitTests.Extensions
         [Fact]
         public void WhenToPascalCaseAndSentence_ThenReturnsPascalCased()
         {
-            var result = "One Two Three".ToPascalCase();
+            var result = "One  Two  Three".ToPascalCase();
 
             result.Should().Be("OneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToPascalCaseAndLowercasedSentence_ThenReturnsPascalCased()
+        {
+            var result = "one  Two  three".ToPascalCase();
+
+            result.Should().Be("OneTwoThree");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndNull_ThenReturnsNull()
+        {
+            var result = ((string)null).ToCapitalizedWords();
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndAllLowercase_ThenReturnsWordsCased()
+        {
+            var result = "avalue".ToCapitalizedWords();
+
+            result.Should().Be("Avalue");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndCapitalizedWord_ThenReturnsWordsCased()
+        {
+            var result = "Avalue".ToCapitalizedWords();
+
+            result.Should().Be("Avalue");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndWordsCased_ThenReturnsWordsCased()
+        {
+            var result = "OneTwoThree".ToCapitalizedWords();
+
+            result.Should().Be("One Two Three");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndSnakeCased_ThenReturnsCamelCased()
+        {
+            var result = "one_Two_three".ToCapitalizedWords();
+
+            result.Should().Be("One Two Three");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndSentence_ThenReturnsWordsCased()
+        {
+            var result = "One Two Three".ToCapitalizedWords();
+
+            result.Should().Be("One Two Three");
+        }
+
+        [Fact]
+        public void WhenToCapitalizedWordsAndLowercaseSentence_ThenReturnsWordsCased()
+        {
+            var result = "one  Two  three".ToCapitalizedWords();
+
+            result.Should().Be("One Two Three");
         }
     }
 }

@@ -73,18 +73,7 @@ namespace Automate.CLI.Application
 
             var pattern = EnsureCurrentPatternExists();
 
-            if (name.HasValue())
-            {
-                pattern.Rename(name);
-            }
-            if (displayName.HasValue())
-            {
-                pattern.SetDisplayName(displayName);
-            }
-            if (description.HasValue())
-            {
-                pattern.SetDescription(description);
-            }
+            pattern.RenameAndDescribe(name, displayName, description);
 
             this.store.Save(pattern);
 

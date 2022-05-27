@@ -118,7 +118,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenFindAutomationAndNone_ThenReturnsNull()
         {
-            var result = this.pattern.FindAutomation("acmdid", auto => true);
+            var result = this.pattern.FindAutomation("acmdid", _ => true);
 
             result.Should().BeNull();
         }
@@ -131,7 +131,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = this.pattern.FindAutomation("acmdid", auto => true);
+            var result = this.pattern.FindAutomation("acmdid", _ => true);
 
             result.Should().BeNull();
         }
@@ -142,7 +142,7 @@ namespace CLI.UnitTests.Domain
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
 
-            var result = this.pattern.FindAutomation(automation.Id, auto => true);
+            var result = this.pattern.FindAutomation(automation.Id, _ => true);
 
             result.Should().Be(automation);
         }
@@ -157,7 +157,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = this.pattern.FindAutomation(automation.Id, auto => true);
+            var result = this.pattern.FindAutomation(automation.Id, _ => true);
 
             result.Should().Be(automation);
         }
@@ -261,58 +261,6 @@ namespace CLI.UnitTests.Domain
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[0].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[1].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[2].Properties["acollection3"].Items.Count.Should().Be(3);
-        }
-
-        [Fact]
-        public void WhenRenameWithInvalidName_ThenThrows()
-        {
-            this.pattern
-                .Invoking(x => x.Rename("^aninvalidname^"))
-                .Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
-        }
-
-        [Fact]
-        public void WhenRename_ThenRenamed()
-        {
-            this.pattern.Rename("aname");
-
-            this.pattern.Name.Should().Be("aname");
-            this.pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
-        }
-
-        [Fact]
-        public void WhenSetDisplayNameWithEmpty_ThenThrows()
-        {
-            this.pattern
-                .Invoking(x => x.SetDisplayName(""))
-                .Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void WhenSetDisplayName_ThenSetDisplayNames()
-        {
-            this.pattern.SetDisplayName("adisplayname");
-
-            this.pattern.DisplayName.Should().Be("adisplayname");
-            this.pattern.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
-        }
-
-        [Fact]
-        public void WhenSetDescriptionWithEmpty_ThenThrows()
-        {
-            this.pattern
-                .Invoking(x => x.SetDescription(""))
-                .Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void WhenSetDescription_ThenSetDescriptions()
-        {
-            this.pattern.SetDescription("adescription");
-
-            this.pattern.Description.Should().Be("adescription");
-            this.pattern.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
     }
 }

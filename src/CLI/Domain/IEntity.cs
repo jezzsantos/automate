@@ -31,6 +31,8 @@ namespace Automate.CLI.Domain
     internal interface IPatternElement : INamedEntity, ICustomizableEntity, IElementContainer, IAttributeContainer,
         IAutomationContainer
     {
+        void RenameAndDescribe(string name, string displayName, string description);
+        
         Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices);
 
         Attribute UpdateAttribute(string attributeName, string name, string type, bool? isRequired, string defaultValue,

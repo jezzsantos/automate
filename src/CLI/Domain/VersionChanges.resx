@@ -96,10 +96,10 @@
     <data name="Pattern_Name_Updated" xml:space="preserve">
         <value>Pattern (ID: {PatternId}) changed its name</value>
     </data>
-    <data name="Pattern_Update_DisplayName" xml:space="preserve">
+    <data name="Pattern_DisplayName_Updated" xml:space="preserve">
         <value>Pattern (ID: {PatternId}) changed its display name</value>
     </data>
-    <data name="Pattern_Update_Description" xml:space="preserve">
+    <data name="Pattern_Description_Updated" xml:space="preserve">
         <value>Pattern (ID: {PatternId}) changed its description</value>
     </data>
 </root>
