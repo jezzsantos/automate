@@ -444,6 +444,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; was updated.
+        /// </summary>
+        internal static string CommandLine_Output_PatternUpdated {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is configured as:
         ///{Configuration}.
         /// </summary>

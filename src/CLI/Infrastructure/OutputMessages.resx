@@ -38,6 +38,9 @@
     <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
         <value>The Pattern: '{Name}' was created with ID: {PatternId}</value>
     </data>
+    <data name="CommandLine_Output_PatternUpdated" xml:space="preserve">
+        <value>The Pattern: '{Name}' was updated</value>
+    </data>
     <data name="CommandLine_Output_NoEditablePatterns" xml:space="preserve">
         <value>There are no editable Patterns yet</value>
     </data>

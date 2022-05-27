@@ -533,7 +533,7 @@ namespace CLI.UnitTests.Domain
             {
                 Value = "awrongvalue"
             };
-            attribute.SetDataType("int");
+            attribute.ResetDataType("int");
 
             var result = solutionItem
                 .Validate();

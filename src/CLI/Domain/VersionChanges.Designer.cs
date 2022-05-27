@@ -61,11 +61,65 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its description.
+        /// </summary>
+        internal static string Element_Update_Description {
+            get {
+                return ResourceManager.GetString("Element_Update_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name.
+        /// </summary>
+        internal static string Element_Update_DisplayName {
+            get {
+                return ResourceManager.GetString("Element_Update_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its name.
+        /// </summary>
+        internal static string Element_Update_Name {
+            get {
+                return ResourceManager.GetString("Element_Update_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CodeTemplate (ID: {TemplateId}) was modified on element {ParentId}.
         /// </summary>
         internal static string Pattern_CodeTemplates_Update {
             get {
                 return ResourceManager.GetString("Pattern_CodeTemplates_Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its name.
+        /// </summary>
+        internal static string Pattern_Name_Updated {
+            get {
+                return ResourceManager.GetString("Pattern_Name_Updated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its description.
+        /// </summary>
+        internal static string Pattern_Update_Description {
+            get {
+                return ResourceManager.GetString("Pattern_Update_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern (ID: {PatternId}) changed its display name.
+        /// </summary>
+        internal static string Pattern_Update_DisplayName {
+            get {
+                return ResourceManager.GetString("Pattern_Update_DisplayName", resourceCulture);
             }
         }
         
@@ -228,33 +282,6 @@ namespace Automate.CLI.Domain {
         internal static string PatternElement_Element_Update_Cardinality {
             get {
                 return ResourceManager.GetString("PatternElement_Element_Update_Cardinality", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its description.
-        /// </summary>
-        internal static string PatternElement_Element_Update_Description {
-            get {
-                return ResourceManager.GetString("PatternElement_Element_Update_Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name.
-        /// </summary>
-        internal static string PatternElement_Element_Update_DisplayName {
-            get {
-                return ResourceManager.GetString("PatternElement_Element_Update_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its name.
-        /// </summary>
-        internal static string PatternElement_Element_Update_Name {
-            get {
-                return ResourceManager.GetString("PatternElement_Element_Update_Name", resourceCulture);
             }
         }
         

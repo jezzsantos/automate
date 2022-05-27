@@ -11,7 +11,8 @@ namespace Automate.CLI.Domain
         {
             DefaultType, "bool", "int", "decimal", "DateTime"
         };
-        public static readonly string[] ReservedAttributeNames = { nameof(Id) };
+        public static readonly string[] ReservedAttributeNames =
+            { nameof(INamedEntity.Id), nameof(Element.DisplayName), nameof(Element.Description) };
         private List<string> choices;
 
         public Attribute(string name, string dataType = DefaultType, bool isRequired = false,
@@ -50,6 +51,7 @@ namespace Automate.CLI.Domain
             }
 
             Id = IdGenerator.Create();
+            Parent = null;
             Name = name;
             DataType = resolvedDataType;
             IsRequired = isRequired;
@@ -74,6 +76,8 @@ namespace Automate.CLI.Domain
         public bool IsRequired { get; private set; }
 
         public string DefaultValue { get; private set; }
+
+        internal PatternElement Parent { get; private set; }
 
         public IReadOnlyList<string> Choices => this.choices;
 
@@ -157,26 +161,32 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void SetDataType(string dataType)
-        {
-            dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
-                ValidationMessages.Attribute_UnsupportedDataType, SupportedDataTypes.Join(", "));
-
-            DataType = dataType;
-        }
-
-        public void SetName(string name)
+        public void Rename(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
 
             Name = name;
+            Parent.RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name, Id,
+                Parent.Id);
         }
 
         public void SetRequired(bool isRequired)
         {
             IsRequired = isRequired;
+            Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required, Id,
+                Parent.Id);
+        }
+
+        public void ResetDataType(string dataType)
+        {
+            dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
+                ValidationMessages.Attribute_UnsupportedDataType, SupportedDataTypes.Join(", "));
+
+            DataType = dataType;
+            Parent.RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType, Id,
+                Parent.Id);
         }
 
         public void SetDefaultValue(string defaultValue)
@@ -192,6 +202,8 @@ namespace Automate.CLI.Domain
             }
 
             DefaultValue = defaultValue;
+            Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue,
+                Id, Parent.Id);
         }
 
         // ReSharper disable once ParameterHidesMember
@@ -203,12 +215,27 @@ namespace Automate.CLI.Domain
                     _ => Validations.IsValueOfDataType(choice, DataType), nameof(choices),
                     ValidationMessages.Attribute_WrongDataTypeChoice.Format(choice, DataType)));
 
+            var change = Choices.HasNone()
+                ? VersionChange.NonBreaking
+                : VersionChange.Breaking;
+
             this.choices = choices;
+            Parent.RecordChange(change, VersionChanges.PatternElement_Attribute_Update_Choices, Id, Parent.Id);
+        }
+
+        public void SetParent(PatternElement parent)
+        {
+            Parent = parent;
         }
 
         public string Id { get; }
 
         public string Name { get; private set; }
+
+        public bool Accept(IPatternVisitor visitor)
+        {
+            return visitor.VisitAttribute(this);
+        }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {
@@ -261,11 +288,6 @@ namespace Automate.CLI.Domain
                         ValidationMessages.Attribute_UnsupportedDataType.Format(dataType,
                             SupportedDataTypes.Join(", ")));
             }
-        }
-
-        public bool Accept(IPatternVisitor visitor)
-        {
-            return visitor.VisitAttribute(this);
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Automate.CLI.Domain
         internal const string LaunchPointSelectionWildcard = "*";
         private readonly List<Attribute> attributes;
         private readonly List<Automation> automations;
+        private readonly ICollectionAutoNamer autoNamer;
         private readonly List<CodeTemplate> codeTemplates;
         private readonly List<Element> elements;
-        private readonly ICollectionAutoNamer autoNamer;
 
         protected PatternElement(string name)
         {
@@ -60,6 +60,7 @@ namespace Automate.CLI.Domain
 
         public void AddAttribute(Attribute attribute)
         {
+            attribute.SetParent(this);
             this.attributes.Add(attribute);
             RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Add, attribute.Id, Id);
         }
@@ -189,41 +190,28 @@ namespace Automate.CLI.Domain
                             .Format(name));
                     }
 
-                    attribute.SetName(name);
-                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name,
-                        attribute.Id, Id);
+                    attribute.Rename(name);
                 }
             }
 
             if (type.HasValue() && type != attribute.DataType)
             {
-                attribute.SetDataType(type);
-                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType,
-                    attribute.Id, Id);
+                attribute.ResetDataType(type);
             }
 
             if (choices.Exists())
             {
-                var change = attribute.Choices.HasNone()
-                    ? VersionChange.NonBreaking
-                    : VersionChange.Breaking;
                 attribute.SetChoices(choices);
-
-                RecordChange(change, VersionChanges.PatternElement_Attribute_Update_Choices, attribute.Id, Id);
             }
 
             if (isRequired.HasValue && attribute.IsRequired != isRequired.Value)
             {
                 attribute.SetRequired(isRequired.Value);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required,
-                    attribute.Id, Id);
             }
 
             if (defaultValue.HasValue() && attribute.DefaultValue.NotEqualsOrdinal(defaultValue))
             {
                 attribute.SetDefaultValue(defaultValue);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue,
-                    attribute.Id, Id);
             }
 
             return attribute;
@@ -248,6 +236,11 @@ namespace Automate.CLI.Domain
             string displayName = null, string description = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
+
+            if (ElementNameIsReserved(name))
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_ElementNameReserved.Format(name));
+            }
 
             if (ElementExistsByName(this, name))
             {
@@ -298,9 +291,7 @@ namespace Automate.CLI.Domain
                             .Format(name));
                     }
 
-                    element.SetName(name);
-                    RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Name, element.Id,
-                        Id);
+                    element.Rename(name);
                 }
             }
 
@@ -312,15 +303,11 @@ namespace Automate.CLI.Domain
                         && element.Cardinality == ElementCardinality.ZeroOrMany)
                     {
                         element.SetCardinality(ElementCardinality.OneOrMany);
-                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
-                            element.Id, Id);
                     }
                     if (!isRequired.Value
                         && element.Cardinality == ElementCardinality.OneOrMany)
                     {
                         element.SetCardinality(ElementCardinality.ZeroOrMany);
-                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
-                            element.Id, Id);
                     }
                 }
                 else
@@ -329,29 +316,21 @@ namespace Automate.CLI.Domain
                         && element.Cardinality == ElementCardinality.ZeroOrOne)
                     {
                         element.SetCardinality(ElementCardinality.One);
-                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
-                            element.Id, Id);
                     }
                     if (!isRequired.Value
                         && element.Cardinality == ElementCardinality.One)
                     {
                         element.SetCardinality(ElementCardinality.ZeroOrOne);
-                        RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
-                            element.Id, Id);
                     }
                 }
             }
             if (displayName.HasValue() && displayName != element.DisplayName)
             {
                 element.SetDisplayName(displayName);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Element_Update_DisplayName,
-                    element.Id, Id);
             }
             if (description.HasValue() && description != element.Description)
             {
                 element.SetDescription(description);
-                RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Element_Update_Description,
-                    element.Id, Id);
             }
 
             return element;
@@ -775,7 +754,7 @@ namespace Automate.CLI.Domain
                 .ToList();
         }
 
-        private void RecordChange(VersionChange change, string description, params object[] args)
+        public void RecordChange(VersionChange change, string description, params object[] args)
         {
             var pattern = Pattern;
             if (pattern.NotExists())
@@ -810,7 +789,7 @@ namespace Automate.CLI.Domain
 
         private static bool ElementNameIsReserved(string attributeName)
         {
-            return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
+            return Element.ReservedElementNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
         }
 
         private static bool ElementExistsByName(IElementContainer element, string elementName)
@@ -853,6 +832,5 @@ namespace Automate.CLI.Domain
                 ? this as PatternDefinition
                 : Parent.GetRoot();
         }
-
     }
 }

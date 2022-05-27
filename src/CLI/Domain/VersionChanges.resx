@@ -51,16 +51,16 @@
     <data name="PatternElement_Element_Add" xml:space="preserve">
         <value>Element/Collection (ID: {ElementId}) was added to element {ParentId}</value>
     </data>
-    <data name="PatternElement_Element_Update_Name" xml:space="preserve">
+    <data name="Element_Update_Name" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its name</value>
     </data>
     <data name="PatternElement_Element_Update_Cardinality" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its cardinality</value>
     </data>
-    <data name="PatternElement_Element_Update_DisplayName" xml:space="preserve">
+    <data name="Element_Update_DisplayName" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name</value>
     </data>
-    <data name="PatternElement_Element_Update_Description" xml:space="preserve">
+    <data name="Element_Update_Description" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its description</value>
     </data>
     <data name="PatternElement_Element_Delete" xml:space="preserve">
@@ -92,5 +92,14 @@
     </data>
     <data name="Pattern_CodeTemplates_Update" xml:space="preserve">
         <value>CodeTemplate (ID: {TemplateId}) was modified on element {ParentId}</value>
+    </data>
+    <data name="Pattern_Name_Updated" xml:space="preserve">
+        <value>Pattern (ID: {PatternId}) changed its name</value>
+    </data>
+    <data name="Pattern_Update_DisplayName" xml:space="preserve">
+        <value>Pattern (ID: {PatternId}) changed its display name</value>
+    </data>
+    <data name="Pattern_Update_Description" xml:space="preserve">
+        <value>Pattern (ID: {PatternId}) changed its description</value>
     </data>
 </root>

@@ -47,12 +47,16 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenCreateWithName_ThenCreatesNewPattern()
+        public void WhenCreate_ThenCreatesNewPattern()
         {
-            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.CreateCommandName} pattern APattern --displayedas ADisplayName --describedas ADescription");
 
             this.setup.Should().DisplayError(OutputMessages.CommandLine_Output_NoPatternSelected);
-            this.setup.Pattern.Name.Should().Be("APattern");
+            var pattern = this.setup.Pattern;
+            pattern.Name.Should().Be("APattern");
+            pattern.DisplayName.Should().Be("ADisplayName");
+            pattern.Description.Should().Be("ADescription");
             this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Pattern.Id);
         }
 
@@ -220,6 +224,23 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_EditablePatternsListed.FormatTemplate(
                         $"{{\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\"}}{Environment.NewLine}" +
                         $"{{\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\"}}"));
+        }
+
+        [Fact]
+        public void WhenUpdatePattern_ThenUpdatesName()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-pattern --name APatternName2 --displayedas ADisplayName2 --describedas ADescription2");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_PatternUpdated.FormatTemplate("APatternName2"));
+            var pattern = this.setup.Pattern;
+            pattern.Name.Should().Be("APatternName2");
+            pattern.DisplayName.Should().Be("ADisplayName2");
+            pattern.Description.Should().Be("ADescription2");
         }
 
         [Fact]

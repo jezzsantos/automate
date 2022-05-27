@@ -60,10 +60,10 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenCreateNewPatternAndAlreadyExists_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
-                .Invoking(x => x.CreateNewPattern("apatternname"))
+                .Invoking(x => x.CreateNewPattern("apatternname", null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternStore_FoundNamed.Format("apatternname"));
         }
@@ -71,7 +71,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenCreateNewPatternAndNotExists_ThenExists()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.store.GetCurrent().Should().NotBeNull();
             this.application.CurrentPatternId.Should().NotBeNull();
@@ -93,8 +93,8 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenSwitchCurrentPattern_ThenCurrentIsChanged()
         {
-            this.application.CreateNewPattern("aname1");
-            this.application.CreateNewPattern("aname2");
+            this.application.CreateNewPattern("aname1", null, null);
+            this.application.CreateNewPattern("aname2", null, null);
 
             this.application.SwitchCurrentPattern("aname1");
 
@@ -176,7 +176,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddAttribute_TheAddsAttributeToPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             var result = this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null, null);
 
@@ -195,7 +195,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -208,7 +208,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddAttributeAndParentIsElement_ThenAddsAttributeToElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             var parentElement = new Element("anelementname");
             this.patternPathResolver
@@ -235,7 +235,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenDeleteAttribute_TheDeletesAttributeFromPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null, null);
 
             var result = this.application.DeleteAttribute("anattributename", null);
@@ -250,7 +250,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -263,7 +263,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenDeleteAttributeAndParentIsElement_ThenDeletesAttributeFromElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             var (_, parentElement) = this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver
                 .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -291,7 +291,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -304,7 +304,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddElement_TheAddsElementToPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             var result = this.application.AddElement("anelementname",
                 ElementCardinality.One, "adisplayname", "adescription", null);
@@ -320,7 +320,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddElementAndParentIsElement_ThenAddsElementToElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("aparentelementname", ElementCardinality.One, null, null, null);
             var parentElement = new Element("aparentelementname");
             this.patternPathResolver.Setup(ppr =>
@@ -348,7 +348,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenDeleteElement_TheDeletesElementFromPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
 
             var result = this.application.DeleteElement("anelementname", null);
@@ -363,7 +363,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -376,7 +376,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenDeleteElementAndParentIsElement_ThenDeletesElementFromElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             var (_, parentElement) = this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver
                 .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -401,7 +401,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCodeTemplateCommandAndCodeTemplateNotExistsOnPattern_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null))
@@ -412,7 +412,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCodeTemplateCommandAndCodeTemplateNotExistsOnDescendant_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", "{apatternname.anelementname}"))
@@ -426,7 +426,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -439,7 +439,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCodeTemplateCommand_TheAddsAutomationToPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result =
@@ -455,7 +455,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCodeTemplateCommandOnDescendantElement_ThenAddsAutomationToElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -484,7 +484,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -497,7 +497,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenUpdateCodeTemplateCommand_TheUpdatesAutomationOnPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
@@ -514,7 +514,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenUpdateCodeTemplateCommandOnDescendantElement_ThenUpdatesAutomationOnElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -547,7 +547,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -560,7 +560,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCliCommand_TheAddsAutomationToPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result =
@@ -576,7 +576,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCliCommandOnDescendantElement_ThenAddsAutomationToElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -605,7 +605,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -618,7 +618,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCommandLaunchPoint_TheAddsAutomationToPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
             var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
@@ -635,7 +635,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenAddCommandLaunchPointOnDescendantElement_ThenAddsAutomationToElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -667,7 +667,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition)null);
 
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x =>
@@ -680,7 +680,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenUpdateCommandLaunchPoint_TheUpdatesAutomationOnPattern()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
             var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
@@ -698,7 +698,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenUpdateCommandLaunchPointOnDescendantElement_ThenUpdatesAutomationOnElement()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -730,7 +730,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
                 .Returns((PatternDefinition pattern, VersionInstruction version) =>
                     new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)), "abuildlocation", null));
@@ -756,7 +756,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenTestCodeTemplateCommandAndCodeTemplateNotExists_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
                 .Invoking(x => x.TestCodeTemplate("atemplatename", null, null, null, null))
@@ -769,7 +769,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result = this.application.TestCodeTemplate("atemplatename", null, null, null, null);
@@ -783,7 +783,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
@@ -801,7 +801,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("acollectionname", ElementCardinality.One, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.acollectionname}"))
@@ -817,7 +817,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenTestCodeTemplateAndImportDataNotExist_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(false);
@@ -831,7 +831,7 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenTestCodeTemplateAndImportDataNotJson_ThenThrows()
         {
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
@@ -849,7 +849,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
@@ -868,7 +868,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.CreateFileAtPath(It.IsAny<string>(), It.IsAny<byte[]>()))
                 .Throws(new FileNotFoundException("anerrormessage"));
@@ -884,7 +884,7 @@ namespace CLI.UnitTests.Application
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
                 .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
-            this.application.CreateNewPattern("apatternname");
+            this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath");

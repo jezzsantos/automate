@@ -7,23 +7,24 @@ namespace Automate.CLI.Domain
 {
     internal class PatternDefinition : PatternElement, IValidateable, IPersistable
     {
-        public PatternDefinition(string name) : base(name)
+        public PatternDefinition(string name, string displayName = null, string description = null) : base(name)
         {
-            DisplayName = name;
-            Description = null;
+            DisplayName = displayName ?? name;
+            Description = description;
             ToolkitVersion = new ToolkitVersion();
         }
 
-        private PatternDefinition(PersistableProperties properties, IPersistableFactory factory) : base(properties, factory)
+        private PatternDefinition(PersistableProperties properties, IPersistableFactory factory) : base(properties,
+            factory)
         {
             DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
             Description = properties.Rehydrate<string>(factory, nameof(Description));
             ToolkitVersion = properties.Rehydrate<ToolkitVersion>(factory, nameof(ToolkitVersion));
         }
 
-        public string DisplayName { get; }
+        public string DisplayName { get; private set; }
 
-        public string Description { get; }
+        public string Description { get; private set; }
 
         public ToolkitVersion ToolkitVersion { get; private set; }
 
@@ -94,7 +95,8 @@ namespace Automate.CLI.Domain
                     var existingCount = solutionItem.Items.Safe().Count();
                     if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
                     {
-                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); }, maxNumberInstances - existingCount);
+                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); },
+                            maxNumberInstances - existingCount);
                     }
 
                     var counter = 0;
@@ -102,10 +104,17 @@ namespace Automate.CLI.Domain
                 }
             }
 
-            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema, int instanceCountAtThisLevel)
+            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema,
+                int instanceCountAtThisLevel)
             {
-                schema.Attributes.ToListSafe().ForEach(attr => { PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel); });
-                schema.Elements.ToListSafe().ForEach(ele => { PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel); });
+                schema.Attributes.ToListSafe().ForEach(attr =>
+                {
+                    PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel);
+                });
+                schema.Elements.ToListSafe().ForEach(ele =>
+                {
+                    PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel);
+                });
             }
 
             void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
@@ -158,7 +167,8 @@ namespace Automate.CLI.Domain
             return visitor.VisitPatternExit(this);
         }
 
-        public void RegisterCodeTemplatesChanges(Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
+        public void RegisterCodeTemplatesChanges(
+            Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
         {
             GetAllCodeTemplates()
                 .ForEach(template =>
@@ -169,9 +179,38 @@ namespace Automate.CLI.Domain
                     if (!lastModified.IsNear(lastChangedInStore, TimeSpan.FromSeconds(1)))
                     {
                         template.Template.UpdateLastModified(lastChangedInStore);
-                        ToolkitVersion.RegisterChange(VersionChange.NonBreaking, VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
+                        ToolkitVersion.RegisterChange(VersionChange.NonBreaking,
+                            VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
                     }
                 });
+        }
+
+        public void Rename(string name)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
+                ValidationMessages.InvalidNameIdentifier);
+
+            Name = name;
+            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Name_Updated, Id);
+        }
+
+        public void SetDisplayName(string displayName)
+        {
+            displayName.GuardAgainstNullOrEmpty(nameof(displayName));
+
+            DisplayName = displayName;
+            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Update_DisplayName,
+                Id);
+        }
+
+        public void SetDescription(string description)
+        {
+            description.GuardAgainstNullOrEmpty(nameof(description));
+
+            Description = description;
+            RecordChange(VersionChange.NonBreaking, VersionChanges.Pattern_Update_Description,
+                Id);
         }
 
         public ValidationResults Validate(ValidationContext context, object value)
@@ -204,7 +243,7 @@ namespace Automate.CLI.Domain
 
         private class AncestryPopulator : IPatternVisitor
         {
-            private readonly Stack<PatternElement> ancestry = new Stack<PatternElement>();
+            private readonly Stack<PatternElement> ancestry = new();
 
             public bool VisitPatternEnter(PatternDefinition pattern)
             {
@@ -235,6 +274,19 @@ namespace Automate.CLI.Domain
             public bool VisitElementExit(Element element)
             {
                 this.ancestry.Pop();
+                return true;
+            }
+
+            public bool VisitAttribute(Attribute attribute)
+            {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                attribute.SetParent(parent);
+
                 return true;
             }
         }

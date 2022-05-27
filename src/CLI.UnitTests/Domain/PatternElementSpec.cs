@@ -196,6 +196,17 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenAddElementWithReservedName_ThenThrows()
+        {
+            this.element
+                .Invoking(x => x.AddElement(Element.ReservedElementNames[0]))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.PatternElement_ElementNameReserved.Format(
+                        Attribute.ReservedAttributeNames[0]));
+        }
+
+        [Fact]
         public void WhenAddElement_TheAddsElementToElement()
         {
             var result =
@@ -609,7 +620,7 @@ namespace CLI.UnitTests.Domain
                 && (string)x.Value == new List<string> { command2.Id }.Join(""));
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
-        
+
         [Fact]
         public void WhenAddCommandLaunchPointAndAlreadyExists_ThenThrows()
         {

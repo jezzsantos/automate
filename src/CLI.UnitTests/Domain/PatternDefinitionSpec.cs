@@ -11,7 +11,7 @@ namespace CLI.UnitTests.Domain
     [Trait("Category", "Unit")]
     public class PatternDefinitionSpec
     {
-        private readonly PatternDefinition pattern;
+        private PatternDefinition pattern;
 
         public PatternDefinitionSpec()
         {
@@ -19,9 +19,24 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
+        public void WhenConstructedWithOnlyName_ThenAssigned()
+        {
+            this.pattern = new PatternDefinition("aname");
+
+            this.pattern.Name.Should().Be("aname");
+            this.pattern.DisplayName.Should().Be("aname");
+            this.pattern.Description.Should().BeNull();
+            this.pattern.Id.Should().NotBeEmpty();
+            this.pattern.ToolkitVersion.Current.Should().Be("0.0.0");
+        }
+        [Fact]
         public void WhenConstructed_ThenAssigned()
         {
+            this.pattern = new PatternDefinition("aname", "adisplayname", "adescription");
+
             this.pattern.Name.Should().Be("aname");
+            this.pattern.DisplayName.Should().Be("adisplayname");
+            this.pattern.Description.Should().Be("adescription");
             this.pattern.Id.Should().NotBeEmpty();
             this.pattern.ToolkitVersion.Current.Should().Be("0.0.0");
         }
@@ -246,6 +261,58 @@ namespace CLI.UnitTests.Domain
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[0].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[1].Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[2].Properties["acollection3"].Items.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public void WhenRenameWithInvalidName_ThenThrows()
+        {
+            this.pattern
+                .Invoking(x => x.Rename("^aninvalidname^"))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(ValidationMessages.InvalidNameIdentifier.Format("^aninvalidname^") + "*");
+        }
+
+        [Fact]
+        public void WhenRename_ThenRenamed()
+        {
+            this.pattern.Rename("aname");
+
+            this.pattern.Name.Should().Be("aname");
+            this.pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenSetDisplayNameWithEmpty_ThenThrows()
+        {
+            this.pattern
+                .Invoking(x => x.SetDisplayName(""))
+                .Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WhenSetDisplayName_ThenSetDisplayNames()
+        {
+            this.pattern.SetDisplayName("adisplayname");
+
+            this.pattern.DisplayName.Should().Be("adisplayname");
+            this.pattern.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenSetDescriptionWithEmpty_ThenThrows()
+        {
+            this.pattern
+                .Invoking(x => x.SetDescription(""))
+                .Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WhenSetDescription_ThenSetDescriptions()
+        {
+            this.pattern.SetDescription("adescription");
+
+            this.pattern.Description.Should().Be("adescription");
+            this.pattern.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
     }
 }

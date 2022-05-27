@@ -4,6 +4,8 @@ namespace Automate.CLI.Domain
 {
     internal class Element : PatternElement, IValidateable, IPersistable
     {
+        public static readonly string[] ReservedElementNames = Attribute.ReservedAttributeNames;
+
         public Element(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null,
             string description = null) : base(name)
         {
@@ -56,23 +58,21 @@ namespace Automate.CLI.Domain
             return visitor.VisitElementExit(this);
         }
 
-        public ValidationResults Validate(ValidationContext context, object value)
-        {
-            return ValidationResults.None;
-        }
-
-        public void SetName(string name)
+        public void Rename(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
 
             Name = name;
+            RecordChange(VersionChange.Breaking, VersionChanges.Element_Update_Name, Id, Parent.Id);
         }
 
         public void SetCardinality(ElementCardinality cardinality)
         {
             Cardinality = cardinality;
+            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                Id, Parent.Id);
         }
 
         public void SetDisplayName(string displayName)
@@ -80,6 +80,8 @@ namespace Automate.CLI.Domain
             displayName.GuardAgainstNullOrEmpty(nameof(displayName));
 
             DisplayName = displayName;
+            RecordChange(VersionChange.NonBreaking, VersionChanges.Element_Update_DisplayName,
+                Id, Parent.Id);
         }
 
         public void SetDescription(string description)
@@ -87,6 +89,13 @@ namespace Automate.CLI.Domain
             description.GuardAgainstNullOrEmpty(nameof(description));
 
             Description = description;
+            RecordChange(VersionChange.NonBreaking, VersionChanges.Element_Update_Description,
+                Id, Parent.Id);
+        }
+
+        public ValidationResults Validate(ValidationContext context, object value)
+        {
+            return ValidationResults.None;
         }
     }
 }

@@ -59,12 +59,36 @@ namespace Automate.CLI.Application
             return EnsureCurrentPatternExists();
         }
 
-        public void CreateNewPattern(string name)
+        public void CreateNewPattern(string name, string displayName, string description)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
-            var pattern = new PatternDefinition(name);
+            var pattern = new PatternDefinition(name, displayName, description);
             this.store.Create(pattern);
+        }
+
+        public PatternDefinition UpdatePattern(string name, string displayName, string description)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+
+            var pattern = EnsureCurrentPatternExists();
+
+            if (name.HasValue())
+            {
+                pattern.Rename(name);
+            }
+            if (displayName.HasValue())
+            {
+                pattern.SetDisplayName(displayName);
+            }
+            if (description.HasValue())
+            {
+                pattern.SetDescription(description);
+            }
+
+            this.store.Save(pattern);
+
+            return pattern;
         }
 
         public void SwitchCurrentPattern(string name)

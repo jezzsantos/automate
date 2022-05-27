@@ -37,8 +37,12 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("pattern", "Creates a new pattern")
                 {
-                    new Argument("Name", "The name of the pattern to create")
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleCreate))
+                    new Argument("Name", "The name of the pattern to create"),
+                    new Option("--displayedas", "A friendly display name for the pattern", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--describedas", "A description for the pattern", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleCreatePattern))
             };
             var editCommands = new Command(EditCommandName, "Editing patterns")
             {
@@ -46,6 +50,15 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Argument("Name", "The name of the existing pattern to edit")
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleSwitch)),
+                new Command("update-pattern", "Updates the pattern")
+                {
+                    new Option("--name", "A new name for the pattern", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--displayedas", "A new friendly display name for the pattern", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--describedas", "A new description for the pattern", typeof(string),
+                        arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdatePattern)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -701,6 +714,13 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, attribute.Id);
             }
 
+            internal static void HandleUpdatePattern(string name, string displayedAs,
+                string describedAs, bool outputStructured, IConsole console)
+            {
+                var pattern = Authoring.UpdatePattern(name, displayedAs, describedAs);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
+            }
+
             internal static void HandleUpdateAttribute(string attributeName, string name, string isOfType,
                 string defaultValueIs,
                 bool? isRequired, string isOneOf, string asChildOf, bool outputStructured, IConsole console)
@@ -741,9 +761,10 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, element.Id);
             }
 
-            internal static void HandleCreate(string name, bool outputStructured, IConsole console)
+            internal static void HandleCreatePattern(string name, string displayedAs,
+                string describedAs, bool outputStructured, IConsole console)
             {
-                Authoring.CreateNewPattern(name);
+                Authoring.CreateNewPattern(name, displayedAs, describedAs);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
             }
