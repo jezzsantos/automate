@@ -13,29 +13,38 @@ namespace TestApp
             var fail = new Option<bool>("--fails", () => false, "Throws an exception");
             var succeed = new Option<bool>("--succeeds", () => true, "Succeeds the application");
             var hang = new Option<bool>("--hangs", () => false, "Hangs the application for a minute");
+            var open = new Option<string>("--opens", "Opens a given file path");
 
             var command = new RootCommand
             {
                 hang,
                 fail,
-                succeed
+                succeed,
+                open
             };
             command.Description = "Test Application";
-            command.SetHandler((bool hangs, bool fails, bool succeeds) =>
+            command.SetHandler((bool hangs, bool fails, bool succeeds, string opens) =>
             {
                 if (hangs)
                 {
+                    Console.WriteLine("Hanging");
                     Thread.Sleep(TimeSpan.FromMinutes(1));
                 }
-                if (fails)
+                else if (fails)
                 {
                     throw new Exception("Failed");
                 }
-                if (succeeds)
+                else if (succeeds)
                 {
                     Console.WriteLine("Success");
                 }
-            }, hang, fail, succeed);
+                else if (!string.IsNullOrEmpty(opens))
+                {
+                    Console.WriteLine($"Opening: {opens}");
+                    Thread.Sleep(TimeSpan.FromMinutes(1));
+                    Console.WriteLine($"Opened: {opens}");
+                }
+            }, hang, fail, succeed, open);
 
             var parser = new CommandLineBuilder(command)
                 .UseDefaults()

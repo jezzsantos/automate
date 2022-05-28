@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -24,80 +22,57 @@ namespace CLI.UnitTests.Domain
         [Trait("Category", "Unit.NOCI")]
         public class GivenACommand
         {
+            private readonly Mock<IApplicationExecutor> applicationExecutor;
             private readonly Mock<ISolutionPathResolver> solutionPathResolver;
-            private readonly string testApplicationName;
 
             public GivenACommand()
             {
                 this.solutionPathResolver = new Mock<ISolutionPathResolver>();
                 this.solutionPathResolver
-                    .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
+                    .Setup(spr =>
+                        spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
                     .Returns((string _, string expr, SolutionItem _) => expr);
-                this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "../../../../../tools/TestApp/TestApp.exe"));
+                this.applicationExecutor = new Mock<IApplicationExecutor>();
             }
 
             [Fact]
-            public void WhenExecuteAndApplicationNotFound_ThenReturnsFailure()
+            public void WhenExecuteAndApplicationFails_ThenReturnsFailure()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var target = new SolutionItem(toolkit, new Element("anelementname"), null);
                 var solution = new SolutionDefinition(toolkit);
+                this.applicationExecutor.Setup(ae =>
+                        ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Returns(ApplicationExecutionProcessResult.Failure("amessage"));
 
-                var command = new CliCommand("acommandname", "anapplicationname", null, this.solutionPathResolver.Object);
+                var command = new CliCommand("acommandname", "anapplicationname", "arguments",
+                    this.solutionPathResolver.Object, this.applicationExecutor.Object);
                 var result = command.Execute(solution, target);
 
                 result.IsSuccess.Should().BeFalse();
                 result.Log.Should()
-                    .Contain(DomainMessages.CliCommand_Log_ExecutionFailed.Format("anapplicationname", null,
-                        "The system cannot find the file specified."));
+                    .Contain("amessage");
+                this.applicationExecutor.Verify(ae => ae.RunApplicationProcess(true, "anapplicationname", "arguments"));
             }
 
             [Fact]
-            public void WhenExecuteAndApplicationFailsWithError_ThenReturnsFailure()
+            public void WhenExecuteAndApplicationSucceeds_ThenReturnsSuccess()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var target = new SolutionItem(toolkit, new Element("anelementname"), null);
                 var solution = new SolutionDefinition(toolkit);
+                this.applicationExecutor.Setup(ae =>
+                        ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Returns(ApplicationExecutionProcessResult.Success("amessage"));
 
-                var command = new CliCommand("acommandname", this.testApplicationName, "--fails", this.solutionPathResolver.Object);
-                var result = command.Execute(solution, target);
-
-                result.IsSuccess.Should().BeFalse();
-                result.Log.Should()
-                    .Contain(DomainMessages.CliCommand_Log_ExecutionFailed.Format(this.testApplicationName, "--fails",
-                        $"Failed{Environment.NewLine}"));
-            }
-
-            [Fact(Skip = "Takes 5 seconds to complete")]
-            public void WhenExecuteAndApplicationHangs_ThenReturnsFailure()
-            {
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new SolutionItem(toolkit, new Element("anelementname"), null);
-                var solution = new SolutionDefinition(toolkit);
-
-                var command = new CliCommand("acommandname", this.testApplicationName, "--hangs", this.solutionPathResolver.Object);
-                var result = command.Execute(solution, target);
-
-                result.IsSuccess.Should().BeFalse();
-                result.Log.Should()
-                    .Contain(DomainMessages.CliCommand_Log_ExecutionFailed.Format(this.testApplicationName, "--hangs",
-                        DomainMessages.CliCommand_Log_Hung.Format(CliCommand.HangTime.TotalSeconds)));
-            }
-
-            [Fact]
-            public void WhenExecuteAndSucceeds_ThenReturnsSuccess()
-            {
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new SolutionItem(toolkit, new Element("anelementname"), null);
-                var solution = new SolutionDefinition(toolkit);
-
-                var command = new CliCommand("acommandname", this.testApplicationName, "--succeeds", this.solutionPathResolver.Object);
+                var command = new CliCommand("acommandname", "anapplicationname", "arguments",
+                    this.solutionPathResolver.Object, this.applicationExecutor.Object);
                 var result = command.Execute(solution, target);
 
                 result.IsSuccess.Should().BeTrue();
                 result.Log.Should()
-                    .Contain(DomainMessages.CliCommand_Log_ExecutionSucceeded.Format(this.testApplicationName, "--succeeds",
-                        $"Success{Environment.NewLine}"));
+                    .Contain("amessage");
+                this.applicationExecutor.Verify(ae => ae.RunApplicationProcess(true, "anapplicationname", "arguments"));
             }
         }
     }

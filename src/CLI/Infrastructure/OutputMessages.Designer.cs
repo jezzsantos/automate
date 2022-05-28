@@ -152,6 +152,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id} by &apos;{ApplicationPath}&apos; at &apos;{EditorPath}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplatedEdited {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplatedEdited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateDeleted {

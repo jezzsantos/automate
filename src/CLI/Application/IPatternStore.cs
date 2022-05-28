@@ -17,6 +17,8 @@ namespace Automate.CLI.Application
 
         string UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file);
 
+        string GetCodeTemplateLocation(PatternDefinition pattern, CodeTemplate codeTemplate);
+
         CodeTemplateContent DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate);
 
         List<PatternDefinition> ListAll();

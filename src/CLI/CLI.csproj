@@ -73,6 +73,14 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Infrastructure\InfrastructureMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>InfrastructureMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Application\ApplicationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="ExceptionMessages.Designer.cs">
@@ -105,6 +113,16 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>MigrationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Infrastructure\InfrastructureMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>InfrastructureMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Application\ApplicationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ApplicationMessages.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

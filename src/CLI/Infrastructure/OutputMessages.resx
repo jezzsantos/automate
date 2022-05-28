@@ -51,6 +51,9 @@
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
         <value>Added Code Template: '{Name}' from element {ParentId}, with ID: {Id} from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
     </data>
+    <data name="CommandLine_Output_CodeTemplatedEdited" xml:space="preserve">
+        <value>Editing Code Template: '{Name}' from element {ParentId}, with ID: {Id} by '{ApplicationPath}' at '{EditorPath}'</value>
+    </data>
     <data name="CommandLine_Output_CodeTemplateDeleted" xml:space="preserve">
         <value>Deleted Code Template: '{Name}' from element {ParentId}, with ID: {Id}</value>
     </data>

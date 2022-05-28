@@ -478,7 +478,8 @@ namespace CLI.IntegrationTests
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
                             $"((21:0,21),(22:0,22)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
                             $"((20:0,20),(20:0,20)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
-                            "* " + DomainMessages.CliCommand_Log_ExecutionSucceeded.Format(this.testApplicationName, "--succeeds", "Success") + $"{Environment.NewLine}"))));
+                            "* " + InfrastructureMessages.ApplicationExecutor_Succeeded.Format(this.testApplicationName,
+                                "--succeeds", "Success") + $"{Environment.NewLine}"))));
         }
 
         [Fact]

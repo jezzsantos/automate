@@ -286,4 +286,7 @@
     <data name="SolutionItem_MissingParent" xml:space="preserve">
         <value>This item does not have a parent item</value>
     </data>
+    <data name="AuthoringApplication_EditingCodeTemplateError" xml:space="preserve">
+        <value>Failed to edit CodeTemplate with '{0}', error was: '{1}'</value>
+    </data>
 </root>

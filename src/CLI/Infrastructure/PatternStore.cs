@@ -106,6 +106,12 @@ namespace Automate.CLI.Infrastructure
             return this.patternRepository.UploadPatternCodeTemplate(pattern, codeTemplateId, source);
         }
 
+        public string GetCodeTemplateLocation(PatternDefinition pattern, CodeTemplate codeTemplate)
+        {
+            return this.patternRepository.GetCodeTemplateLocation(pattern, codeTemplate.Id,
+                codeTemplate.Metadata.OriginalFileExtension);
+        }
+
         public CodeTemplateContent DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)
         {
             return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplate.Id, codeTemplate.Metadata.OriginalFileExtension);

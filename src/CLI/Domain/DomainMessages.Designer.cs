@@ -61,15 +61,6 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
-        /// </summary>
-        internal static string AuthoringApplication_TestCodeTemplate_Description {
-            get {
-                return ResourceManager.GetString("AuthoringApplication_TestCodeTemplate_Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to CliCommand ({0}) application name.
         /// </summary>
         internal static string CliCommand_ApplicationName_Description {
@@ -84,44 +75,6 @@ namespace Automate.CLI.Domain {
         internal static string CliCommand_Arguments_Description {
             get {
                 return ResourceManager.GetString("CliCommand_Arguments_Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command line: &apos;{0} {1}&apos; failed execution. Errors were:
-        ///{2}.
-        /// </summary>
-        internal static string CliCommand_Log_ExecutionFailed {
-            get {
-                return ResourceManager.GetString("CliCommand_Log_ExecutionFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Executed command line: &apos;{0} {1}&apos;, output:
-        ///{2}.
-        /// </summary>
-        internal static string CliCommand_Log_ExecutionSucceeded {
-            get {
-                return ResourceManager.GetString("CliCommand_Log_ExecutionSucceeded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The application hung, and did not complete within: {0}s.
-        /// </summary>
-        internal static string CliCommand_Log_Hung {
-            get {
-                return ResourceManager.GetString("CliCommand_Log_Hung", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The application unexpected completed with exit code: &apos;{0}&apos;.
-        /// </summary>
-        internal static string CliCommand_Log_ProcessExited {
-            get {
-                return ResourceManager.GetString("CliCommand_Log_ProcessExited", resourceCulture);
             }
         }
         

@@ -87,6 +87,11 @@ namespace Automate.CLI.Infrastructure
             return InMemoryLocation;
         }
 
+        public string GetCodeTemplateLocation(PatternDefinition pattern, string codeTemplateId, string extension)
+        {
+            return InMemoryLocation;
+        }
+
         public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
         {
             return new CodeTemplateContent

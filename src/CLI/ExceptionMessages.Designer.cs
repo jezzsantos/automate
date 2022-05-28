@@ -97,6 +97,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to edit CodeTemplate with &apos;{0}&apos;, error was: &apos;{1}&apos;.
+        /// </summary>
+        internal static string AuthoringApplication_EditingCodeTemplateError {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_EditingCodeTemplateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pattern does not yet exist.
         /// </summary>
         internal static string AuthoringApplication_NoCurrentPattern {

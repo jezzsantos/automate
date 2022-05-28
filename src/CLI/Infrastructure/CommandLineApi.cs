@@ -166,7 +166,16 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
-                //TODO: edit-codetemplate (open in editor, by name)
+                new Command("codetemplate", "Edits a code template in an editor")
+                {
+                    new Argument("TemplateName", "The name of the code template"),
+                    new Option("--with", "Name of or full path to an application to edit the code template",
+                        typeof(string), arity: ArgumentArity.ExactlyOne),
+                    new Option("--args", "An program arguments",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to edit the code template from",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleEditCodeTemplate)),
                 new Command("delete-codetemplate", "Deletes a code template from an element/collection in the pattern")
                 {
                     new Argument("TemplateName", "The name of the code template"),
@@ -792,8 +801,16 @@ namespace Automate.CLI.Infrastructure
                 var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, parent.Id,
-                    template.Template.Id,
-                    template.Template.Metadata.OriginalFilePath, template.Location);
+                    template.Template.Id, template.Template.Metadata.OriginalFilePath, template.Location);
+            }
+
+            internal static void HandleEditCodeTemplate(string templateName, string with, string args, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var (parent, template, location) = Authoring.EditCodeTemplate(templateName, with, args, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, parent.Id,
+                    template.Id, with, location);
             }
 
             internal static void HandleDeleteCodeTemplate(string templateName, string asChildOf,

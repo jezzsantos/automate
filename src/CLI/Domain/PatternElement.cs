@@ -743,6 +743,17 @@ namespace Automate.CLI.Domain
 
         public IReadOnlyList<Automation> Automation => this.automations;
 
+        public CodeTemplate FindCodeTemplateByName(string name)
+        {
+            var codeTemplate = CodeTemplates.FirstOrDefault(template => template.Name.EqualsIgnoreCase(name));
+            if (codeTemplate.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(name));
+            }
+
+            return codeTemplate;
+        }
+
         public virtual bool Accept(IPatternVisitor visitor)
         {
             var abort = false;

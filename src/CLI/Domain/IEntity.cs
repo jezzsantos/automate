@@ -70,6 +70,8 @@ namespace Automate.CLI.Domain
         Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, IPatternElement sourceElement);
 
         public void DeleteCommandLaunchPoint(string id);
+
+        CodeTemplate FindCodeTemplateByName(string name);
     }
 
     internal interface INamedEntity : IIdentifiableEntity

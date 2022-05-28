@@ -113,6 +113,11 @@ namespace Automate.CLI.Infrastructure
             return uploadedFilePath;
         }
 
+        public string GetCodeTemplateLocation(PatternDefinition pattern, string codeTemplateId, string extension)
+        {
+            return CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
+        }
+
         public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
         {
             var path = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
@@ -266,6 +271,15 @@ namespace Automate.CLI.Infrastructure
             }
 
             return File.ReadAllText(filename).FromJson<ToolkitDefinition>(this.persistableFactory);
+        }
+
+        public static string GetCodeTemplateLocation(string patternId, string codeTemplateId, string extension)
+        {
+            patternId.GuardAgainstNullOrEmpty(nameof(patternId));
+            codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
+            extension.GuardAgainstNullOrEmpty(nameof(extension));
+
+            return $"{PatternDirectoryPath}/{patternId}/{CodeTemplateDirectoryName}/{codeTemplateId}.{extension}";
         }
 
         private static void EnsurePathExists(string filename)

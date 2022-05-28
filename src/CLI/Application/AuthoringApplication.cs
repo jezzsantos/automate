@@ -10,42 +10,43 @@ namespace Automate.CLI.Application
 {
     internal class AuthoringApplication
     {
+        private readonly IApplicationExecutor applictionExecutor;
         private readonly IFilePathResolver fileResolver;
-
         private readonly IPatternToolkitPackager packager;
-
         private readonly IPatternPathResolver patternResolver;
-
         private readonly IPatternStore store;
-
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
         public AuthoringApplication(string currentDirectory) : this(currentDirectory,
-            new PatternStore(currentDirectory), new SystemIoFilePathResolver())
+            new PatternStore(currentDirectory), new SystemIoFilePathResolver(), new ApplicationExecutor())
         {
         }
 
-        private AuthoringApplication(string currentDirectory, IPatternStore store, IFilePathResolver fileResolver) :
+        private AuthoringApplication(string currentDirectory, IPatternStore store, IFilePathResolver fileResolver,
+            IApplicationExecutor applicationExecutor) :
             this(store, fileResolver, new PatternPathResolver(),
-                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory)), new TextTemplatingEngine())
+                new PatternToolkitPackager(store, new ToolkitStore(currentDirectory)), new TextTemplatingEngine(),
+                applicationExecutor)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
         internal AuthoringApplication(IPatternStore store, IFilePathResolver fileResolver,
             IPatternPathResolver patternResolver, IPatternToolkitPackager packager,
-            ITextTemplatingEngine textTemplatingEngine)
+            ITextTemplatingEngine textTemplatingEngine, IApplicationExecutor applicationExecutor)
         {
             store.GuardAgainstNull(nameof(store));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
             patternResolver.GuardAgainstNull(nameof(patternResolver));
             packager.GuardAgainstNull(nameof(packager));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
+            applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
             this.store = store;
             this.fileResolver = fileResolver;
             this.patternResolver = patternResolver;
             this.packager = packager;
             this.textTemplatingEngine = textTemplatingEngine;
+            this.applictionExecutor = applicationExecutor;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -204,14 +205,41 @@ namespace Automate.CLI.Application
             return (target, new UploadedCodeTemplate(codeTemplate, location));
         }
 
-        public (IPatternElement Parent, CodeTemplate Template) DeleteCodeTemplate(string name, string parentExpression)
+        public (IPatternElement Parent, CodeTemplate Template, string Location) EditCodeTemplate(string templateName,
+            string editorPath, string arguments,
+            string parentExpression)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
+            templateName.GuardAgainstNullOrEmpty(nameof(templateName));
+            editorPath.GuardAgainstNullOrEmpty(nameof(editorPath));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var template = target.DeleteCodeTemplate(name, true);
+            var codeTemplate = target.FindCodeTemplateByName(templateName);
+            var location = this.store.GetCodeTemplateLocation(pattern, codeTemplate);
+            var args = arguments.HasValue()
+                ? $"{arguments} {location}"
+                : location;
+
+            var result = this.applictionExecutor.RunApplicationProcess(false, editorPath, args);
+            if (!result.IsSuccess)
+            {
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_EditingCodeTemplateError.Format(editorPath, result.Error));
+            }
+
+            return (target, codeTemplate, location);
+        }
+
+        public (IPatternElement Parent, CodeTemplate Template) DeleteCodeTemplate(string templateName,
+            string parentExpression)
+        {
+            templateName.GuardAgainstNullOrEmpty(nameof(templateName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var template = target.DeleteCodeTemplate(templateName, true);
             this.store.Save(pattern);
 
             return (target, template);
@@ -225,10 +253,10 @@ namespace Automate.CLI.Application
             return target.CodeTemplates.ToListSafe();
         }
 
-        public Automation AddCodeTemplateCommand(string codeTemplateName, string name, bool isTearOff,
+        public Automation AddCodeTemplateCommand(string templateName, string name, bool isTearOff,
             string filePath, string parentExpression)
         {
-            codeTemplateName.GuardAgainstNullOrEmpty(nameof(codeTemplateName));
+            templateName.GuardAgainstNullOrEmpty(nameof(templateName));
             filePath.GuardAgainstNullOrEmpty(nameof(filePath));
 
             var pattern = EnsureCurrentPatternExists();
@@ -236,19 +264,19 @@ namespace Automate.CLI.Application
 
             try
             {
-                var command = target.AddCodeTemplateCommand(name, codeTemplateName, isTearOff, filePath);
+                var command = target.AddCodeTemplateCommand(name, templateName, isTearOff, filePath);
                 this.store.Save(pattern);
 
                 return command;
             }
             catch (AutomateException ex)
             {
-                if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(codeTemplateName))
+                if (ex.Message == ExceptionMessages.PatternElement_CodeTemplateNotFound.Format(templateName))
                 {
                     throw new AutomateException(parentExpression.HasValue()
-                        ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(codeTemplateName,
+                        ? ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format(templateName,
                             parentExpression)
-                        : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(codeTemplateName,
+                        : ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsRoot.Format(templateName,
                             parentExpression));
                 }
 
@@ -392,14 +420,14 @@ namespace Automate.CLI.Application
             string GenerateImportedCode(Dictionary<string, object> data)
             {
                 return this.textTemplatingEngine.Transform(
-                    DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
+                    ApplicationMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
                     textTemplate, data);
             }
 
             string GenerateGeneratedCode(LazySolutionItemDictionary data)
             {
                 return this.textTemplatingEngine.Transform(
-                    DomainMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
+                    ApplicationMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
                     textTemplate, data);
             }
 

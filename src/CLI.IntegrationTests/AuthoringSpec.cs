@@ -509,6 +509,32 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenEditCodeTemplateWithEditor_ThenEditsTemplate()
+        {
+            var testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                "../../../../../tools/TestApp/TestApp.exe"));
+
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            var codeTemplate = this.setup.Pattern.CodeTemplates.First();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} codetemplate \"ATemplateName\" --with \"{testApplicationName}\" --args \"--opens\"");
+
+            var pattern = this.setup.Pattern;
+            var codeTemplateLocation =
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                    JsonFileRepository.GetCodeTemplateLocation(pattern.Id, codeTemplate.Id, "code")));
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplatedEdited.FormatTemplate(codeTemplate.Name,
+                        this.setup.Pattern.Id, codeTemplate.Id, testApplicationName, codeTemplateLocation));
+        }
+
+        [Fact]
         public void WhenDeleteCodeTemplate_ThenDeletesTemplate()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");

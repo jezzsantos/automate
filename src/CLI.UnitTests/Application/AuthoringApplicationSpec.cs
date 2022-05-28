@@ -23,6 +23,7 @@ namespace CLI.UnitTests.Application
         private readonly Mock<IPatternPathResolver> patternPathResolver;
         private readonly PatternStore store;
         private readonly Mock<ITextTemplatingEngine> textTemplatingEngine;
+        private readonly Mock<IApplicationExecutor> applicationExecutor;
 
         public AuthoringApplicationSpec()
         {
@@ -43,12 +44,13 @@ namespace CLI.UnitTests.Application
                 .Returns("anoutput");
             this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
                 .Returns("anoutput");
+            this.applicationExecutor = new Mock<IApplicationExecutor>();
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
             this.application =
                 new AuthoringApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object,
-                    this.builder.Object, this.textTemplatingEngine.Object);
+                    this.builder.Object, this.textTemplatingEngine.Object, this.applicationExecutor.Object);
         }
 
         [Fact]
