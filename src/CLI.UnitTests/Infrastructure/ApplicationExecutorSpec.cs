@@ -7,7 +7,7 @@ using Xunit;
 
 namespace CLI.UnitTests.Infrastructure
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Unit.NOCI")]
     public class ApplicationExecutorSpec
     {
         private readonly ApplicationExecutor executor;

@@ -19,7 +19,7 @@ namespace CLI.UnitTests.Domain
             }
         }
 
-        [Trait("Category", "Unit.NOCI")]
+        [Trait("Category", "Unit")]
         public class GivenACommand
         {
             private readonly Mock<IApplicationExecutor> applicationExecutor;
