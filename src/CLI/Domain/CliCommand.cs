@@ -69,7 +69,7 @@ namespace Automate.CLI.Domain
 
         public void ChangeName(string name)
         {
-            this.automation.ChangeName(name);
+            this.automation.Rename(name);
         }
 
         public string Id => this.automation.Id;

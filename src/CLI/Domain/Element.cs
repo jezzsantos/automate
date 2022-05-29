@@ -57,9 +57,12 @@ namespace Automate.CLI.Domain
 
         public void SetCardinality(ElementCardinality cardinality)
         {
-            Cardinality = cardinality;
-            RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
-                Id, Parent.Id);
+            if (cardinality != Cardinality)
+            {
+                Cardinality = cardinality;
+                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_Cardinality,
+                    Id, Parent.Id);
+            }
         }
 
 

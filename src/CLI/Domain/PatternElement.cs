@@ -104,6 +104,7 @@ namespace Automate.CLI.Domain
 
         public void AddAutomation(Automation automation)
         {
+            automation.SetParent(this);
             this.automations.Add(automation);
             RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Add, automation.Id, Id);
         }
@@ -266,12 +267,12 @@ namespace Automate.CLI.Domain
                         throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExistsAsElement
                             .Format(name));
                     }
-
-                    attribute.Rename(name);
                 }
+
+                attribute.Rename(name);
             }
 
-            if (type.HasValue() && type != attribute.DataType)
+            if (type.HasValue())
             {
                 attribute.ResetDataType(type);
             }
@@ -281,12 +282,12 @@ namespace Automate.CLI.Domain
                 attribute.SetChoices(choices);
             }
 
-            if (isRequired.HasValue && attribute.IsRequired != isRequired.Value)
+            if (isRequired.HasValue)
             {
                 attribute.SetRequired(isRequired.Value);
             }
 
-            if (defaultValue.HasValue() && attribute.DefaultValue.NotEqualsOrdinal(defaultValue))
+            if (defaultValue.HasValue())
             {
                 attribute.SetDefaultValue(defaultValue);
             }
@@ -510,7 +511,6 @@ namespace Automate.CLI.Domain
             {
                 command.ChangeFilePath(filePath);
             }
-            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, command.Id, Id);
 
             return command.AsAutomation();
         }
@@ -567,15 +567,14 @@ namespace Automate.CLI.Domain
             {
                 command.ChangeName(name);
             }
-            if (applicationName.HasValue())
+            if (applicationName.HasValue() && name.NotEqualsOrdinal(command.ApplicationName))
             {
                 command.ChangeApplicationName(applicationName);
             }
-            if (arguments.HasValue())
+            if (arguments.HasValue() && name.NotEqualsOrdinal(command.Arguments))
             {
                 command.ChangeArguments(arguments);
             }
-            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, command.Id, Id);
 
             return command.AsAutomation();
         }
@@ -681,8 +680,6 @@ namespace Automate.CLI.Domain
             {
                 launchPoint.ChangeName(name);
             }
-            RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Automation_Update, launchPoint.Id,
-                Id);
 
             return launchPoint.AsAutomation();
         }

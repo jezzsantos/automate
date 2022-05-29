@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
@@ -77,7 +78,7 @@ namespace Automate.CLI.Domain
 
         public string DefaultValue { get; private set; }
 
-        internal PatternElement Parent { get; private set; }
+        private PatternElement Parent { get; set; }
 
         public IReadOnlyList<string> Choices => this.choices;
 
@@ -167,16 +168,23 @@ namespace Automate.CLI.Domain
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
 
-            Name = name;
-            Parent.RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_Name, Id,
-                Parent.Id);
+            if (name.NotEqualsOrdinal(Name))
+            {
+                Name = name;
+                Parent.RecordChange(VersionChange.Breaking, VersionChanges.Attribute_Update_Name, Id,
+                    Parent.Id);
+            }
         }
 
         public void SetRequired(bool isRequired)
         {
-            IsRequired = isRequired;
-            Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_Required, Id,
-                Parent.Id);
+            if (isRequired != IsRequired)
+            {
+                IsRequired = isRequired;
+                Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.Attribute_Update_Required,
+                    Id,
+                    Parent.Id);
+            }
         }
 
         public void ResetDataType(string dataType)
@@ -184,9 +192,12 @@ namespace Automate.CLI.Domain
             dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
                 ValidationMessages.Attribute_UnsupportedDataType, SupportedDataTypes.Join(", "));
 
-            DataType = dataType;
-            Parent.RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Attribute_Update_DataType, Id,
-                Parent.Id);
+            if (dataType.NotEqualsOrdinal(DataType))
+            {
+                DataType = dataType;
+                Parent.RecordChange(VersionChange.Breaking, VersionChanges.Attribute_Update_DataType, Id,
+                    Parent.Id);
+            }
         }
 
         public void SetDefaultValue(string defaultValue)
@@ -201,9 +212,13 @@ namespace Automate.CLI.Domain
                     ValidationMessages.Attribute_DefaultValueIsNotAChoice, Choices.SafeJoin("; "));
             }
 
-            DefaultValue = defaultValue;
-            Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.PatternElement_Attribute_Update_DefaultValue,
-                Id, Parent.Id);
+            if (defaultValue.NotEqualsOrdinal(DefaultValue))
+            {
+                DefaultValue = defaultValue;
+                Parent.RecordChange(VersionChange.NonBreaking,
+                    VersionChanges.Attribute_Update_DefaultValue,
+                    Id, Parent.Id);
+            }
         }
 
         // ReSharper disable once ParameterHidesMember
@@ -215,12 +230,15 @@ namespace Automate.CLI.Domain
                     _ => Validations.IsValueOfDataType(choice, DataType), nameof(choices),
                     ValidationMessages.Attribute_WrongDataTypeChoice.Format(choice, DataType)));
 
-            var change = Choices.HasNone()
-                ? VersionChange.NonBreaking
-                : VersionChange.Breaking;
+            if (!choices.SequenceEqual(Choices))
+            {
+                var change = Choices.HasNone()
+                    ? VersionChange.NonBreaking
+                    : VersionChange.Breaking;
 
-            this.choices = choices;
-            Parent.RecordChange(change, VersionChanges.PatternElement_Attribute_Update_Choices, Id, Parent.Id);
+                this.choices = choices;
+                Parent.RecordChange(change, VersionChanges.Attribute_Update_Choices, Id, Parent.Id);
+            }
         }
 
         public void SetParent(PatternElement parent)

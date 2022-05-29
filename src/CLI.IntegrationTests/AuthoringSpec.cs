@@ -653,7 +653,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-cli-command \"AnApplication1\"  --arguments \"Arguments1\" --name ACommandName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} update-cli-command \"ACommandName\" --applicationName \"AnApplication2\" --arguments \"Arguments2\"");
+                $"{CommandLineApi.EditCommandName} update-cli-command \"ACommandName\" --app \"AnApplication2\" --arguments \"Arguments2\"");
 
             var command = this.setup.Pattern.Automation.First();
             this.setup.Should().DisplayNoError();

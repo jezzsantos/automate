@@ -314,7 +314,7 @@ namespace Automate.CLI.Application
         public Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments,
             string parentExpression)
         {
-            applicationName.GuardAgainstNull(nameof(applicationName));
+            commandName.GuardAgainstNull(nameof(commandName));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);

@@ -26,6 +26,7 @@ namespace Automate.CLI.Domain
             metadata.GuardAgainstNull(nameof(metadata));
 
             Id = IdGenerator.Create();
+            Parent = null;
             Name = name;
             Type = type;
             this.metadata = metadata;
@@ -104,20 +105,38 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void UpdateMetadata(string name, object value)
+        public void SetParent(PatternElement parent)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            value.GuardAgainstNull(nameof(value));
-            this.metadata[name] = value;
+            Parent = parent;
         }
 
-        public void ChangeName(string name)
+        private PatternElement Parent { get; set; }
+
+        public void Rename(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
 
-            Name = name;
+            if (name.NotEqualsOrdinal(Name))
+            {
+                Name = name;
+                Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.Automation_Update_Name, Id, Parent.Id);
+            }
+        }
+
+        public void UpdateMetadata(string name, object value)
+        {
+            name.GuardAgainstNullOrEmpty(nameof(name));
+            value.GuardAgainstNull(nameof(value));
+
+            if (!this.metadata.ContainsKey(name)
+                || this.metadata[name] != value)
+            {
+                this.metadata[name] = value;
+                Parent.RecordChange(VersionChange.NonBreaking, VersionChanges.Automation_Update_Metadata, Id,
+                    Parent.Id);
+            }
         }
 
         public bool Accept(IPatternVisitor visitor)

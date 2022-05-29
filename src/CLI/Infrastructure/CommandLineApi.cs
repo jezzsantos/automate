@@ -67,7 +67,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--isrequired", "Whether an attribute value will be required", typeof(bool),
                         () => false, ArgumentArity.ZeroOrOne),
-                    new Option("--isoneof", "A list of semi-colon delimited values", typeof(string),
+                    new Option("--isoneof", "A list of semi-colon delimited choices", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the attribute to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
@@ -77,13 +77,13 @@ namespace Automate.CLI.Infrastructure
                     new Argument("AttributeName", "The name of the attribute"),
                     new Option("--name", "A new name for the attribute", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--isoftype", "The type of the attribute", typeof(string),
+                    new Option("--isoftype", "The new type of the attribute", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--defaultvalueis", "The default value for the attribute", typeof(string),
+                    new Option("--defaultvalueis", "The new default value for the attribute", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--isrequired", "Whether an attribute value will be required", typeof(bool?),
+                    new Option("--isrequired", "Whether an attribute value will be required or not", typeof(bool?),
                         () => null, ArgumentArity.ZeroOrOne),
-                    new Option("--isoneof", "A list of semi-colon delimited values", typeof(string),
+                    new Option("--isoneof", "A new list of semi-colon delimited choices", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to update the attribute on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
@@ -111,13 +111,13 @@ namespace Automate.CLI.Infrastructure
                     new Argument("ElementName", "The name of the element"),
                     new Option("--name", "A new name for the element", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--displayedas", "A friendly display name for the element", typeof(string),
+                    new Option("--displayedas", "A new friendly display name for the element", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--describedas", "A description for the element", typeof(string),
+                    new Option("--describedas", "A new description for the element", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to update the element on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--isrequired", "Whether the element will be required or not",
+                    new Option("--isrequired", "Whether the element will now be required or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateElement)),
                 new Command("delete-element", "Deletes an element from an element/collection in the pattern")
@@ -143,13 +143,13 @@ namespace Automate.CLI.Infrastructure
                     new Argument("CollectionName", "The name of the collection"),
                     new Option("--name", "A new name for the element", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--displayedas", "A friendly display name for the collection", typeof(string),
+                    new Option("--displayedas", "A new friendly display name for the collection", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--describedas", "A description for the collection", typeof(string),
+                    new Option("--describedas", "A new description for the collection", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to update the collection on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--isrequired", "Whether the collection will be required or not",
+                    new Option("--isrequired", "Whether the collection will now be required or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCollection)),
                 new Command("delete-collection", "Deletes a collection from an element/collection in the pattern")
@@ -202,9 +202,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--name", "A new name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--astearoff",
-                        "If you only want to generate the file once, and not overwrite the file if it already exists",
+                        "If you now only want to generate the file once, and not overwrite the file if it already exists",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
-                    new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
+                    new Option("--withpath", "A new full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the command exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
@@ -226,11 +226,11 @@ namespace Automate.CLI.Infrastructure
                 new Command("update-cli-command", "Updates an existing CLI command")
                 {
                     new Argument("CommandName", "The name of the command to update"),
-                    new Option("--applicationName",
-                        "The name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable",
+                    new Option("--app",
+                        "The new name of the command line application/exe to execute. Include the full path if the application is not in the machine's path variable",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--arguments",
-                        "The arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
+                        "The new arguments to pass to the command line application. (Escape double-quotes with an extra double-quote)",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--name", "A new name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
@@ -623,11 +623,10 @@ namespace Automate.CLI.Infrastructure
                     command.Name, command.Id);
             }
 
-            internal static void HandleUpdateCliCommand(string commandName, string applicationName, string arguments,
-                string name,
-                string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleUpdateCliCommand(string commandName, string app, string arguments,
+                string name, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.UpdateCliCommand(commandName, name, applicationName, arguments, asChildOf);
+                var command = Authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandUpdated,
                     command.Name, command.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
                     command.Metadata[nameof(CliCommand.Arguments)]);

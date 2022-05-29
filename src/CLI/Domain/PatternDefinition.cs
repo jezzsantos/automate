@@ -257,6 +257,19 @@ namespace Automate.CLI.Domain
 
                 return true;
             }
+
+            public bool VisitAutomation(Automation automation)
+            {
+                var parent = this.ancestry.Peek();
+                if (parent.NotExists())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                automation.SetParent(parent);
+
+                return true;
+            }
         }
 
         private class AutomationFinder : IPatternVisitor

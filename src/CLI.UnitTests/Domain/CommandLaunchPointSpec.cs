@@ -13,11 +13,13 @@ namespace CLI.UnitTests.Domain
     public class CommandLaunchPointSpec
     {
         private readonly CommandLaunchPoint launchPoint;
+        private readonly PatternDefinition pattern;
 
         public CommandLaunchPointSpec()
         {
-            this.launchPoint =
-                new CommandLaunchPoint("alaunchpointname", new List<string> { IdGenerator.Create() });
+            this.pattern = new PatternDefinition("apatternname");
+            this.launchPoint = new CommandLaunchPoint("alaunchpointname", new List<string> { IdGenerator.Create() });
+            this.pattern.AddAutomation(this.launchPoint.AsAutomation());
         }
 
         [Fact]
@@ -54,13 +56,15 @@ namespace CLI.UnitTests.Domain
             this.launchPoint
                 .Invoking(x => x.Execute(solution, solutionItem))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(this.launchPoint.CommandIds.First()));
+                .WithMessage(
+                    ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(this.launchPoint.CommandIds.First()));
         }
 
         [Fact]
         public void WhenExecuteAndCommandOnPattern_ThenExecutesCommandOnOnlyOneElement()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var pattern = new PatternDefinition("apatternname");
             pattern.AddAutomation(automation);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
@@ -77,7 +81,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndCommandOnDescendantElement_ThenExecutesCommandOnOnlyOneElement()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var element2 = new Element("anelementname2");
             element2.AddAutomation(automation);
@@ -100,7 +105,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndCommandOnDescendantCollection_ThenExecutesCommandOnEachItem()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
@@ -125,7 +131,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndAutomationFails_ThenContinuesAndFails()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object> { { "FailTurn", 2 } });
+            var automation = new Automation("acommandname", AutomationType.TestingOnly,
+                new Dictionary<string, object> { { "FailTurn", 2 } });
             var element1 = new Element("anelementname1");
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
@@ -143,7 +150,9 @@ namespace CLI.UnitTests.Domain
                 .Execute(solution, solutionItem);
 
             result.CommandName.Should().Be("alaunchpointname");
-            result.Log.Should().Contain("testingonly", DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(), "anexceptionmessage"));
+            result.Log.Should().Contain("testingonly",
+                DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(this.launchPoint.CommandIds.First(),
+                    "anexceptionmessage"));
             result.IsSuccess.Should().BeFalse();
         }
 
@@ -162,7 +171,8 @@ namespace CLI.UnitTests.Domain
 
             this.launchPoint.AppendCommandIds(new List<string> { "acmdid2" });
 
-            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid2");
+            this.launchPoint.CommandIds.Should()
+                .ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid2");
         }
 
         [Fact]
@@ -174,7 +184,8 @@ namespace CLI.UnitTests.Domain
 
             this.launchPoint.AppendCommandIds(new List<string> { "acmdid2", "acmdid3", "acmdid4" });
 
-            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid2", "acmdid3", "acmdid4");
+            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1",
+                "acmdid2", "acmdid3", "acmdid4");
         }
     }
 }
