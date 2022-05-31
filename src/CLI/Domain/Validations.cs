@@ -8,7 +8,7 @@ namespace Automate.CLI.Domain
 {
     internal static class Validations
     {
-        private const string NameIdentifierExpression = @"[a-zA-Z0-9_\.]+";
+        private const string NameIdentifierExpression = @"[a-zA-Z0-9_\.\-]+";
 
         public static bool IsNameIdentifier(string value)
         {
