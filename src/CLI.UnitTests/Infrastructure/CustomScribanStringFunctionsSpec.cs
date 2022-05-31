@@ -51,6 +51,21 @@ namespace CLI.UnitTests.Infrastructure
         }
 
         [Fact]
+        public void WhenTransformWithSnakeCase_ThenReturnsTransformedTemplate()
+        {
+            var model = new
+            {
+                aproperty = "oneTwoThree"
+            };
+
+            var result =
+                model.Transform("adescription",
+                    "{{aproperty | string.snakecase}}");
+
+            result.Should().Be("one_two_three");
+        }
+
+        [Fact]
         public void WhenTransformWithToPlural_ThenReturnsTransformedTemplate()
         {
             var model = new
@@ -60,7 +75,7 @@ namespace CLI.UnitTests.Infrastructure
             };
 
             var result =
-                model.Transform("adescription", "{{simple | string.to_plural}}\n{{infinitive | string.to_plural}}");
+                model.Transform("adescription", "{{simple | string.pluralize}}\n{{infinitive | string.pluralize}}");
 
             result.Should().Be("words\nsheep");
         }
@@ -75,37 +90,93 @@ namespace CLI.UnitTests.Infrastructure
             };
 
             var result =
-                model.Transform("adescription", "{{simple | string.to_singular}}\n{{infinitive | string.to_singular}}");
+                model.Transform("adescription", "{{simple | string.singularize}}\n{{infinitive | string.singularize}}");
 
             result.Should().Be("word\nsheep");
         }
 
         [Fact]
-        public void WhenTransformWithPascalCasedPlural_ThenReturnsTransformedTemplate()
+        public void WhenTransformWithPascalPlural_ThenReturnsTransformedTemplate()
         {
             var model = new
             {
-                aproperty = "word"
+                aproperty = "one word"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.to_plural | string.pascalcase}}");
+                model.Transform("adescription", "{{aproperty | string.pascalplural}}");
 
-            result.Should().Be("Words");
+            result.Should().Be("OneWords");
         }
 
         [Fact]
-        public void WhenTransformWithCamelCasedPlural_ThenReturnsTransformedTemplate()
+        public void WhenTransformWithCamelPlural_ThenReturnsTransformedTemplate()
         {
             var model = new
             {
-                aproperty = "Word"
+                aproperty = "One Word"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.to_plural | string.camelcase}}");
+                model.Transform("adescription", "{{aproperty | string.camelplural}}");
 
-            result.Should().Be("words");
+            result.Should().Be("oneWords");
+        }
+
+        [Fact]
+        public void WhenTransformWithSnakePlural_ThenReturnsTransformedTemplate()
+        {
+            var model = new
+            {
+                aproperty = "One Word"
+            };
+
+            var result =
+                model.Transform("adescription", "{{aproperty | string.snakeplural}}");
+
+            result.Should().Be("one_words");
+        }
+
+        [Fact]
+        public void WhenTransformWithPascalSingular_ThenReturnsTransformedTemplate()
+        {
+            var model = new
+            {
+                aproperty = "one words"
+            };
+
+            var result =
+                model.Transform("adescription", "{{aproperty | string.pascalsingular}}");
+
+            result.Should().Be("OneWord");
+        }
+
+        [Fact]
+        public void WhenTransformWithCamelSingular_ThenReturnsTransformedTemplate()
+        {
+            var model = new
+            {
+                aproperty = "One Words"
+            };
+
+            var result =
+                model.Transform("adescription", "{{aproperty | string.camelsingular}}");
+
+            result.Should().Be("oneWord");
+        }
+
+        [Fact]
+        public void WhenTransformWithSnakeSingular_ThenReturnsTransformedTemplate()
+        {
+            var model = new
+            {
+                aproperty = "One Words"
+            };
+
+            var result =
+                model.Transform("adescription", "{{aproperty | string.snakesingular}}");
+
+            result.Should().Be("one_word");
         }
     }
 }
