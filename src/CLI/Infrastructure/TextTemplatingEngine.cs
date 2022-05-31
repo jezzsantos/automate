@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
+using Humanizer;
 using Scriban.Runtime;
 
 namespace Automate.CLI.Infrastructure
@@ -53,15 +54,51 @@ namespace Automate.CLI.Infrastructure
         /// <returns>The pascal cased input string</returns>
         /// <remarks>
         ///     ```scriban-html
-        ///     {{ "TestWord" | string.pascalcase }}
+        ///     {{ "testWord" | string.pascalcase }}
         ///     ```
         ///     ```html
-        ///     testWord
+        ///     TestWord
         ///     ```
         /// </remarks>
         public static string Pascalcase(string text)
         {
             return text?.ToPascalCase();
+        }
+
+        /// <summary>
+        ///     Converts the string to plural form.
+        /// </summary>
+        /// <param name="text">The input string</param>
+        /// <returns>The singular input string</returns>
+        /// <remarks>
+        ///     ```scriban-html
+        ///     {{ "TestWord" | string.to_plural }}
+        ///     ```
+        ///     ```html
+        ///     TestWords
+        ///     ```
+        /// </remarks>
+        public static string ToPlural(string text)
+        {
+            return text?.Pluralize();
+        }
+
+        /// <summary>
+        ///     Converts the string to singular form.
+        /// </summary>
+        /// <param name="text">The input string</param>
+        /// <returns>The plural input string</returns>
+        /// <remarks>
+        ///     ```scriban-html
+        ///     {{ "TestWords" | string.to_singular }}
+        ///     ```
+        ///     ```html
+        ///     TestWord
+        ///     ```
+        /// </remarks>
+        public static string ToSingular(string text)
+        {
+            return text?.Singularize();
         }
     }
 }

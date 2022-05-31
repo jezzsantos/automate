@@ -7,7 +7,7 @@ namespace Automate.CLI.Infrastructure
 {
     internal static class TextTemplatingExtensions
     {
-        private const string FunctionQualifyingNamespace = "automate";
+        private const string LegacyFunctionNamespace = "automate";
 
         public static string Transform(this object source, string description, string textTemplate,
             bool modelPrefix = false)
@@ -28,18 +28,22 @@ namespace Automate.CLI.Infrastructure
 
             try
             {
-                var customFunctions = new ScriptObject();
-                customFunctions.Import(typeof(CustomScribanStringFunctions));
+                var legacyFunctions = new ScriptObject();
+                legacyFunctions.Import(typeof(CustomScribanStringFunctions),
+                    member => member.Name is nameof(CustomScribanStringFunctions.Pascalcase)
+                        or nameof(CustomScribanStringFunctions.Camelcase));
 
-                var stringFunctions = new ScriptObject();
-                stringFunctions.SetValue(FunctionQualifyingNamespace, customFunctions, true);
+                //HACK: Support legacy functions in legacy namespace for next few versions of existing toolkits.
+                var backwardsCompatibleFunctions = new ScriptObject();
+                backwardsCompatibleFunctions.SetValue(LegacyFunctionNamespace, legacyFunctions, true);
 
                 var sourceData = new ScriptObject();
                 sourceData.Import(model);
 
                 var context = new TemplateContext();
-                context.PushGlobal(customFunctions);
-                context.PushGlobal(stringFunctions);
+                var builtIn = (ScriptObject)context.BuiltinObject["string"];
+                builtIn.Import(typeof(CustomScribanStringFunctions));
+                context.PushGlobal(backwardsCompatibleFunctions);
                 context.PushGlobal(sourceData);
 
                 return engine.Render(context);
