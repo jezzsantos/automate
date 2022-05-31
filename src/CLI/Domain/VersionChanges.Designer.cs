@@ -286,6 +286,15 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its auto-creation.
+        /// </summary>
+        internal static string PatternElement_Element_Update_AutoCreate {
+            get {
+                return ResourceManager.GetString("PatternElement_Element_Update_AutoCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Element (ID: {ElementId}) was updated on element {ParentId}, and changed its cardinality.
         /// </summary>
         internal static string PatternElement_Element_Update_Cardinality {

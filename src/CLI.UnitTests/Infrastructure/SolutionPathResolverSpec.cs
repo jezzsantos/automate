@@ -133,8 +133,8 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndDescendantElementExpressionNotMaterialised_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3");
-            var element2 = new Element("anelementname2");
+            var element3 = new Element("anelementname3", autoCreate: false);
+            var element2 = new Element("anelementname2", autoCreate: false);
             var element1 = new Element("anelementname1");
             element2.AddElement(element3);
             element1.AddElement(element2);

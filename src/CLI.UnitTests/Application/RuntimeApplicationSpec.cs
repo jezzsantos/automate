@@ -341,7 +341,7 @@ namespace CLI.UnitTests.Application
         public void WhenConfigureSolutionWithAddElementAndProperty_ThenReturnsSolution()
         {
             var attribute = new Attribute("anattributename");
-            var element = new Element("anelementname");
+            var element = new Element("anelementname", autoCreate: false);
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
             ResetToolkit();
@@ -487,8 +487,10 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenValidateElement_ThenReturnsResults()
         {
-            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
-            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
+            var element1 = new Element("anelementname1", autoCreate: false, displayName: "adisplayname1",
+                description: "adescription1");
+            var element2 = new Element("anelementname2", autoCreate: false, displayName: "adisplayname2",
+                description: "adescription2");
             this.pattern.AddElement(element1);
             this.pattern.AddElement(element2);
             ResetToolkit();
@@ -509,9 +511,10 @@ namespace CLI.UnitTests.Application
         {
             var attribute1 = new Attribute("anattributename1", null, true, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, true, "adefaultvalue2");
-            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
-            var collection2 = new Element("acollectionname2",
-                ElementCardinality.OneOrMany, "adisplayname2", "adescription2");
+            var element1 = new Element("anelementname1", autoCreate: false, displayName: "adisplayname1",
+                description: "adescription1");
+            var collection2 = new Element("acollectionname2", ElementCardinality.OneOrMany, false, "adisplayname2",
+                "adescription2");
             collection2.AddAttribute(attribute2);
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);

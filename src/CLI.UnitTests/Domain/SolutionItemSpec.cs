@@ -84,7 +84,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithElement_ThenElementAssigned()
         {
-            var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
+            var element = new Element("anelementname", autoCreate: false, displayName: "adisplayname",
+                description: "adescription");
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
             this.pattern.AddElement(element);
 
@@ -101,7 +102,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithCollection_ThenCollectionAssigned()
         {
-            var element = new Element("acollectionname", displayName: "adisplayname", description: "adescription");
+            var element = new Element("acollectionname", autoCreate: false, displayName: "adisplayname",
+                description: "adescription");
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
             this.pattern.AddElement(element);
 
@@ -118,11 +120,14 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenConstructedWithDescendantSchema_ThenDescendantElementsAssigned()
         {
-            var element3 = new Element("anelementname3", displayName: "adisplayname3", description: "adescription3");
+            var element3 = new Element("anelementname3", autoCreate: false, displayName: "adisplayname3",
+                description: "adescription3");
             element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
-            var element2 = new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
+            var element2 = new Element("anelementname2", autoCreate: false, displayName: "adisplayname2",
+                description: "adescription2");
             element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
-            var element1 = new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
+            var element1 = new Element("anelementname1", autoCreate: false, displayName: "adisplayname1",
+                description: "adescription1");
             element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
             element2.AddElement(element3);
             element1.AddElement(element2);
@@ -164,6 +169,50 @@ namespace CLI.UnitTests.Domain
             result.IsMaterialised.Should().BeTrue();
             result.Value.Should().BeNull();
             result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            result.Items.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenMaterialiseAndElementHasAutoCreateElement_ThenMaterialisesChildElement()
+        {
+            var element1 = new Element("anelementname1", displayName: "adisplayname", description: "adescription");
+            var element2 = new Element("anelementname2", autoCreate: true, displayName: "adisplayname",
+                description: "adescription");
+            var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
+            element1.AddAttribute(attribute);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
+
+            var result = new SolutionItem(this.toolkit, element1, null)
+                .Materialise();
+
+            result.Id.Should().NotBeNull();
+            result.IsMaterialised.Should().BeTrue();
+            result.Value.Should().BeNull();
+            result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            result.Properties["anelementname2"].IsMaterialised.Should().BeTrue();
+            result.Items.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenMaterialiseAndElementHasAutoCreateCollection_ThenMaterialisesChildCollection()
+        {
+            var element1 = new Element("anelementname1", displayName: "adisplayname", description: "adescription");
+            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany, true, "adisplayname",
+                "adescription");
+            var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
+            element1.AddAttribute(attribute);
+            element1.AddElement(collection1);
+            this.pattern.AddElement(element1);
+
+            var result = new SolutionItem(this.toolkit, element1, null)
+                .Materialise();
+
+            result.Id.Should().NotBeNull();
+            result.IsMaterialised.Should().BeTrue();
+            result.Value.Should().BeNull();
+            result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            result.Properties["acollectionname1"].IsMaterialised.Should().BeTrue();
             result.Items.Should().BeNull();
         }
 
@@ -399,7 +448,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndIsOneOnlyOneElementAndNotMaterialised_ThenReturnsErrors()
         {
-            var element = new Element("anelementname");
+            var element = new Element("anelementname", autoCreate: false);
             this.pattern.AddElement(element);
 
             var result = new SolutionItem(this.toolkit, this.pattern)
@@ -457,8 +506,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndIsElementWithRequiredItems_ThenReturnsErrors()
         {
-            var element1 = new Element("anelementname1");
-            var element2 = new Element("anelementname2");
+            var element1 = new Element("anelementname1", autoCreate: false);
+            var element2 = new Element("anelementname2", autoCreate: false);
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
@@ -492,8 +541,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndIsDescendantCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
         {
-            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
-            var element = new Element("anelementname");
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany, false);
+            var element = new Element("anelementname", autoCreate: false);
             var attribute = new Attribute("anattributename", isRequired: true);
             element.AddAttribute(attribute);
             collection.AddElement(element);
@@ -553,7 +602,7 @@ namespace CLI.UnitTests.Domain
                 new Element("anelementname1", displayName: "adisplayname1", description: "adescription1");
             var elementLevel2 =
                 new Element("anelementname2", displayName: "adisplayname2", description: "adescription2");
-            var collectionLevel1 = new Element("acollectionname2", ElementCardinality.OneOrMany, "adisplayname1",
+            var collectionLevel1 = new Element("acollectionname2", ElementCardinality.OneOrMany, false, "adisplayname1",
                 "adescription1");
             elementLevel2.AddAttribute(attribute2);
             collectionLevel1.AddAttribute(attribute3);

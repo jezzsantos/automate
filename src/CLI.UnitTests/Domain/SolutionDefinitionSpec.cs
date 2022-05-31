@@ -12,15 +12,15 @@ namespace CLI.UnitTests.Domain
         public void WhenConstructed_ThenInitialisesTopLevelElementsAndCollectionsOnly()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3");
+            var element3 = new Element("anelementname3", autoCreate: false);
             element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
-            var collection3 = new Element("acollectionname3");
-            var element2 = new Element("anelementname2");
+            var collection3 = new Element("acollectionname3", autoCreate: false);
+            var element2 = new Element("anelementname2", autoCreate: false);
             element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
-            var collection2 = new Element("acollectionname2");
-            var element1 = new Element("anelementname1");
+            var collection2 = new Element("acollectionname2", autoCreate: false);
+            var element1 = new Element("anelementname1", autoCreate: false);
             element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
-            var collection1 = new Element("acollectionname1");
+            var collection1 = new Element("acollectionname1", autoCreate: false);
             element2.AddElement(element3);
             element2.AddElement(collection3);
             pattern.AddElement(element1);
@@ -190,12 +190,12 @@ namespace CLI.UnitTests.Domain
         public void WhenFindByAutomationOnUnMaterialisedDescendantElement_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3");
+            var element3 = new Element("anelementname3", autoCreate: false);
             var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element3.AddAutomation(automation);
-            var element2 = new Element("anelementname2");
+            var element2 = new Element("anelementname2", autoCreate: false);
             element2.AddElement(element3);
-            var element1 = new Element("anelementname1");
+            var element1 = new Element("anelementname1", autoCreate: false);
             element1.AddElement(element2);
             pattern.AddElement(element1);
             var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
@@ -212,14 +212,14 @@ namespace CLI.UnitTests.Domain
             var pattern = new PatternDefinition("apatternname");
             var attribute1 = new Attribute("anattributename1", defaultValue: "adefaultvalue");
             pattern.AddAttribute(attribute1);
-            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
+            var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany, false);
             var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue");
             collection1.AddAttribute(attribute2);
-            var element2 = new Element("anelementname2");
+            var element2 = new Element("anelementname2", autoCreate: false);
             var attribute3 = new Attribute("anattributename3", defaultValue: "adefaultvalue");
             element2.AddAttribute(attribute3);
             element2.AddElement(collection1);
-            var element1 = new Element("anelementname1");
+            var element1 = new Element("anelementname1", autoCreate: false);
             var attribute4 = new Attribute("anattributename4", defaultValue: "adefaultvalue");
             element1.AddAttribute(attribute4);
             element1.AddElement(element2);

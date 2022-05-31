@@ -311,7 +311,7 @@ namespace Automate.CLI.Domain
         }
 
         public Element AddElement(string name, ElementCardinality cardinality = ElementCardinality.One,
-            string displayName = null, string description = null)
+            bool autoCreate = false, string displayName = null, string description = null)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
@@ -331,14 +331,14 @@ namespace Automate.CLI.Domain
                     ExceptionMessages.PatternElement_ElementByNameExistsAsAttribute.Format(name));
             }
 
-            var element = new Element(name, cardinality, displayName, description);
+            var element = new Element(name, cardinality, autoCreate, displayName, description);
             AddElement(element);
 
             return element;
         }
 
         public Element UpdateElement(string elementName, string name = null, bool? isRequired = null,
-            string displayName = null, string description = null)
+            bool? autoCreate = null, string displayName = null, string description = null)
         {
             elementName.GuardAgainstNullOrEmpty(nameof(elementName));
 
@@ -400,6 +400,11 @@ namespace Automate.CLI.Domain
                         element.SetCardinality(ElementCardinality.ZeroOrOne);
                     }
                 }
+            }
+
+            if (autoCreate.HasValue)
+            {
+                element.SetCreation(autoCreate.Value);
             }
 
             return element;

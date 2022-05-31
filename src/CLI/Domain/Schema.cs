@@ -69,6 +69,15 @@ namespace Automate.CLI.Domain
         {
             return Object.HasCardinalityOfMany();
         }
+
+        public bool ShouldAutoCreate()
+        {
+            if (IsCollection)
+            {
+                return Object.AutoCreate;
+            }
+            return Object.AutoCreate && Object.Cardinality is ElementCardinality.One;
+        }
     }
 
     internal class CollectionItemSchema : ElementSchema

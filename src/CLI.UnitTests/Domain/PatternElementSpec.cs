@@ -210,12 +210,13 @@ namespace CLI.UnitTests.Domain
         public void WhenAddElement_TheAddsElementToElement()
         {
             var result =
-                this.element.AddElement("anelementname", ElementCardinality.One, "adisplayname", "adescription");
+                this.element.AddElement("anelementname", ElementCardinality.One, false, "adisplayname", "adescription");
 
             result.Name.Should().Be("anelementname");
             result.DisplayName.Should().Be("adisplayname");
             result.Description.Should().Be("adescription");
             result.IsCollection.Should().BeFalse();
+            result.AutoCreate.Should().BeFalse();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
 
@@ -270,7 +271,7 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddElement("anelement1");
 
-            var result = this.element.UpdateElement("anelement1", "anelement2", false,
+            var result = this.element.UpdateElement("anelement1", "anelement2", false, false,
                 "adisplayname", "adescription");
 
             result.Name.Should().Be("anelement2");
@@ -283,7 +284,7 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddElement("anelement1", ElementCardinality.ZeroOrOne);
 
-            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+            var result = this.element.UpdateElement("anelement1", "anelement2", true, false,
                 "adisplayname", "adescription");
 
             result.Name.Should().Be("anelement2");
@@ -296,7 +297,7 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddElement("anelement1", ElementCardinality.OneOrMany);
 
-            var result = this.element.UpdateElement("anelement1", "anelement2", false,
+            var result = this.element.UpdateElement("anelement1", "anelement2", false, false,
                 "adisplayname", "adescription");
 
             result.Name.Should().Be("anelement2");
@@ -309,7 +310,7 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddElement("anelement1", ElementCardinality.ZeroOrMany);
 
-            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+            var result = this.element.UpdateElement("anelement1", "anelement2", true, false,
                 "adisplayname", "adescription");
 
             result.Name.Should().Be("anelement2");
@@ -322,13 +323,14 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddElement("anelement1");
 
-            var result = this.element.UpdateElement("anelement1", "anelement2", true,
+            var result = this.element.UpdateElement("anelement1", "anelement2", true, true,
                 "adisplayname", "adescription");
 
             result.Name.Should().Be("anelement2");
             result.Cardinality.Should().Be(ElementCardinality.One);
             result.DisplayName.Should().Be("adisplayname");
             result.Description.Should().Be("adescription");
+            result.AutoCreate.Should().BeTrue();
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.Breaking);
         }
 

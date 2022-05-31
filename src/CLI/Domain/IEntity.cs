@@ -40,9 +40,10 @@ namespace Automate.CLI.Domain
 
         Attribute DeleteAttribute(string name);
 
-        Element AddElement(string name, ElementCardinality cardinality, string displayName, string description);
+        Element AddElement(string name, ElementCardinality cardinality, bool autoCreate, string displayName,
+            string description);
 
-        Element UpdateElement(string elementName, string name, bool? isRequired, string displayName,
+        Element UpdateElement(string elementName, string name, bool? isRequired, bool? autoCreate, string displayName,
             string description);
 
         Element DeleteElement(string name);

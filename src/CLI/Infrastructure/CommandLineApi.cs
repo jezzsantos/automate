@@ -104,7 +104,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the element to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--isrequired", "Whether the element will be required or not",
-                        typeof(bool), () => true, ArgumentArity.ZeroOrOne)
+                        typeof(bool), () => true, ArgumentArity.ZeroOrOne),
+                    new Option("--autocreate", "Whether the element will be created automatically or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddElement)),
                 new Command("update-element", "Updates an element on an element/collection in the pattern")
                 {
@@ -118,6 +120,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to update the element on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--isrequired", "Whether the element will now be required or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
+                    new Option("--autocreate", "Whether the element will now be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateElement)),
                 new Command("delete-element", "Deletes an element from an element/collection in the pattern")
@@ -136,7 +140,9 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the collection to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--isrequired", "Whether at least one item in the collection will be required or not",
-                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
+                    new Option("--autocreate", "Whether the collection will be created automatically or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCollection)),
                 new Command("update-collection", "Updates a collection on an element/collection in the pattern")
                 {
@@ -150,6 +156,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to update the collection on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--isrequired", "Whether the collection will now be required or not",
+                        typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
+                    new Option("--autocreate", "Whether the collection will now be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleUpdateCollection)),
                 new Command("delete-collection", "Deletes a collection from an element/collection in the pattern")
@@ -669,51 +677,52 @@ namespace Automate.CLI.Infrastructure
                     launchPoint.Name, parent.Id, launchPoint.Id);
             }
 
-            internal static void HandleAddElement(string name, string displayedAs, string describedAs, string asChildOf,
+            internal static void HandleAddElement(string name, bool? autoCreate, string displayedAs, string describedAs,
+                string asChildOf,
                 bool isRequired, bool outputStructured, IConsole console)
             {
                 var (parent, element) = Authoring.AddElement(name,
                     isRequired
                         ? ElementCardinality.One
-                        : ElementCardinality.ZeroOrOne, displayedAs, describedAs, asChildOf);
+                        : ElementCardinality.ZeroOrOne, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id,
                     element.Id);
             }
 
-            internal static void HandleUpdateElement(string elementName, string name, string displayedAs,
-                string describedAs, string asChildOf,
-                bool? isRequired, bool outputStructured, IConsole console)
+            internal static void HandleUpdateElement(string elementName, string name, bool? autoCreate,
+                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
+                IConsole console)
             {
                 var (parent, element) = Authoring.UpdateElement(elementName, name,
-                    isRequired, displayedAs, describedAs, asChildOf);
+                    isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
                     parent.Id,
                     element.Id);
             }
 
-            internal static void HandleAddCollection(string name, string displayedAs, string describedAs,
+            internal static void HandleAddCollection(string name, bool? autoCreate, string displayedAs,
+                string describedAs,
                 string asChildOf, bool isRequired, bool outputStructured, IConsole console)
             {
                 var (parent, collection) = Authoring.AddElement(name, isRequired
                     ? ElementCardinality.OneOrMany
-                    : ElementCardinality.ZeroOrMany, displayedAs, describedAs, asChildOf);
+                    : ElementCardinality.ZeroOrMany, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
                     parent.Id, collection.Id);
             }
 
-            internal static void HandleUpdateCollection(string collectionName, string name, string displayedAs,
-                string describedAs, string asChildOf,
-                bool? isRequired, bool outputStructured, IConsole console)
+            internal static void HandleUpdateCollection(string collectionName, string name, bool? autoCreate,
+                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
+                IConsole console)
             {
                 var (parent, element) = Authoring.UpdateElement(collectionName, name,
-                    isRequired, displayedAs, describedAs, asChildOf);
+                    isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
                     parent.Id, element.Id);
             }
 
             internal static void HandleAddAttribute(string name, string isOfType, string defaultValueIs,
-                bool isRequired,
-                string isOneOf, string asChildOf, bool outputStructured, IConsole console)
+                bool isRequired, string isOneOf, string asChildOf, bool outputStructured, IConsole console)
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
@@ -722,16 +731,16 @@ namespace Automate.CLI.Infrastructure
                     parent.Id, attribute.Id);
             }
 
-            internal static void HandleUpdatePattern(string name, string displayedAs,
-                string describedAs, bool outputStructured, IConsole console)
+            internal static void HandleUpdatePattern(string name, string displayedAs, string describedAs,
+                bool outputStructured, IConsole console)
             {
                 var pattern = Authoring.UpdatePattern(name, displayedAs, describedAs);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
             }
 
             internal static void HandleUpdateAttribute(string attributeName, string name, string isOfType,
-                string defaultValueIs,
-                bool? isRequired, string isOneOf, string asChildOf, bool outputStructured, IConsole console)
+                string defaultValueIs, bool? isRequired, string isOneOf, string asChildOf, bool outputStructured,
+                IConsole console)
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =

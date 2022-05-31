@@ -25,7 +25,7 @@ namespace Automate.CLI.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             pattern.GuardAgainstNull(nameof(pattern));
 
-            Materialise(toolkit, pattern, false);
+            MaterialisePatternElement(toolkit, pattern, false);
         }
 
         public SolutionItem(ToolkitDefinition toolkit, Element element, SolutionItem parent, bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent, isCollectionItem)
@@ -55,7 +55,7 @@ namespace Automate.CLI.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             attribute.GuardAgainstNull(nameof(attribute));
 
-            Materialise(attribute);
+            MaterialiseAttribute(attribute);
         }
 
         private SolutionItem(string name, ToolkitDefinition toolkit, SolutionItem parent, SolutionItemSchema schema)
@@ -152,11 +152,11 @@ namespace Automate.CLI.Domain
 
             if (IsElement || IsEphemeralCollection)
             {
-                Materialise(Toolkit, ElementSchema, IsEphemeralCollection);
+                MaterialisePatternElement(Toolkit, ElementSchema, IsEphemeralCollection);
             }
             else if (IsAttribute)
             {
-                Materialise(AttributeSchema, value);
+                MaterialiseAttribute(AttributeSchema, value);
             }
             else
             {
@@ -402,8 +402,6 @@ namespace Automate.CLI.Domain
             return true;
         }
 
-
-
         /// <summary>
         ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="SolutionItem" />
         ///     that themselves are composed of other nodes or composite nodes.
@@ -479,7 +477,8 @@ namespace Automate.CLI.Domain
             }
         }
 
-        private void Materialise(ToolkitDefinition toolkit, IPatternElementSchema schema, bool isCollection)
+        private void MaterialisePatternElement(ToolkitDefinition toolkit, IPatternElementSchema schema,
+            bool isCollection)
         {
             this.properties = new Dictionary<string, SolutionItem>();
             if (isCollection)
@@ -491,14 +490,22 @@ namespace Automate.CLI.Domain
                 schema.Attributes.ToListSafe()
                     .ForEach(attr => { this.properties.Add(attr.Name, new SolutionItem(toolkit, attr, this)); });
                 schema.Elements.ToListSafe()
-                    .ForEach(ele => { this.properties.Add(ele.Name, new SolutionItem(toolkit, ele, this, false)); });
+                    .ForEach(ele =>
+                    {
+                        var element = new SolutionItem(toolkit, ele, this, false);
+                        if (ele.ShouldAutoCreate())
+                        {
+                            element.Materialise();
+                        }
+                        this.properties.Add(ele.Name, element);
+                    });
                 this.items = null;
             }
             IsMaterialised = true;
             Value = null;
         }
 
-        private void Materialise(IAttributeSchema schema, object value = null)
+        private void MaterialiseAttribute(IAttributeSchema schema, object value = null)
         {
             this.properties = null;
             this.items = null;

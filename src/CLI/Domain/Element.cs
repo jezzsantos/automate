@@ -6,13 +6,14 @@ namespace Automate.CLI.Domain
     {
         public static readonly string[] ReservedElementNames = Attribute.ReservedAttributeNames;
 
-        public Element(string name, ElementCardinality cardinality = ElementCardinality.One, string displayName = null,
-            string description = null) : base(name)
+        public Element(string name, ElementCardinality cardinality = ElementCardinality.One, bool autoCreate = true,
+            string displayName = null, string description = null) : base(name)
         {
             DisplayName = displayName;
             Description = description;
             IsCollection = cardinality is ElementCardinality.OneOrMany or ElementCardinality.ZeroOrMany;
             Cardinality = cardinality;
+            AutoCreate = autoCreate;
         }
 
         private Element(PersistableProperties properties, IPersistableFactory factory) : base(properties, factory)
@@ -22,11 +23,14 @@ namespace Automate.CLI.Domain
             IsCollection = properties.Rehydrate<bool>(factory, nameof(IsCollection));
             Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality))
                 .ToEnumOrDefault(ElementCardinality.One);
+            AutoCreate = properties.Rehydrate(factory, nameof(AutoCreate), true);
         }
 
         public ElementCardinality Cardinality { get; private set; }
 
         public bool IsCollection { get; private set; }
+
+        public bool AutoCreate { get; private set; }
 
         public override PersistableProperties Dehydrate()
         {
@@ -35,6 +39,7 @@ namespace Automate.CLI.Domain
             properties.Dehydrate(nameof(Description), Description);
             properties.Dehydrate(nameof(IsCollection), IsCollection);
             properties.Dehydrate(nameof(Cardinality), Cardinality);
+            properties.Dehydrate(nameof(AutoCreate), AutoCreate);
 
             return properties;
         }
@@ -54,7 +59,6 @@ namespace Automate.CLI.Domain
             return visitor.VisitElementExit(this);
         }
 
-
         public void SetCardinality(ElementCardinality cardinality)
         {
             if (cardinality != Cardinality)
@@ -65,6 +69,15 @@ namespace Automate.CLI.Domain
             }
         }
 
+        public void SetCreation(bool autoCreate)
+        {
+            if (autoCreate != AutoCreate)
+            {
+                AutoCreate = autoCreate;
+                RecordChange(VersionChange.Breaking, VersionChanges.PatternElement_Element_Update_AutoCreate,
+                    Id, Parent.Id);
+            }
+        }
 
         public ValidationResults Validate(ValidationContext context, object value)
         {

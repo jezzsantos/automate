@@ -57,6 +57,9 @@
     <data name="PatternElement_Element_Update_Cardinality" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its cardinality</value>
     </data>
+    <data name="PatternElement_Element_Update_AutoCreate" xml:space="preserve">
+        <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its auto-creation</value>
+    </data>
     <data name="Element_Update_DisplayName" xml:space="preserve">
         <value>Element (ID: {ElementId}) was updated on element {ParentId}, and changed its display name</value>
     </data>

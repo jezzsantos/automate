@@ -37,6 +37,8 @@ namespace Automate.CLI.Domain
         bool HasCardinalityOfAtMostOne();
 
         bool HasCardinalityOfMany();
+
+        bool ShouldAutoCreate();
     }
 
     internal interface IAttributeSchema : ISchema

@@ -136,28 +136,28 @@ namespace Automate.CLI.Application
         }
 
         public (IPatternElement Parent, Element Element) AddElement(string name, ElementCardinality cardinality,
-            string displayName, string description, string parentExpression)
+            bool autoCreate, string displayName, string description, string parentExpression)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var element = target.AddElement(name, cardinality, displayName, description);
+            var element = target.AddElement(name, cardinality, autoCreate, displayName, description);
             this.store.Save(pattern);
 
             return (target, element);
         }
 
         public (IPatternElement Parent, Element Element) UpdateElement(string elementName, string name,
-            bool? isRequired, string displayName, string description, string parentExpression)
+            bool? isRequired, bool? autoCreate, string displayName, string description, string parentExpression)
         {
             elementName.GuardAgainstNullOrEmpty(nameof(elementName));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var element = target.UpdateElement(elementName, name, isRequired, displayName, description);
+            var element = target.UpdateElement(elementName, name, isRequired, autoCreate, displayName, description);
             this.store.Save(pattern);
 
             return (target, element);
