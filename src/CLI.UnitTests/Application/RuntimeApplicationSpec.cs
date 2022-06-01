@@ -410,14 +410,14 @@ namespace CLI.UnitTests.Application
             result.Validation.Should().BeEquivalentTo(ValidationResults.None);
             result.Configuration.Should().Be(new
             {
-                id = solution.Model.Id,
+                solution.Model.Id,
                 anattributename1 = "adefaultvalue1",
                 anelementname1 = new
                 {
-                    id = solution.Model.Properties["anelementname1"].Id,
+                    solution.Model.Properties["anelementname1"].Id,
                     anelementname2 = new
                     {
-                        id = solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                        solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
                         anattributename2 = "adefaultvalue2"
                     }
                 }
@@ -448,14 +448,14 @@ namespace CLI.UnitTests.Application
             result.Validation.Results.Should().BeEmpty();
             result.Configuration.Should().Be(new
             {
-                id = solution.Model.Id,
+                solution.Model.Id,
                 anattributename1 = "adefaultvalue1",
                 anelementname1 = new
                 {
-                    id = solution.Model.Properties["anelementname1"].Id,
+                    solution.Model.Properties["anelementname1"].Id,
                     anelementname2 = new
                     {
-                        id = solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                        solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
                         anattributename2 = "adefaultvalue2"
                     }
                 }

@@ -1155,7 +1155,7 @@ namespace Automate.CLI.Domain
         {
             if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection)
             {
-                yield return new DictionaryEntry(FormatName(nameof(SolutionItem.Id)), this.solutionItem.Id);
+                yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Id)), this.solutionItem.Id);
             }
             if (this.includeAncestry)
             {
@@ -1163,7 +1163,8 @@ namespace Automate.CLI.Domain
                 {
                     if (this.solutionItem.Parent.Exists())
                     {
-                        yield return new DictionaryEntry(FormatName(nameof(SolutionItem.Parent)), new LazySolutionItemDictionary(this.solutionItem.Parent, true));
+                        yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Parent)),
+                            new LazySolutionItemDictionary(this.solutionItem.Parent, true));
                     }
                 }
             }
@@ -1178,12 +1179,13 @@ namespace Automate.CLI.Domain
                         {
                             if (item.Value.Exists())
                             {
-                                yield return new DictionaryEntry(FormatName(name), item.Value);
+                                yield return new DictionaryEntry(AsIsMemberName(name), item.Value);
                             }
                         }
                         if (item.IsElement || item.IsEphemeralCollection)
                         {
-                            yield return new DictionaryEntry(FormatName(name), new LazySolutionItemDictionary(item, this.includeAncestry));
+                            yield return new DictionaryEntry(AsIsMemberName(name),
+                                new LazySolutionItemDictionary(item, this.includeAncestry));
                         }
                     }
                 }
@@ -1193,21 +1195,21 @@ namespace Automate.CLI.Domain
                 if (this.solutionItem.Items.HasAny())
                 {
                     var items = this.solutionItem.Items.Select(item => new LazySolutionItemDictionary(item, this.includeAncestry));
-                    yield return new DictionaryEntry(FormatName(nameof(SolutionItem.Items)), items);
+                    yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Items)), items);
                 }
             }
             if (this.solutionItem.IsAttribute)
             {
                 if (this.solutionItem.Value.Exists())
                 {
-                    yield return new DictionaryEntry(FormatName(this.solutionItem.Name), this.solutionItem.Value);
+                    yield return new DictionaryEntry(AsIsMemberName(this.solutionItem.Name), this.solutionItem.Value);
                 }
             }
         }
 
-        private static string FormatName(string name)
+        private static string AsIsMemberName(string memberName)
         {
-            return name.ToSnakeCase();
+            return memberName;
         }
 
         private class DictionaryEntryEnumerator : IDictionaryEnumerator

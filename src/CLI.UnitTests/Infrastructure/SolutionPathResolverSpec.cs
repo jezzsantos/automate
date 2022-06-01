@@ -213,7 +213,8 @@ namespace CLI.UnitTests.Infrastructure
             var solutionItem = new SolutionItem(new ToolkitDefinition(pattern), pattern);
             solutionItem.Properties["anelementname"].Materialise();
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anelementname.parent.anelementname.anattributename}}anexpression", solutionItem);
+            var result = this.resolver.ResolveExpression("adescription",
+                "anexpression{{anelementname.Parent.anelementname.anattributename}}anexpression", solutionItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

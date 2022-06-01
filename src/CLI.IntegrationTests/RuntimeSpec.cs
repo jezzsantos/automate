@@ -299,26 +299,26 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
                     new
                     {
-                        id = solution.Model.Id,
-                        a_property1 = "avalue1",
-                        an_element1 = new
+                        solution.Model.Id,
+                        AProperty1 = "avalue1",
+                        AnElement1 = new
                         {
-                            id = solution.Model.Properties["AnElement1"].Id,
-                            a_property3 = "A",
-                            a_collection1 = new
+                            solution.Model.Properties["AnElement1"].Id,
+                            AProperty3 = "A",
+                            ACollection1 = new
                             {
-                                id = solution.Model.Properties["AnElement1"].Properties["ACollection1"].Id
+                                solution.Model.Properties["AnElement1"].Properties["ACollection1"].Id
                             }
                         },
-                        a_collection2 = new
+                        ACollection2 = new
                         {
-                            id = solution.Model.Properties["ACollection2"].Id,
-                            items = new[]
+                            solution.Model.Properties["ACollection2"].Id,
+                            Items = new[]
                             {
                                 new
                                 {
-                                    id = solution.Model.Properties["ACollection2"].Items.Single().Id,
-                                    a_property4 = "ADefaultValue4"
+                                    solution.Model.Properties["ACollection2"].Items.Single().Id,
+                                    AProperty4 = "ADefaultValue4"
                                 }
                             }
                         }
@@ -340,21 +340,21 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
                     new
                     {
-                        id = solution.Model.Id,
-                        a_property1 = "avalue1",
-                        an_element1 = new
+                        solution.Model.Id,
+                        AProperty1 = "avalue1",
+                        AnElement1 = new
                         {
-                            id = solution.Model.Properties["AnElement1"].Id
+                            solution.Model.Properties["AnElement1"].Id
                         },
-                        a_collection2 = new
+                        ACollection2 = new
                         {
-                            id = solution.Model.Properties["ACollection2"].Id,
-                            items = new[]
+                            solution.Model.Properties["ACollection2"].Id,
+                            Items = new[]
                             {
                                 new
                                 {
-                                    id = solution.Model.Properties["ACollection2"].Items.Single().Id,
-                                    a_property4 = "ADefaultValue4"
+                                    solution.Model.Properties["ACollection2"].Items.Single().Id,
+                                    AProperty4 = "ADefaultValue4"
                                 }
                             }
                         }
@@ -370,9 +370,9 @@ namespace CLI.IntegrationTests
                         $"\t- CodeTemplates:{Environment.NewLine}" +
                         $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code){Environment.NewLine}" +
                         $"\t- Automation:{Environment.NewLine}" +
-                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.a_property3}}}}namingtest.cs){Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint1 [{pattern.Automation[1].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id}){Environment.NewLine}" +
-                        $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{an_element1.}}}}invalid.cs){Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/code/{{{{AnElement1.}}}}invalid.cs){Environment.NewLine}" +
                         $"\t\t- CliCommand4 [{pattern.Automation[3].Id}] (CliCommand) (app: {this.testApplicationName}, args: --succeeds){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint2 [{pattern.Automation[4].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id};{pattern.Automation[3].Id}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
@@ -476,8 +476,8 @@ namespace CLI.IntegrationTests
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs", path) + $"{Environment.NewLine}" +
                     "* " + DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(commandId,
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
-                            $"((21:0,21),(22:0,22)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
-                            $"((20:0,20),(20:0,20)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
+                            $"((20:0,20),(21:0,21)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
+                            $"((19:0,19),(19:0,19)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
                             "* " + InfrastructureMessages.ApplicationExecutor_Succeeded.Format(this.testApplicationName,
                                 "--succeeds", "Success") + $"{Environment.NewLine}"))));
         }
@@ -680,12 +680,12 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.a_property3}}}}namingtest.cs\"");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs\"");
             var commandId1 = this.setup.Pattern.Automation[0].Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{an_element1.}}}}invalid.cs\"");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --withpath \"~/code/{{{{AnElement1.}}}}invalid.cs\"");
             var commandId2 = this.setup.Pattern.Automation[2].Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-cli-command \"{this.testApplicationName}\" --arguments \"--succeeds\"");

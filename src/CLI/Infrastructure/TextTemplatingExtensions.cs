@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Automate.CLI.Extensions;
 using Scriban;
 using Scriban.Runtime;
@@ -21,13 +22,9 @@ namespace Automate.CLI.Infrastructure
 
             try
             {
-                var sourceData = new ScriptObject();
-                sourceData.Import(source);
-
                 var context = new TemplateContext();
-                var builtIn = (ScriptObject)context.BuiltinObject["string"];
-                builtIn.Import(typeof(CustomScribanStringFunctions));
-                context.PushGlobal(sourceData);
+                AddStringFunctionsToBuiltIn(context);
+                context.PushGlobal(CreateScriptForSource(source));
 
                 return engine.Render(context);
             }
@@ -35,6 +32,25 @@ namespace Automate.CLI.Infrastructure
             {
                 throw new AutomateException(
                     ExceptionMessages.TextTemplatingExtensions_TransformFailed.Format(description, ex.Message));
+            }
+
+            static void AddStringFunctionsToBuiltIn(TemplateContext context)
+            {
+                var builtIn = (ScriptObject)context.BuiltinObject["string"];
+                builtIn.Import(typeof(CustomScribanStringFunctions));
+            }
+
+            static IScriptObject CreateScriptForSource(object source)
+            {
+                var script = new ScriptObject();
+                script.Import(source, null, AsIsMemberName);
+
+                return script;
+            }
+
+            static string AsIsMemberName(MemberInfo member)
+            {
+                return member.Name;
             }
         }
     }

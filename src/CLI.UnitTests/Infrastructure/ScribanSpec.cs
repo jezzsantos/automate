@@ -12,11 +12,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "OneTwoThree"
+                AProperty = "OneTwoThree"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.downcase}}\\n{{aproperty | string.upcase}}");
+                source.Transform("adescription", "{{AProperty | string.downcase}}\\n{{AProperty | string.upcase}}");
 
             result.Should().Be("onetwothree\\nONETWOTHREE");
         }
@@ -26,11 +26,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "OneTwoThree"
+                AProperty = "OneTwoThree"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.camelcase}}");
+                source.Transform("adescription", "{{AProperty | string.camelcase}}");
 
             result.Should().Be("oneTwoThree");
         }
@@ -40,12 +40,12 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "oneTwoThree"
+                AProperty = "oneTwoThree"
             };
 
             var result =
                 source.Transform("adescription",
-                    "{{aproperty | string.pascalcase}}");
+                    "{{AProperty | string.pascalcase}}");
 
             result.Should().Be("OneTwoThree");
         }
@@ -55,12 +55,12 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "oneTwoThree"
+                AProperty = "oneTwoThree"
             };
 
             var result =
                 source.Transform("adescription",
-                    "{{aproperty | string.snakecase}}");
+                    "{{AProperty | string.snakecase}}");
 
             result.Should().Be("one_two_three");
         }
@@ -70,12 +70,13 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                simple = "word",
-                infinitive = "sheep"
+                SimpleWord = "word",
+                InfinitiveWord = "sheep"
             };
 
             var result =
-                source.Transform("adescription", "{{simple | string.pluralize}}\n{{infinitive | string.pluralize}}");
+                source.Transform("adescription",
+                    "{{SimpleWord | string.pluralize}}\n{{InfinitiveWord | string.pluralize}}");
 
             result.Should().Be("words\nsheep");
         }
@@ -85,13 +86,13 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                simple = "words",
-                infinitive = "sheep"
+                SimpleWord = "words",
+                InfinitiveWord = "sheep"
             };
 
             var result =
                 source.Transform("adescription",
-                    "{{simple | string.singularize}}\n{{infinitive | string.singularize}}");
+                    "{{SimpleWord | string.singularize}}\n{{InfinitiveWord | string.singularize}}");
 
             result.Should().Be("word\nsheep");
         }
@@ -101,11 +102,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "one word"
+                AProperty = "one word"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.pascalplural}}");
+                source.Transform("adescription", "{{AProperty | string.pascalplural}}");
 
             result.Should().Be("OneWords");
         }
@@ -115,11 +116,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "One Word"
+                AProperty = "One Word"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.camelplural}}");
+                source.Transform("adescription", "{{AProperty | string.camelplural}}");
 
             result.Should().Be("oneWords");
         }
@@ -129,11 +130,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "One Word"
+                AProperty = "One Word"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.snakeplural}}");
+                source.Transform("adescription", "{{AProperty | string.snakeplural}}");
 
             result.Should().Be("one_words");
         }
@@ -143,11 +144,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "one words"
+                AProperty = "one words"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.pascalsingular}}");
+                source.Transform("adescription", "{{AProperty | string.pascalsingular}}");
 
             result.Should().Be("OneWord");
         }
@@ -157,11 +158,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "One Words"
+                AProperty = "One Words"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.camelsingular}}");
+                source.Transform("adescription", "{{AProperty | string.camelsingular}}");
 
             result.Should().Be("oneWord");
         }
@@ -171,11 +172,11 @@ namespace CLI.UnitTests.Infrastructure
         {
             var source = new
             {
-                aproperty = "One Words"
+                AProperty = "One Words"
             };
 
             var result =
-                source.Transform("adescription", "{{aproperty | string.snakesingular}}");
+                source.Transform("adescription", "{{AProperty | string.snakesingular}}");
 
             result.Should().Be("one_word");
         }

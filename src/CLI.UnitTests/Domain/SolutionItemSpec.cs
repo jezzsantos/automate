@@ -620,16 +620,19 @@ namespace CLI.UnitTests.Domain
 
             result.Should().Be(new Dictionary<string, object>
             {
-                { "id", solutionItem.Id },
+                { nameof(SolutionItem.Id), solutionItem.Id },
                 { "anattributename1", "adefaultvalue1" },
                 {
                     "anelementname1", new Dictionary<string, object>
                     {
-                        { "id", solutionItem.Properties["anelementname1"].Id },
+                        { nameof(SolutionItem.Id), solutionItem.Properties["anelementname1"].Id },
                         {
                             "anelementname2", new Dictionary<string, object>
                             {
-                                { "id", solutionItem.Properties["anelementname1"].Properties["anelementname2"].Id },
+                                {
+                                    nameof(SolutionItem.Id),
+                                    solutionItem.Properties["anelementname1"].Properties["anelementname2"].Id
+                                },
                                 { "anattributename2", "adefaultvalue2" }
                             }
                         }
@@ -638,13 +641,15 @@ namespace CLI.UnitTests.Domain
                 {
                     "acollectionname2", new Dictionary<string, object>
                     {
-                        { "id", solutionItem.Properties["acollectionname2"].Id },
+                        { nameof(SolutionItem.Id), solutionItem.Properties["acollectionname2"].Id },
                         {
-                            "items", new List<object>
+                            nameof(SolutionItem.Items), new List<object>
                             {
                                 new Dictionary<string, object>
                                 {
-                                    { "id", solutionItem.Properties["acollectionname2"].Items[0].Id },
+                                    {
+                                        nameof(SolutionItem.Id), solutionItem.Properties["acollectionname2"].Items[0].Id
+                                    },
                                     { "anattributename3", 25 }
                                 }
                             }

@@ -1,12 +1,12 @@
 {
-  "id": "eE5Fh1bc",
-  "parent": {
-    "id": "wJyTGRx0",
-    "a_property1": "aproperty11",
-    "an_element1": {
-      "id": "eE5Fh1bc",
-      "a_property3": "A"
+  "Id": "eE5Fh1bc",
+  "Parent": {
+    "Id": "wJyTGRx0",
+    "AProperty1": "aproperty11",
+    "AnElement1": {
+      "Id": "eE5Fh1bc",
+      "AProperty3": "A"
     }
   },
-  "a_property3": "A"
+  "AProperty3": "A"
 }
