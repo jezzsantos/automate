@@ -452,7 +452,7 @@ namespace CLI.UnitTests.Application
 
             var automation = this.store.GetCurrent().Automation.Single();
             automation.Name.Should().Be("acommandname");
-            automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
+            automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(false);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
             result.Id.Should().Be(automation.Id);
         }
@@ -511,7 +511,7 @@ namespace CLI.UnitTests.Application
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("anewname");
-            automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(true);
+            automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(true);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
             result.Id.Should().Be(automation.Id);
         }
@@ -532,7 +532,7 @@ namespace CLI.UnitTests.Application
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             automation.Name.Should().Be("anewname");
-            automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(true);
+            automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(true);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
             result.Id.Should().Be(automation.Id);
         }

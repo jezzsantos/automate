@@ -261,13 +261,13 @@ namespace CLI.UnitTests.Domain
         }
 
         [Trait("Category", "Unit")]
-        public class GivenATearOffCommand
+        public class GivenAOneOffCommand
         {
             private readonly CodeTemplateCommand command;
             private readonly Mock<IFileSystemWriter> fileSystemWriter;
             private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
-            public GivenATearOffCommand()
+            public GivenAOneOffCommand()
             {
                 var filePathResolver = new Mock<IFilePathResolver>();
                 filePathResolver.Setup(fpr => fpr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))

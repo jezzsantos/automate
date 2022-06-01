@@ -196,10 +196,10 @@ namespace Automate.CLI.Infrastructure
                     new Argument("CodeTemplateName", "The name of the code template"),
                     new Option("--name", "A name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--astearoff",
+                    new Option("----oneoff",
                         "Only if you only want to generate the file once, and not overwrite the file if it already exists",
                         typeof(bool), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--withpath", "The full path of the generated file, with filename.", typeof(string),
+                    new Option("--targetpath", "The full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ExactlyOne),
                     new Option("--aschildof", "The expression of the element/collection to add the command to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
@@ -209,10 +209,10 @@ namespace Automate.CLI.Infrastructure
                     new Argument("CommandName", "The name of the command to update"),
                     new Option("--name", "A new name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
-                    new Option("--astearoff",
+                    new Option("----oneoff",
                         "If you now only want to generate the file once, and not overwrite the file if it already exists",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
-                    new Option("--withpath", "A new full path of the generated file, with filename.", typeof(string),
+                    new Option("--targetpath", "A new full path of the generated file, with filename.", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the command exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
@@ -605,22 +605,22 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleAddCodeTemplateCommand(string codeTemplateName, string name, bool asTearOff,
-                string withPath, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleAddCodeTemplateCommand(string codeTemplateName, string name, bool oneOff,
+                string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.AddCodeTemplateCommand(codeTemplateName, name, asTearOff, withPath, asChildOf);
+                var command = Authoring.AddCodeTemplateCommand(codeTemplateName, name, oneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
                     command.Name,
                     command.Id);
             }
 
-            internal static void HandleUpdateCodeTemplateCommand(string commandName, string name, bool? asTearOff,
-                string withPath, string asChildOf, bool outputStructured, IConsole console)
+            internal static void HandleUpdateCodeTemplateCommand(string commandName, string name, bool? oneOff,
+                string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.UpdateCodeTemplateCommand(commandName, name, asTearOff, withPath, asChildOf);
+                var command = Authoring.UpdateCodeTemplateCommand(commandName, name, oneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
                     command.Name, command.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
-                    command.Metadata[nameof(CodeTemplateCommand.IsTearOff)]);
+                    command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
             }
 
             internal static void HandleAddCliCommand(string applicationName, string arguments, string name,

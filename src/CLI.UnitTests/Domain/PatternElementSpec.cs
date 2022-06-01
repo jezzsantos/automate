@@ -397,7 +397,7 @@ namespace CLI.UnitTests.Domain
                 this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
 
             result.Name.Should().Be("acommandname");
-            result.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
+            result.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(false);
             result.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
@@ -410,7 +410,7 @@ namespace CLI.UnitTests.Domain
             var result = this.element.AddCodeTemplateCommand(null, "atemplatename", false, "~/apath");
 
             result.Name.Should().Be("CodeTemplateCommand1");
-            result.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(false);
+            result.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(false);
             result.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
@@ -438,7 +438,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().Be(this.element.Automation[0]);
             result.Name.Should().Be("anewname");
-            result.Metadata[nameof(CodeTemplateCommand.IsTearOff)].Should().Be(true);
+            result.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(true);
             result.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }

@@ -80,7 +80,7 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
     * `automate edit add-attribute "Name" --isrequired`
     * `automate edit add-codetemplate "Controllers/BookingController.cs"`
-    * `automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/Controllers/{{name}}Controller.cs"`
+    * `automate edit add-codetemplate-command "CodeTemplate1" --targetpath "~/Controllers/{{name}}Controller.cs"`
     * `automate edit add-command-launchpoint "*" --name "Generate"`
 
 4. Edit the contents of the code template:
@@ -118,7 +118,7 @@ Now, that person (or you), can:
 
 4. Now run the automation:
 
-* `automate execute command "Generate"` this command will generate the code from the code template into the destination folder (`--withpath`), using the value of the `Name` property which you configured as `Banana`
+* `automate execute command "Generate"` this command will generate the code from the code template into the destination folder (`--targetpath`), using the value of the `Name` property which you configured as `Banana`
 * If you now open that generated file, you will see the value of `Banana` in the contents of the file.
 
 ---

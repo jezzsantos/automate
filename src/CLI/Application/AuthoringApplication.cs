@@ -253,7 +253,7 @@ namespace Automate.CLI.Application
             return target.CodeTemplates.ToListSafe();
         }
 
-        public Automation AddCodeTemplateCommand(string templateName, string name, bool isTearOff,
+        public Automation AddCodeTemplateCommand(string templateName, string name, bool isOneOff,
             string filePath, string parentExpression)
         {
             templateName.GuardAgainstNullOrEmpty(nameof(templateName));
@@ -264,7 +264,7 @@ namespace Automate.CLI.Application
 
             try
             {
-                var command = target.AddCodeTemplateCommand(name, templateName, isTearOff, filePath);
+                var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, filePath);
                 this.store.Save(pattern);
 
                 return command;
@@ -284,7 +284,7 @@ namespace Automate.CLI.Application
             }
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath,
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath,
             string parentExpression)
         {
             commandName.GuardAgainstNullOrEmpty(nameof(commandName));
@@ -292,7 +292,7 @@ namespace Automate.CLI.Application
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var command = target.UpdateCodeTemplateCommand(commandName, name, isTearOff, filePath);
+            var command = target.UpdateCodeTemplateCommand(commandName, name, isOneOff, filePath);
             this.store.Save(pattern);
 
             return command;

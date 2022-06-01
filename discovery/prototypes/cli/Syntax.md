@@ -413,13 +413,13 @@ In every case, a *Launch Point* needs to be defined and added to the pattern to 
 
 These automation commands will decide **where** to render the files on disk, and what filenames to use.
 
-`automate edit add-codetemplate-command "CodeTemplate1" --withpath "~/backend/Controllers/{{name}}Controller.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate1" --targetpath "~/backend/Controllers/{{name}}Controller.gen.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate2" --astearoff --withpath "~/backend/Services/{{name}}Service.cs"`
+`automate edit add-codetemplate-command "CodeTemplate2" ----oneoff --targetpath "~/backend/Services/{{name}}Service.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate3" --withpath "~/backend/Services/I{{name}}Service.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate3" --targetpath "~/backend/Services/I{{name}}Service.gen.cs"`
 
-`automate edit add-codetemplate-command "CodeTemplate4" --withpath "~/backend/Data/{{name}}.gen.cs"`
+`automate edit add-codetemplate-command "CodeTemplate4" --targetpath "~/backend/Data/{{name}}.gen.cs"`
 
 > These 4x automation commands add new "Commands" for each template to the root pattern element (AcmeAPI).
 >
@@ -427,9 +427,9 @@ These automation commands will decide **where** to render the files on disk, and
 >
 > Notice that the filename defined for each command uses an expression that includes the `name` attribute of the pattern. It is in lowercase here, as all attributes and element names will be snake_cased when this template is executed.
 >
-> Notice that for `CodeTemplate2` we use the option `--astearoff`  (and a slight variation on the file extension in the `--withpath` option) to indicate that this file will only be generated once, and only if the specified file does not exist at the specified location with the specified name.
+> Notice that for `CodeTemplate2` we use the option `----oneoff`  (and a slight variation on the file extension in the `--targetpath` option) to indicate that this file will only be generated once, and only if the specified file does not exist at the specified location with the specified name.
 >
-> The `--withpath` option starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern. Which for this case, is the current directory.
+> The `--targetpath` option starts with a tilde `~` indicating that we want the files to be rooted at the root directory of the pattern. Which for this case, is the current directory.
 
 Now, that we have the four explicit commands to execute, we can define a single "Launch Point" that will be able to execute them all **when** we want (using the values of `<CMDID>` that were returned from the previous commands):
 

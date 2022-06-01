@@ -156,7 +156,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACodeTemplateCommand1 --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACodeTemplateCommand1 --targetpath ~/afilepath");
             var commandId = this.setup.Pattern.Automation.Single().Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId} --name ALaunchPoint");
@@ -182,7 +182,7 @@ namespace CLI.IntegrationTests
                         $"\t- CodeTemplates:{Environment.NewLine}" +
                         $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code){Environment.NewLine}" +
                         $"\t- Automation:{Environment.NewLine}" +
-                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, tearOff: false, path: ~/afilepath){Environment.NewLine}" +
+                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, oneOff: false, path: ~/afilepath){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {commandId}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
                         $"\t\t- AProperty (string){Environment.NewLine}" +
@@ -581,7 +581,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -597,9 +597,9 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --targetpath ~/afilepath");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" --astearoff true --withpath anewpath");
+                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" ----oneoff true --targetpath anewpath");
 
             var command = this.setup.Pattern.Automation.First();
             this.setup.Should().DisplayNoError();
@@ -616,7 +616,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --targetpath ~/afilepath");
             var command = this.setup.Pattern.Automation.First();
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint \"*\" --name ALaunchPoint");
@@ -691,7 +691,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath");
             var commandId = this.setup.Pattern.Automation.Single().Id;
 
             this.setup.RunCommand(
@@ -712,7 +712,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath");
             var commandId = this.setup.Pattern.Automation.Single().Id;
 
             this.setup.RunCommand(
@@ -733,12 +733,12 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath");
             var commandId1 = this.setup.Pattern.Automation.First().Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint \"*\" --name ALaunchPoint");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --withpath ~/afilepath");
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath");
             var commandId2 = this.setup.Pattern.Automation.Last().Id;
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} update-command-launchpoint \"ALaunchPoint\" --add \"*\" --from \"{{APattern}}\"");

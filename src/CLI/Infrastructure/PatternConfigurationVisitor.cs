@@ -125,7 +125,7 @@ namespace Automate.CLI.Infrastructure
                     if (automation.Type == AutomationType.CodeTemplateCommand)
                     {
                         PrintInline(
-                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, tearOff: {automation.Metadata[nameof(CodeTemplateCommand.IsTearOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
+                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, oneOff: {automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
                             true);
                     }
                     else if (automation.Type == AutomationType.CliCommand)

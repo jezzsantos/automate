@@ -468,7 +468,7 @@ namespace Automate.CLI.Domain
             return codeTemplate;
         }
 
-        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isTearOff, string filePath)
+        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string filePath)
         {
             codeTemplateName.GuardAgainstNull(nameof(codeTemplateName));
             filePath.GuardAgainstNull(nameof(filePath));
@@ -487,13 +487,13 @@ namespace Automate.CLI.Domain
                     ExceptionMessages.PatternElement_AutomationByNameExists.Format(commandName));
             }
 
-            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isTearOff, filePath).AsAutomation();
+            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isOneOff, filePath).AsAutomation();
             AddAutomation(automation);
 
             return automation;
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isTearOff, string filePath)
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath)
         {
             var automation =
                 FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
@@ -508,9 +508,9 @@ namespace Automate.CLI.Domain
             {
                 command.ChangeName(name);
             }
-            if (isTearOff.HasValue)
+            if (isOneOff.HasValue)
             {
-                command.ChangeTearOff(isTearOff.Value);
+                command.ChangeOneOff(isOneOff.Value);
             }
             if (filePath.HasValue())
             {

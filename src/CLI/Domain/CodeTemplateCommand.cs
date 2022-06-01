@@ -15,9 +15,9 @@ namespace Automate.CLI.Domain
         private readonly ISolutionPathResolver solutionPathResolver;
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
-        public CodeTemplateCommand(string name, string codeTemplateId, bool isTearOff, string filePath) : this(
+        public CodeTemplateCommand(string name, string codeTemplateId, bool isOneOff, string filePath) : this(
             new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(),
-            new TextTemplatingEngine(), name, codeTemplateId, isTearOff, filePath)
+            new TextTemplatingEngine(), name, codeTemplateId, isOneOff, filePath)
         {
         }
 
@@ -25,10 +25,11 @@ namespace Automate.CLI.Domain
             IFileSystemWriter fileSystemWriter,
             ISolutionPathResolver solutionPathResolver,
             ITextTemplatingEngine textTemplatingEngine,
-            string name, string codeTemplateId, bool isTearOff, string filePath) : this(new Automation(name, AutomationType.CodeTemplateCommand, new Dictionary<string, object>
+            string name, string codeTemplateId, bool isOneOff, string filePath) : this(new Automation(name,
+            AutomationType.CodeTemplateCommand, new Dictionary<string, object>
         {
             { nameof(CodeTemplateId), codeTemplateId },
-            { nameof(IsTearOff), isTearOff },
+            { nameof(IsOneOff), isOneOff },
             { nameof(FilePath), filePath }
         }), filePathResolver, fileSystemWriter, solutionPathResolver, textTemplatingEngine)
         {
@@ -66,7 +67,7 @@ namespace Automate.CLI.Domain
 
         public string FilePath => this.automation.Metadata[nameof(FilePath)].ToString();
 
-        public bool IsTearOff => this.automation.Metadata[nameof(IsTearOff)].ToString().ToBool();
+        public bool IsOneOff => this.automation.Metadata[nameof(IsOneOff)].ToString().ToBool();
 
         public static CodeTemplateCommand FromAutomation(Automation automation)
         {
@@ -83,9 +84,9 @@ namespace Automate.CLI.Domain
             this.automation.Rename(name);
         }
 
-        public void ChangeTearOff(bool isTearOff)
+        public void ChangeOneOff(bool isOneOff)
         {
-            this.automation.UpdateMetadata(nameof(IsTearOff), isTearOff);
+            this.automation.UpdateMetadata(nameof(IsOneOff), isOneOff);
         }
 
         public void ChangeFilePath(string filePath)
@@ -125,8 +126,8 @@ namespace Automate.CLI.Domain
                 ? existingLink.Path.NotEqualsIgnoreCase(destinationFullPath)
                 : false;
 
-            var shouldMoveOldFile = IsTearOff && !destinationFileExists && existingLinkChangedLocation;
-            var shouldWriteFile = shouldMoveOldFile == false && (!IsTearOff || IsTearOff && !destinationFileExists);
+            var shouldMoveOldFile = IsOneOff && !destinationFileExists && existingLinkChangedLocation;
+            var shouldWriteFile = shouldMoveOldFile == false && (!IsOneOff || (IsOneOff && !destinationFileExists));
 
             if (shouldWriteFile)
             {
@@ -172,7 +173,7 @@ namespace Automate.CLI.Domain
                 var oldFilePath = existingLink.Path;
                 if (existingLinkChangedLocation)
                 {
-                    if (IsTearOff)
+                    if (IsOneOff)
                     {
                         if (destinationFileExists)
                         {
@@ -191,7 +192,7 @@ namespace Automate.CLI.Domain
             else
             {
                 target.AddArtifactLink(Id, destinationFullPath, destinationFilename);
-                if (IsTearOff)
+                if (IsOneOff)
                 {
                     log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(destinationFilename, destinationFullPath));
                 }

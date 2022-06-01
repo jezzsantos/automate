@@ -102,7 +102,7 @@
         <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandUpdated" xml:space="preserve">
-        <value>Updated Code Template Command '{Name}' with ID: {Id}, with path: {FilePath}, and TearOff: {TearOff}</value>
+        <value>Updated Code Template Command '{Name}' with ID: {Id}, with path: {FilePath}, and OneOff: {OneOff}</value>
     </data>
     <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
         <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>

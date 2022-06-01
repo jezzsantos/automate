@@ -134,7 +134,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; with ID: {Id}, with path: {FilePath}, and TearOff: {TearOff}.
+        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; with ID: {Id}, with path: {FilePath}, and OneOff: {OneOff}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandUpdated {
             get {
