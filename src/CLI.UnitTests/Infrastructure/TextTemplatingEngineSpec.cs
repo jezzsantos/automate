@@ -51,7 +51,7 @@ namespace CLI.UnitTests.Infrastructure
             var solution = new SolutionItem(toolkit, element, null);
             solution.Materialise();
 
-            var result = this.engine.Transform("adescription", "{{model.anattributename}}", solution);
+            var result = this.engine.Transform("adescription", "{{anattributename}}", solution);
 
             result.Should().Be("adefaultvalue");
         }
@@ -62,11 +62,13 @@ namespace CLI.UnitTests.Infrastructure
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.}}", new SolutionItem(toolkit, new Element("anelementname"), null)))
+                .Invoking(x => x.Transform("adescription", "{{anything.}}",
+                    new SolutionItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format("adescription",
-                    "((8:0,8),(9:0,9)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" + Environment.NewLine +
-                    "((7:0,7),(7:0,7)): Invalid token found `.`. Expecting <EOL>/end of line."));
+                    "((11:0,11),(12:0,12)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" +
+                    Environment.NewLine +
+                    "((10:0,10),(10:0,10)): Invalid token found `.`. Expecting <EOL>/end of line."));
         }
 
         [Fact]
@@ -75,10 +77,12 @@ namespace CLI.UnitTests.Infrastructure
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
             this.engine
-                .Invoking(x => x.Transform("adescription", "{{model.parent.notexists}}", new SolutionItem(toolkit, new Element("anelementname"), null)))
+                .Invoking(x => x.Transform("adescription", "{{parent.notexists}}",
+                    new SolutionItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_TransformFailed.Format("adescription",
-                    "<input>(1,16) : error : Cannot get the member model.parent.notexists for a null object." + Environment.NewLine));
+                    "<input>(1,10) : error : Cannot get the member parent.notexists for a null object." +
+                    Environment.NewLine));
         }
     }
 }

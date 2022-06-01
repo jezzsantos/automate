@@ -10,13 +10,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithBuiltIns_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "OneTwoThree"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.downcase}}\\n{{aproperty | string.upcase}}");
+                source.Transform("adescription", "{{aproperty | string.downcase}}\\n{{aproperty | string.upcase}}");
 
             result.Should().Be("onetwothree\\nONETWOTHREE");
         }
@@ -24,42 +24,42 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithCamelCase_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "OneTwoThree"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.camelcase}}\n{{aproperty | automate.camelcase}}");
+                source.Transform("adescription", "{{aproperty | string.camelcase}}");
 
-            result.Should().Be("oneTwoThree\noneTwoThree");
+            result.Should().Be("oneTwoThree");
         }
 
         [Fact]
         public void WhenTransformWithPascalCase_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "oneTwoThree"
             };
 
             var result =
-                model.Transform("adescription",
-                    "{{aproperty | string.pascalcase}}\n{{aproperty | automate.pascalcase}}");
+                source.Transform("adescription",
+                    "{{aproperty | string.pascalcase}}");
 
-            result.Should().Be("OneTwoThree\nOneTwoThree");
+            result.Should().Be("OneTwoThree");
         }
 
         [Fact]
         public void WhenTransformWithSnakeCase_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "oneTwoThree"
             };
 
             var result =
-                model.Transform("adescription",
+                source.Transform("adescription",
                     "{{aproperty | string.snakecase}}");
 
             result.Should().Be("one_two_three");
@@ -68,14 +68,14 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithToPlural_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 simple = "word",
                 infinitive = "sheep"
             };
 
             var result =
-                model.Transform("adescription", "{{simple | string.pluralize}}\n{{infinitive | string.pluralize}}");
+                source.Transform("adescription", "{{simple | string.pluralize}}\n{{infinitive | string.pluralize}}");
 
             result.Should().Be("words\nsheep");
         }
@@ -83,14 +83,15 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithToSingular_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 simple = "words",
                 infinitive = "sheep"
             };
 
             var result =
-                model.Transform("adescription", "{{simple | string.singularize}}\n{{infinitive | string.singularize}}");
+                source.Transform("adescription",
+                    "{{simple | string.singularize}}\n{{infinitive | string.singularize}}");
 
             result.Should().Be("word\nsheep");
         }
@@ -98,13 +99,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithPascalPlural_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "one word"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.pascalplural}}");
+                source.Transform("adescription", "{{aproperty | string.pascalplural}}");
 
             result.Should().Be("OneWords");
         }
@@ -112,13 +113,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithCamelPlural_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "One Word"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.camelplural}}");
+                source.Transform("adescription", "{{aproperty | string.camelplural}}");
 
             result.Should().Be("oneWords");
         }
@@ -126,13 +127,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithSnakePlural_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "One Word"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.snakeplural}}");
+                source.Transform("adescription", "{{aproperty | string.snakeplural}}");
 
             result.Should().Be("one_words");
         }
@@ -140,13 +141,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithPascalSingular_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "one words"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.pascalsingular}}");
+                source.Transform("adescription", "{{aproperty | string.pascalsingular}}");
 
             result.Should().Be("OneWord");
         }
@@ -154,13 +155,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithCamelSingular_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "One Words"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.camelsingular}}");
+                source.Transform("adescription", "{{aproperty | string.camelsingular}}");
 
             result.Should().Be("oneWord");
         }
@@ -168,13 +169,13 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenTransformWithSnakeSingular_ThenReturnsTransformedTemplate()
         {
-            var model = new
+            var source = new
             {
                 aproperty = "One Words"
             };
 
             var result =
-                model.Transform("adescription", "{{aproperty | string.snakesingular}}");
+                source.Transform("adescription", "{{aproperty | string.snakesingular}}");
 
             result.Should().Be("one_word");
         }
