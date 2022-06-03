@@ -49,6 +49,8 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
+        private PatternElement Parent { get; set; }
+
         public PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
@@ -109,8 +111,6 @@ namespace Automate.CLI.Domain
         {
             Parent = parent;
         }
-
-        private PatternElement Parent { get; set; }
 
         public void Rename(string name)
         {

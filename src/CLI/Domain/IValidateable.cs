@@ -12,7 +12,7 @@ namespace Automate.CLI.Domain
 
     internal class ValidationResults : Collection<ValidationResult>
     {
-        public static ValidationResults None => new ValidationResults();
+        public static ValidationResults None => new();
 
         public List<ValidationResult> Results => Items.ToList();
 

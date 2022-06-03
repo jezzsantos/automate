@@ -8,11 +8,11 @@ namespace Automate.CLI.Domain
 
         string Extension { get; }
 
+        DateTime LastModifiedUtc { get; }
+
         void CopyTo(string destination);
 
         byte[] GetContents();
-
-        DateTime LastModifiedUtc { get; }
     }
 
     internal interface IFilePathResolver

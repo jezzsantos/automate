@@ -8,8 +8,8 @@ namespace Automate.CLI.Infrastructure
 {
     internal class DraftStore : IDraftStore
     {
-        private readonly ILocalStateRepository localStateRepository;
         private readonly IDraftRepository draftRepository;
+        private readonly ILocalStateRepository localStateRepository;
 
         public DraftStore(string currentDirectory) : this(new JsonFileRepository(currentDirectory))
         {

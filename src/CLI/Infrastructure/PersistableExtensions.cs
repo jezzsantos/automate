@@ -42,7 +42,8 @@ namespace Automate.CLI.Infrastructure
 
         private class ListConverter : JsonConverter<List<object>>
         {
-            public override List<object> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public override List<object> Read(ref Utf8JsonReader reader, Type typeToConvert,
+                JsonSerializerOptions options)
             {
                 if (reader.TokenType != JsonTokenType.StartArray)
                 {
@@ -116,7 +117,8 @@ namespace Automate.CLI.Infrastructure
                 JsonSerializer.Serialize(writer, item, options);
             }
 
-            private static void WriteWithConverter<TValue>(Utf8JsonWriter writer, JsonSerializerOptions options, TValue value)
+            private static void WriteWithConverter<TValue>(Utf8JsonWriter writer, JsonSerializerOptions options,
+                TValue value)
             {
                 var valueConverter = (JsonConverter<TValue>)options.GetConverter(typeof(TValue));
 
@@ -130,7 +132,8 @@ namespace Automate.CLI.Infrastructure
 
         private class DictionaryConverter : JsonConverter<Dictionary<string, object>>
         {
-            public override Dictionary<string, object> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public override Dictionary<string, object> Read(ref Utf8JsonReader reader, Type typeToConvert,
+                JsonSerializerOptions options)
             {
                 if (reader.TokenType != JsonTokenType.StartObject)
                 {
@@ -175,7 +178,8 @@ namespace Automate.CLI.Infrastructure
                 throw new JsonException();
             }
 
-            public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
+            public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value,
+                JsonSerializerOptions options)
             {
                 writer.WriteStartObject();
 
@@ -209,7 +213,8 @@ namespace Automate.CLI.Infrastructure
                             continue;
                         }
 
-                        WriteWithConverter(writer, options, propertyName, listOfDictionary.Select(dic => (object)dic).ToList());
+                        WriteWithConverter(writer, options, propertyName,
+                            listOfDictionary.Select(dic => (object)dic).ToList());
                     }
                     else if (item.Value is List<object> list)
                     {
@@ -256,14 +261,16 @@ namespace Automate.CLI.Infrastructure
                 return default;
             }
 
-            private static void WriteScalarValue(Utf8JsonWriter writer, JsonSerializerOptions options, string propertyName, KeyValuePair<string, object> item)
+            private static void WriteScalarValue(Utf8JsonWriter writer, JsonSerializerOptions options,
+                string propertyName, KeyValuePair<string, object> item)
             {
                 writer.WritePropertyName
                     (options.PropertyNamingPolicy?.ConvertName(propertyName) ?? propertyName);
                 JsonSerializer.Serialize(writer, item.Value, options);
             }
 
-            private static void WriteWithConverter<TValue>(Utf8JsonWriter writer, JsonSerializerOptions options, string propertyName, TValue value)
+            private static void WriteWithConverter<TValue>(Utf8JsonWriter writer, JsonSerializerOptions options,
+                string propertyName, TValue value)
             {
                 var valueConverter = (JsonConverter<TValue>)options.GetConverter(typeof(TValue));
 

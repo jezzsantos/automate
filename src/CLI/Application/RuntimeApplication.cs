@@ -9,10 +9,10 @@ namespace Automate.CLI.Application
 {
     internal class RuntimeApplication
     {
-        private readonly IFilePathResolver fileResolver;
-        private readonly IPatternToolkitPackager packager;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IDraftStore draftStore;
+        private readonly IFilePathResolver fileResolver;
+        private readonly IPatternToolkitPackager packager;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(string currentDirectory) : this(currentDirectory, new PatternStore(currentDirectory),

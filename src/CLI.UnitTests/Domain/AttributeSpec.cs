@@ -20,6 +20,7 @@ namespace CLI.UnitTests.Domain
             this.pattern = new PatternDefinition("apatternname");
             this.attribute = this.pattern.AddAttribute("anattributename");
         }
+
         [Fact]
         public void WhenConstructedWithInvalidName_ThenThrows()
         {
@@ -109,7 +110,7 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenValidateAndNotRequired_ThenReturnsNoErrors()
         {
-            var result = attribute.Validate(new ValidationContext("apath"), null);
+            var result = this.attribute.Validate(new ValidationContext("apath"), null);
 
             result.Results.Should().BeEmpty();
         }

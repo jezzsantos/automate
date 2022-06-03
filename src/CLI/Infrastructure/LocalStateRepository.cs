@@ -10,7 +10,8 @@ namespace Automate.CLI.Infrastructure
         private readonly string currentDirectory;
         private readonly IPersistableFactory persistableFactory;
 
-        internal LocalStateRepository(string currentDirectory) : this(currentDirectory, new AutomatePersistableFactory())
+        internal LocalStateRepository(string currentDirectory) : this(currentDirectory,
+            new AutomatePersistableFactory())
         {
         }
 

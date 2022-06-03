@@ -65,8 +65,8 @@ namespace CLI.UnitTests.Domain
         {
             var automation =
                 new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            pattern.AddAutomation(automation);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            this.pattern.AddAutomation(automation);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
             var draftItem = draft.Model;
 
             var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
@@ -86,8 +86,8 @@ namespace CLI.UnitTests.Domain
             var element2 = new Element("anelementname2");
             element2.AddAutomation(automation);
             element1.AddElement(element2);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            this.pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
             var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["anelementname2"].Materialise();
@@ -109,8 +109,8 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            this.pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
             var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
@@ -134,8 +134,8 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            this.pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
             var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();

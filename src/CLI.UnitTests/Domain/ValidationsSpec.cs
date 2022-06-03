@@ -28,7 +28,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenIsRuntimeFilePathWithAbsolutePathContainingExpressions_ThenReturnsTrue()
         {
-            var result = Validations.IsRuntimeFilePath("C:/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
+            var result = Validations.IsRuntimeFilePath(
+                "C:/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
 
             result.Should().BeTrue();
         }
@@ -62,7 +63,9 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenIsRuntimeFilePathWithNakedPathContainingExpressions_ThenReturnsTrue()
         {
-            var result = Validations.IsRuntimeFilePath("adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
+            var result =
+                Validations.IsRuntimeFilePath(
+                    "adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
 
             result.Should().BeTrue();
         }
@@ -96,7 +99,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenIsRuntimeFilePathWithRelativePathContainingExpressions_ThenReturnsTrue()
         {
-            var result = Validations.IsRuntimeFilePath("/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
+            var result = Validations.IsRuntimeFilePath(
+                "/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
 
             result.Should().BeTrue();
         }
@@ -130,7 +134,8 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenIsRuntimeFilePathWithDraftPathContainingExpressions_ThenReturnsTrue()
         {
-            var result = Validations.IsRuntimeFilePath("~/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
+            var result = Validations.IsRuntimeFilePath(
+                "~/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
 
             result.Should().BeTrue();
         }

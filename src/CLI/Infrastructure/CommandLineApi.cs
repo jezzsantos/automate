@@ -1203,7 +1203,6 @@ namespace Automate.CLI.Infrastructure
             }
 
             return (name, value);
-
         }
     }
 

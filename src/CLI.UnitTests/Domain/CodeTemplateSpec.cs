@@ -26,7 +26,8 @@ namespace CLI.UnitTests.Domain
         {
             this.template.Name.Should().Be("aname");
             this.template.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory, Path.Combine("CodeTemplateSpec", "afilepath.txt")));
+            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory,
+                Path.Combine("CodeTemplateSpec", "afilepath.txt")));
             this.template.Metadata.OriginalFileExtension.Should().Be("txt");
         }
     }

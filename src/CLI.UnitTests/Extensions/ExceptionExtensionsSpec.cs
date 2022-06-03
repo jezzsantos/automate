@@ -27,7 +27,8 @@ namespace CLI.UnitTests.Extensions
         [Fact]
         public void WhenExceptionExtensionsWithDescendantInnerExceptions_ThenReturnsExceptionMessages()
         {
-            var result = new Exception("amessage1", new Exception("amessage2", new Exception("amessage3"))).ToMessages();
+            var result =
+                new Exception("amessage1", new Exception("amessage2", new Exception("amessage3"))).ToMessages();
 
             result.Should().Be($"amessage1{Environment.NewLine}amessage2{Environment.NewLine}amessage3");
         }
@@ -43,7 +44,8 @@ namespace CLI.UnitTests.Extensions
         [Fact]
         public void WhenExceptionExtensionsWithDescendantInnerExceptionsWithIndenting_ThenReturnsExceptionMessages()
         {
-            var result = new Exception("amessage1", new Exception("amessage2", new Exception("amessage3"))).ToMessages(true);
+            var result =
+                new Exception("amessage1", new Exception("amessage2", new Exception("amessage3"))).ToMessages(true);
 
             result.Should().Be($"amessage1{Environment.NewLine}\tamessage2{Environment.NewLine}\t\tamessage3");
         }

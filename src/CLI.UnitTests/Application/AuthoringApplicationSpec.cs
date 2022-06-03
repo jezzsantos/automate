@@ -18,12 +18,12 @@ namespace CLI.UnitTests.Application
     public class AuthoringApplicationSpec
     {
         private readonly AuthoringApplication application;
+        private readonly Mock<IApplicationExecutor> applicationExecutor;
         private readonly Mock<IPatternToolkitPackager> builder;
         private readonly Mock<IFilePathResolver> filePathResolver;
         private readonly Mock<IPatternPathResolver> patternPathResolver;
         private readonly PatternStore store;
         private readonly Mock<ITextTemplatingEngine> textTemplatingEngine;
-        private readonly Mock<IApplicationExecutor> applicationExecutor;
 
         public AuthoringApplicationSpec()
         {
@@ -40,9 +40,11 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition model, string _) => model);
             this.textTemplatingEngine = new Mock<ITextTemplatingEngine>();
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
+            this.textTemplatingEngine.Setup(tte =>
+                    tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                 .Returns("anoutput");
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
+            this.textTemplatingEngine.Setup(tte =>
+                    tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
                 .Returns("anoutput");
             this.applicationExecutor = new Mock<IApplicationExecutor>();
             var repo = new MemoryRepository();
@@ -271,7 +273,8 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver
                 .Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(parentElement);
-            this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null, "{apatternname.anelementname}");
+            this.application.AddAttribute("anattributename", "string", "adefaultvalue", false, null,
+                "{apatternname.anelementname}");
 
             var result = this.application.DeleteAttribute("anattributename", "{apatternname.anelementname}");
 
@@ -420,9 +423,12 @@ namespace CLI.UnitTests.Application
             this.application.CreateNewPattern("apatternname", null, null);
 
             this.application
-                .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", "{apatternname.anelementname}"))
+                .Invoking(x => x.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
+                    "{apatternname.anelementname}"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format("atemplatename", "{apatternname.anelementname}"));
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsElement.Format("atemplatename",
+                        "{apatternname.anelementname}"));
         }
 
         [Fact]
@@ -465,7 +471,8 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
 
             var result = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
                 "{apatternname.anelementname}");
@@ -504,7 +511,8 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
+            var command =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
             var result =
                 this.application.UpdateCodeTemplateCommand(command.Name, "anewname", true, "anewpath", null);
@@ -524,11 +532,14 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.First);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
-            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", "{apatternname.anelementname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
+            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
+                "{apatternname.anelementname}");
 
             var result =
-                this.application.UpdateCodeTemplateCommand(command.Name, "anewname", true, "anewpath", "{apatternname.anelementname}");
+                this.application.UpdateCodeTemplateCommand(command.Name, "anewname", true, "anewpath",
+                    "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             automation.Name.Should().Be("anewname");
@@ -586,7 +597,8 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
 
             var result = this.application.AddCliCommand("anapplicationname", null, "acommandname",
                 "{apatternname.anelementname}");
@@ -625,11 +637,14 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
-            var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
+            var command1 =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
+            var command2 =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
 
             var result =
-                this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id }, null);
+                this.application.AddCommandLaunchPoint("alaunchpointname",
+                    new List<string> { command1.Id, command2.Id }, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("alaunchpointname");
@@ -646,7 +661,8 @@ namespace CLI.UnitTests.Application
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            var command = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
+            var command =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
 
             var result =
                 this.application.AddCommandLaunchPoint("alaunchpointname",
@@ -661,7 +677,8 @@ namespace CLI.UnitTests.Application
         public void WhenUpdateCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, null, null))
+                .Invoking(x =>
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -676,7 +693,8 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid1" }, null, "anunknownparent"))
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid1" }, null,
+                        "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
@@ -687,12 +705,16 @@ namespace CLI.UnitTests.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
-            var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
-            var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, null);
+            var command1 =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", null);
+            var command2 =
+                this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
+            var launchPoint =
+                this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, null);
 
             var result =
-                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname", new List<string> { command1.Id, command2.Id }, null, null);
+                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname",
+                    new List<string> { command1.Id, command2.Id }, null, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("anewname");
@@ -708,10 +730,14 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.First);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
-            var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath", "{apatternname.anelementname}");
-            var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", "{apatternname.anelementname}");
-            var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, "{apatternname.anelementname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
+            var command1 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname1", false, "~/apath",
+                "{apatternname.anelementname}");
+            var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath",
+                "{apatternname.anelementname}");
+            var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname",
+                new List<string> { command1.Id }, "{apatternname.anelementname}");
 
             var result =
                 this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname",
@@ -738,7 +764,8 @@ namespace CLI.UnitTests.Application
             this.application.CreateNewPattern("apatternname", null, null);
             this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
                 .Returns((PatternDefinition pattern, VersionInstruction version) =>
-                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)), "abuildlocation", null));
+                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)),
+                        "abuildlocation", null));
 
             var toolkit = this.application.BuildAndExportToolkit("2.0.0", false);
 
@@ -773,50 +800,60 @@ namespace CLI.UnitTests.Application
         public void WhenTestCodeTemplateOnPattern_ThenReturnsResult()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result = this.application.TestCodeTemplate("atemplatename", null, null, null, null);
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
         [Fact]
         public void WhenTestCodeTemplateOnDescendantElement_ThenReturnsResult()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("anelementname", ElementCardinality.One, false, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.anelementname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
 
-            var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}", null, null, null);
+            var result =
+                this.application.TestCodeTemplate("atemplatename", "{apatternname.anelementname}", null, null, null);
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
         [Fact]
         public void WhenTestCodeTemplateOnDescendantCollection_ThenReturnsResult()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddElement("acollectionname", ElementCardinality.One, false, null, null, null);
             this.patternPathResolver.Setup(ppr =>
                     ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.acollectionname}"))
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
-            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", "{apatternname.acollectionname}");
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.acollectionname}");
 
-            var result = this.application.TestCodeTemplate("atemplatename", "{apatternname.acollectionname}", null, null, null);
+            var result =
+                this.application.TestCodeTemplate("atemplatename", "{apatternname.acollectionname}", null, null, null);
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -830,7 +867,8 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.TestCodeTemplate("atemplatename", null, "arootpath", "animportpath", null))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format("afullpath"));
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format("afullpath"));
         }
 
         [Fact]
@@ -853,26 +891,30 @@ namespace CLI.UnitTests.Application
         public void WhenTestCodeTemplateAndImportData_ThenReturnsResult()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == SystemIoFileConstants.Encoding.GetBytes("{\"aname\":\"avalue\"}")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == SystemIoFileConstants.Encoding.GetBytes("{\"aname\":\"avalue\"}")));
 
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", "animportpath", null);
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.Is<Dictionary<string, object>>(dic =>
-                (string)dic["aname"] == "avalue")));
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate",
+                It.Is<Dictionary<string, object>>(dic =>
+                    (string)dic["aname"] == "avalue")));
         }
 
         [Fact]
         public void WhenTestCodeTemplateAndExportDataAndNotFile_ThenThrows()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
             this.filePathResolver.Setup(pr => pr.CreateFileAtPath(It.IsAny<string>(), It.IsAny<byte[]>()))
@@ -881,21 +923,25 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format("afullpath", "anerrormessage"));
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format("afullpath",
+                        "anerrormessage"));
         }
 
         [Fact]
         public void WhenTestCodeTemplateAndExportData_ThenWritesData()
         {
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
-                .Returns(Mock.Of<IFile>(file => file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == CodeTemplateFile.Encoding.GetBytes("atexttemplate")));
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
 
             var result = this.application.TestCodeTemplate("atemplatename", null, "arootpath", null, "anexportpath");
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }
     }

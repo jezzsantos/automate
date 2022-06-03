@@ -164,7 +164,8 @@ namespace CLI.UnitTests.Domain
                 && (string)x.Arguments[1] == codeTemplate3.Id);
         }
 
-        private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern, Dictionary<string, byte[]> codeTemplateFiles = null)
+        private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern,
+            Dictionary<string, byte[]> codeTemplateFiles = null)
         {
             var (_, toolkit) = PatternToolkitPackager.Pack(oldPattern, new VersionInstruction(), GetTemplateContent());
 

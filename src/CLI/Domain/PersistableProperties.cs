@@ -275,22 +275,26 @@ namespace Automate.CLI.Domain
             {
                 if (!IsGenericDictionary(type))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNotGeneric);
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericDictionaryNotGeneric);
                 }
 
                 var genericArguments = type.GenericTypeArguments;
                 if (genericArguments.HasNone())
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNoParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericDictionaryNoParameters.Format(type));
                 }
                 if (genericArguments.Length > 2)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryTooManyParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericDictionaryTooManyParameters.Format(type));
                 }
 
                 if (genericArguments.First() != typeof(string))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericDictionaryNotStringKey.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericDictionaryNotStringKey.Format(type));
                 }
 
                 return genericArguments.Last();
@@ -298,7 +302,8 @@ namespace Automate.CLI.Domain
 
             IDictionary CreateEmptyGenericDictionary(Type dictionaryType)
             {
-                return (IDictionary)Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(typeof(string), dictionaryType));
+                return (IDictionary)Activator.CreateInstance(
+                    typeof(Dictionary<,>).MakeGenericType(typeof(string), dictionaryType));
             }
 
             bool IsPersistableType(Type type)
@@ -320,17 +325,20 @@ namespace Automate.CLI.Domain
             {
                 if (!IsGenericList(type))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListNotGeneric);
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericListNotGeneric);
                 }
 
                 var genericArguments = type.GenericTypeArguments;
                 if (genericArguments.HasNone())
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListNoParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericListNoParameters.Format(type));
                 }
                 if (genericArguments.Length > 1)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(type), ExceptionMessages.PersistableExtensions_GenericListTooManyParameters.Format(type));
+                    throw new ArgumentOutOfRangeException(nameof(type),
+                        ExceptionMessages.PersistableExtensions_GenericListTooManyParameters.Format(type));
                 }
 
                 return genericArguments.Single();

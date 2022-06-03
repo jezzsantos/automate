@@ -30,7 +30,8 @@ namespace Automate.CLI.Domain
             this.automation = automation;
         }
 
-        public IReadOnlyList<string> CommandIds => this.automation.Metadata[nameof(CommandIds)].ToString().SafeSplit(CommandIdDelimiter).ToList();
+        public IReadOnlyList<string> CommandIds => this.automation.Metadata[nameof(CommandIds)].ToString()
+            .SafeSplit(CommandIdDelimiter).ToList();
 
         public static CommandLaunchPoint FromAutomation(Automation automation)
         {
@@ -109,7 +110,8 @@ namespace Automate.CLI.Domain
                 }
                 catch (Exception ex)
                 {
-                    outcome.Fail(DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(cmdId, ex.ToMessages(true)));
+                    outcome.Fail(
+                        DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(cmdId, ex.ToMessages(true)));
                 }
             }
         }

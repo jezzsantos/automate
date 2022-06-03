@@ -73,7 +73,8 @@ namespace CLI.UnitTests.Domain
         public void WhenFindByAutomationOnPattern_ThenReturnsAutomation()
         {
             var pattern = new PatternDefinition("apatternname");
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             pattern.AddAutomation(automation);
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
 
@@ -89,7 +90,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element3.AddAutomation(automation);
             var element2 = new Element("anelementname2");
             element2.AddElement(element3);
@@ -99,13 +101,15 @@ namespace CLI.UnitTests.Domain
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
             draft.Model.Properties["anelementname1"].Materialise();
             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+                .Materialise();
 
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
                 pair.Automation.Object == automation
-                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]);
+                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
+                    .Properties["anelementname3"]);
         }
 
         [Fact]
@@ -113,7 +117,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             collection1.AddAutomation(automation);
             var element2 = new Element("anelementname2");
             element2.AddElement(collection1);
@@ -123,13 +128,15 @@ namespace CLI.UnitTests.Domain
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
             draft.Model.Properties["anelementname1"].Materialise();
             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"]
+                .MaterialiseCollectionItem();
 
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
                 pair.Automation.Object == automation
-                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].Items[0]);
+                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
+                    .Properties["acollectionname1"].Items[0]);
         }
 
         [Fact]
@@ -137,7 +144,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             element1.AddAutomation(automation);
             collection1.AddElement(element1);
@@ -159,7 +167,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             var element1 = new Element("anelementname1");
             element1.AddAutomation(automation);
             collection1.AddElement(element1);
@@ -191,7 +200,8 @@ namespace CLI.UnitTests.Domain
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3", autoCreate: false);
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element3.AddAutomation(automation);
             var element2 = new Element("anelementname2", autoCreate: false);
             element2.AddElement(element3);
@@ -227,7 +237,8 @@ namespace CLI.UnitTests.Domain
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
             draft.Model.Properties["anelementname1"].Materialise();
             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"]
+                .MaterialiseCollectionItem();
 
             var patternItem = draft.Model;
             patternItem.Parent.Should().BeNull();
@@ -390,8 +401,10 @@ namespace CLI.UnitTests.Domain
             draft.Model.Properties["acollectionname2"].MaterialiseCollectionItem();
             draft.Model.Properties["acollectionname2"].Items[0].Properties["anelementname3"].Materialise();
             draft.Model.Properties["acollectionname3"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"]
+                .MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]
+                .Properties["acollectionname5"].MaterialiseCollectionItem();
 
             draft.PopulateAncestry();
 
@@ -399,20 +412,27 @@ namespace CLI.UnitTests.Domain
             draft.Model.Properties["anelementname1"].Parent.Should().Be(draft.Model);
 
             draft.Model.Properties["anelementname2"].Parent.Should().Be(draft.Model);
-            draft.Model.Properties["anelementname2"].Properties["acollectionname1"].Parent.Should().Be(draft.Model.Properties["anelementname2"]);
-            draft.Model.Properties["anelementname2"].Properties["acollectionname1"].Items[0].Parent.Should().Be(draft.Model.Properties["anelementname2"]);
+            draft.Model.Properties["anelementname2"].Properties["acollectionname1"].Parent.Should()
+                .Be(draft.Model.Properties["anelementname2"]);
+            draft.Model.Properties["anelementname2"].Properties["acollectionname1"].Items[0].Parent.Should()
+                .Be(draft.Model.Properties["anelementname2"]);
 
             draft.Model.Properties["acollectionname2"].Parent.Should().Be(draft.Model);
             draft.Model.Properties["acollectionname2"].Items[0].Parent.Should().Be(draft.Model);
-            draft.Model.Properties["acollectionname2"].Items[0].Properties["anelementname3"].Parent.Should().Be(draft.Model.Properties["acollectionname2"].Items[0]);
+            draft.Model.Properties["acollectionname2"].Items[0].Properties["anelementname3"].Parent.Should()
+                .Be(draft.Model.Properties["acollectionname2"].Items[0]);
 
             draft.Model.Properties["acollectionname3"].Parent.Should().Be(draft.Model);
             draft.Model.Properties["acollectionname3"].Items[0].Parent.Should().Be(draft.Model);
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Parent.Should().Be(draft.Model.Properties["acollectionname3"].Items[0]);
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Parent.Should().Be(draft.Model.Properties["acollectionname3"].Items[0]);
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].Parent.Should()
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Parent.Should()
+                .Be(draft.Model.Properties["acollectionname3"].Items[0]);
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Parent.Should()
+                .Be(draft.Model.Properties["acollectionname3"].Items[0]);
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]
+                .Properties["acollectionname5"].Parent.Should()
                 .Be(draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]);
-            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0].Properties["acollectionname5"].Items[0].Parent.Should()
+            draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]
+                .Properties["acollectionname5"].Items[0].Parent.Should()
                 .Be(draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]);
         }
     }

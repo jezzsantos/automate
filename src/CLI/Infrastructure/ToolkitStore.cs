@@ -26,6 +26,14 @@ namespace Automate.CLI.Infrastructure
             this.localStateRepository = localStateRepository;
         }
 
+        public ToolkitDefinition GetCurrent()
+        {
+            var state = this.localStateRepository.GetLocalState();
+            return state.CurrentToolkit.HasValue()
+                ? this.toolkitRepository.GetToolkit(state.CurrentToolkit)
+                : null;
+        }
+
         public void DestroyAll()
         {
             this.toolkitRepository.DestroyAll();
@@ -41,14 +49,6 @@ namespace Automate.CLI.Infrastructure
         {
             this.toolkitRepository.ImportToolkit(toolkit);
             ChangeCurrent(toolkit.Id);
-        }
-
-        public ToolkitDefinition GetCurrent()
-        {
-            var state = this.localStateRepository.GetLocalState();
-            return state.CurrentToolkit.HasValue()
-                ? this.toolkitRepository.GetToolkit(state.CurrentToolkit)
-                : null;
         }
 
         public void ChangeCurrent(string id)

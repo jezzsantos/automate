@@ -11,16 +11,48 @@ namespace Automate.CLI.Infrastructure
         public const string InMemoryLocation = "in-memory";
 
         // ReSharper disable once CollectionNeverQueried.Local
-        private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new Dictionary<string, byte[]>();
-        private readonly Dictionary<string, PatternDefinition> inMemoryPatterns =
-            new Dictionary<string, PatternDefinition>();
-        private readonly Dictionary<string, DraftDefinition> inMemoryDrafts =
-            new Dictionary<string, DraftDefinition>();
+        private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new();
+        private readonly Dictionary<string, DraftDefinition> inMemoryDrafts = new();
+        private readonly Dictionary<string, PatternDefinition> inMemoryPatterns = new();
 
         // ReSharper disable once CollectionNeverUpdated.Local
-        private readonly Dictionary<string, ToolkitDefinition> inMemoryToolkits =
-            new Dictionary<string, ToolkitDefinition>();
-        private LocalState inMemoryState = new LocalState();
+        private readonly Dictionary<string, ToolkitDefinition> inMemoryToolkits = new();
+        private LocalState inMemoryState = new();
+
+        public string DraftLocation => InMemoryLocation;
+
+        public void NewDraft(DraftDefinition draft)
+        {
+            this.inMemoryDrafts.Add(draft.Id, draft);
+        }
+
+        public void UpsertDraft(DraftDefinition draft)
+        {
+            this.inMemoryDrafts[draft.Id] = draft;
+        }
+
+        public DraftDefinition GetDraft(string id)
+        {
+            if (this.inMemoryDrafts.ContainsKey(id))
+            {
+                return this.inMemoryDrafts[id];
+            }
+
+            throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
+        }
+
+        public DraftDefinition FindDraftById(string id)
+        {
+            return this.inMemoryDrafts
+                .FirstOrDefault(p => p.Key == id).Value;
+        }
+
+        public List<DraftDefinition> ListDrafts()
+        {
+            return this.inMemoryDrafts
+                .Select(draft => draft.Value)
+                .ToList();
+        }
 
         public void SaveLocalState(LocalState state)
         {
@@ -92,48 +124,14 @@ namespace Automate.CLI.Infrastructure
             return InMemoryLocation;
         }
 
-        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId,
+            string extension)
         {
             return new CodeTemplateContent
             {
                 Content = this.inMemoryCodeTemplates[codeTemplateId],
                 LastModifiedUtc = DateTime.UtcNow
             };
-        }
-
-        public string DraftLocation => InMemoryLocation;
-
-        public void NewDraft(DraftDefinition draft)
-        {
-            this.inMemoryDrafts.Add(draft.Id, draft);
-        }
-
-        public void UpsertDraft(DraftDefinition draft)
-        {
-            this.inMemoryDrafts[draft.Id] = draft;
-        }
-
-        public DraftDefinition GetDraft(string id)
-        {
-            if (this.inMemoryDrafts.ContainsKey(id))
-            {
-                return this.inMemoryDrafts[id];
-            }
-
-            throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
-        }
-
-        public DraftDefinition FindDraftById(string id)
-        {
-            return this.inMemoryDrafts
-                .FirstOrDefault(p => p.Key == id).Value;
-        }
-
-        public List<DraftDefinition> ListDrafts()
-        {
-            return this.inMemoryDrafts
-                .Select(draft => draft.Value)
-                .ToList();
         }
 
         public List<ToolkitDefinition> ListToolkits()

@@ -21,7 +21,8 @@ namespace Automate.CLI.Infrastructure
 
         public ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction)
         {
-            var (version, toolkit) = Pack(pattern, instruction, (pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
+            var (version, toolkit) =
+                Pack(pattern, instruction, (pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
             this.store.Save(pattern);
 
             var exportedLocation = this.toolkitStore.Export(toolkit);
@@ -40,7 +41,8 @@ namespace Automate.CLI.Infrastructure
             return toolkit;
         }
 
-        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(PatternDefinition pattern, VersionInstruction instruction, Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
+        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(PatternDefinition pattern,
+            VersionInstruction instruction, Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
         {
             pattern.GuardAgainstNull(nameof(pattern));
 

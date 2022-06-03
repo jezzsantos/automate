@@ -82,7 +82,8 @@ namespace CLI.UnitTests.Domain
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var target = new DraftItem(toolkit, new Element("anelementname"), null);
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 var draft = new DraftDefinition(toolkit);
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
@@ -112,7 +113,8 @@ namespace CLI.UnitTests.Domain
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -138,12 +140,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndDifferentArtifactLinkExistsButFileNotExists_ThenDeletesLinkedFileAndGeneratesNewFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndDifferentArtifactLinkExistsButFileNotExists_ThenDeletesLinkedFileAndGeneratesNewFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "anoriginalpath", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -171,12 +175,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndDifferentArtifactLinkExistsAndFileExists_ThenDeletesLinkedFileAndOverwritesFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndDifferentArtifactLinkExistsAndFileExists_ThenDeletesLinkedFileAndOverwritesFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "anoriginalpath", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -204,12 +210,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -240,7 +248,8 @@ namespace CLI.UnitTests.Domain
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -297,7 +306,8 @@ namespace CLI.UnitTests.Domain
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
@@ -321,12 +331,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndDifferentArtifactLinkExistsAndFileExists_ThenDeletesLinkedFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndDifferentArtifactLinkExistsAndFileExists_ThenDeletesLinkedFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "anoriginalpath", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -352,12 +364,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndDifferentArtifactLinkExistsButFileNotExists_ThenMovesLinkedFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndDifferentArtifactLinkExistsButFileNotExists_ThenMovesLinkedFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "apath", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -388,7 +402,8 @@ namespace CLI.UnitTests.Domain
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
@@ -413,12 +428,14 @@ namespace CLI.UnitTests.Domain
             }
 
             [Fact]
-            public void WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
+            public void
+                WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile> { new CodeTemplateFile(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");

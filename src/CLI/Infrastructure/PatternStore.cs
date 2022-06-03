@@ -114,7 +114,8 @@ namespace Automate.CLI.Infrastructure
 
         public CodeTemplateContent DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)
         {
-            return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplate.Id, codeTemplate.Metadata.OriginalFileExtension);
+            return this.patternRepository.DownloadPatternCodeTemplate(pattern, codeTemplate.Id,
+                codeTemplate.Metadata.OriginalFileExtension);
         }
 
         public List<PatternDefinition> ListAll()

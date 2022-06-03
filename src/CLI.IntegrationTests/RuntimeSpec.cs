@@ -263,6 +263,7 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate(item.Name, item.Id));
             item.Properties["AProperty1"].Value.Should().BeNull();
         }
+
         [Fact]
         public void WhenConfigureDraftAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {

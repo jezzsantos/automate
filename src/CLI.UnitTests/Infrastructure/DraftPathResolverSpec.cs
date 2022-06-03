@@ -31,7 +31,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), null))
+                .Invoking(x =>
+                    x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))),
+                        null))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -39,7 +41,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsInvalidFormat_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "notavalidexpression"))
+                .Invoking(x =>
+                    x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))),
+                        "notavalidexpression"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftPathResolver_InvalidExpression.Format("notavalidexpression"));
         }
@@ -48,7 +52,9 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsEmpty_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "{}"))
+                .Invoking(x =>
+                    x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))),
+                        "{}"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftPathResolver_InvalidExpression.Format("{}"));
         }
@@ -98,7 +104,8 @@ namespace CLI.UnitTests.Infrastructure
             var collectionInstance = draft.Model.Properties["acollectionname"].MaterialiseCollectionItem();
             var elementInstance = collectionInstance.Properties["anelementname"].Materialise();
 
-            var result = this.resolver.ResolveItem(draft, $"{{apatternname.acollectionname.{collectionInstance.Id}.anelementname}}");
+            var result = this.resolver.ResolveItem(draft,
+                $"{{apatternname.acollectionname.{collectionInstance.Id}.anelementname}}");
 
             result.Id.Should().Be(elementInstance.Id);
         }
@@ -171,7 +178,8 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.resolver.ResolveExpression("adescription", null, new DraftItem(toolkit, new Element("anelementname"), null));
+            var result = this.resolver.ResolveExpression("adescription", null,
+                new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().BeNull();
         }
@@ -181,7 +189,8 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression", new DraftItem(toolkit, new Element("anelementname"), null));
+            var result = this.resolver.ResolveExpression("adescription", "anexpression",
+                new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().Be("anexpression");
         }
@@ -197,7 +206,8 @@ namespace CLI.UnitTests.Infrastructure
             var draftItem = new DraftItem(new ToolkitDefinition(pattern), element, null);
             draftItem.Materialise();
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression", draftItem);
+            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression",
+                draftItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

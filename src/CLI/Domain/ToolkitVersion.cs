@@ -9,7 +9,7 @@ namespace Automate.CLI.Domain
     {
         internal const int VersionFieldCount = 3;
         internal const string AutoIncrementInstruction = "auto";
-        internal static readonly Version InitialVersionNumber = new Version(0, 0, 0);
+        internal static readonly Version InitialVersionNumber = new(0, 0, 0);
         private readonly List<VersionChangeLog> changeLog;
 
         public ToolkitVersion()
@@ -109,7 +109,8 @@ namespace Automate.CLI.Domain
                 return result;
             }
 
-            this.changeLog.Add(new VersionChangeLog(VersionChange.NoChange, VersionChanges.ToolkitVersion_NewVersion, Current, result.Version));
+            this.changeLog.Add(new VersionChangeLog(VersionChange.NoChange, VersionChanges.ToolkitVersion_NewVersion,
+                Current, result.Version));
             Current = result.Version;
             ResetAfterUpdate();
             return result;
@@ -175,8 +176,10 @@ namespace Automate.CLI.Domain
                             DomainMessages.ToolkitVersion_Forced.Format(instruction.Instruction,
                                 ChangeLog.ToBulletList(item => item.Message)));
                     }
-                    throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Format(instruction.Instruction,
-                        expectedNewVersion.ToString(VersionFieldCount), ChangeLog.ToMultiLineText(item => item.Message)));
+                    throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Format(
+                        instruction.Instruction,
+                        expectedNewVersion.ToString(VersionFieldCount),
+                        ChangeLog.ToMultiLineText(item => item.Message)));
                 }
 
                 if (LastChanges == VersionChange.NonBreaking)

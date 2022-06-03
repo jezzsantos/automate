@@ -82,7 +82,8 @@ namespace Automate.CLI.Domain
             var result = new DraftUpgradeResult(this, Toolkit.Version, latestToolkit.Version);
             if (Toolkit.Version.EqualsOrdinal(latestToolkit.Version))
             {
-                result.Add(MigrationChangeType.Abort, MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion, latestToolkit.PatternName, latestToolkit.Version);
+                result.Add(MigrationChangeType.Abort, MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion,
+                    latestToolkit.PatternName, latestToolkit.Version);
                 return result;
             }
 
@@ -90,11 +91,14 @@ namespace Automate.CLI.Domain
             {
                 if (!force)
                 {
-                    result.Fail(MigrationChangeType.Abort, MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden, latestToolkit.PatternName, latestToolkit.Version);
+                    result.Fail(MigrationChangeType.Abort,
+                        MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden, latestToolkit.PatternName,
+                        latestToolkit.Version);
                     return result;
                 }
 
-                result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced, latestToolkit.PatternName, latestToolkit.Version);
+                result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced,
+                    latestToolkit.PatternName, latestToolkit.Version);
             }
 
             Model.Migrate(latestToolkit, result);
@@ -108,10 +112,6 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public string Id { get; }
-
-        public string Name { get; }
-
         public bool Accept(IDraftVisitor visitor)
         {
             if (visitor.VisitDraftEnter(this))
@@ -121,6 +121,10 @@ namespace Automate.CLI.Domain
 
             return visitor.VisitDraftExit(this);
         }
+
+        public string Id { get; }
+
+        public string Name { get; }
 
         private void TraverseDraft(IDraftVisitor visitor)
         {
@@ -141,7 +145,7 @@ namespace Automate.CLI.Domain
 
         private class AncestryPopulator : IDraftVisitor
         {
-            private readonly Stack<DraftItem> ancestry = new Stack<DraftItem>();
+            private readonly Stack<DraftItem> ancestry = new();
             private readonly ToolkitDefinition toolkit;
 
             public AncestryPopulator(ToolkitDefinition toolkit)

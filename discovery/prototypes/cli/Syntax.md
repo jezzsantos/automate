@@ -162,7 +162,7 @@ And now, they add the necessary attributes of a "service operation":
 
 `automate edit add-attribute "IsAuthorized" --isrequired --isoftype "bool" --defaultvalueis "true" --aschildof "{AcmeAPI.ServiceOperation}"`
 
-> Note: The tech lead has deliberately ignored some of  the optional behaviours of a "service operation" such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving the pattern as the `RoadRunner` product matures.
+> Note: The tech lead has deliberately ignored some of the optional behaviours of a "service operation" such as response caching and rate limiting for this next API. Which is an example of the tech lead picking and choosing what to start their team with in the first iterations of the pattern, leaving room for evolving the pattern as the `RoadRunner` product matures.
 
 Now, a service operation (conceptually) has a HTTP Request DTO and a HTTP Response DTO. These DTO's for now will just be dictionaries (for simplicity). So the tech lead would define both of those on the `ServiceOperation` as a "Collection" of `Field` elements with various attributes.
 
@@ -581,7 +581,7 @@ A codebase contributor can now finally ask the toolkit to write the new API code
 
 `automate execute command "Generate"`
 
-> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured code template commands, that in turn, each generate the code files from all the code templates. The code is written into the codebase of  the `RoadRunner` project in the respective locations.
+> This command runs the `Generate` Launch Point (on the root pattern element), which runs the configured code template commands, that in turn, each generate the code files from all the code templates. The code is written into the codebase of the `RoadRunner` project in the respective locations.
 
 > If any of the required properties (of attributes) are not set correctly, or any required elements of collections are missing, then appropriate validation errors will be displayed explaining the problem.
 

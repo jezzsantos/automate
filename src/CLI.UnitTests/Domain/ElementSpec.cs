@@ -1,6 +1,4 @@
-﻿using System;
-using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+﻿using Automate.CLI.Domain;
 using FluentAssertions;
 using Xunit;
 

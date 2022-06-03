@@ -7,11 +7,13 @@ namespace Automate.CLI.Domain
     {
         private readonly List<MigrationChange> log;
 
-        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion) : this(draft, fromVersion, toVersion, new List<MigrationChange>())
+        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion) : this(draft,
+            fromVersion, toVersion, new List<MigrationChange>())
         {
         }
 
-        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion, List<MigrationChange> log)
+        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion,
+            List<MigrationChange> log)
         {
             draft.GuardAgainstNull(nameof(draft));
             fromVersion.GuardAgainstNull(nameof(fromVersion));

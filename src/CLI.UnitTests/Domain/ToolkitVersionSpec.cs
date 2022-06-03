@@ -54,7 +54,9 @@ namespace CLI.UnitTests.Domain
                 this.version
                     .Invoking(x => x.UpdateVersion(new VersionInstruction("invalidinstruction")))
                     .Should().Throw<ArgumentOutOfRangeException>()
-                    .WithMessage(ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Format("invalidinstruction") + "*");
+                    .WithMessage(
+                        ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Format("invalidinstruction") +
+                        "*");
             }
 
             [Fact]
@@ -119,7 +121,8 @@ namespace CLI.UnitTests.Domain
                 this.version
                     .Invoking(x => x.UpdateVersion(new VersionInstruction("1.1.1.1")))
                     .Should().Throw<ArgumentOutOfRangeException>()
-                    .WithMessage(ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Format("1.1.1.1") + "*");
+                    .WithMessage(ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Format("1.1.1.1") +
+                                 "*");
             }
         }
 
@@ -139,7 +142,8 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NoChange, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -148,7 +152,8 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.NonBreaking, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -157,7 +162,8 @@ namespace CLI.UnitTests.Domain
                 this.version.RegisterChange(VersionChange.Breaking, "achange");
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -175,7 +181,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMinor()
             {
-                var result = this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                var result =
+                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
 
                 result.Version.Should().Be("0.1.0");
                 result.Message.Should().BeNull();
@@ -239,8 +246,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
-                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
+                this.version.ChangeLog.Should().Contain(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().Contain(entry =>
+                    entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -250,8 +259,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.NonBreaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -261,8 +272,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "anonbreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -280,7 +293,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMinor()
             {
-                var result = this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                var result =
+                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
 
                 result.Version.Should().Be("0.1.0");
                 result.Message.Should().BeNull();
@@ -295,7 +309,8 @@ namespace CLI.UnitTests.Domain
                 var result = this.version.UpdateVersion(new VersionInstruction("0.1.0"));
 
                 result.Version.Should().Be("0.1.0");
-                result.Message.Should().Be(DomainMessages.ToolkitVersion_Warning.Format("0.1.0", "* anonbreakingchange"));
+                result.Message.Should()
+                    .Be(DomainMessages.ToolkitVersion_Warning.Format("0.1.0", "* anonbreakingchange"));
                 this.version.Current.Should().Be(result.Version);
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
@@ -344,8 +359,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
-                this.version.ChangeLog.Should().Contain(entry => entry.Change == VersionChange.NoChange && entry.Message == "achange");
+                this.version.ChangeLog.Should().Contain(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().Contain(entry =>
+                    entry.Change == VersionChange.NoChange && entry.Message == "achange");
             }
 
             [Fact]
@@ -355,8 +372,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.NonBreaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -366,8 +385,10 @@ namespace CLI.UnitTests.Domain
 
                 this.version.LastChanges.Should().Be(VersionChange.Breaking);
                 this.version.ChangeLog.Count.Should().Be(2);
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
-                this.version.ChangeLog.Should().ContainSingle(entry => entry.Change == VersionChange.Breaking && entry.Message == "achange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "abreakingchange");
+                this.version.ChangeLog.Should().ContainSingle(entry =>
+                    entry.Change == VersionChange.Breaking && entry.Message == "achange");
             }
 
             [Fact]
@@ -385,7 +406,8 @@ namespace CLI.UnitTests.Domain
             [Fact]
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMajor()
             {
-                var result = this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                var result =
+                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
 
                 result.Version.Should().Be("1.0.0");
                 result.Message.Should().BeNull();
@@ -400,7 +422,8 @@ namespace CLI.UnitTests.Domain
                 this.version
                     .Invoking(x => x.UpdateVersion(new VersionInstruction("0.1.0")))
                     .Should().Throw<AutomateException>()
-                    .WithMessage(ExceptionMessages.ToolkitVersion_IllegalVersion.Format("0.1.0", "1.0.0", "abreakingchange"));
+                    .WithMessage(
+                        ExceptionMessages.ToolkitVersion_IllegalVersion.Format("0.1.0", "1.0.0", "abreakingchange"));
             }
 
             [Fact]
@@ -421,7 +444,8 @@ namespace CLI.UnitTests.Domain
                 this.version
                     .Invoking(x => x.UpdateVersion(new VersionInstruction("0.10.0")))
                     .Should().Throw<AutomateException>()
-                    .WithMessage(ExceptionMessages.ToolkitVersion_IllegalVersion.Format("0.10.0", "1.0.0", "abreakingchange"));
+                    .WithMessage(
+                        ExceptionMessages.ToolkitVersion_IllegalVersion.Format("0.10.0", "1.0.0", "abreakingchange"));
             }
 
             [Fact]

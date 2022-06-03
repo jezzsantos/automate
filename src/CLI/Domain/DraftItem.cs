@@ -396,8 +396,6 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public string Id { get; }
-
         public bool Accept(IDraftItemVisitor visitor)
         {
             if (IsPattern)
@@ -473,6 +471,8 @@ namespace Automate.CLI.Domain
 
             return true;
         }
+
+        public string Id { get; }
 
         /// <summary>
         ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="DraftItem" />
@@ -1172,8 +1172,8 @@ namespace Automate.CLI.Domain
     /// </summary>
     internal class LazyDraftItemDictionary : IDictionary
     {
-        private readonly bool includeAncestry;
         private readonly DraftItem draftItem;
+        private readonly bool includeAncestry;
 
         /// <summary>
         ///     For serialization

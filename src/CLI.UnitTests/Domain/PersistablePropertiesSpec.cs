@@ -99,12 +99,12 @@ namespace CLI.UnitTests.Domain
             var properties = new PersistableProperties();
             properties.Dehydrate("aname", new List<TestPersistable>
             {
-                new TestPersistable()
+                new()
             });
 
             properties["aname"].Should().BeEquivalentTo(new List<Dictionary<string, object>>
             {
-                new Dictionary<string, object>
+                new()
                 {
                     { nameof(TestPersistable.AProperty), "avalue" },
                     { nameof(TestPersistable.AList), new List<string>() },
@@ -282,7 +282,8 @@ namespace CLI.UnitTests.Domain
         public void WhenRehydrateForPersistable_ThenReturnsValue()
         {
             this.factory.Setup(pf => pf.Rehydrate(typeof(TestPersistable), It.IsAny<PersistableProperties>()))
-                .Returns((Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
+                .Returns(
+                    (Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
 
             var result = new PersistableProperties
             {
@@ -382,7 +383,8 @@ namespace CLI.UnitTests.Domain
         public void WhenRehydrateForListOfPersistable_ThenReturnsList()
         {
             this.factory.Setup(pf => pf.Rehydrate(typeof(TestPersistable), It.IsAny<PersistableProperties>()))
-                .Returns((Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
+                .Returns(
+                    (Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
 
             var result = new PersistableProperties
             {
@@ -478,7 +480,8 @@ namespace CLI.UnitTests.Domain
         public void WhenRehydrateForDictionaryOfPersistable_ThenReturnsDictionary()
         {
             this.factory.Setup(pf => pf.Rehydrate(typeof(TestPersistable), It.IsAny<PersistableProperties>()))
-                .Returns((Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
+                .Returns(
+                    (Type _, PersistableProperties props) => new TestPersistable { AProperty = props["AProperty"] });
 
             var result = new PersistableProperties
             {

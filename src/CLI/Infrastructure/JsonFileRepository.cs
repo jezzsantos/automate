@@ -30,7 +30,8 @@ namespace Automate.CLI.Infrastructure
         {
         }
 
-        private JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository, IPersistableFactory persistableFactory)
+        private JsonFileRepository(string currentDirectory, ILocalStateRepository localStateRepository,
+            IPersistableFactory persistableFactory)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
             localStateRepository.GuardAgainstNull(nameof(localStateRepository));
@@ -38,6 +39,63 @@ namespace Automate.CLI.Infrastructure
             this.currentDirectory = currentDirectory;
             this.localStateRepository = localStateRepository;
             this.persistableFactory = persistableFactory;
+        }
+
+        public static string GetCodeTemplateLocation(string patternId, string codeTemplateId, string extension)
+        {
+            patternId.GuardAgainstNullOrEmpty(nameof(patternId));
+            codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
+            extension.GuardAgainstNullOrEmpty(nameof(extension));
+
+            return $"{PatternDirectoryPath}/{patternId}/{CodeTemplateDirectoryName}/{codeTemplateId}.{extension}";
+        }
+
+        public string DraftLocation => Path.Combine(this.currentDirectory, DraftDirectoryPath);
+
+        public void NewDraft(DraftDefinition draft)
+        {
+            UpsertDraft(draft);
+        }
+
+        public void UpsertDraft(DraftDefinition draft)
+        {
+            var filename = CreateFilenameForDraftById(draft.Id);
+            EnsurePathExists(filename);
+
+            using (var file = File.CreateText(filename))
+            {
+                file.Write(draft.ToJson(this.persistableFactory));
+            }
+        }
+
+        public DraftDefinition GetDraft(string id)
+        {
+            var filename = CreateFilenameForDraftById(id);
+            if (!File.Exists(filename))
+            {
+                throw new AutomateException(ExceptionMessages.JsonFileRepository_DraftNotFound.Format(id));
+            }
+
+            return File.ReadAllText(filename).FromJson<DraftDefinition>(this.persistableFactory);
+        }
+
+        public List<DraftDefinition> ListDrafts()
+        {
+            if (!Directory.Exists(DraftLocation))
+            {
+                return new List<DraftDefinition>();
+            }
+
+            return Directory.GetDirectories(DraftLocation)
+                .Select(path => new DirectoryInfo(path).Name)
+                .Select(GetDraft)
+                .ToList();
+        }
+
+        public DraftDefinition FindDraftById(string id)
+        {
+            return ListDrafts()
+                .FirstOrDefault(draft => draft.Id == id);
         }
 
         public void SaveLocalState(LocalState state)
@@ -118,7 +176,8 @@ namespace Automate.CLI.Infrastructure
             return CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
         }
 
-        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId,
+            string extension)
         {
             var path = CreateFilenameForCodeTemplate(pattern.Id, codeTemplateId, extension);
             var file = new SystemIoFile(path);
@@ -161,54 +220,6 @@ namespace Automate.CLI.Infrastructure
             }
 
             this.localStateRepository.DestroyAll();
-        }
-
-        public string DraftLocation => Path.Combine(this.currentDirectory, DraftDirectoryPath);
-
-        public void NewDraft(DraftDefinition draft)
-        {
-            UpsertDraft(draft);
-        }
-
-        public void UpsertDraft(DraftDefinition draft)
-        {
-            var filename = CreateFilenameForDraftById(draft.Id);
-            EnsurePathExists(filename);
-
-            using (var file = File.CreateText(filename))
-            {
-                file.Write(draft.ToJson(this.persistableFactory));
-            }
-        }
-
-        public DraftDefinition GetDraft(string id)
-        {
-            var filename = CreateFilenameForDraftById(id);
-            if (!File.Exists(filename))
-            {
-                throw new AutomateException(ExceptionMessages.JsonFileRepository_DraftNotFound.Format(id));
-            }
-
-            return File.ReadAllText(filename).FromJson<DraftDefinition>(this.persistableFactory);
-        }
-
-        public List<DraftDefinition> ListDrafts()
-        {
-            if (!Directory.Exists(DraftLocation))
-            {
-                return new List<DraftDefinition>();
-            }
-
-            return Directory.GetDirectories(DraftLocation)
-                .Select(path => new DirectoryInfo(path).Name)
-                .Select(GetDraft)
-                .ToList();
-        }
-
-        public DraftDefinition FindDraftById(string id)
-        {
-            return ListDrafts()
-                .FirstOrDefault(draft => draft.Id == id);
         }
 
         public List<ToolkitDefinition> ListToolkits()
@@ -271,15 +282,6 @@ namespace Automate.CLI.Infrastructure
             }
 
             return File.ReadAllText(filename).FromJson<ToolkitDefinition>(this.persistableFactory);
-        }
-
-        public static string GetCodeTemplateLocation(string patternId, string codeTemplateId, string extension)
-        {
-            patternId.GuardAgainstNullOrEmpty(nameof(patternId));
-            codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
-            extension.GuardAgainstNullOrEmpty(nameof(extension));
-
-            return $"{PatternDirectoryPath}/{patternId}/{CodeTemplateDirectoryName}/{codeTemplateId}.{extension}";
         }
 
         private static void EnsurePathExists(string filename)

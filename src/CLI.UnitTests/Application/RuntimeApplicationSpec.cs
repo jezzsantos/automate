@@ -17,11 +17,11 @@ namespace CLI.UnitTests.Application
     public class RuntimeApplicationSpec
     {
         private readonly RuntimeApplication application;
+        private readonly Mock<IDraftPathResolver> draftPathResolver;
+        private readonly IDraftStore draftStore;
         private readonly Mock<IFilePathResolver> fileResolver;
         private readonly Mock<IPatternToolkitPackager> packager;
         private readonly PatternDefinition pattern;
-        private readonly Mock<IDraftPathResolver> draftPathResolver;
-        private readonly IDraftStore draftStore;
         private readonly ToolkitDefinition toolkit;
         private readonly IToolkitStore toolkitStore;
 

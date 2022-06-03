@@ -24,7 +24,8 @@ namespace Automate.CLI.Domain
             results.Add(new ValidationResult(new ValidationContext(draftItem.PathReference), message));
         }
 
-        public static IReadOnlyList<ValidationResult> Validate(this IAttributeSchema attribute, DraftItem draftItem, object value)
+        public static IReadOnlyList<ValidationResult> Validate(this IAttributeSchema attribute, DraftItem draftItem,
+            object value)
         {
             return attribute.Validate(new ValidationContext(draftItem.PathReference), value);
         }

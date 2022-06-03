@@ -32,7 +32,7 @@ namespace Automate.CLI.Domain
         IAutomationContainer
     {
         void RenameAndDescribe(string name, string displayName, string description);
-        
+
         Attribute AddAttribute(string name, string type, bool isRequired, string defaultValue, List<string> choices);
 
         Attribute UpdateAttribute(string attributeName, string name, string type, bool? isRequired, string defaultValue,
@@ -68,7 +68,8 @@ namespace Automate.CLI.Domain
 
         Automation AddCommandLaunchPoint(string name, List<string> commandIds);
 
-        Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds, IPatternElement sourceElement);
+        Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
+            IPatternElement sourceElement);
 
         public void DeleteCommandLaunchPoint(string id);
 

@@ -93,7 +93,11 @@ namespace CLI.UnitTests.Extensions
         {
             var result = new TestPersistable
             {
-                APersistableDictionary = { { "aname1", new TestPersistable() }, { "aname2", new TestPersistable() }, { "aname3", new TestPersistable() } }
+                APersistableDictionary =
+                {
+                    { "aname1", new TestPersistable() }, { "aname2", new TestPersistable() },
+                    { "aname3", new TestPersistable() }
+                }
             }.ToJson(this.factory.Object);
 
             result.Should().Be($"{{{Environment.NewLine}" +
@@ -115,7 +119,8 @@ namespace CLI.UnitTests.Extensions
         [Fact]
         public void WhenFromJsonAndJsonIsNull_ThenThrows()
         {
-            FluentActions.Invoking(() => PersistableExtensions.FromJson<TestPersistable>(null, Mock.Of<IPersistableFactory>()))
+            FluentActions.Invoking(() =>
+                    PersistableExtensions.FromJson<TestPersistable>(null, Mock.Of<IPersistableFactory>()))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PersistableExtensions_FromJson_NoJson);
         }
@@ -193,9 +198,12 @@ namespace CLI.UnitTests.Extensions
 
             this.factory.Verify(pf => pf.Rehydrate<TestPersistable>(It.Is<PersistableProperties>(props =>
                 props.Count == 1
-                && (string)((Dictionary<string, object>)((List<object>)props[$"{nameof(TestPersistable.APersistableList)}"])[0])[nameof(TestPersistable.AProperty)] == "avalue1"
-                && (string)((Dictionary<string, object>)((List<object>)props[$"{nameof(TestPersistable.APersistableList)}"])[1])[nameof(TestPersistable.AProperty)] == "avalue2"
-                && (string)((Dictionary<string, object>)((List<object>)props[$"{nameof(TestPersistable.APersistableList)}"])[2])[nameof(TestPersistable.AProperty)] == "avalue3"
+                && (string)((Dictionary<string, object>)((List<object>)props[
+                    $"{nameof(TestPersistable.APersistableList)}"])[0])[nameof(TestPersistable.AProperty)] == "avalue1"
+                && (string)((Dictionary<string, object>)((List<object>)props[
+                    $"{nameof(TestPersistable.APersistableList)}"])[1])[nameof(TestPersistable.AProperty)] == "avalue2"
+                && (string)((Dictionary<string, object>)((List<object>)props[
+                    $"{nameof(TestPersistable.APersistableList)}"])[2])[nameof(TestPersistable.AProperty)] == "avalue3"
             )));
         }
 
@@ -216,9 +224,12 @@ namespace CLI.UnitTests.Extensions
             result.Should().Be(persistable);
             this.factory.Verify(pf => pf.Rehydrate<TestPersistable>(It.Is<PersistableProperties>(props =>
                 props.Count == 1
-                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname1"] == "avalue1"
-                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname2"] == "avalue2"
-                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname3"] == "avalue3"
+                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname1"] ==
+                "avalue1"
+                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname2"] ==
+                "avalue2"
+                && (string)((Dictionary<string, object>)props[$"{nameof(TestPersistable.ADictionary)}"])["aname3"] ==
+                "avalue3"
             )));
         }
 
@@ -239,9 +250,15 @@ namespace CLI.UnitTests.Extensions
             result.Should().Be(persistable);
             this.factory.Verify(pf => pf.Rehydrate<TestPersistable>(It.Is<PersistableProperties>(props =>
                 props.Count == 1
-                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[$"{nameof(TestPersistable.APersistableDictionary)}"])["aname1"])[$"{nameof(TestPersistable.AProperty)}"] == "avalue1"
-                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[$"{nameof(TestPersistable.APersistableDictionary)}"])["aname2"])[$"{nameof(TestPersistable.AProperty)}"] == "avalue2"
-                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[$"{nameof(TestPersistable.APersistableDictionary)}"])["aname3"])[$"{nameof(TestPersistable.AProperty)}"] == "avalue3"
+                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[
+                    $"{nameof(TestPersistable.APersistableDictionary)}"])["aname1"])[
+                    $"{nameof(TestPersistable.AProperty)}"] == "avalue1"
+                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[
+                    $"{nameof(TestPersistable.APersistableDictionary)}"])["aname2"])[
+                    $"{nameof(TestPersistable.AProperty)}"] == "avalue2"
+                && (string)((Dictionary<string, object>)((Dictionary<string, object>)props[
+                    $"{nameof(TestPersistable.APersistableDictionary)}"])["aname3"])[
+                    $"{nameof(TestPersistable.AProperty)}"] == "avalue3"
             )));
         }
     }
