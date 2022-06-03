@@ -5,9 +5,9 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionDefinition : INamedEntity, IPersistable, ISolutionVisitable
+    internal class DraftDefinition : INamedEntity, IPersistable, IDraftVisitable
     {
-        public SolutionDefinition(ToolkitDefinition toolkit, string name = null)
+        public DraftDefinition(ToolkitDefinition toolkit, string name = null)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
 
@@ -16,22 +16,22 @@ namespace Automate.CLI.Domain
                 ? name
                 : $"{toolkit.PatternName}{GetRandomNumber()}";
             Toolkit = toolkit;
-            Model = new SolutionItem(toolkit, toolkit.Pattern);
+            Model = new DraftItem(toolkit, toolkit.Pattern);
         }
 
-        private SolutionDefinition(PersistableProperties properties, IPersistableFactory factory)
+        private DraftDefinition(PersistableProperties properties, IPersistableFactory factory)
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
             Toolkit = properties.Rehydrate<ToolkitDefinition>(factory, nameof(Toolkit));
-            Model = properties.Rehydrate<SolutionItem>(factory, nameof(Model));
+            Model = properties.Rehydrate<DraftItem>(factory, nameof(Model));
         }
 
         public ToolkitDefinition Toolkit { get; }
 
         public string PatternName => Toolkit.Pattern?.Name;
 
-        public SolutionItem Model { get; }
+        public DraftItem Model { get; }
 
         public PersistableProperties Dehydrate()
         {
@@ -44,9 +44,9 @@ namespace Automate.CLI.Domain
             return properties;
         }
 
-        public static SolutionDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        public static DraftDefinition Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
-            var instance = new SolutionDefinition(properties, factory);
+            var instance = new DraftDefinition(properties, factory);
             instance.PopulateAncestry();
             return instance;
         }
@@ -56,18 +56,18 @@ namespace Automate.CLI.Domain
             return Model.GetConfiguration(false).ToJson();
         }
 
-        public List<SolutionItemCommandPair> FindByAutomation(string automationId)
+        public List<DraftItemCommandPair> FindByAutomation(string automationId)
         {
             var aggregator = new AutomationAggregator(automationId);
-            TraverseSolution(aggregator);
+            TraverseDraft(aggregator);
             return aggregator.Automation;
         }
 
-        public SolutionItem FindByCodeTemplate(string codeTemplateId)
+        public DraftItem FindByCodeTemplate(string codeTemplateId)
         {
             var finder = new CodeTemplateFinder(codeTemplateId);
-            TraverseSolution(finder);
-            return finder.SolutionItem;
+            TraverseDraft(finder);
+            return finder.DraftItem;
         }
 
         public ValidationResults Validate()
@@ -75,14 +75,14 @@ namespace Automate.CLI.Domain
             return Model.Validate();
         }
 
-        public SolutionUpgradeResult Upgrade(ToolkitDefinition latestToolkit, bool force)
+        public DraftUpgradeResult Upgrade(ToolkitDefinition latestToolkit, bool force)
         {
             latestToolkit.GuardAgainstNull(nameof(latestToolkit));
 
-            var result = new SolutionUpgradeResult(this, Toolkit.Version, latestToolkit.Version);
+            var result = new DraftUpgradeResult(this, Toolkit.Version, latestToolkit.Version);
             if (Toolkit.Version.EqualsOrdinal(latestToolkit.Version))
             {
-                result.Add(MigrationChangeType.Abort, MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion, latestToolkit.PatternName, latestToolkit.Version);
+                result.Add(MigrationChangeType.Abort, MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion, latestToolkit.PatternName, latestToolkit.Version);
                 return result;
             }
 
@@ -90,11 +90,11 @@ namespace Automate.CLI.Domain
             {
                 if (!force)
                 {
-                    result.Fail(MigrationChangeType.Abort, MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden, latestToolkit.PatternName, latestToolkit.Version);
+                    result.Fail(MigrationChangeType.Abort, MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden, latestToolkit.PatternName, latestToolkit.Version);
                     return result;
                 }
 
-                result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced, latestToolkit.PatternName, latestToolkit.Version);
+                result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced, latestToolkit.PatternName, latestToolkit.Version);
             }
 
             Model.Migrate(latestToolkit, result);
@@ -112,17 +112,17 @@ namespace Automate.CLI.Domain
 
         public string Name { get; }
 
-        public bool Accept(ISolutionVisitor visitor)
+        public bool Accept(IDraftVisitor visitor)
         {
-            if (visitor.VisitSolutionEnter(this))
+            if (visitor.VisitDraftEnter(this))
             {
                 Model.Accept(visitor);
             }
 
-            return visitor.VisitSolutionExit(this);
+            return visitor.VisitDraftExit(this);
         }
 
-        private void TraverseSolution(ISolutionVisitor visitor)
+        private void TraverseDraft(IDraftVisitor visitor)
         {
             Accept(visitor);
         }
@@ -130,7 +130,7 @@ namespace Automate.CLI.Domain
         internal void PopulateAncestry()
         {
             var populator = new AncestryPopulator(Toolkit);
-            TraverseSolution(populator);
+            TraverseDraft(populator);
         }
 
         private static string GetRandomNumber()
@@ -139,9 +139,9 @@ namespace Automate.CLI.Domain
             return number.Substring(number.Length - 3);
         }
 
-        private class AncestryPopulator : ISolutionVisitor
+        private class AncestryPopulator : IDraftVisitor
         {
-            private readonly Stack<SolutionItem> ancestry = new Stack<SolutionItem>();
+            private readonly Stack<DraftItem> ancestry = new Stack<DraftItem>();
             private readonly ToolkitDefinition toolkit;
 
             public AncestryPopulator(ToolkitDefinition toolkit)
@@ -151,7 +151,7 @@ namespace Automate.CLI.Domain
                 this.toolkit = toolkit;
             }
 
-            public bool VisitPatternEnter(SolutionItem item)
+            public bool VisitPatternEnter(DraftItem item)
             {
                 this.ancestry.Push(item);
 
@@ -159,13 +159,13 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitPatternExit(SolutionItem item)
+            public bool VisitPatternExit(DraftItem item)
             {
                 this.ancestry.Clear();
                 return true;
             }
 
-            public bool VisitElementEnter(SolutionItem item)
+            public bool VisitElementEnter(DraftItem item)
             {
                 var parent = this.ancestry.Peek();
                 if (parent.NotExists())
@@ -178,13 +178,13 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitElementExit(SolutionItem item)
+            public bool VisitElementExit(DraftItem item)
             {
                 this.ancestry.Pop();
                 return true;
             }
 
-            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            public bool VisitEphemeralCollectionEnter(DraftItem item)
             {
                 var parent = this.ancestry.Peek();
                 if (parent.NotExists())
@@ -197,13 +197,13 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitEphemeralCollectionExit(SolutionItem item)
+            public bool VisitEphemeralCollectionExit(DraftItem item)
             {
                 this.ancestry.Pop();
                 return true;
             }
 
-            public bool VisitAttributeEnter(SolutionItem item)
+            public bool VisitAttributeEnter(DraftItem item)
             {
                 var parent = this.ancestry.Peek();
                 if (parent.NotExists())
@@ -215,13 +215,13 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitAttributeExit(SolutionItem item)
+            public bool VisitAttributeExit(DraftItem item)
             {
                 return true;
             }
         }
 
-        private class CodeTemplateFinder : ISolutionVisitor
+        private class CodeTemplateFinder : IDraftVisitor
         {
             private readonly string codeTemplateId;
 
@@ -229,47 +229,47 @@ namespace Automate.CLI.Domain
             {
                 codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
                 this.codeTemplateId = codeTemplateId;
-                SolutionItem = null;
+                DraftItem = null;
             }
 
-            public SolutionItem SolutionItem { get; private set; }
+            public DraftItem DraftItem { get; private set; }
 
-            public bool VisitPatternEnter(SolutionItem item)
+            public bool VisitPatternEnter(DraftItem item)
             {
                 var codeTemplate = item.PatternSchema.FindCodeTemplateById(this.codeTemplateId);
                 if (codeTemplate.Exists())
                 {
-                    SolutionItem = item;
+                    DraftItem = item;
                     return false;
                 }
 
                 return true;
             }
 
-            public bool VisitPatternExit(SolutionItem item)
+            public bool VisitPatternExit(DraftItem item)
             {
                 return true;
             }
 
-            public bool VisitElementEnter(SolutionItem item)
+            public bool VisitElementEnter(DraftItem item)
             {
                 var codeTemplate = item.ElementSchema.FindCodeTemplateById(this.codeTemplateId);
                 if (codeTemplate.Exists())
                 {
-                    SolutionItem = item;
+                    DraftItem = item;
                     return false;
                 }
 
                 return true;
             }
 
-            public bool VisitElementExit(SolutionItem item)
+            public bool VisitElementExit(DraftItem item)
             {
                 return true;
             }
         }
 
-        private class AutomationAggregator : ISolutionVisitor
+        private class AutomationAggregator : IDraftVisitor
         {
             private readonly string automationId;
 
@@ -278,56 +278,56 @@ namespace Automate.CLI.Domain
                 automationId.GuardAgainstNullOrEmpty(nameof(automationId));
 
                 this.automationId = automationId;
-                Automation = new List<SolutionItemCommandPair>();
+                Automation = new List<DraftItemCommandPair>();
             }
 
-            public List<SolutionItemCommandPair> Automation { get; }
+            public List<DraftItemCommandPair> Automation { get; }
 
-            public bool VisitPatternEnter(SolutionItem item)
+            public bool VisitPatternEnter(DraftItem item)
             {
                 var automation = item.PatternSchema.FindAutomationById(this.automationId);
                 if (automation.Exists())
                 {
-                    Automation.Add(new SolutionItemCommandPair(automation, item));
+                    Automation.Add(new DraftItemCommandPair(automation, item));
                 }
 
                 return true;
             }
 
-            public bool VisitPatternExit(SolutionItem item)
+            public bool VisitPatternExit(DraftItem item)
             {
                 return true;
             }
 
-            public bool VisitElementEnter(SolutionItem item)
+            public bool VisitElementEnter(DraftItem item)
             {
                 var automation = item.ElementSchema.Automation.Safe()
                     .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(this.automationId));
                 if (automation.Exists())
                 {
-                    Automation.Add(new SolutionItemCommandPair(automation, item));
+                    Automation.Add(new DraftItemCommandPair(automation, item));
                 }
 
                 return true;
             }
 
-            public bool VisitElementExit(SolutionItem item)
+            public bool VisitElementExit(DraftItem item)
             {
                 return true;
             }
         }
     }
 
-    internal class SolutionItemCommandPair
+    internal class DraftItemCommandPair
     {
-        public SolutionItemCommandPair(IAutomationSchema automation, SolutionItem solutionItem)
+        public DraftItemCommandPair(IAutomationSchema automation, DraftItem draftItem)
         {
             Automation = automation;
-            SolutionItem = solutionItem;
+            DraftItem = draftItem;
         }
 
         public IAutomationSchema Automation { get; }
 
-        public SolutionItem SolutionItem { get; }
+        public DraftItem DraftItem { get; }
     }
 }

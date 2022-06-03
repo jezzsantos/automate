@@ -321,52 +321,52 @@ namespace Automate.CLI.Infrastructure
             };
             var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
             {
-                new Command("toolkit", "Creates a new solution from a toolkit")
+                new Command("toolkit", "Creates a new draft from a toolkit")
                 {
                     new Argument("PatternName", "The name of the pattern in the toolkit that you want to use"),
-                    new Option("--name", "A name for the solution", arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewSolution)),
-                new Command("switch", "Switches to configuring another solution")
+                    new Option("--name", "A name for the draft", arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleNewDraft)),
+                new Command("switch", "Switches to configuring another draft")
                 {
-                    new Argument("SolutionId", "The id of the existing solution to configure")
+                    new Argument("DraftId", "The id of the existing draft to configure")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSwitch))
             };
-            var configureCommands = new Command(ConfigureCommandName, "Configuring solutions to patterns from toolkits")
+            var configureCommands = new Command(ConfigureCommandName, "Configuring drafts to patterns from toolkits")
             {
-                new Command("add", "Configure an element in the solution")
+                new Command("add", "Configure an element in the draft")
                 {
                     new Argument("Expression", "The expression of the element to configure"),
                     new Option("--and-set", "A Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureAddTo)),
-                new Command("add-one-to", "Add a new item to a collection in the solution")
+                new Command("add-one-to", "Add a new item to a collection in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to add to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureAddOneTo)),
-                new Command("on", "Set the properties of an existing item in the solution")
+                new Command("on", "Set the properties of an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to assign to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureOn)),
-                new Command("reset", "Reset all the properties of an existing item in the solution")
+                new Command("reset", "Reset all the properties of an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element to reset")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureResetElement)),
-                new Command("clear", "Deletes all the items from an existing collection in the solution")
+                new Command("clear", "Deletes all the items from an existing collection in the draft")
                 {
                     new Argument("Expression", "The expression of the collection to clear")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureClearCollection)),
-                new Command("delete", "Deletes an existing item in the solution")
+                new Command("delete", "Deletes an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to delete")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureDelete))
             };
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
-                new Command("solution", "Validate the current solution")
+                new Command("draft", "Validate the current draft")
                 {
                     new Option("--on", "The expression of the element/collection to validate",
                         arity: ArgumentArity.ZeroOrOne)
@@ -374,7 +374,7 @@ namespace Automate.CLI.Infrastructure
             };
             var executeCommands = new Command(ExecuteCommandName, "Executing automation on patterns from toolkits")
             {
-                new Command("command", "Executes the launch point on the solution")
+                new Command("command", "Executes the launch point on the draft")
                 {
                     new Argument("Name", "The name of the launch point to execute"),
                     new Option("--on",
@@ -382,7 +382,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleExecuteCommand))
             };
-            var viewCommands = new Command(ViewCommandName, "Viewing patterns and solutions")
+            var viewCommands = new Command(ViewCommandName, "Viewing patterns and drafts")
             {
                 new Command("pattern", "View the configuration of the current pattern")
                 {
@@ -394,28 +394,28 @@ namespace Automate.CLI.Infrastructure
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewToolkit)),
-                new Command("solution", "View the configuration of the current solution")
+                new Command("draft", "View the configuration of the current draft")
                 {
                     new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool),
                         () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewSolution))
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleViewDraft))
             };
-            var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and solutions")
+            var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and drafts")
             {
                 new Command("patterns", "Lists all patterns being edited")
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleListPatterns)),
                 new Command("toolkits", "Lists all installed toolkits")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListToolkits)),
-                new Command("solutions", "Lists all solutions being configured")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListSolutions))
+                new Command("drafts", "Lists all drafts being configured")
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleListDrafts))
             };
-            var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and solutions")
+            var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and drafts")
             {
-                new Command("solution", "Upgrades a solution from a new version of its toolkit")
+                new Command("draft", "Upgrades a draft from a new version of its toolkit")
                     {
                         new Option("--force", "Force the upgrade despite any compatability errors")
                     }
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSolutionUpgrade))
+                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleDraftUpgrade))
             };
             var testingOnlyCommands = new Command("testingonly", "For testing only!")
             {
@@ -465,17 +465,17 @@ namespace Automate.CLI.Infrastructure
             }
             if (IsRuntimeCommand(args))
             {
-                if (IsRuntimeSolutionCommand(args))
+                if (IsRuntimeDraftCommand(args))
                 {
-                    if (Runtime.CurrentSolutionId.Exists())
+                    if (Runtime.CurrentDraftId.Exists())
                     {
                         ConsoleExtensions.WriteOutput(
-                            OutputMessages.CommandLine_Output_CurrentSolutionInUse.FormatTemplate(
-                                Runtime.CurrentSolutionName, Runtime.CurrentSolutionId), ConsoleColor.Gray);
+                            OutputMessages.CommandLine_Output_CurrentDraftInUse.FormatTemplate(
+                                Runtime.CurrentDraftName, Runtime.CurrentDraftId), ConsoleColor.Gray);
                     }
                     else
                     {
-                        ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoSolutionSelected);
+                        ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoDraftSelected);
                     }
                 }
             }
@@ -551,16 +551,16 @@ namespace Automate.CLI.Infrastructure
                 return false;
             }
 
-            var isViewSolutionCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "solution";
+            var isViewDraftCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "draft";
             var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
-            var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
+            var isListDraftsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "drafts";
 
             return args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
                    || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
-                   || isViewSolutionCommand || isListToolkitsCommand || isListSolutionsCommand;
+                   || isViewDraftCommand || isListToolkitsCommand || isListDraftsCommand;
         }
 
-        private static bool IsRuntimeSolutionCommand(IReadOnlyList<string> args)
+        private static bool IsRuntimeDraftCommand(IReadOnlyList<string> args)
         {
             if (args.Count < 1)
             {
@@ -568,10 +568,10 @@ namespace Automate.CLI.Infrastructure
             }
 
             var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
-            var isListSolutionsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "solutions";
+            var isListDraftsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "drafts";
 
             return args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand &&
-                   !isListSolutionsCommand;
+                   !isListDraftsCommand;
         }
 
         private static bool IsAuthoringCommand(IReadOnlyList<string> args)
@@ -895,30 +895,30 @@ namespace Automate.CLI.Infrastructure
 
         private class RuntimeHandlers
         {
-            internal static void HandleSolutionUpgrade(bool force, bool outputStructured, IConsole console)
+            internal static void HandleDraftUpgrade(bool force, bool outputStructured, IConsole console)
             {
-                var upgrade = Runtime.UpgradeSolution(force);
+                var upgrade = Runtime.UpgradeDraft(force);
                 if (upgrade.IsSuccess)
                 {
                     if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
                     {
                         console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning,
-                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName,
+                            OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
+                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
                             upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                     }
                     else
                     {
                         console.WriteOutput(outputStructured,
-                            OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded,
-                            upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName,
+                            OutputMessages.CommandLine_Output_DraftUpgradeSucceeded,
+                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
                             upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                     }
                 }
                 else
                 {
-                    console.WriteError(outputStructured, OutputMessages.CommandLine_Output_SolutionUpgradeFailed,
-                        upgrade.Solution.Name, upgrade.Solution.Id, upgrade.Solution.PatternName, upgrade.FromVersion,
+                    console.WriteError(outputStructured, OutputMessages.CommandLine_Output_DraftUpgradeFailed,
+                        upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName, upgrade.FromVersion,
                         upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
                 }
             }
@@ -945,35 +945,35 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void HandleNewSolution(string patternName, string name, bool outputStructured,
+            internal static void HandleNewDraft(string patternName, string name, bool outputStructured,
                 IConsole console)
             {
-                var solution = Runtime.CreateSolution(patternName, name);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateSolutionFromToolkit,
-                    solution.Name, solution.Id, solution.PatternName);
+                var draft = Runtime.CreateDraft(patternName, name);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
+                    draft.Name, draft.Id, draft.PatternName);
             }
 
-            internal static void HandleListSolutions(bool outputStructured, IConsole console)
+            internal static void HandleListDrafts(bool outputStructured, IConsole console)
             {
-                var solutions = Runtime.ListCreatedSolutions();
-                if (solutions.Any())
+                var drafts = Runtime.ListCreatedDrafts();
+                if (drafts.Any())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledSolutionsListed,
-                        solutions.ToMultiLineText(solution =>
-                            $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}"));
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledDraftsListed,
+                        drafts.ToMultiLineText(draft =>
+                            $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledSolutions);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledDrafts);
                 }
             }
 
-            internal static void HandleSwitch(string solutionId, bool outputStructured, IConsole console)
+            internal static void HandleSwitch(string draftId, bool outputStructured, IConsole console)
             {
-                Runtime.SwitchCurrentSolution(solutionId);
+                Runtime.SwitchCurrentDraft(draftId);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_SolutionSwitched, Runtime.CurrentSolutionName,
-                    Runtime.CurrentSolutionId);
+                    OutputMessages.CommandLine_Output_DraftSwitched, Runtime.CurrentDraftName,
+                    Runtime.CurrentDraftId);
             }
 
             internal static void HandleConfigureAddTo(string expression, string[] andSet, bool outputStructured,
@@ -989,9 +989,9 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var solutionItem = Runtime.ConfigureSolution(expression, null, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraft(expression, null, null, nameValues);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
+                    draftItem.Name, draftItem.Id);
             }
 
             internal static void HandleConfigureAddOneTo(string expression, string[] andSet, bool outputStructured,
@@ -1006,9 +1006,9 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var solutionItem = Runtime.ConfigureSolution(null, expression, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraft(null, expression, null, nameValues);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
+                    draftItem.Name, draftItem.Id);
             }
 
             internal static void HandleConfigureOn(string expression, string[] andSet, bool outputStructured,
@@ -1023,41 +1023,41 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var solutionItem = Runtime.ConfigureSolution(null, null, expression, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraft(null, null, expression, nameValues);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
+                    draftItem.Name, draftItem.Id);
             }
 
             internal static void HandleConfigureResetElement(string expression, bool outputStructured, IConsole console)
             {
-                var solutionItem = Runtime.ConfigureSolutionAndResetElement(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionResetElement,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraftAndResetElement(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftResetElement,
+                    draftItem.Name, draftItem.Id);
             }
 
             internal static void HandleConfigureClearCollection(string expression, bool outputStructured,
                 IConsole console)
             {
-                var solutionItem = Runtime.ConfigureSolutionAndClearCollection(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionEmptyCollection,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraftAndClearCollection(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftEmptyCollection,
+                    draftItem.Name, draftItem.Id);
             }
 
             internal static void HandleConfigureDelete(string expression, bool outputStructured, IConsole console)
             {
-                var solutionItem = Runtime.ConfigureSolutionAndDelete(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionDelete,
-                    solutionItem.Name, solutionItem.Id);
+                var draftItem = Runtime.ConfigureDraftAndDelete(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftDelete,
+                    draftItem.Name, draftItem.Id);
             }
 
-            internal static void HandleViewSolution(bool todo, bool outputStructured, IConsole console)
+            internal static void HandleViewDraft(bool todo, bool outputStructured, IConsole console)
             {
-                var (configuration, pattern, validation) = Runtime.GetSolutionConfiguration(todo, todo);
+                var (configuration, pattern, validation) = Runtime.GetDraftConfiguration(todo, todo);
 
-                var solutionId = Runtime.CurrentSolutionId;
-                var solutionName = Runtime.CurrentSolutionName;
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfiguration,
-                    solutionName, solutionId, configuration);
+                var draftId = Runtime.CurrentDraftId;
+                var draftName = Runtime.CurrentDraftName;
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfiguration,
+                    draftName, draftId, configuration);
 
                 if (todo)
                 {
@@ -1073,13 +1073,13 @@ namespace Automate.CLI.Infrastructure
                     if (validation.HasAny())
                     {
                         console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                            solutionName, solutionId, FormatValidationErrors(validation));
+                            OutputMessages.CommandLine_Output_DraftValidationFailed,
+                            draftName, draftId, FormatValidationErrors(validation));
                     }
                     else
                     {
                         console.WriteOutput(outputStructured,
-                            OutputMessages.CommandLine_Output_SolutionValidationSuccess, solutionName, solutionId);
+                            OutputMessages.CommandLine_Output_DraftValidationSuccess, draftName, draftId);
                     }
                 }
             }
@@ -1098,18 +1098,18 @@ namespace Automate.CLI.Infrastructure
             {
                 var results = Runtime.Validate(on);
 
-                var solutionId = Runtime.CurrentSolutionId;
-                var solutionName = Runtime.CurrentSolutionName;
+                var draftId = Runtime.CurrentDraftId;
+                var draftName = Runtime.CurrentDraftName;
                 if (results.HasAny())
                 {
                     console.WriteOutputWarning(outputStructured,
-                        OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                        solutionName, solutionId, FormatValidationErrors(results));
+                        OutputMessages.CommandLine_Output_DraftValidationFailed,
+                        draftName, draftId, FormatValidationErrors(results));
                 }
                 else
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionValidationSuccess,
-                        solutionName, solutionId);
+                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftValidationSuccess,
+                        draftName, draftId);
                 }
             }
 
@@ -1127,8 +1127,8 @@ namespace Automate.CLI.Infrastructure
                     if (execution.IsInvalid)
                     {
                         console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_SolutionValidationFailed,
-                            Runtime.CurrentSolutionName, Runtime.CurrentSolutionId,
+                            OutputMessages.CommandLine_Output_DraftValidationFailed,
+                            Runtime.CurrentDraftName, Runtime.CurrentDraftId,
                             FormatValidationErrors(execution.ValidationErrors));
                     }
                     else

@@ -142,6 +142,24 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to has more than one instance.
+        /// </summary>
+        internal static string DraftItem_ValidationRule_ElementHasMoreThanOneInstance {
+            get {
+                return ResourceManager.GetString("DraftItem_ValidationRule_ElementHasMoreThanOneInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to requires at least one instance.
+        /// </summary>
+        internal static string DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance {
+            get {
+                return ResourceManager.GetString("DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Id &apos;{0}&apos; is not a valid identifier.
         /// </summary>
         internal static string InvalidIdentifier {
@@ -156,24 +174,6 @@ namespace Automate.CLI.Domain {
         internal static string InvalidNameIdentifier {
             get {
                 return ResourceManager.GetString("InvalidNameIdentifier", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to has more than one instance.
-        /// </summary>
-        internal static string SolutionItem_ValidationRule_ElementHasMoreThanOneInstance {
-            get {
-                return ResourceManager.GetString("SolutionItem_ValidationRule_ElementHasMoreThanOneInstance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to requires at least one instance.
-        /// </summary>
-        internal static string SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance {
-            get {
-                return ResourceManager.GetString("SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance", resourceCulture);
             }
         }
     }

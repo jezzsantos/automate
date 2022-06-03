@@ -254,11 +254,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Solution &apos;{Name}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit: &apos;{PatternName}&apos;.
+        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos;.
         /// </summary>
-        internal static string CommandLine_Output_CreateSolutionFromToolkit {
+        internal static string CommandLine_Output_CreateDraftFromToolkit {
             get {
-                return ResourceManager.GetString("CommandLine_Output_CreateSolutionFromToolkit", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_CreateDraftFromToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft: &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is now being configured.
+        /// </summary>
+        internal static string CommandLine_Output_CurrentDraftInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CurrentDraftInUse", resourceCulture);
             }
         }
         
@@ -272,11 +281,106 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is now being configured.
+        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is configured as:
+        ///{Configuration}.
         /// </summary>
-        internal static string CommandLine_Output_CurrentSolutionInUse {
+        internal static string CommandLine_Output_DraftConfiguration {
             get {
-                return ResourceManager.GetString("CommandLine_Output_CurrentSolutionInUse", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_DraftConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
+        /// </summary>
+        internal static string CommandLine_Output_DraftConfigured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was deleted successfully.
+        /// </summary>
+        internal static string CommandLine_Output_DraftDelete {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was cleared successfully.
+        /// </summary>
+        internal static string CommandLine_Output_DraftEmptyCollection {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftEmptyCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was reset successfully.
+        /// </summary>
+        internal static string CommandLine_Output_DraftResetElement {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftResetElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft: &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is now the default.
+        /// </summary>
+        internal static string CommandLine_Output_DraftSwitched {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftSwitched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to upgrade Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_DraftUpgradeFailed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftUpgradeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully upgraded Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_DraftUpgradeSucceeded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftUpgradeSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aborted upgrade of Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///{Log}.
+        /// </summary>
+        internal static string CommandLine_Output_DraftUpgradeWithWarning {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftUpgradeWithWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is not correctly configured in these ways:
+        ///{Errors}.
+        /// </summary>
+        internal static string CommandLine_Output_DraftValidationFailed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftValidationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is configured correctly.
+        /// </summary>
+        internal static string CommandLine_Output_DraftValidationSuccess {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftValidationSuccess", resourceCulture);
             }
         }
         
@@ -318,18 +422,18 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created Solutions:
-        ///{Solutions}.
+        ///   Looks up a localized string similar to Created Drafts:
+        ///{Drafts}.
         /// </summary>
-        internal static string CommandLine_Output_InstalledSolutionsListed {
+        internal static string CommandLine_Output_InstalledDraftsListed {
             get {
-                return ResourceManager.GetString("CommandLine_Output_InstalledSolutionsListed", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_InstalledDraftsListed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command:
-        ///`automate run toolkit &lt;PatternName&gt; --name &quot;SolutionName&quot;`.
+        ///`automate run toolkit &lt;PatternName&gt; --name &quot;DraftName&quot;`.
         /// </summary>
         internal static string CommandLine_Output_InstalledToolkit {
             get {
@@ -375,6 +479,17 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Draft is being configured. You must first run one of these commands:
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;` to create a new draft from an existing toolkit, or
+        ///`automate run switch &lt;DraftID&gt;` to switch to this existing draft.
+        /// </summary>
+        internal static string CommandLine_Output_NoDraftSelected {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoDraftSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no editable Patterns yet.
         /// </summary>
         internal static string CommandLine_Output_NoEditablePatterns {
@@ -384,12 +499,12 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no Solutions yet. Use this command to create one:
-        ///`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;.
+        ///   Looks up a localized string similar to There are no Drafts yet. Use this command to create one:
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;.
         /// </summary>
-        internal static string CommandLine_Output_NoInstalledSolutions {
+        internal static string CommandLine_Output_NoInstalledDrafts {
             get {
-                return ResourceManager.GetString("CommandLine_Output_NoInstalledSolutions", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_NoInstalledDrafts", resourceCulture);
             }
         }
         
@@ -410,17 +525,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_NoPatternSelected {
             get {
                 return ResourceManager.GetString("CommandLine_Output_NoPatternSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Solution is being configured. You must first run one of these commands:
-        ///`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;` to create a new solution from an existing toolkit, or
-        ///`automate run switch &lt;SolutionID&gt;` to switch to this existing solution.
-        /// </summary>
-        internal static string CommandLine_Output_NoSolutionSelected {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoSolutionSelected", resourceCulture);
             }
         }
         
@@ -458,110 +562,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_PatternUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_PatternUpdated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is configured as:
-        ///{Configuration}.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionConfiguration {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was configured successfully.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionConfigured {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionConfigured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was deleted successfully.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionDelete {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was cleared successfully.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionEmptyCollection {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionEmptyCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was reset successfully.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionResetElement {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionResetElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Solution: &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is now the default.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionSwitched {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionSwitched", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to upgrade Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
-        ///{Log}.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionUpgradeFailed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Successfully upgraded Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
-        ///{Log}.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionUpgradeSucceeded {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeSucceeded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Aborted upgrade of Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
-        ///{Log}.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionUpgradeWithWarning {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionUpgradeWithWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is not correctly configured in these ways:
-        ///{Errors}.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionValidationFailed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionValidationFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Solution &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is configured correctly.
-        /// </summary>
-        internal static string CommandLine_Output_SolutionValidationSuccess {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_SolutionValidationSuccess", resourceCulture);
             }
         }
         

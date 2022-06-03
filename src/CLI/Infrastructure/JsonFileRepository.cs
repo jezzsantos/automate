@@ -7,20 +7,20 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal class JsonFileRepository : IPatternRepository, IToolkitRepository, ISolutionRepository,
+    internal class JsonFileRepository : IPatternRepository, IToolkitRepository, IDraftRepository,
         ILocalStateRepository
     {
         private const string PatternDefinitionFilename = "Pattern.json";
         private const string ToolkitDefinitionFilename = "Toolkit.json";
-        private const string SolutionDefinitionFilename = "Solution.json";
+        private const string DraftDefinitionFilename = "Draft.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
         private const string ToolkitInstallerFileExtension = ".toolkit";
         private static readonly string PatternDirectoryPath =
             Path.Combine(InfrastructureConstants.RootPersistencePath, "patterns");
         private static readonly string ToolkitDirectoryPath =
             Path.Combine(InfrastructureConstants.RootPersistencePath, "toolkits");
-        private static readonly string SolutionDirectoryPath =
-            Path.Combine(InfrastructureConstants.RootPersistencePath, "solutions");
+        private static readonly string DraftDirectoryPath =
+            Path.Combine(InfrastructureConstants.RootPersistencePath, "drafts");
         private readonly string currentDirectory;
         private readonly ILocalStateRepository localStateRepository;
         private readonly IPersistableFactory persistableFactory;
@@ -143,9 +143,9 @@ namespace Automate.CLI.Infrastructure
                     .ToList()
                     .ForEach(directory => Directory.Delete(directory, true));
             }
-            if (Directory.Exists(SolutionLocation))
+            if (Directory.Exists(DraftLocation))
             {
-                Directory.GetDirectories(SolutionLocation)
+                Directory.GetDirectories(DraftLocation)
                     .ToList()
                     .ForEach(directory => Directory.Delete(directory, true));
             }
@@ -163,52 +163,52 @@ namespace Automate.CLI.Infrastructure
             this.localStateRepository.DestroyAll();
         }
 
-        public string SolutionLocation => Path.Combine(this.currentDirectory, SolutionDirectoryPath);
+        public string DraftLocation => Path.Combine(this.currentDirectory, DraftDirectoryPath);
 
-        public void NewSolution(SolutionDefinition solution)
+        public void NewDraft(DraftDefinition draft)
         {
-            UpsertSolution(solution);
+            UpsertDraft(draft);
         }
 
-        public void UpsertSolution(SolutionDefinition solution)
+        public void UpsertDraft(DraftDefinition draft)
         {
-            var filename = CreateFilenameForSolutionById(solution.Id);
+            var filename = CreateFilenameForDraftById(draft.Id);
             EnsurePathExists(filename);
 
             using (var file = File.CreateText(filename))
             {
-                file.Write(solution.ToJson(this.persistableFactory));
+                file.Write(draft.ToJson(this.persistableFactory));
             }
         }
 
-        public SolutionDefinition GetSolution(string id)
+        public DraftDefinition GetDraft(string id)
         {
-            var filename = CreateFilenameForSolutionById(id);
+            var filename = CreateFilenameForDraftById(id);
             if (!File.Exists(filename))
             {
-                throw new AutomateException(ExceptionMessages.JsonFileRepository_SolutionNotFound.Format(id));
+                throw new AutomateException(ExceptionMessages.JsonFileRepository_DraftNotFound.Format(id));
             }
 
-            return File.ReadAllText(filename).FromJson<SolutionDefinition>(this.persistableFactory);
+            return File.ReadAllText(filename).FromJson<DraftDefinition>(this.persistableFactory);
         }
 
-        public List<SolutionDefinition> ListSolutions()
+        public List<DraftDefinition> ListDrafts()
         {
-            if (!Directory.Exists(SolutionLocation))
+            if (!Directory.Exists(DraftLocation))
             {
-                return new List<SolutionDefinition>();
+                return new List<DraftDefinition>();
             }
 
-            return Directory.GetDirectories(SolutionLocation)
+            return Directory.GetDirectories(DraftLocation)
                 .Select(path => new DirectoryInfo(path).Name)
-                .Select(GetSolution)
+                .Select(GetDraft)
                 .ToList();
         }
 
-        public SolutionDefinition FindSolutionById(string id)
+        public DraftDefinition FindDraftById(string id)
         {
-            return ListSolutions()
-                .FirstOrDefault(solution => solution.Id == id);
+            return ListDrafts()
+                .FirstOrDefault(draft => draft.Id == id);
         }
 
         public List<ToolkitDefinition> ListToolkits()
@@ -339,15 +339,15 @@ namespace Automate.CLI.Infrastructure
             return Path.Combine(ToolkitLocation, id);
         }
 
-        private string CreateFilenameForSolutionById(string id)
+        private string CreateFilenameForDraftById(string id)
         {
-            var location = CreatePathForSolution(id);
-            return Path.Combine(location, SolutionDefinitionFilename);
+            var location = CreatePathForDraft(id);
+            return Path.Combine(location, DraftDefinitionFilename);
         }
 
-        private string CreatePathForSolution(string id)
+        private string CreatePathForDraft(string id)
         {
-            return Path.Combine(SolutionLocation, id);
+            return Path.Combine(DraftLocation, id);
         }
     }
 }

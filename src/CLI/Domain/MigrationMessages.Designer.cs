@@ -63,122 +63,122 @@ namespace Automate.CLI.Domain {
         /// <summary>
         ///   Looks up a localized string similar to Failed, the updated toolkit (Name: &apos;{Name}&apos; v{Version}) contains at least one breaking change, and therefore cannot be automatically upgraded.
         /// </summary>
-        internal static string SolutionDefinition_Upgrade_BreakingChangeForbidden {
+        internal static string DraftDefinition_Upgrade_BreakingChangeForbidden {
             get {
-                return ResourceManager.GetString("SolutionDefinition_Upgrade_BreakingChangeForbidden", resourceCulture);
+                return ResourceManager.GetString("DraftDefinition_Upgrade_BreakingChangeForbidden", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Upgrade was forcefully applied despite the toolkit (Name: &apos;{Name}&apos; v{Version}) indicating a breaking change. The integrity of the upgraded solution cannot be guaranteed, and may need to be updated.
+        ///   Looks up a localized string similar to Upgrade was forcefully applied despite the toolkit (Name: &apos;{Name}&apos; v{Version}) indicating a breaking change. The integrity of the upgraded draft cannot be guaranteed, and may need to be updated.
         /// </summary>
-        internal static string SolutionDefinition_Upgrade_BreakingChangeForced {
+        internal static string DraftDefinition_Upgrade_BreakingChangeForced {
             get {
-                return ResourceManager.GetString("SolutionDefinition_Upgrade_BreakingChangeForced", resourceCulture);
+                return ResourceManager.GetString("DraftDefinition_Upgrade_BreakingChangeForced", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Skipped, a newer version of the toolkit (Name: &apos;{Name}&apos; v{Version}) has not been installed yet.
         /// </summary>
-        internal static string SolutionDefinition_Upgrade_SameToolkitVersion {
+        internal static string DraftDefinition_Upgrade_SameToolkitVersion {
             get {
-                return ResourceManager.GetString("SolutionDefinition_Upgrade_SameToolkitVersion", resourceCulture);
+                return ResourceManager.GetString("DraftDefinition_Upgrade_SameToolkitVersion", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added attribute &apos;{Path}&apos; to solution, with value of &apos;{NewValue}&apos;.
+        ///   Looks up a localized string similar to Added attribute &apos;{Path}&apos; to draft, with value of &apos;{NewValue}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeAdded {
+        internal static string DraftItem_AttributeAdded {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeAdded", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeAdded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Added Choices to attribute &apos;{Path}&apos;, and changed current value to &apos;{Value}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeChoicesAdded {
+        internal static string DraftItem_AttributeChoicesAdded {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeChoicesAdded", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeChoicesAdded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Changed Choices of attribute &apos;{Path}&apos;, and changed current value from &apos;{Value}&apos; to &apos;{NewChoice}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeChoicesChanged {
+        internal static string DraftItem_AttributeChoicesChanged {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeChoicesChanged", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeChoicesChanged", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Deleted Choices from attribute &apos;{Path}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeChoicesDeleted {
+        internal static string DraftItem_AttributeChoicesDeleted {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeChoicesDeleted", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeChoicesDeleted", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Changed DataTye of attribute &apos;{Path}&apos; from &apos;{OldDataType}&apos; to &apos;{NewDataType}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeDataTypeChanged {
+        internal static string DraftItem_AttributeDataTypeChanged {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeDataTypeChanged", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeDataTypeChanged", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Changed DefaultValue of attribute &apos;{Path}&apos;, and changed the current default value from &apos;{Value}&apos; to &apos;{NewDefault}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeDefaultValueChanged {
+        internal static string DraftItem_AttributeDefaultValueChanged {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeDefaultValueChanged", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeDefaultValueChanged", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted attribute &apos;{Path}&apos; from solution.
+        ///   Looks up a localized string similar to Deleted attribute &apos;{Path}&apos; from draft.
         /// </summary>
-        internal static string SolutionItem_AttributeDeleted {
+        internal static string DraftItem_AttributeDeleted {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeDeleted", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeDeleted", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Changed Name of attribute &apos;{Path}&apos; from &apos;{OldName}&apos; to &apos;{NewName}&apos;.
         /// </summary>
-        internal static string SolutionItem_AttributeNameChanged {
+        internal static string DraftItem_AttributeNameChanged {
             get {
-                return ResourceManager.GetString("SolutionItem_AttributeNameChanged", resourceCulture);
+                return ResourceManager.GetString("DraftItem_AttributeNameChanged", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added element &apos;{Path}&apos; to solution.
+        ///   Looks up a localized string similar to Added element &apos;{Path}&apos; to draft.
         /// </summary>
-        internal static string SolutionItem_ElementAdded {
+        internal static string DraftItem_ElementAdded {
             get {
-                return ResourceManager.GetString("SolutionItem_ElementAdded", resourceCulture);
+                return ResourceManager.GetString("DraftItem_ElementAdded", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted element &apos;{Path}&apos; from solution.
+        ///   Looks up a localized string similar to Deleted element &apos;{Path}&apos; from draft.
         /// </summary>
-        internal static string SolutionItem_ElementDeleted {
+        internal static string DraftItem_ElementDeleted {
             get {
-                return ResourceManager.GetString("SolutionItem_ElementDeleted", resourceCulture);
+                return ResourceManager.GetString("DraftItem_ElementDeleted", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added new Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to solution.
+        ///   Looks up a localized string similar to Added new Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to draft.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_Added {
             get {
@@ -187,7 +187,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Changed contents of Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) in solution.
+        ///   Looks up a localized string similar to Changed contents of Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) in draft.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_ContentUpgraded {
             get {
@@ -196,7 +196,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) from solution.
+        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) from draft.
         /// </summary>
         internal static string ToolkitDefinition_CodeTemplateFile_Deleted {
             get {

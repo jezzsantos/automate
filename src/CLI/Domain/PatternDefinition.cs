@@ -63,59 +63,59 @@ namespace Automate.CLI.Domain
             return finder.Automation;
         }
 
-        public SolutionDefinition CreateTestSolution()
+        public DraftDefinition CreateTestDraft()
         {
             const int maxNumberInstances = 3;
 
-            var solution = new SolutionDefinition(new ToolkitDefinition(this));
-            PopulateDescendants(solution.Model, 1);
-            return solution;
+            var draft = new DraftDefinition(new ToolkitDefinition(this));
+            PopulateDescendants(draft.Model, 1);
+            return draft;
 
-            void PopulateDescendants(SolutionItem solutionItem, int instanceCountAtThisLevel)
+            void PopulateDescendants(DraftItem draftItem, int instanceCountAtThisLevel)
             {
-                if (solutionItem.IsPattern)
+                if (draftItem.IsPattern)
                 {
-                    PopulatePatternElement(solutionItem, solutionItem.PatternSchema, instanceCountAtThisLevel);
+                    PopulatePatternElement(draftItem, draftItem.PatternSchema, instanceCountAtThisLevel);
                 }
-                if (solutionItem.IsElement)
+                if (draftItem.IsElement)
                 {
-                    if (!solutionItem.IsMaterialised)
+                    if (!draftItem.IsMaterialised)
                     {
-                        solutionItem.Materialise();
+                        draftItem.Materialise();
                     }
-                    PopulatePatternElement(solutionItem, solutionItem.ElementSchema, instanceCountAtThisLevel);
+                    PopulatePatternElement(draftItem, draftItem.ElementSchema, instanceCountAtThisLevel);
                 }
-                if (solutionItem.IsEphemeralCollection)
+                if (draftItem.IsEphemeralCollection)
                 {
-                    solutionItem.MaterialiseCollectionItem();
-                    var existingCount = solutionItem.Items.Safe().Count();
-                    if (solutionItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
+                    draftItem.MaterialiseCollectionItem();
+                    var existingCount = draftItem.Items.Safe().Count();
+                    if (draftItem.ElementSchema.HasCardinalityOfMany() && existingCount < maxNumberInstances)
                     {
-                        Repeat.Times(() => { solutionItem.MaterialiseCollectionItem(); },
+                        Repeat.Times(() => { draftItem.MaterialiseCollectionItem(); },
                             maxNumberInstances - existingCount);
                     }
 
                     var counter = 0;
-                    solutionItem.Items.ToListSafe().ForEach(itm => { PopulateDescendants(itm, ++counter); });
+                    draftItem.Items.ToListSafe().ForEach(itm => { PopulateDescendants(itm, ++counter); });
                 }
             }
 
-            void PopulatePatternElement(SolutionItem solutionItem, IPatternElementSchema schema,
+            void PopulatePatternElement(DraftItem draftItem, IPatternElementSchema schema,
                 int instanceCountAtThisLevel)
             {
                 schema.Attributes.ToListSafe().ForEach(attr =>
                 {
-                    PopulateAttribute(solutionItem, attr, instanceCountAtThisLevel);
+                    PopulateAttribute(draftItem, attr, instanceCountAtThisLevel);
                 });
                 schema.Elements.ToListSafe().ForEach(ele =>
                 {
-                    PopulateDescendants(solutionItem.Properties[ele.Name], instanceCountAtThisLevel);
+                    PopulateDescendants(draftItem.Properties[ele.Name], instanceCountAtThisLevel);
                 });
             }
 
-            void PopulateAttribute(SolutionItem solutionItem, IAttributeSchema schema, int instanceCountAtThisLevel)
+            void PopulateAttribute(DraftItem draftItem, IAttributeSchema schema, int instanceCountAtThisLevel)
             {
-                var prop = solutionItem.GetProperty(schema.Name);
+                var prop = draftItem.GetProperty(schema.Name);
                 if (!prop.HasDefaultValue)
                 {
                     object testValue;

@@ -51,10 +51,10 @@
     <data name="Attribute_ValidationRule_WrongDataTypeValue" xml:space="preserve">
         <value>has a value of '{0}' which is not of the correct data type '{1}'</value>
     </data>
-    <data name="SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance" xml:space="preserve">
+    <data name="DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance" xml:space="preserve">
         <value>requires at least one instance</value>
     </data>
-    <data name="SolutionItem_ValidationRule_ElementHasMoreThanOneInstance" xml:space="preserve">
+    <data name="DraftItem_ValidationRule_ElementHasMoreThanOneInstance" xml:space="preserve">
         <value>has more than one instance</value>
     </data>
     <data name="Attribute_DefaultValueIsNotAChoice" xml:space="preserve">

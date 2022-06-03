@@ -424,7 +424,7 @@ namespace Automate.CLI.Application
                     textTemplate, data);
             }
 
-            string GenerateGeneratedCode(LazySolutionItemDictionary data)
+            string GenerateGeneratedCode(LazyDraftItemDictionary data)
             {
                 return this.textTemplatingEngine.Transform(
                     ApplicationMessages.AuthoringApplication_TestCodeTemplate_Description.Format(codeTemplate.Id),
@@ -462,20 +462,20 @@ namespace Automate.CLI.Application
                 return importedData;
             }
 
-            LazySolutionItemDictionary GenerateTestData()
+            LazyDraftItemDictionary GenerateTestData()
             {
-                var solution = pattern.CreateTestSolution();
-                var solutionItem = solution.FindByCodeTemplate(codeTemplate.Id);
-                if (solutionItem.NotExists())
+                var draft = pattern.CreateTestDraft();
+                var draftItem = draft.FindByCodeTemplate(codeTemplate.Id);
+                if (draftItem.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestSolution
+                        ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestDraft
                             .Format(codeTemplate.Id));
                 }
-                return solutionItem.GetConfiguration(true);
+                return draftItem.GetConfiguration(true);
             }
 
-            void ExportResult(LazySolutionItemDictionary data)
+            void ExportResult(LazyDraftItemDictionary data)
             {
                 var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
                 try

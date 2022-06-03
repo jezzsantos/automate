@@ -163,9 +163,9 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenCreateTestSolutionAndOnlyPattern_ThenReturnsTestPattern()
+        public void WhenCreateTestDraftAndOnlyPattern_ThenReturnsTestPattern()
         {
-            var result = this.pattern.CreateTestSolution();
+            var result = this.pattern.CreateTestDraft();
 
             result.PatternName.Should().Be("aname");
             result.Toolkit.Version.Should().Be("0.0.0");
@@ -176,7 +176,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenCreateTestSolutionAndDescendantElements_ThenReturnsTestPattern()
+        public void WhenCreateTestDraftAndDescendantElements_ThenReturnsTestPattern()
         {
             var date = DateTime.UtcNow;
             var element1 = new Element("anelement1");
@@ -193,7 +193,7 @@ namespace CLI.UnitTests.Domain
             element1.AddElement(element2);
             this.pattern.AddElement(element1);
 
-            var result = this.pattern.CreateTestSolution();
+            var result = this.pattern.CreateTestDraft();
 
             result.Model.Properties.Should().ContainSingle(x => x.Value.Name == "anelement1");
             result.Model.Properties["anelement1"].Properties.Should().ContainSingle(x => x.Value.Name == "anelement2");
@@ -207,7 +207,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenCreateTestSolutionAndDescendantCollections_ThenReturnsTestPattern()
+        public void WhenCreateTestDraftAndDescendantCollections_ThenReturnsTestPattern()
         {
             var collection1 = new Element("acollection1", ElementCardinality.OneOrMany);
             var collection2 = new Element("acollection2", ElementCardinality.OneOrMany);
@@ -223,7 +223,7 @@ namespace CLI.UnitTests.Domain
             collection1.AddElement(collection2);
             this.pattern.AddElement(collection1);
 
-            var result = this.pattern.CreateTestSolution();
+            var result = this.pattern.CreateTestDraft();
 
             result.Model.Properties.Should().ContainSingle(x => x.Value.Name == "acollection1");
             result.Model.Properties["acollection1"].Items.Count.Should().Be(3);

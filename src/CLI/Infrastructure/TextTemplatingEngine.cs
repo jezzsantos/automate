@@ -6,12 +6,12 @@ namespace Automate.CLI.Infrastructure
 {
     internal class TextTemplatingEngine : ITextTemplatingEngine
     {
-        public string Transform(string description, string textTemplate, SolutionItem solutionItem)
+        public string Transform(string description, string textTemplate, DraftItem draftItem)
         {
-            solutionItem.GuardAgainstNull(nameof(solutionItem));
+            draftItem.GuardAgainstNull(nameof(draftItem));
             description.GuardAgainstNullOrEmpty(nameof(description));
 
-            var configuration = solutionItem.GetConfiguration(true);
+            var configuration = draftItem.GetConfiguration(true);
 
             return configuration.Transform(description, textTemplate);
         }

@@ -11,21 +11,21 @@ namespace Automate.CLI.Domain
         {
             CurrentPattern = properties.Rehydrate<string>(factory, nameof(CurrentPattern));
             CurrentToolkit = properties.Rehydrate<string>(factory, nameof(CurrentToolkit));
-            CurrentSolution = properties.Rehydrate<string>(factory, nameof(CurrentSolution));
+            CurrentDraft = properties.Rehydrate<string>(factory, nameof(CurrentDraft));
         }
 
         public string CurrentPattern { get; private set; } = null!;
 
         public string CurrentToolkit { get; private set; } = null!;
 
-        public string CurrentSolution { get; private set; } = null!;
+        public string CurrentDraft { get; private set; } = null!;
 
         public PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
             properties.Dehydrate(nameof(CurrentPattern), CurrentPattern);
             properties.Dehydrate(nameof(CurrentToolkit), CurrentToolkit);
-            properties.Dehydrate(nameof(CurrentSolution), CurrentSolution);
+            properties.Dehydrate(nameof(CurrentDraft), CurrentDraft);
 
             return properties;
         }
@@ -45,9 +45,9 @@ namespace Automate.CLI.Domain
             CurrentToolkit = id;
         }
 
-        public void SetCurrentSolution(string id)
+        public void SetCurrentDraft(string id)
         {
-            CurrentSolution = id;
+            CurrentDraft = id;
         }
     }
 }

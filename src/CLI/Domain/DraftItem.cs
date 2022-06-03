@@ -6,21 +6,21 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionItem : IIdentifiableEntity, IPersistable, ISolutionItemVisitable
+    internal class DraftItem : IIdentifiableEntity, IPersistable, IDraftItemVisitable
     {
         private readonly List<ArtifactLink> artifactLinks;
 
         // ReSharper disable once InconsistentNaming
         private object _value;
-        private List<SolutionItem> items;
-        private Dictionary<string, SolutionItem> properties;
+        private List<DraftItem> items;
+        private Dictionary<string, DraftItem> properties;
 
-        public SolutionItem(ToolkitDefinition toolkit, PatternDefinition pattern) : this(toolkit, pattern.ToSchema())
+        public DraftItem(ToolkitDefinition toolkit, PatternDefinition pattern) : this(toolkit, pattern.ToSchema())
         {
         }
 
-        private SolutionItem(ToolkitDefinition toolkit, IPatternSchema pattern)
-            : this(pattern.Name, toolkit, null, new SolutionItemSchema(pattern.Id, SolutionItemSchemaType.Pattern))
+        private DraftItem(ToolkitDefinition toolkit, IPatternSchema pattern)
+            : this(pattern.Name, toolkit, null, new DraftItemSchema(pattern.Id, DraftItemSchemaType.Pattern))
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             pattern.GuardAgainstNull(nameof(pattern));
@@ -28,18 +28,18 @@ namespace Automate.CLI.Domain
             MaterialisePatternElement(toolkit, pattern, false);
         }
 
-        public SolutionItem(ToolkitDefinition toolkit, Element element, SolutionItem parent,
+        public DraftItem(ToolkitDefinition toolkit, Element element, DraftItem parent,
             bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent, isCollectionItem)
         {
         }
 
-        private SolutionItem(ToolkitDefinition toolkit, IElementSchema element, SolutionItem parent,
+        private DraftItem(ToolkitDefinition toolkit, IElementSchema element, DraftItem parent,
             bool isCollectionItem)
-            : this(element.Name, toolkit, parent, new SolutionItemSchema(element.Id, isCollectionItem
-                ? SolutionItemSchemaType.CollectionItem
+            : this(element.Name, toolkit, parent, new DraftItemSchema(element.Id, isCollectionItem
+                ? DraftItemSchemaType.CollectionItem
                 : element.IsCollection
-                    ? SolutionItemSchemaType.EphemeralCollection
-                    : SolutionItemSchemaType.Element))
+                    ? DraftItemSchemaType.EphemeralCollection
+                    : DraftItemSchemaType.Element))
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             element.GuardAgainstNull(nameof(element));
@@ -47,14 +47,14 @@ namespace Automate.CLI.Domain
             UnMaterialise();
         }
 
-        public SolutionItem(ToolkitDefinition toolkit, Attribute attribute, SolutionItem parent) : this(toolkit,
+        public DraftItem(ToolkitDefinition toolkit, Attribute attribute, DraftItem parent) : this(toolkit,
             attribute.ToSchema(), parent)
         {
         }
 
-        private SolutionItem(ToolkitDefinition toolkit, IAttributeSchema attribute, SolutionItem parent)
+        private DraftItem(ToolkitDefinition toolkit, IAttributeSchema attribute, DraftItem parent)
             : this(attribute.Name, toolkit, parent,
-                new SolutionItemSchema(attribute.Id, SolutionItemSchemaType.Attribute))
+                new DraftItemSchema(attribute.Id, DraftItemSchemaType.Attribute))
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             attribute.GuardAgainstNull(nameof(attribute));
@@ -62,7 +62,7 @@ namespace Automate.CLI.Domain
             MaterialiseAttribute(attribute);
         }
 
-        private SolutionItem(string name, ToolkitDefinition toolkit, SolutionItem parent, SolutionItemSchema schema)
+        private DraftItem(string name, ToolkitDefinition toolkit, DraftItem parent, DraftItemSchema schema)
         {
             Id = IdGenerator.Create();
             Name = name;
@@ -72,23 +72,23 @@ namespace Automate.CLI.Domain
             this.artifactLinks = new List<ArtifactLink>();
         }
 
-        private SolutionItem(PersistableProperties properties, IPersistableFactory factory)
+        private DraftItem(PersistableProperties properties, IPersistableFactory factory)
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
-            Schema = properties.Rehydrate<SolutionItemSchema>(factory, nameof(Schema));
+            Schema = properties.Rehydrate<DraftItemSchema>(factory, nameof(Schema));
             this._value = properties.Rehydrate<object>(factory, nameof(Value));
-            this.properties = properties.Rehydrate<Dictionary<string, SolutionItem>>(factory, nameof(Properties));
-            this.items = properties.Rehydrate<List<SolutionItem>>(factory, nameof(Items));
+            this.properties = properties.Rehydrate<Dictionary<string, DraftItem>>(factory, nameof(Properties));
+            this.items = properties.Rehydrate<List<DraftItem>>(factory, nameof(Items));
             IsMaterialised = properties.Rehydrate<bool>(factory, nameof(IsMaterialised));
             this.artifactLinks = properties.Rehydrate<List<ArtifactLink>>(factory, nameof(ArtifactLinks));
         }
 
-        public SolutionItem Parent { get; private set; }
+        public DraftItem Parent { get; private set; }
 
         private ToolkitDefinition Toolkit { get; set; }
 
-        public SolutionItemSchema Schema { get; }
+        public DraftItemSchema Schema { get; }
 
         public IPatternSchema PatternSchema => Schema.ResolveSchema<IPatternSchema>(Toolkit);
 
@@ -104,22 +104,22 @@ namespace Automate.CLI.Domain
                 : value;
         }
 
-        public IReadOnlyDictionary<string, SolutionItem> Properties => this.properties;
+        public IReadOnlyDictionary<string, DraftItem> Properties => this.properties;
 
-        public IReadOnlyList<SolutionItem> Items => this.items;
+        public IReadOnlyList<DraftItem> Items => this.items;
 
         public string Name { get; }
 
         public bool IsMaterialised { get; private set; }
 
-        public bool IsPattern => Schema.SchemaType == SolutionItemSchemaType.Pattern;
+        public bool IsPattern => Schema.SchemaType == DraftItemSchemaType.Pattern;
 
         public bool IsElement =>
-            Schema.SchemaType is SolutionItemSchemaType.Element or SolutionItemSchemaType.CollectionItem;
+            Schema.SchemaType is DraftItemSchemaType.Element or DraftItemSchemaType.CollectionItem;
 
-        public bool IsEphemeralCollection => Schema.SchemaType == SolutionItemSchemaType.EphemeralCollection;
+        public bool IsEphemeralCollection => Schema.SchemaType == DraftItemSchemaType.EphemeralCollection;
 
-        public bool IsAttribute => Schema.SchemaType == SolutionItemSchemaType.Attribute;
+        public bool IsAttribute => Schema.SchemaType == DraftItemSchemaType.Attribute;
 
         public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
 
@@ -142,17 +142,17 @@ namespace Automate.CLI.Domain
             return props;
         }
 
-        public static SolutionItem Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        public static DraftItem Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
-            return new SolutionItem(properties, factory);
+            return new DraftItem(properties, factory);
         }
 
-        public SolutionItem Materialise(object value = null)
+        public DraftItem Materialise(object value = null)
         {
             if (IsPattern)
             {
                 throw new AutomateException(
-                    ExceptionMessages.SolutionItem_PatternAlreadyMaterialised.Format(PatternSchema.Name));
+                    ExceptionMessages.DraftItem_PatternAlreadyMaterialised.Format(PatternSchema.Name));
             }
 
             if (IsElement || IsEphemeralCollection)
@@ -165,7 +165,7 @@ namespace Automate.CLI.Domain
             }
             else
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_ValueAlreadyMaterialised);
+                throw new AutomateException(ExceptionMessages.DraftItem_ValueAlreadyMaterialised);
             }
 
             return this;
@@ -176,11 +176,11 @@ namespace Automate.CLI.Domain
         ///     This ephemeral collection is never actually operated upon. Only <see cref="Items" /> in its collection are operated
         ///     on.
         /// </summary>
-        public SolutionItem MaterialiseCollectionItem()
+        public DraftItem MaterialiseCollectionItem()
         {
             if (!IsEphemeralCollection)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_MaterialiseNotACollection);
+                throw new AutomateException(ExceptionMessages.DraftItem_MaterialiseNotACollection);
             }
 
             if (!IsMaterialised)
@@ -210,22 +210,22 @@ namespace Automate.CLI.Domain
             return false;
         }
 
-        public SolutionItemProperty GetProperty(string name)
+        public DraftItemProperty GetProperty(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             if (!IsMaterialised)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_NotMaterialised);
+                throw new AutomateException(ExceptionMessages.DraftItem_NotMaterialised);
             }
 
             if (Properties.NotExists()
                 || !Properties.ContainsKey(name))
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_NotAProperty.Format(name));
+                throw new AutomateException(ExceptionMessages.DraftItem_NotAProperty.Format(name));
             }
 
-            return new SolutionItemProperty(Properties[name]);
+            return new DraftItemProperty(Properties[name]);
         }
 
         public ValidationResults Validate()
@@ -236,7 +236,7 @@ namespace Automate.CLI.Domain
         }
 
         /// <summary>
-        ///     Returns the populated configuration of the current <see cref="SolutionItem" />.
+        ///     Returns the populated configuration of the current <see cref="DraftItem" />.
         ///     Entries in this <see cref="Dictionary{K,V}" /> will only contain the values (at the leaves of the hierarchy)
         /// </summary>
         /// <param name="includeAncestry">
@@ -244,29 +244,29 @@ namespace Automate.CLI.Domain
         ///     Warning: Will cause cyclic overflows if attempt is made to render a physical representation of this graph (i.e
         ///     serialization).
         /// </param>
-        public LazySolutionItemDictionary GetConfiguration(bool includeAncestry)
+        public LazyDraftItemDictionary GetConfiguration(bool includeAncestry)
         {
             if (!IsPattern && !IsElement && !IsEphemeralCollection)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_ConfigurationForNonElement);
+                throw new AutomateException(ExceptionMessages.DraftItem_ConfigurationForNonElement);
             }
 
-            return new LazySolutionItemDictionary(this, includeAncestry);
+            return new LazyDraftItemDictionary(this, includeAncestry);
         }
 
-        public CommandExecutionResult ExecuteCommand(SolutionDefinition solution, string name)
+        public CommandExecutionResult ExecuteCommand(DraftDefinition draft, string name)
         {
-            solution.GuardAgainstNull(nameof(solution));
+            draft.GuardAgainstNull(nameof(draft));
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             var command = GetAutomationByName(name);
             if (command.NotExists())
             {
                 throw new AutomateException(
-                    ExceptionMessages.SolutionItem_UnknownAutomation.Format(name));
+                    ExceptionMessages.DraftItem_UnknownAutomation.Format(name));
             }
 
-            return command.Execute(solution, this);
+            return command.Execute(draft, this);
         }
 
         public void AddArtifactLink(string commandId, string path, string tag)
@@ -275,10 +275,10 @@ namespace Automate.CLI.Domain
             this.artifactLinks.Add(link);
         }
 
-        public void SetAncestry(ToolkitDefinition toolkit, SolutionItem parent)
+        public void SetAncestry(ToolkitDefinition toolkit, DraftItem parent)
         {
             Toolkit = toolkit;
-            Parent = Schema.SchemaType == SolutionItemSchemaType.CollectionItem
+            Parent = Schema.SchemaType == DraftItemSchemaType.CollectionItem
                 ? parent?.Parent
                 : parent;
         }
@@ -291,12 +291,12 @@ namespace Automate.CLI.Domain
             {
                 var assignment = $"{name}={value}";
                 assignment.GuardAgainstInvalid(_ => Validations.IsPropertyAssignment(name, value), nameof(assignment),
-                    ExceptionMessages.SolutionItem_ConfigureSolution_PropertyAssignmentInvalid, name, Id);
+                    ExceptionMessages.DraftItem_Configure_PropertyAssignmentInvalid, name, Id);
 
                 if (!HasAttribute(name))
                 {
                     throw new AutomateException(
-                        ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyNotExists.Format(Name, name));
+                        ExceptionMessages.DraftItem_Configure_ElementPropertyNotExists.Format(Name, name));
                 }
 
                 var property = GetProperty(name);
@@ -305,7 +305,7 @@ namespace Automate.CLI.Domain
                     if (!property.HasChoice(value))
                     {
                         throw new AutomateException(
-                            ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf
+                            ExceptionMessages.DraftItem_Configure_ElementPropertyValueIsNotOneOf
                                 .Format(Name, name, property.ChoiceValues.Join(";"), value));
                     }
                 }
@@ -314,7 +314,7 @@ namespace Automate.CLI.Domain
                     if (!property.DataTypeMatches(value))
                     {
                         throw new AutomateException(
-                            ExceptionMessages.SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible
+                            ExceptionMessages.DraftItem_Configure_ElementPropertyValueNotCompatible
                                 .Format(Name, name, property.DataType, value));
                     }
                 }
@@ -323,7 +323,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public void Migrate(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+        public void Migrate(ToolkitDefinition latestToolkit, DraftUpgradeResult result)
         {
             var migrator = new SchemaMigrator(latestToolkit, result);
             TraverseDescendants(migrator);
@@ -333,7 +333,7 @@ namespace Automate.CLI.Domain
         {
             if (!IsPattern && !IsElement)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_ResetPropertiesForNonElement);
+                throw new AutomateException(ExceptionMessages.DraftItem_ResetPropertiesForNonElement);
             }
 
             List<IAttributeSchema> attributes = null;
@@ -357,29 +357,29 @@ namespace Automate.CLI.Domain
         {
             if (!IsEphemeralCollection)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_ClearItemsForNonCollection);
+                throw new AutomateException(ExceptionMessages.DraftItem_ClearItemsForNonCollection);
             }
 
             this.items.Clear();
         }
 
-        public void Delete(SolutionItem childItem)
+        public void Delete(DraftItem childItem)
         {
             if (!IsPattern && !IsElement && !IsEphemeralCollection)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_DeleteForNonElement);
+                throw new AutomateException(ExceptionMessages.DraftItem_DeleteForNonElement);
             }
 
             if (!childItem.IsElement && !childItem.IsEphemeralCollection)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_DeleteForNonElementChild);
+                throw new AutomateException(ExceptionMessages.DraftItem_DeleteForNonElementChild);
             }
 
             if (IsPattern || IsElement)
             {
                 if (Properties.All(prop => prop.Value != childItem))
                 {
-                    throw new AutomateException(ExceptionMessages.SolutionItem_DeleteWithUnknownChild);
+                    throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
                 }
 
                 this.properties.Remove(childItem.Name);
@@ -389,7 +389,7 @@ namespace Automate.CLI.Domain
             {
                 if (Items.All(item => item != childItem))
                 {
-                    throw new AutomateException(ExceptionMessages.SolutionItem_DeleteWithUnknownChild);
+                    throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
                 }
 
                 this.items.Remove(childItem);
@@ -398,7 +398,7 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
-        public bool Accept(ISolutionItemVisitor visitor)
+        public bool Accept(IDraftItemVisitor visitor)
         {
             if (IsPattern)
             {
@@ -475,7 +475,7 @@ namespace Automate.CLI.Domain
         }
 
         /// <summary>
-        ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="SolutionItem" />
+        ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="DraftItem" />
         ///     that themselves are composed of other nodes or composite nodes.
         ///     Once 'entered' a specific composite node, we traverse each of its child nodes (and their child nodes), before
         ///     'exiting' this specific composite node.
@@ -485,21 +485,21 @@ namespace Automate.CLI.Domain
         ///     In other words, an aborted 'enter', must result in an 'exit', but then followed by returning up that branch of
         ///     nodes to the root of the graph, before exiting the traversal.
         /// </summary>
-        private void TraverseDescendants(ISolutionItemVisitor visitor)
+        private void TraverseDescendants(IDraftItemVisitor visitor)
         {
             Accept(visitor);
         }
 
-        private SolutionItem AddProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
+        private DraftItem AddProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
         {
-            var property = new SolutionItem(toolkit, schema, this);
+            var property = new DraftItem(toolkit, schema, this);
             this.properties.Add(schema.Name, property);
 
             return property;
         }
 
         /// <summary>
-        ///     Cannot use the <see cref="ISolutionItemVisitor" /> to traverse up the hierarchy,
+        ///     Cannot use the <see cref="IDraftItemVisitor" /> to traverse up the hierarchy,
         ///     so we have to traverse up using a custom iterator
         /// </summary>
         private string GetPath(bool asReference)
@@ -509,32 +509,32 @@ namespace Automate.CLI.Domain
                 ? $"{{{path}}}"
                 : path;
 
-            string GetAncestorPath(SolutionItem solutionItem)
+            string GetAncestorPath(DraftItem draftItem)
             {
-                if (solutionItem.IsPattern)
+                if (draftItem.IsPattern)
                 {
-                    return solutionItem.Name;
+                    return draftItem.Name;
                 }
 
-                if (solutionItem.IsElement || solutionItem.IsEphemeralCollection)
+                if (draftItem.IsElement || draftItem.IsEphemeralCollection)
                 {
-                    if (solutionItem.Parent.Exists())
+                    if (draftItem.Parent.Exists())
                     {
-                        return solutionItem.Schema.SchemaType == SolutionItemSchemaType.CollectionItem
-                            ? $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.ElementSchema.Name}.{solutionItem.Id}"
-                            : $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
+                        return draftItem.Schema.SchemaType == DraftItemSchemaType.CollectionItem
+                            ? $"{GetAncestorPath(draftItem.Parent)}.{draftItem.ElementSchema.Name}.{draftItem.Id}"
+                            : $"{GetAncestorPath(draftItem.Parent)}.{draftItem.Name}";
                     }
-                    throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
+                    throw new AutomateException(ExceptionMessages.DraftItem_UnknownPath);
                 }
-                if (solutionItem.IsAttribute)
+                if (draftItem.IsAttribute)
                 {
-                    if (solutionItem.Parent.Exists())
+                    if (draftItem.Parent.Exists())
                     {
-                        return $"{GetAncestorPath(solutionItem.Parent)}.{solutionItem.Name}";
+                        return $"{GetAncestorPath(draftItem.Parent)}.{draftItem.Name}";
                     }
-                    throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
+                    throw new AutomateException(ExceptionMessages.DraftItem_UnknownPath);
                 }
-                throw new AutomateException(ExceptionMessages.SolutionItem_UnknownPath);
+                throw new AutomateException(ExceptionMessages.DraftItem_UnknownPath);
             }
         }
 
@@ -552,19 +552,19 @@ namespace Automate.CLI.Domain
         private void MaterialisePatternElement(ToolkitDefinition toolkit, IPatternElementSchema schema,
             bool isCollection)
         {
-            this.properties = new Dictionary<string, SolutionItem>();
+            this.properties = new Dictionary<string, DraftItem>();
             if (isCollection)
             {
-                this.items = new List<SolutionItem>();
+                this.items = new List<DraftItem>();
             }
             else
             {
                 schema.Attributes.ToListSafe()
-                    .ForEach(attr => { this.properties.Add(attr.Name, new SolutionItem(toolkit, attr, this)); });
+                    .ForEach(attr => { this.properties.Add(attr.Name, new DraftItem(toolkit, attr, this)); });
                 schema.Elements.ToListSafe()
                     .ForEach(ele =>
                     {
-                        var element = new SolutionItem(toolkit, ele, this, false);
+                        var element = new DraftItem(toolkit, ele, this, false);
                         if (ele.ShouldAutoCreate())
                         {
                             element.Materialise();
@@ -599,7 +599,7 @@ namespace Automate.CLI.Domain
             if (IsPattern)
             {
                 throw new AutomateException(
-                    ExceptionMessages.SolutionItem_UnMaterialisationOnPatternForbidden.Format(PatternSchema.Name));
+                    ExceptionMessages.DraftItem_UnMaterialisationOnPatternForbidden.Format(PatternSchema.Name));
             }
 
             if (IsElement || IsEphemeralCollection)
@@ -612,7 +612,7 @@ namespace Automate.CLI.Domain
             }
             else
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_UnMaterialisationOnValueForbidden);
+                throw new AutomateException(ExceptionMessages.DraftItem_UnMaterialisationOnValueForbidden);
             }
 
             this.properties = null;
@@ -620,9 +620,9 @@ namespace Automate.CLI.Domain
             IsMaterialised = false;
         }
 
-        private SolutionItem CreateEphemeralCollectionItem()
+        private DraftItem CreateEphemeralCollectionItem()
         {
-            var childElementItem = new SolutionItem(Toolkit, ElementSchema, Parent, true);
+            var childElementItem = new DraftItem(Toolkit, ElementSchema, Parent, true);
             childElementItem.Materialise();
 
             return childElementItem;
@@ -641,7 +641,7 @@ namespace Automate.CLI.Domain
             }
             else
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_HasNoAutomations);
+                throw new AutomateException(ExceptionMessages.DraftItem_HasNoAutomations);
             }
 
             return automations.FirstOrDefault(auto => auto.Name.EqualsIgnoreCase(name));
@@ -652,14 +652,14 @@ namespace Automate.CLI.Domain
             this._value = Attribute.SetValue(dataType, value);
         }
 
-        private class SchemaMigrator : ISolutionItemVisitor
+        private class SchemaMigrator : IDraftItemVisitor
         {
             private readonly Stack<List<string>> deletedAttributes;
             private readonly Stack<List<string>> deletedElements;
             private readonly ToolkitDefinition latestToolkit;
-            private readonly SolutionUpgradeResult result;
+            private readonly DraftUpgradeResult result;
 
-            public SchemaMigrator(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+            public SchemaMigrator(ToolkitDefinition latestToolkit, DraftUpgradeResult result)
             {
                 latestToolkit.GuardAgainstNull(nameof(latestToolkit));
                 result.GuardAgainstNull(nameof(result));
@@ -669,14 +669,14 @@ namespace Automate.CLI.Domain
                 this.deletedElements = new Stack<List<string>>();
             }
 
-            public bool VisitPatternEnter(SolutionItem item)
+            public bool VisitPatternEnter(DraftItem item)
             {
                 this.deletedAttributes.Push(new List<string>());
                 this.deletedElements.Push(new List<string>());
                 return true;
             }
 
-            public bool VisitPatternExit(SolutionItem item)
+            public bool VisitPatternExit(DraftItem item)
             {
                 DeleteAttributes(item, this.deletedAttributes.Pop());
                 DeleteElements(item, this.deletedElements.Pop());
@@ -685,7 +685,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitElementEnter(SolutionItem item)
+            public bool VisitElementEnter(DraftItem item)
             {
                 var elementToDelete = string.Empty;
                 if (item.IsMaterialised)
@@ -694,7 +694,7 @@ namespace Automate.CLI.Domain
                     if (latestSchema.NotExists())
                     {
                         elementToDelete = item.ElementSchema.Name;
-                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted,
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftItem_ElementDeleted,
                             item.FullyQualifiedPath);
                     }
                 }
@@ -710,7 +710,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitElementExit(SolutionItem item)
+            public bool VisitElementExit(DraftItem item)
             {
                 DeleteAttributes(item, this.deletedAttributes.Pop());
                 DeleteElements(item, this.deletedElements.Pop());
@@ -719,7 +719,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            public bool VisitEphemeralCollectionEnter(DraftItem item)
             {
                 var elementToDelete = string.Empty;
                 if (item.IsMaterialised)
@@ -728,7 +728,7 @@ namespace Automate.CLI.Domain
                     if (latestSchema.NotExists())
                     {
                         elementToDelete = item.ElementSchema.Name;
-                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_ElementDeleted,
+                        this.result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftItem_ElementDeleted,
                             item.FullyQualifiedPath);
                     }
                 }
@@ -743,7 +743,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitEphemeralCollectionExit(SolutionItem item)
+            public bool VisitEphemeralCollectionExit(DraftItem item)
             {
                 DeleteAttributes(item, this.deletedAttributes.Pop());
                 DeleteElements(item, this.deletedElements.Pop());
@@ -752,7 +752,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitAttributeEnter(SolutionItem item)
+            public bool VisitAttributeEnter(DraftItem item)
             {
                 var attributeToDelete = string.Empty;
 
@@ -760,7 +760,7 @@ namespace Automate.CLI.Domain
                 if (latestSchema.NotExists())
                 {
                     attributeToDelete = item.AttributeSchema.Name;
-                    this.result.Add(MigrationChangeType.Breaking, MigrationMessages.SolutionItem_AttributeDeleted,
+                    this.result.Add(MigrationChangeType.Breaking, MigrationMessages.DraftItem_AttributeDeleted,
                         item.FullyQualifiedPath);
                 }
                 else
@@ -781,7 +781,7 @@ namespace Automate.CLI.Domain
                         var property = item.Parent.AddProperty(this.latestToolkit, latestSchema);
                         property.SetValue(value, newDataType);
                         this.result.Add(MigrationChangeType.Breaking,
-                            MigrationMessages.SolutionItem_AttributeNameChanged, item.FullyQualifiedPath, oldName,
+                            MigrationMessages.DraftItem_AttributeNameChanged, item.FullyQualifiedPath, oldName,
                             newName);
                     }
 
@@ -809,7 +809,7 @@ namespace Automate.CLI.Domain
                             }
                         }
                         this.result.Add(MigrationChangeType.Breaking,
-                            MigrationMessages.SolutionItem_AttributeDataTypeChanged, item.FullyQualifiedPath,
+                            MigrationMessages.DraftItem_AttributeDataTypeChanged, item.FullyQualifiedPath,
                             oldDataType, newDataType);
                     }
 
@@ -822,14 +822,14 @@ namespace Automate.CLI.Domain
                                 item.SetValue(null, newDataType);
                             }
                             this.result.Add(MigrationChangeType.NonBreaking,
-                                MigrationMessages.SolutionItem_AttributeChoicesAdded, item.FullyQualifiedPath,
+                                MigrationMessages.DraftItem_AttributeChoicesAdded, item.FullyQualifiedPath,
                                 item.Value);
                         }
                     }
                     if (oldChoices.HasAny() && newChoices.HasNone())
                     {
                         this.result.Add(MigrationChangeType.Breaking,
-                            MigrationMessages.SolutionItem_AttributeChoicesDeleted, item.FullyQualifiedPath);
+                            MigrationMessages.DraftItem_AttributeChoicesDeleted, item.FullyQualifiedPath);
                     }
                     if (oldChoices.HasAny() && newChoices.HasAny())
                     {
@@ -843,14 +843,14 @@ namespace Automate.CLI.Domain
                                     {
                                         item.SetValue(newDefaultValue, newDataType);
                                         this.result.Add(MigrationChangeType.Breaking,
-                                            MigrationMessages.SolutionItem_AttributeChoicesChanged,
+                                            MigrationMessages.DraftItem_AttributeChoicesChanged,
                                             item.FullyQualifiedPath, value, newDefaultValue);
                                     }
                                     else
                                     {
                                         item.SetValue(null, newDataType);
                                         this.result.Add(MigrationChangeType.Breaking,
-                                            MigrationMessages.SolutionItem_AttributeChoicesChanged,
+                                            MigrationMessages.DraftItem_AttributeChoicesChanged,
                                             item.FullyQualifiedPath, value, null);
                                     }
                                 }
@@ -866,7 +866,7 @@ namespace Automate.CLI.Domain
                             {
                                 item.SetValue(newDefaultValue, newDataType);
                                 this.result.Add(MigrationChangeType.NonBreaking,
-                                    MigrationMessages.SolutionItem_AttributeDefaultValueChanged,
+                                    MigrationMessages.DraftItem_AttributeDefaultValueChanged,
                                     item.FullyQualifiedPath, value, newDefaultValue);
                             }
                         }
@@ -874,7 +874,7 @@ namespace Automate.CLI.Domain
                         {
                             item.SetValue(newDefaultValue, newDataType);
                             this.result.Add(MigrationChangeType.NonBreaking,
-                                MigrationMessages.SolutionItem_AttributeDefaultValueChanged, item.FullyQualifiedPath,
+                                MigrationMessages.DraftItem_AttributeDefaultValueChanged, item.FullyQualifiedPath,
                                 value, newDefaultValue);
                         }
                     }
@@ -888,19 +888,19 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            private static void DeleteElements(SolutionItem item, IEnumerable<string> elementNames)
+            private static void DeleteElements(DraftItem item, IEnumerable<string> elementNames)
             {
                 elementNames.ToListSafe()
                     .ForEach(item.RemoveProperty);
             }
 
-            private static void DeleteAttributes(SolutionItem item, IEnumerable<string> attributeNames)
+            private static void DeleteAttributes(DraftItem item, IEnumerable<string> attributeNames)
             {
                 attributeNames.ToListSafe()
                     .ForEach(item.RemoveProperty);
             }
 
-            private void AddNewAttributes<TSchema>(SolutionItem item, TSchema existingSchema)
+            private void AddNewAttributes<TSchema>(DraftItem item, TSchema existingSchema)
                 where TSchema : IPatternElementSchema
             {
                 var latestSchema = item.Schema.ResolveSchema<TSchema>(this.latestToolkit, false);
@@ -913,14 +913,14 @@ namespace Automate.CLI.Domain
                         {
                             var property = item.AddProperty(this.latestToolkit, attr);
                             this.result.Add(MigrationChangeType.NonBreaking,
-                                MigrationMessages.SolutionItem_AttributeAdded, property.FullyQualifiedPath,
+                                MigrationMessages.DraftItem_AttributeAdded, property.FullyQualifiedPath,
                                 property.Value);
                         });
                 }
             }
         }
 
-        private class SchemaValidator : ISolutionItemVisitor
+        private class SchemaValidator : IDraftItemVisitor
         {
             public SchemaValidator()
             {
@@ -929,14 +929,14 @@ namespace Automate.CLI.Domain
 
             public ValidationResults Validations { get; }
 
-            public bool VisitElementEnter(SolutionItem item)
+            public bool VisitElementEnter(DraftItem item)
             {
                 if (!item.IsMaterialised)
                 {
                     if (item.ElementSchema.HasCardinalityOfAtLeastOne())
                     {
                         Validations.Add(item,
-                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                            ValidationMessages.DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
                                 .Format(item.Name));
                     }
                     if (item.ElementSchema.HasCardinalityOfAtMostOne())
@@ -944,7 +944,7 @@ namespace Automate.CLI.Domain
                         if (item.Items.HasAny() && item.Items.Count > 1)
                         {
                             Validations.Add(item,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                ValidationMessages.DraftItem_ValidationRule_ElementHasMoreThanOneInstance
                                     .Format(item.Name));
                         }
                     }
@@ -953,7 +953,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitEphemeralCollectionEnter(SolutionItem item)
+            public bool VisitEphemeralCollectionEnter(DraftItem item)
             {
                 if (item.IsMaterialised)
                 {
@@ -962,7 +962,7 @@ namespace Automate.CLI.Domain
                         if (item.Items.HasNone())
                         {
                             Validations.Add(item,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                ValidationMessages.DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
                                     .Format(item.Name));
                         }
                     }
@@ -971,7 +971,7 @@ namespace Automate.CLI.Domain
                         if (item.Items.HasAny() && item.Items.Count > 1)
                         {
                             Validations.Add(item,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                ValidationMessages.DraftItem_ValidationRule_ElementHasMoreThanOneInstance
                                     .Format(item.Name));
                         }
                     }
@@ -981,7 +981,7 @@ namespace Automate.CLI.Domain
                     if (item.ElementSchema.HasCardinalityOfAtLeastOne())
                     {
                         Validations.Add(item,
-                            ValidationMessages.SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                            ValidationMessages.DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
                                 .Format(item.Name));
                     }
                     if (item.ElementSchema.HasCardinalityOfAtMostOne())
@@ -989,7 +989,7 @@ namespace Automate.CLI.Domain
                         if (item.Items.HasAny() && item.Items.Count > 1)
                         {
                             Validations.Add(item,
-                                ValidationMessages.SolutionItem_ValidationRule_ElementHasMoreThanOneInstance
+                                ValidationMessages.DraftItem_ValidationRule_ElementHasMoreThanOneInstance
                                     .Format(item.Name));
                         }
                     }
@@ -998,7 +998,7 @@ namespace Automate.CLI.Domain
                 return true;
             }
 
-            public bool VisitAttributeEnter(SolutionItem item)
+            public bool VisitAttributeEnter(DraftItem item)
             {
                 Validations.AddRange(item.AttributeSchema.Validate(item, item.Value));
 
@@ -1007,15 +1007,15 @@ namespace Automate.CLI.Domain
         }
     }
 
-    internal class SolutionItemProperty
+    internal class DraftItemProperty
     {
-        private readonly SolutionItem item;
+        private readonly DraftItem item;
 
-        public SolutionItemProperty(SolutionItem item)
+        public DraftItemProperty(DraftItem item)
         {
             if (!item.IsAttribute)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_NotAnAttribute.Format(item.Name));
+                throw new AutomateException(ExceptionMessages.DraftItem_NotAnAttribute.Format(item.Name));
             }
 
             this.item = item;
@@ -1059,32 +1059,32 @@ namespace Automate.CLI.Domain
         }
     }
 
-    internal class SolutionItemSchema : IPersistable
+    internal class DraftItemSchema : IPersistable
     {
-        public static readonly SolutionItemSchema None = new();
+        public static readonly DraftItemSchema None = new();
 
-        public SolutionItemSchema(string id, SolutionItemSchemaType schemaType)
+        public DraftItemSchema(string id, DraftItemSchemaType schemaType)
         {
             id.GuardAgainstNullOrEmpty(nameof(id));
             SchemaId = id;
             SchemaType = schemaType;
         }
 
-        private SolutionItemSchema(PersistableProperties properties, IPersistableFactory factory)
+        private DraftItemSchema(PersistableProperties properties, IPersistableFactory factory)
         {
             SchemaId = properties.Rehydrate<string>(factory, nameof(SchemaId));
-            SchemaType = properties.Rehydrate<SolutionItemSchemaType>(factory, nameof(SchemaType));
+            SchemaType = properties.Rehydrate<DraftItemSchemaType>(factory, nameof(SchemaType));
         }
 
-        private SolutionItemSchema()
+        private DraftItemSchema()
         {
             SchemaId = null;
-            SchemaType = SolutionItemSchemaType.None;
+            SchemaType = DraftItemSchemaType.None;
         }
 
         public string SchemaId { get; }
 
-        public SolutionItemSchemaType SchemaType { get; }
+        public DraftItemSchemaType SchemaType { get; }
 
         public PersistableProperties Dehydrate()
         {
@@ -1095,9 +1095,9 @@ namespace Automate.CLI.Domain
             return properties;
         }
 
-        public static SolutionItemSchema Rehydrate(PersistableProperties properties, IPersistableFactory factory)
+        public static DraftItemSchema Rehydrate(PersistableProperties properties, IPersistableFactory factory)
         {
-            return new SolutionItemSchema(properties, factory);
+            return new DraftItemSchema(properties, factory);
         }
 
         public TSchema ResolveSchema<TSchema>(ToolkitDefinition toolkit, bool throwOnNotFound = true)
@@ -1105,9 +1105,9 @@ namespace Automate.CLI.Domain
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
 
-            if (SchemaType == SolutionItemSchemaType.None)
+            if (SchemaType == DraftItemSchemaType.None)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_InvalidSolutionItemSchema);
+                throw new AutomateException(ExceptionMessages.DraftItem_InvalidDraftItemSchema);
             }
 
             object target;
@@ -1124,7 +1124,7 @@ namespace Automate.CLI.Domain
                 target = toolkit.Pattern.FindSchema<Element>(SchemaId);
                 if (target.Exists())
                 {
-                    return SchemaType == SolutionItemSchemaType.CollectionItem
+                    return SchemaType == DraftItemSchemaType.CollectionItem
                         ? (TSchema)(ISchema)new CollectionItemSchema((Element)target)
                         : (TSchema)((Element)target).ToSchema();
                 }
@@ -1144,14 +1144,14 @@ namespace Automate.CLI.Domain
 
             if (throwOnNotFound)
             {
-                throw new AutomateException(ExceptionMessages.SolutionItem_UnknownSchema.Format(SchemaId, SchemaType));
+                throw new AutomateException(ExceptionMessages.DraftItem_UnknownSchema.Format(SchemaId, SchemaType));
             }
 
             return default;
         }
     }
 
-    internal enum SolutionItemSchemaType
+    internal enum DraftItemSchemaType
     {
         None = 0,
         Pattern = 1,
@@ -1164,28 +1164,28 @@ namespace Automate.CLI.Domain
     /// <summary>
     ///     This dictionary implementation is required to use an <see cref="IEnumerator" /> that evaluates lazy-ly (deferred
     ///     execution),
-    ///     so that we can populate cyclic pointers in memory for ancestor properties (i.e. <see cref="SolutionItem.Parent" />
+    ///     so that we can populate cyclic pointers in memory for ancestor properties (i.e. <see cref="DraftItem.Parent" />
     ///     which would otherwise cause infinite recursion, if each <see cref="DictionaryEntry" /> was evaluated when this
     ///     dictionary was being constructed.
     ///     This dictionary type must implement <see cref="IDictionary" /> so that it can be used in text transformation using
     ///     Scriban.
     /// </summary>
-    internal class LazySolutionItemDictionary : IDictionary
+    internal class LazyDraftItemDictionary : IDictionary
     {
         private readonly bool includeAncestry;
-        private readonly SolutionItem solutionItem;
+        private readonly DraftItem draftItem;
 
         /// <summary>
         ///     For serialization
         /// </summary>
-        public LazySolutionItemDictionary()
+        public LazyDraftItemDictionary()
         {
         }
 
-        public LazySolutionItemDictionary(SolutionItem solutionItem, bool includeAncestry)
+        public LazyDraftItemDictionary(DraftItem draftItem, bool includeAncestry)
         {
-            solutionItem.GuardAgainstNull(nameof(solutionItem));
-            this.solutionItem = solutionItem;
+            draftItem.GuardAgainstNull(nameof(draftItem));
+            this.draftItem = draftItem;
             this.includeAncestry = includeAncestry;
         }
 
@@ -1201,7 +1201,7 @@ namespace Automate.CLI.Domain
                     return value.Value;
                 }
 
-                throw new KeyNotFoundException($"The key: {key} could not be found on the current solution item");
+                throw new KeyNotFoundException(ExceptionMessages.LazyDraftItemDictionary_NotFound.Format(key));
             }
             set => throw new NotImplementedException();
         }
@@ -1260,27 +1260,27 @@ namespace Automate.CLI.Domain
 
         private IEnumerable<DictionaryEntry> GetPairs()
         {
-            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection)
+            if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
             {
-                yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Id)), this.solutionItem.Id);
+                yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Id)), this.draftItem.Id);
             }
             if (this.includeAncestry)
             {
-                if (this.solutionItem.IsPattern || this.solutionItem.IsElement ||
-                    this.solutionItem.IsEphemeralCollection || this.solutionItem.IsAttribute)
+                if (this.draftItem.IsPattern || this.draftItem.IsElement ||
+                    this.draftItem.IsEphemeralCollection || this.draftItem.IsAttribute)
                 {
-                    if (this.solutionItem.Parent.Exists())
+                    if (this.draftItem.Parent.Exists())
                     {
-                        yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Parent)),
-                            new LazySolutionItemDictionary(this.solutionItem.Parent, true));
+                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Parent)),
+                            new LazyDraftItemDictionary(this.draftItem.Parent, true));
                     }
                 }
             }
-            if (this.solutionItem.IsPattern || this.solutionItem.IsElement || this.solutionItem.IsEphemeralCollection)
+            if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
             {
-                if (this.solutionItem.Properties.HasAny())
+                if (this.draftItem.Properties.HasAny())
                 {
-                    foreach (var prop in this.solutionItem.Properties.Safe())
+                    foreach (var prop in this.draftItem.Properties.Safe())
                     {
                         var (name, item) = prop;
                         if (item.IsAttribute)
@@ -1293,25 +1293,25 @@ namespace Automate.CLI.Domain
                         if (item.IsElement || item.IsEphemeralCollection)
                         {
                             yield return new DictionaryEntry(AsIsMemberName(name),
-                                new LazySolutionItemDictionary(item, this.includeAncestry));
+                                new LazyDraftItemDictionary(item, this.includeAncestry));
                         }
                     }
                 }
             }
-            if (this.solutionItem.IsEphemeralCollection)
+            if (this.draftItem.IsEphemeralCollection)
             {
-                if (this.solutionItem.Items.HasAny())
+                if (this.draftItem.Items.HasAny())
                 {
-                    var items = this.solutionItem.Items.Select(item =>
-                        new LazySolutionItemDictionary(item, this.includeAncestry));
-                    yield return new DictionaryEntry(AsIsMemberName(nameof(SolutionItem.Items)), items);
+                    var items = this.draftItem.Items.Select(item =>
+                        new LazyDraftItemDictionary(item, this.includeAncestry));
+                    yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
                 }
             }
-            if (this.solutionItem.IsAttribute)
+            if (this.draftItem.IsAttribute)
             {
-                if (this.solutionItem.Value.Exists())
+                if (this.draftItem.Value.Exists())
                 {
-                    yield return new DictionaryEntry(AsIsMemberName(this.solutionItem.Name), this.solutionItem.Value);
+                    yield return new DictionaryEntry(AsIsMemberName(this.draftItem.Name), this.draftItem.Value);
                 }
             }
         }
@@ -1379,7 +1379,7 @@ namespace Automate.CLI.Domain
             {
                 if (this.index < 0 || this.index >= this.entries.Count)
                 {
-                    throw new InvalidOperationException("Enumerator is before or after the collection.");
+                    throw new InvalidOperationException(ExceptionMessages.DictionaryEntryEnumerator_OutOfRange);
                 }
             }
         }

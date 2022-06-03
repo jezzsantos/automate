@@ -2,7 +2,7 @@
 
 namespace Automate.CLI.Domain
 {
-    internal static class SolutionItemExtensions
+    internal static class DraftItemExtensions
     {
         public static bool HasCardinalityOfAtLeastOne(this Element element)
         {
@@ -19,14 +19,14 @@ namespace Automate.CLI.Domain
             return element.Cardinality is ElementCardinality.OneOrMany or ElementCardinality.ZeroOrMany;
         }
 
-        public static void Add(this ValidationResults results, SolutionItem solutionItem, string message)
+        public static void Add(this ValidationResults results, DraftItem draftItem, string message)
         {
-            results.Add(new ValidationResult(new ValidationContext(solutionItem.PathReference), message));
+            results.Add(new ValidationResult(new ValidationContext(draftItem.PathReference), message));
         }
 
-        public static IReadOnlyList<ValidationResult> Validate(this IAttributeSchema attribute, SolutionItem solutionItem, object value)
+        public static IReadOnlyList<ValidationResult> Validate(this IAttributeSchema attribute, DraftItem draftItem, object value)
         {
-            return attribute.Validate(new ValidationContext(solutionItem.PathReference), value);
+            return attribute.Validate(new ValidationContext(draftItem.PathReference), value);
         }
     }
 }

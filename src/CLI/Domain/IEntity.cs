@@ -15,7 +15,7 @@ namespace Automate.CLI.Domain
 
     internal interface IAutomation : INamedEntity
     {
-        CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target);
+        CommandExecutionResult Execute(DraftDefinition draft, DraftItem target);
     }
 
     internal interface IElementContainer

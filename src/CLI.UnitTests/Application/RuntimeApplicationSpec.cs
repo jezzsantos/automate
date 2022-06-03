@@ -20,8 +20,8 @@ namespace CLI.UnitTests.Application
         private readonly Mock<IFilePathResolver> fileResolver;
         private readonly Mock<IPatternToolkitPackager> packager;
         private readonly PatternDefinition pattern;
-        private readonly Mock<ISolutionPathResolver> solutionPathResolver;
-        private readonly ISolutionStore solutionStore;
+        private readonly Mock<IDraftPathResolver> draftPathResolver;
+        private readonly IDraftStore draftStore;
         private readonly ToolkitDefinition toolkit;
         private readonly IToolkitStore toolkitStore;
 
@@ -29,25 +29,25 @@ namespace CLI.UnitTests.Application
         {
             var repo = new MemoryRepository();
             this.toolkitStore = new ToolkitStore(repo, repo);
-            this.solutionStore = new SolutionStore(repo, repo);
+            this.draftStore = new DraftStore(repo, repo);
             this.fileResolver = new Mock<IFilePathResolver>();
             this.fileResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             this.packager = new Mock<IPatternToolkitPackager>();
-            this.solutionPathResolver = new Mock<ISolutionPathResolver>();
+            this.draftPathResolver = new Mock<IDraftPathResolver>();
 
             this.application =
-                new RuntimeApplication(this.toolkitStore, this.solutionStore, this.fileResolver.Object,
-                    this.packager.Object, this.solutionPathResolver.Object);
+                new RuntimeApplication(this.toolkitStore, this.draftStore, this.fileResolver.Object,
+                    this.packager.Object, this.draftPathResolver.Object);
             this.pattern = new PatternDefinition("apatternname");
             this.toolkit = new ToolkitDefinition(this.pattern);
             this.toolkitStore.Import(this.toolkit);
         }
 
         [Fact]
-        public void WhenConstructed_ThenCurrentSolutionIsNull()
+        public void WhenConstructed_ThenCurrentDraftIsNull()
         {
-            this.application.CurrentSolutionId.Should().BeNull();
+            this.application.CurrentDraftId.Should().BeNull();
         }
 
         [Fact]
@@ -75,23 +75,23 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenCreateSolutionAndToolkitNotExist_ThenThrows()
+        public void WhenCreateDraftAndToolkitNotExist_ThenThrows()
         {
             this.application
-                .Invoking(x => x.CreateSolution("atoolkitname", null))
+                .Invoking(x => x.CreateDraft("atoolkitname", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format("atoolkitname"));
         }
 
         [Fact]
-        public void WhenCreateSolution_ThenReturnsNewSolution()
+        public void WhenCreateDraft_ThenReturnsNewDraft()
         {
-            var result = this.application.CreateSolution("apatternname", null);
+            var result = this.application.CreateDraft("apatternname", null);
 
             result.Id.Should().NotBeNull();
             result.PatternName.Should().Be("apatternname");
             result.Toolkit.Id.Should().Be(this.toolkit.Id);
-            this.application.CurrentSolutionId.Should().Be(result.Id);
+            this.application.CurrentDraftId.Should().Be(result.Id);
         }
 
         [Fact]
@@ -103,13 +103,13 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenListCreatedSolutions_ThenReturnsToolkits()
+        public void WhenListCreatedDrafts_ThenReturnsToolkits()
         {
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
-            var result = this.application.ListCreatedSolutions();
+            var result = this.application.ListCreatedDrafts();
 
-            result.Should().Contain(solution);
+            result.Should().Contain(draft);
         }
 
         [Fact]
@@ -118,117 +118,117 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.GetCurrentToolkit())
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
         public void WhenGetCurrentToolkitAndToolkitUpgraded_ThenThrows()
         {
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
             this.toolkitStore.Import(new ToolkitDefinition(this.pattern, new Version("0.2.0")));
 
             this.application
                 .Invoking(x => x.GetCurrentToolkit())
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
                         "0.0.0", "0.2.0"));
         }
 
         [Fact]
-        public void WhenSwitchCurrentSolutionAndSolutionNotExists_ThenThrows()
+        public void WhenSwitchCurrentDraftAndDraftNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.SwitchCurrentSolution("asolutionid"))
+                .Invoking(x => x.SwitchCurrentDraft("adraftid"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.SolutionStore_NotFoundAtLocationWithId.Format("asolutionid",
+                    ExceptionMessages.DraftStore_NotFoundAtLocationWithId.Format("adraftid",
                         MemoryRepository.InMemoryLocation));
         }
 
         [Fact]
-        public void WhenSwitchCurrentSolution_ThenCurrentIsChanged()
+        public void WhenSwitchCurrentDraft_ThenCurrentIsChanged()
         {
-            var solution1 = this.application.CreateSolution("apatternname", null);
-            this.application.CreateSolution("apatternname", null);
+            var draft1 = this.application.CreateDraft("apatternname", null);
+            this.application.CreateDraft("apatternname", null);
 
-            this.application.SwitchCurrentSolution(solution1.Id);
+            this.application.SwitchCurrentDraft(draft1.Id);
 
-            this.solutionStore.GetCurrent().Should().NotBeNull();
-            this.application.CurrentSolutionId.Should().Be(solution1.Id);
+            this.draftStore.GetCurrent().Should().NotBeNull();
+            this.application.CurrentDraftId.Should().Be(draft1.Id);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndCurrentSolutionNotExists_ThenThrows()
+        public void WhenConfigureDraftAndCurrentDraftNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.ConfigureSolution(null, null, null, new Dictionary<string, string>()))
+                .Invoking(x => x.ConfigureDraft(null, null, null, new Dictionary<string, string>()))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndNoAddElementNorAddToCollectionNorOnElementNorAnyAssignments_ThenThrows()
+        public void WhenConfigureDraftAndNoAddElementNorAddToCollectionNorOnElementNorAnyAssignments_ThenThrows()
         {
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution(null, null, null, null))
+                .Invoking(x => x.ConfigureDraft(null, null, null, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
-                        solution.Id) + "*");
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_NoChanges.Format(
+                        draft.Id) + "*");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndBothAddElementAndAddToCollection_ThenThrows()
+        public void WhenConfigureDraftAndBothAddElementAndAddToCollection_ThenThrows()
         {
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", "acollectionexpression", null, null))
+                .Invoking(x => x.ConfigureDraft("anelementexpression", "acollectionexpression", null, null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
-                        solution.Id, "anelementexpression", "acollectionexpression") + "*");
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_AddAndAddTo.Format(
+                        draft.Id, "anelementexpression", "acollectionexpression") + "*");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndBothAddElementAndOnElement_ThenThrows()
+        public void WhenConfigureDraftAndBothAddElementAndOnElement_ThenThrows()
         {
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, "anelementexpression", null))
+                .Invoking(x => x.ConfigureDraft("anelementexpression", null, "anelementexpression", null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAdd.Format(
-                        solution.Id, "anelementexpression", "anelementexpression") + "*");
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAdd.Format(
+                        draft.Id, "anelementexpression", "anelementexpression") + "*");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndBothAddToCollectionAndOnElement_ThenThrows()
+        public void WhenConfigureDraftAndBothAddToCollectionAndOnElement_ThenThrows()
         {
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution(null, "acollectionexpression", "anelementexpression", null))
+                .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", "anelementexpression", null))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAddTo.Format(
-                        solution.Id, "anelementexpression", "acollectionexpression") + "*");
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAddTo.Format(
+                        draft.Id, "anelementexpression", "acollectionexpression") + "*");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndAddElementButUnknown_ThenThrows()
+        public void WhenConfigureDraftAndAddElementButUnknown_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns((SolutionItem)null);
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns((DraftItem)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, null))
+                .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
@@ -236,58 +236,58 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndAddElementAlreadyMaterialised_ThenThrows()
+        public void WhenConfigureDraftAndAddElementAlreadyMaterialised_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
+            this.application.CreateDraft("apatternname", null);
             this.pattern.AddElement("anelementname");
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null).Materialise());
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(new DraftItem(this.toolkit, this.pattern.Elements.Single(), null).Materialise());
 
             this.application
-                .Invoking(x => x.ConfigureSolution("anelementexpression", null, null, null))
+                .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddElementExists.Format(
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_AddElementExists.Format(
                         "anelementexpression"));
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithChangeOnPattern_ThenReturnsSolution()
+        public void WhenConfigureDraftWithChangeOnPattern_ThenReturnsDraft()
         {
             var attribute = new Attribute("anattributename", null);
             this.pattern.AddAttribute(attribute);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
-            var result = this.application.ConfigureSolution(null, null, null,
+            var result = this.application.ConfigureDraft(null, null, null,
                 new Dictionary<string, string> { { "anattributename", "avalue" } });
 
             result.Id.Should().NotBeNull();
-            solution.Model.Properties["anattributename"].Value.Should().Be("avalue");
+            draft.Model.Properties["anattributename"].Value.Should().Be("avalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithNewElement_ThenReturnsSolution()
+        public void WhenConfigureDraftWithNewElement_ThenReturnsDraft()
         {
-            this.application.CreateSolution("apatternname", null);
+            this.application.CreateDraft("apatternname", null);
             this.pattern.AddElement("anelementname");
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null));
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(new DraftItem(this.toolkit, this.pattern.Elements.Single(), null));
 
-            var result = this.application.ConfigureSolution("apatternname.anelement", null, null, null);
+            var result = this.application.ConfigureDraft("apatternname.anelement", null, null, null);
 
             result.Id.Should().NotBeNull();
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndAddCollectionElementButUnknown_ThenThrows()
+        public void WhenConfigureDraftAndAddCollectionElementButUnknown_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns((SolutionItem)null);
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns((DraftItem)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution(null, "acollectionexpression", null, null))
+                .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
@@ -295,28 +295,28 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithNewCollectionElement_ThenReturnsSolution()
+        public void WhenConfigureDraftWithNewCollectionElement_ThenReturnsDraft()
         {
-            this.application.CreateSolution("apatternname", null);
+            this.application.CreateDraft("apatternname", null);
             this.pattern.AddElement("anelementname", ElementCardinality.OneOrMany);
-            var solutionItem = new SolutionItem(this.toolkit, this.pattern.Elements.Single(), null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draftItem = new DraftItem(this.toolkit, this.pattern.Elements.Single(), null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
-            var result = this.application.ConfigureSolution(null, "apatternname.acollectionname", null, null);
+            var result = this.application.ConfigureDraft(null, "apatternname.acollectionname", null, null);
 
-            result.Id.Should().Be(solutionItem.Items.Single().Id);
+            result.Id.Should().Be(draftItem.Items.Single().Id);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndOnElementButUnknown_ThenThrows()
+        public void WhenConfigureDraftAndOnElementButUnknown_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns((SolutionItem)null);
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns((DraftItem)null);
 
             this.application
-                .Invoking(x => x.ConfigureSolution(null, null, "anelementexpression", null))
+                .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
@@ -324,62 +324,62 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndOnElementAndNotMaterialised_ThenThrows()
+        public void WhenConfigureDraftAndOnElementAndNotMaterialised_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(new SolutionItem(this.toolkit, new Element("anelementname"), null));
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(new DraftItem(this.toolkit, new Element("anelementname"), null));
 
             this.application
-                .Invoking(x => x.ConfigureSolution(null, null, "anelementexpression", null))
+                .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnElementNotExists.Format(
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_OnElementNotExists.Format(
                         "anelementexpression"));
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithAddElementAndProperty_ThenReturnsSolution()
+        public void WhenConfigureDraftWithAddElementAndProperty_ThenReturnsDraft()
         {
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname", autoCreate: false);
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"];
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draft = this.application.CreateDraft("apatternname", null);
+            var draftItem = draft.Model.Properties["anelementname"];
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
-            var result = this.application.ConfigureSolution("anelementexpression", null, null,
+            var result = this.application.ConfigureDraft("anelementexpression", null, null,
                 new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-            result.Id.Should().Be(solutionItem.Id);
-            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
+            result.Id.Should().Be(draftItem.Id);
+            draftItem.Properties["anattributename"].Value.Should().Be("avalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionWithOnElementAndProperty_ThenReturnsSolution()
+        public void WhenConfigureDraftWithOnElementAndProperty_ThenReturnsDraft()
         {
             var attribute = new Attribute("anattributename");
             var element = new Element("anelementname");
             element.AddAttribute(attribute);
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"].Materialise();
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draft = this.application.CreateDraft("apatternname", null);
+            var draftItem = draft.Model.Properties["anelementname"].Materialise();
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
-            var result = this.application.ConfigureSolution(null, null, "anelementexpression",
+            var result = this.application.ConfigureDraft(null, null, "anelementexpression",
                 new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-            result.Id.Should().Be(solutionItem.Id);
-            solutionItem.Properties["anattributename"].Value.Should().Be("avalue");
+            result.Id.Should().Be(draftItem.Id);
+            draftItem.Properties["anattributename"].Value.Should().Be("avalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndResetElement_ThenResetsAllAttributes()
+        public void WhenConfigureDraftAndResetElement_ThenResetsAllAttributes()
         {
             var attribute1 = new Attribute("anattributename1");
             var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue");
@@ -388,76 +388,76 @@ namespace CLI.UnitTests.Application
             element.AddAttribute(attribute2);
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"].Materialise();
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draft = this.application.CreateDraft("apatternname", null);
+            var draftItem = draft.Model.Properties["anelementname"].Materialise();
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
-            var result = this.application.ConfigureSolutionAndResetElement("anelementexpression");
+            var result = this.application.ConfigureDraftAndResetElement("anelementexpression");
 
             result.Properties["anattributename1"].Value.Should().BeNull();
             result.Properties["anattributename2"].Value.Should().Be("adefaultvalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndClearCollection_ThenEmptiesCollection()
+        public void WhenConfigureDraftAndClearCollection_ThenEmptiesCollection()
         {
             var collection = new Element("acollectioname", ElementCardinality.ZeroOrMany);
             this.pattern.AddElement(collection);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var collectionItem = solution.Model.Properties["acollectioname"].Materialise();
+            var draft = this.application.CreateDraft("apatternname", null);
+            var collectionItem = draft.Model.Properties["acollectioname"].Materialise();
             collectionItem.MaterialiseCollectionItem();
             collectionItem.MaterialiseCollectionItem();
             collectionItem.MaterialiseCollectionItem();
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                 .Returns(collectionItem);
 
-            var result = this.application.ConfigureSolutionAndClearCollection("acollectionexpression");
+            var result = this.application.ConfigureDraftAndClearCollection("acollectionexpression");
 
             result.Items.Count.Should().Be(0);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndDeletePattern_ThenThrows()
+        public void WhenConfigureDraftAndDeletePattern_ThenThrows()
         {
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model;
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draft = this.application.CreateDraft("apatternname", null);
+            var draftItem = draft.Model;
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
             this.application
-                .Invoking(x => x.ConfigureSolutionAndDelete("anelementexpression"))
+                .Invoking(x => x.ConfigureDraftAndDelete("anelementexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_ConfigureSolution_DeletePattern);
+                .WithMessage(ExceptionMessages.RuntimeApplication_ConfigureDraft_DeletePattern);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndDelete_ThenDeletesElement()
+        public void WhenConfigureDraftAndDelete_ThenDeletesElement()
         {
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            var solutionItem = solution.Model.Properties["anelementname"].Materialise();
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solutionItem);
+            var draft = this.application.CreateDraft("apatternname", null);
+            var draftItem = draft.Model.Properties["anelementname"].Materialise();
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draftItem);
 
-            var result = this.application.ConfigureSolutionAndDelete("anelementexpression");
+            var result = this.application.ConfigureDraftAndDelete("anelementexpression");
 
             result.Properties.Should().NotContainKey("anelementname");
         }
 
         [Fact]
-        public void WhenGetConfigurationAndCurrentSolutionNotExists_ThenThrows()
+        public void WhenGetConfigurationAndCurrentDraftNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.GetSolutionConfiguration(false, false))
+                .Invoking(x => x.GetDraftConfiguration(false, false))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
@@ -472,26 +472,26 @@ namespace CLI.UnitTests.Application
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            solution.Model.Properties["anelementname1"].Materialise();
-            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            var draft = this.application.CreateDraft("apatternname", null);
+            draft.Model.Properties["anelementname1"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
-            var result = this.application.GetSolutionConfiguration(false, false);
+            var result = this.application.GetDraftConfiguration(false, false);
 
             result.Pattern.Should().BeNull();
             result.Validation.Should().BeEquivalentTo(ValidationResults.None);
             result.Configuration.Should().Be(new
             {
-                solution.Model.Id,
+                draft.Model.Id,
                 anattributename1 = "adefaultvalue1",
                 anelementname1 = new
                 {
-                    solution.Model.Properties["anelementname1"].Id,
+                    draft.Model.Properties["anelementname1"].Id,
                     anelementname2 = new
                     {
-                        solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                        draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
                         anattributename2 = "adefaultvalue2"
                     }
                 }
@@ -510,26 +510,26 @@ namespace CLI.UnitTests.Application
             this.pattern.AddAttribute(attribute1);
             this.pattern.AddElement(element1);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            solution.Model.Properties["anelementname1"].Materialise();
-            solution.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            var draft = this.application.CreateDraft("apatternname", null);
+            draft.Model.Properties["anelementname1"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
-            var result = this.application.GetSolutionConfiguration(true, true);
+            var result = this.application.GetDraftConfiguration(true, true);
 
             result.Pattern.Should().Be(this.pattern);
             result.Validation.Results.Should().BeEmpty();
             result.Configuration.Should().Be(new
             {
-                solution.Model.Id,
+                draft.Model.Id,
                 anattributename1 = "adefaultvalue1",
                 anelementname1 = new
                 {
-                    solution.Model.Properties["anelementname1"].Id,
+                    draft.Model.Properties["anelementname1"].Id,
                     anelementname2 = new
                     {
-                        solution.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                        draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
                         anattributename2 = "adefaultvalue2"
                     }
                 }
@@ -537,20 +537,20 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenValidateSolutionAndSolutionNotExist_ThenThrows()
+        public void WhenValidateDraftAndDraftNotExist_ThenThrows()
         {
             this.application
                 .Invoking(x => x.Validate(null))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
-        public void WhenValidateSolutionAndElementNotExist_ThenThrows()
+        public void WhenValidateDraftAndElementNotExist_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns((SolutionItem)null);
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns((DraftItem)null);
 
             this.application
                 .Invoking(x => x.Validate("anelementexpression"))
@@ -570,20 +570,20 @@ namespace CLI.UnitTests.Application
             this.pattern.AddElement(element1);
             this.pattern.AddElement(element2);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solution.Model.Properties["anelementname1"]);
+            var draft = this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draft.Model.Properties["anelementname1"]);
 
             var result = this.application.Validate("{anelementname}");
 
             result.Results.Count.Should().Be(1);
             result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&
                                                  r.Message == ValidationMessages
-                                                     .SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
+                                                     .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
 
         [Fact]
-        public void WhenValidateSolution_ThenReturnsResults()
+        public void WhenValidateDraft_ThenReturnsResults()
         {
             var attribute1 = new Attribute("anattributename1", null, true, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, true, "adefaultvalue2");
@@ -596,36 +596,36 @@ namespace CLI.UnitTests.Application
             this.pattern.AddElement(element1);
             this.pattern.AddElement(collection2);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solution.Model);
+            var draft = this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draft.Model);
 
             var result = this.application.Validate(null);
 
             result.Results.Count.Should().Be(2);
             result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&
                                                  r.Message == ValidationMessages
-                                                     .SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
+                                                     .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance);
             result.Results.Should().Contain(r => r.Context.Path == "{apatternname.acollectionname2}" &&
                                                  r.Message == ValidationMessages
-                                                     .SolutionItem_ValidationRule_ElementRequiresAtLeastOneInstance);
+                                                     .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
 
         [Fact]
-        public void WhenExecuteLaunchPointAndSolutionNotExist_ThenThrows()
+        public void WhenExecuteLaunchPointAndDraftNotExist_ThenThrows()
         {
             this.application
                 .Invoking(x => x.ExecuteLaunchPoint("acommandname", null))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
         public void WhenExecuteLaunchPointAndElementNotExist_ThenThrows()
         {
-            this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns((SolutionItem)null);
+            this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns((DraftItem)null);
 
             this.application
                 .Invoking(x => x.ExecuteLaunchPoint("acommandname", "anelementexpression"))
@@ -644,10 +644,10 @@ namespace CLI.UnitTests.Application
             element.AddAutomation(automation);
             this.pattern.AddElement(element);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
+            var draft = this.application.CreateDraft("apatternname", null);
 
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solution.Model.Properties["anelementname"].Materialise());
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draft.Model.Properties["anelementname"].Materialise());
 
             var result = this.application.ExecuteLaunchPoint("acommandname", "anelementname");
 
@@ -656,15 +656,15 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenExecuteLaunchPointOnSolution_ThenReturnsResult()
+        public void WhenExecuteLaunchPointOnDraft_ThenReturnsResult()
         {
             var automation =
                 new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
             ResetToolkit();
-            var solution = this.application.CreateSolution("apatternname", null);
-            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
-                .Returns(solution.Model);
+            var draft = this.application.CreateDraft("apatternname", null);
+            this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                .Returns(draft.Model);
 
             var result = this.application.ExecuteLaunchPoint("acommandname", null);
 
@@ -673,26 +673,26 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndSolutionNotExist_ThenThrows()
+        public void WhenUpgradeDraftAndDraftNotExist_ThenThrows()
         {
             this.application
-                .Invoking(x => x.UpgradeSolution(false))
+                .Invoking(x => x.UpgradeDraft(false))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndNothingToUpgrade_ThenSolutionUpgraded()
+        public void WhenUpgradeDraftAndNothingToUpgrade_ThenDraftUpgraded()
         {
-            this.application.CreateSolution("apatternname", null);
+            this.application.CreateDraft("apatternname", null);
 
-            var result = this.application.UpgradeSolution(false);
+            var result = this.application.UpgradeDraft(false);
 
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().ContainSingle(x =>
                 x.Type == MigrationChangeType.Abort
-                && x.MessageTemplate == MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion);
-            result.Solution.Id.Should().Be(this.application.CurrentSolutionId);
+                && x.MessageTemplate == MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion);
+            result.Draft.Id.Should().Be(this.application.CurrentDraftId);
         }
 
         private void ResetToolkit()

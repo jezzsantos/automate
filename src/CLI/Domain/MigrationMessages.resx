@@ -24,52 +24,52 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="SolutionDefinition_Upgrade_SameToolkitVersion" xml:space="preserve">
+    <data name="DraftDefinition_Upgrade_SameToolkitVersion" xml:space="preserve">
         <value>Skipped, a newer version of the toolkit (Name: '{Name}' v{Version}) has not been installed yet</value>
     </data>
-    <data name="SolutionDefinition_Upgrade_BreakingChangeForbidden" xml:space="preserve">
+    <data name="DraftDefinition_Upgrade_BreakingChangeForbidden" xml:space="preserve">
         <value>Failed, the updated toolkit (Name: '{Name}' v{Version}) contains at least one breaking change, and therefore cannot be automatically upgraded</value>
     </data>
-    <data name="SolutionDefinition_Upgrade_BreakingChangeForced" xml:space="preserve">
-        <value>Upgrade was forcefully applied despite the toolkit (Name: '{Name}' v{Version}) indicating a breaking change. The integrity of the upgraded solution cannot be guaranteed, and may need to be updated</value>
+    <data name="DraftDefinition_Upgrade_BreakingChangeForced" xml:space="preserve">
+        <value>Upgrade was forcefully applied despite the toolkit (Name: '{Name}' v{Version}) indicating a breaking change. The integrity of the upgraded draft cannot be guaranteed, and may need to be updated</value>
     </data>
     <data name="ToolkitDefinition_CodeTemplateFile_ContentUpgraded" xml:space="preserve">
-        <value>Changed contents of Code Template: '{Name}' (ID: '{Id}') in solution</value>
+        <value>Changed contents of Code Template: '{Name}' (ID: '{Id}') in draft</value>
     </data>
     <data name="ToolkitDefinition_CodeTemplateFile_Deleted" xml:space="preserve">
-        <value>Deleted Code Template: '{Name}' (ID: '{Id}') from solution</value>
+        <value>Deleted Code Template: '{Name}' (ID: '{Id}') from draft</value>
     </data>
     <data name="ToolkitDefinition_CodeTemplateFile_Added" xml:space="preserve">
-        <value>Added new Code Template: '{Name}' (ID: '{Id}') to solution</value>
+        <value>Added new Code Template: '{Name}' (ID: '{Id}') to draft</value>
     </data>
-    <data name="SolutionItem_ElementDeleted" xml:space="preserve">
-        <value>Deleted element '{Path}' from solution</value>
+    <data name="DraftItem_ElementDeleted" xml:space="preserve">
+        <value>Deleted element '{Path}' from draft</value>
     </data>
-    <data name="SolutionItem_AttributeDeleted" xml:space="preserve">
-        <value>Deleted attribute '{Path}' from solution</value>
+    <data name="DraftItem_AttributeDeleted" xml:space="preserve">
+        <value>Deleted attribute '{Path}' from draft</value>
     </data>
-    <data name="SolutionItem_ElementAdded" xml:space="preserve">
-        <value>Added element '{Path}' to solution</value>
+    <data name="DraftItem_ElementAdded" xml:space="preserve">
+        <value>Added element '{Path}' to draft</value>
     </data>
-    <data name="SolutionItem_AttributeAdded" xml:space="preserve">
-        <value>Added attribute '{Path}' to solution, with value of '{NewValue}'</value>
+    <data name="DraftItem_AttributeAdded" xml:space="preserve">
+        <value>Added attribute '{Path}' to draft, with value of '{NewValue}'</value>
     </data>
-    <data name="SolutionItem_AttributeNameChanged" xml:space="preserve">
+    <data name="DraftItem_AttributeNameChanged" xml:space="preserve">
         <value>Changed Name of attribute '{Path}' from '{OldName}' to '{NewName}'</value>
     </data>
-    <data name="SolutionItem_AttributeDataTypeChanged" xml:space="preserve">
+    <data name="DraftItem_AttributeDataTypeChanged" xml:space="preserve">
         <value>Changed DataTye of attribute '{Path}' from '{OldDataType}' to '{NewDataType}'</value>
     </data>
-    <data name="SolutionItem_AttributeChoicesAdded" xml:space="preserve">
+    <data name="DraftItem_AttributeChoicesAdded" xml:space="preserve">
         <value>Added Choices to attribute '{Path}', and changed current value to '{Value}'</value>
     </data>
-    <data name="SolutionItem_AttributeChoicesDeleted" xml:space="preserve">
+    <data name="DraftItem_AttributeChoicesDeleted" xml:space="preserve">
         <value>Deleted Choices from attribute '{Path}'</value>
     </data>
-    <data name="SolutionItem_AttributeChoicesChanged" xml:space="preserve">
+    <data name="DraftItem_AttributeChoicesChanged" xml:space="preserve">
         <value>Changed Choices of attribute '{Path}', and changed current value from '{Value}' to '{NewChoice}'</value>
     </data>
-    <data name="SolutionItem_AttributeDefaultValueChanged" xml:space="preserve">
+    <data name="DraftItem_AttributeDefaultValueChanged" xml:space="preserve">
         <value>Changed DefaultValue of attribute '{Path}', and changed the current default value from '{Value}' to '{NewDefault}'</value>
     </data>
 </root>

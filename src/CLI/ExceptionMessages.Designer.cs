@@ -88,11 +88,11 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A CodeTemplate with ID: &apos;{0}&apos; cannot be found on the test solution.
+        ///   Looks up a localized string similar to A CodeTemplate with ID: &apos;{0}&apos; cannot be found on the test draft.
         /// </summary>
-        internal static string AuthoringApplication_CodeTemplateNotExistsTestSolution {
+        internal static string AuthoringApplication_CodeTemplateNotExistsTestDraft {
             get {
-                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExistsTestSolution", resourceCulture);
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateNotExistsTestDraft", resourceCulture);
             }
         }
         
@@ -151,7 +151,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command is misconfigured. A CodeTemplate with ID: &apos;{0}&apos; could not be found on any element in this solution.
+        ///   Looks up a localized string similar to Command is misconfigured. A CodeTemplate with ID: &apos;{0}&apos; could not be found on any element in this draft.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateNotExists {
             get {
@@ -160,7 +160,7 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LaunchPoint is misconfigured. A CodeTemplateCommand with ID: &apos;{0}&apos; could not be found on any element in this solution.
+        ///   Looks up a localized string similar to LaunchPoint is misconfigured. A CodeTemplateCommand with ID: &apos;{0}&apos; could not be found on any element in this draft.
         /// </summary>
         internal static string CommandLaunchPoint_CommandIdNotFound {
             get {
@@ -178,6 +178,267 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enumerator is before or after the collection.
+        /// </summary>
+        internal static string DictionaryEntryEnumerator_OutOfRange {
+            get {
+                return ResourceManager.GetString("DictionaryEntryEnumerator_OutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
+        /// </summary>
+        internal static string DraftItem_ClearCollectionForNonCollection {
+            get {
+                return ResourceManager.GetString("DraftItem_ClearCollectionForNonCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
+        /// </summary>
+        internal static string DraftItem_ClearItemsForNonCollection {
+            get {
+                return ResourceManager.GetString("DraftItem_ClearItemsForNonCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot fetch configuration for a non-element.
+        /// </summary>
+        internal static string DraftItem_ConfigurationForNonElement {
+            get {
+                return ResourceManager.GetString("DraftItem_ConfigurationForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
+        /// </summary>
+        internal static string DraftItem_Configure_ElementPropertyNotExists {
+            get {
+                return ResourceManager.GetString("DraftItem_Configure_ElementPropertyNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) can only have one of these values: &apos;{2}&apos;, it cannot be: &apos;{3}&apos;.
+        /// </summary>
+        internal static string DraftItem_Configure_ElementPropertyValueIsNotOneOf {
+            get {
+                return ResourceManager.GetString("DraftItem_Configure_ElementPropertyValueIsNotOneOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) is of type: &apos;{2}&apos;, and cannot accept value: &apos;{3}&apos;.
+        /// </summary>
+        internal static string DraftItem_Configure_ElementPropertyValueNotCompatible {
+            get {
+                return ResourceManager.GetString("DraftItem_Configure_ElementPropertyValueNotCompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tried to configure property: &apos;{1}&apos; (on element: &apos;{2}&apos;) but contains invalid assignment: &apos;{0}&apos;.
+        /// </summary>
+        internal static string DraftItem_Configure_PropertyAssignmentInvalid {
+            get {
+                return ResourceManager.GetString("DraftItem_Configure_PropertyAssignmentInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete on a non-element.
+        /// </summary>
+        internal static string DraftItem_DeleteForNonElement {
+            get {
+                return ResourceManager.GetString("DraftItem_DeleteForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only delete an element or collection.
+        /// </summary>
+        internal static string DraftItem_DeleteForNonElementChild {
+            get {
+                return ResourceManager.GetString("DraftItem_DeleteForNonElementChild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only delete a child of the element or collection.
+        /// </summary>
+        internal static string DraftItem_DeleteWithUnknownChild {
+            get {
+                return ResourceManager.GetString("DraftItem_DeleteWithUnknownChild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This element does not support automation.
+        /// </summary>
+        internal static string DraftItem_HasNoAutomations {
+            get {
+                return ResourceManager.GetString("DraftItem_HasNoAutomations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot resolve this reference to any schema on the toolkit of this draft.
+        /// </summary>
+        internal static string DraftItem_InvalidDraftItemSchema {
+            get {
+                return ResourceManager.GetString("DraftItem_InvalidDraftItemSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot materialise item in an non-collection element.
+        /// </summary>
+        internal static string DraftItem_MaterialiseNotACollection {
+            get {
+                return ResourceManager.GetString("DraftItem_MaterialiseNotACollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item does not have a parent item.
+        /// </summary>
+        internal static string DraftItem_MissingParent {
+            get {
+                return ResourceManager.GetString("DraftItem_MissingParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{0}&apos; is not an attribute.
+        /// </summary>
+        internal static string DraftItem_NotAnAttribute {
+            get {
+                return ResourceManager.GetString("DraftItem_NotAnAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property: &apos;{0}&apos; cannot be found on this element.
+        /// </summary>
+        internal static string DraftItem_NotAProperty {
+            get {
+                return ResourceManager.GetString("DraftItem_NotAProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This draft item is not yet materialised.
+        /// </summary>
+        internal static string DraftItem_NotMaterialised {
+            get {
+                return ResourceManager.GetString("DraftItem_NotMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Pattern: &apos;{0}&apos; has already been materialized.
+        /// </summary>
+        internal static string DraftItem_PatternAlreadyMaterialised {
+            get {
+                return ResourceManager.GetString("DraftItem_PatternAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot reset properties for a non-element.
+        /// </summary>
+        internal static string DraftItem_ResetPropertiesForNonElement {
+            get {
+                return ResourceManager.GetString("DraftItem_ResetPropertiesForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command: &apos;{0}&apos; does not exist on this element.
+        /// </summary>
+        internal static string DraftItem_UnknownAutomation {
+            get {
+                return ResourceManager.GetString("DraftItem_UnknownAutomation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item does not have a path.
+        /// </summary>
+        internal static string DraftItem_UnknownPath {
+            get {
+                return ResourceManager.GetString("DraftItem_UnknownPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find the associated schema in the toolkit of this draft which matches the ID: {0}, for an: &apos;{1}&apos;.
+        /// </summary>
+        internal static string DraftItem_UnknownSchema {
+            get {
+                return ResourceManager.GetString("DraftItem_UnknownSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot un-materialize the pattern.
+        /// </summary>
+        internal static string DraftItem_UnMaterialisationOnPatternForbidden {
+            get {
+                return ResourceManager.GetString("DraftItem_UnMaterialisationOnPatternForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot un-materialize a value.
+        /// </summary>
+        internal static string DraftItem_UnMaterialisationOnValueForbidden {
+            get {
+                return ResourceManager.GetString("DraftItem_UnMaterialisationOnValueForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Value has already been materialized.
+        /// </summary>
+        internal static string DraftItem_ValueAlreadyMaterialised {
+            get {
+                return ResourceManager.GetString("DraftItem_ValueAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid draft expression.
+        /// </summary>
+        internal static string DraftPathResolver_InvalidExpression {
+            get {
+                return ResourceManager.GetString("DraftPathResolver_InvalidExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A draft with id: &apos;{0}&apos; cannot be found in the draft store at location: &apos;{1}&apos;.
+        /// </summary>
+        internal static string DraftStore_NotFoundAtLocationWithId {
+            get {
+                return ResourceManager.GetString("DraftStore_NotFoundAtLocationWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The draft definition could not be found for: &apos;{0}&apos;.
+        /// </summary>
+        internal static string JsonFileRepository_DraftNotFound {
+            get {
+                return ResourceManager.GetString("JsonFileRepository_DraftNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The pattern definition could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_PatternNotFound {
@@ -187,20 +448,20 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The solution definition could not be found for: &apos;{0}&apos;.
-        /// </summary>
-        internal static string JsonFileRepository_SolutionNotFound {
-            get {
-                return ResourceManager.GetString("JsonFileRepository_SolutionNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The toolkit could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_ToolkitNotFound {
             get {
                 return ResourceManager.GetString("JsonFileRepository_ToolkitNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The key: {0} could not be found on the current draft item.
+        /// </summary>
+        internal static string LazyDraftItemDictionary_NotFound {
+            get {
+                return ResourceManager.GetString("LazyDraftItemDictionary_NotFound", resourceCulture);
             }
         }
         
@@ -466,75 +727,84 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;. You can only do one or the other.
+        ///   Looks up a localized string similar to Tried to configure draft ID: &apos;{0}&apos; to add both a new element with Name: &apos;{1}&apos;, and to a new collection with Name: &apos;{2}&apos;. You can only do one or the other.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_AddAndAddTo {
+        internal static string RuntimeApplication_ConfigureDraft_AddAndAddTo {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddAndAddTo", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_AddAndAddTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) already exists, and cannot be added again.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_AddElementExists {
+        internal static string RuntimeApplication_ConfigureDraft_AddElementExists {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_AddElementExists", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_AddElementExists", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Tried to delete the pattern, which cannot be deleted.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_DeletePattern {
+        internal static string RuntimeApplication_ConfigureDraft_DeletePattern {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_DeletePattern", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_DeletePattern", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes to any elements or collections.
+        ///   Looks up a localized string similar to Tried to configure draft ID: &apos;{0}&apos; without any changes to any elements or collections.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_NoChanges {
+        internal static string RuntimeApplication_ConfigureDraft_NoChanges {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_NoChanges", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_NoChanges", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add a new element with Name: &apos;{2}&apos;. You can only do one or the other.
+        ///   Looks up a localized string similar to Tried to configure draft ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add a new element with Name: &apos;{2}&apos;. You can only do one or the other.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_OnAndAdd {
+        internal static string RuntimeApplication_ConfigureDraft_OnAndAdd {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnAndAdd", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_OnAndAdd", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add to a collection with Name: &apos;{2}&apos;. You can only do one or the other.
+        ///   Looks up a localized string similar to Tried to configure draft ID: &apos;{0}&apos; to update the element &apos;{1}&apos;, and add to a collection with Name: &apos;{2}&apos;. You can only do one or the other.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_OnAndAddTo {
+        internal static string RuntimeApplication_ConfigureDraft_OnAndAddTo {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnAndAddTo", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_OnAndAddTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) has not been created yet, and cannot be configured.
         /// </summary>
-        internal static string RuntimeApplication_ConfigureSolution_OnElementNotExists {
+        internal static string RuntimeApplication_ConfigureDraft_OnElementNotExists {
             get {
-                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_OnElementNotExists", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_ConfigureDraft_OnElementNotExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The installed toolkit for this solution &apos;{0}&apos; (ID: &apos;{1}&apos;) has been upgraded from version: &apos;{2}&apos; to version: &apos;{3}&apos;. Please upgrade this solution with command:
-        ///`automate upgrade solution`.
+        ///   Looks up a localized string similar to The installed toolkit for this draft &apos;{0}&apos; (ID: &apos;{1}&apos;) has been upgraded from version: &apos;{2}&apos; to version: &apos;{3}&apos;. Please upgrade this draft with command:
+        ///`automate upgrade draft`.
         /// </summary>
-        internal static string RuntimeApplication_CurrentSolutionUpgraded {
+        internal static string RuntimeApplication_CurrentDraftUpgraded {
             get {
-                return ResourceManager.GetString("RuntimeApplication_CurrentSolutionUpgraded", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_CurrentDraftUpgraded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No draft with ID: &apos;{0}&apos; has been created..
+        /// </summary>
+        internal static string RuntimeApplication_DraftNotFound {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_DraftNotFound", resourceCulture);
             }
         }
         
@@ -548,20 +818,11 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution does not yet exist.
+        ///   Looks up a localized string similar to Draft does not yet exist.
         /// </summary>
-        internal static string RuntimeApplication_NoCurrentSolution {
+        internal static string RuntimeApplication_NoCurrentDraft {
             get {
-                return ResourceManager.GetString("RuntimeApplication_NoCurrentSolution", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No solution with ID: &apos;{0}&apos; has been created..
-        /// </summary>
-        internal static string RuntimeApplication_SolutionNotFound {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_SolutionNotFound", resourceCulture);
+                return ResourceManager.GetString("RuntimeApplication_NoCurrentDraft", resourceCulture);
             }
         }
         
@@ -580,249 +841,6 @@ namespace Automate.CLI {
         internal static string RuntimeApplication_ToolkitNotFound {
             get {
                 return ResourceManager.GetString("RuntimeApplication_ToolkitNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
-        /// </summary>
-        internal static string SolutionItem_ClearCollectionForNonCollection {
-            get {
-                return ResourceManager.GetString("SolutionItem_ClearCollectionForNonCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
-        /// </summary>
-        internal static string SolutionItem_ClearItemsForNonCollection {
-            get {
-                return ResourceManager.GetString("SolutionItem_ClearItemsForNonCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot fetch configuration for a non-element.
-        /// </summary>
-        internal static string SolutionItem_ConfigurationForNonElement {
-            get {
-                return ResourceManager.GetString("SolutionItem_ConfigurationForNonElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The element (referenced by: &apos;{0}&apos;) does not have a property called: &apos;{1}&apos;.
-        /// </summary>
-        internal static string SolutionItem_ConfigureSolution_ElementPropertyNotExists {
-            get {
-                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyNotExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) can only have one of these values: &apos;{2}&apos;, it cannot be: &apos;{3}&apos;.
-        /// </summary>
-        internal static string SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf {
-            get {
-                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyValueIsNotOneOf", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{1}&apos; (on element: &apos;{0}&apos;) is of type: &apos;{2}&apos;, and cannot accept value: &apos;{3}&apos;.
-        /// </summary>
-        internal static string SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible {
-            get {
-                return ResourceManager.GetString("SolutionItem_ConfigureSolution_ElementPropertyValueNotCompatible", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tried to configure property: &apos;{1}&apos; (on element: &apos;{2}&apos;) but contains invalid assignment: &apos;{0}&apos;.
-        /// </summary>
-        internal static string SolutionItem_ConfigureSolution_PropertyAssignmentInvalid {
-            get {
-                return ResourceManager.GetString("SolutionItem_ConfigureSolution_PropertyAssignmentInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot delete on a non-element.
-        /// </summary>
-        internal static string SolutionItem_DeleteForNonElement {
-            get {
-                return ResourceManager.GetString("SolutionItem_DeleteForNonElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can only delete an element or collection.
-        /// </summary>
-        internal static string SolutionItem_DeleteForNonElementChild {
-            get {
-                return ResourceManager.GetString("SolutionItem_DeleteForNonElementChild", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can only delete a child of the element or collection.
-        /// </summary>
-        internal static string SolutionItem_DeleteWithUnknownChild {
-            get {
-                return ResourceManager.GetString("SolutionItem_DeleteWithUnknownChild", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This element does not support automation.
-        /// </summary>
-        internal static string SolutionItem_HasNoAutomations {
-            get {
-                return ResourceManager.GetString("SolutionItem_HasNoAutomations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot resolve this reference to any schema on the toolkit of this solution.
-        /// </summary>
-        internal static string SolutionItem_InvalidSolutionItemSchema {
-            get {
-                return ResourceManager.GetString("SolutionItem_InvalidSolutionItemSchema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot materialise item in an non-collection element.
-        /// </summary>
-        internal static string SolutionItem_MaterialiseNotACollection {
-            get {
-                return ResourceManager.GetString("SolutionItem_MaterialiseNotACollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This item does not have a parent item.
-        /// </summary>
-        internal static string SolutionItem_MissingParent {
-            get {
-                return ResourceManager.GetString("SolutionItem_MissingParent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{0}&apos; is not an attribute.
-        /// </summary>
-        internal static string SolutionItem_NotAnAttribute {
-            get {
-                return ResourceManager.GetString("SolutionItem_NotAnAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property: &apos;{0}&apos; cannot be found on this element.
-        /// </summary>
-        internal static string SolutionItem_NotAProperty {
-            get {
-                return ResourceManager.GetString("SolutionItem_NotAProperty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This solution item is not yet materialised.
-        /// </summary>
-        internal static string SolutionItem_NotMaterialised {
-            get {
-                return ResourceManager.GetString("SolutionItem_NotMaterialised", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Pattern: &apos;{0}&apos; has already been materialized.
-        /// </summary>
-        internal static string SolutionItem_PatternAlreadyMaterialised {
-            get {
-                return ResourceManager.GetString("SolutionItem_PatternAlreadyMaterialised", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot reset properties for a non-element.
-        /// </summary>
-        internal static string SolutionItem_ResetPropertiesForNonElement {
-            get {
-                return ResourceManager.GetString("SolutionItem_ResetPropertiesForNonElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command: &apos;{0}&apos; does not exist on this element.
-        /// </summary>
-        internal static string SolutionItem_UnknownAutomation {
-            get {
-                return ResourceManager.GetString("SolutionItem_UnknownAutomation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This item does not have a path.
-        /// </summary>
-        internal static string SolutionItem_UnknownPath {
-            get {
-                return ResourceManager.GetString("SolutionItem_UnknownPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot find the associated schema in the toolkit of this solution which matches the ID: {0}, for an: &apos;{1}&apos;.
-        /// </summary>
-        internal static string SolutionItem_UnknownSchema {
-            get {
-                return ResourceManager.GetString("SolutionItem_UnknownSchema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot un-materialize the pattern.
-        /// </summary>
-        internal static string SolutionItem_UnMaterialisationOnPatternForbidden {
-            get {
-                return ResourceManager.GetString("SolutionItem_UnMaterialisationOnPatternForbidden", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot un-materialize a value.
-        /// </summary>
-        internal static string SolutionItem_UnMaterialisationOnValueForbidden {
-            get {
-                return ResourceManager.GetString("SolutionItem_UnMaterialisationOnValueForbidden", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Value has already been materialized.
-        /// </summary>
-        internal static string SolutionItem_ValueAlreadyMaterialised {
-            get {
-                return ResourceManager.GetString("SolutionItem_ValueAlreadyMaterialised", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid solution expression.
-        /// </summary>
-        internal static string SolutionPathResolver_InvalidExpression {
-            get {
-                return ResourceManager.GetString("SolutionPathResolver_InvalidExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A solution with id: &apos;{0}&apos; cannot be found in the solution store at location: &apos;{1}&apos;.
-        /// </summary>
-        internal static string SolutionStore_NotFoundAtLocationWithId {
-            get {
-                return ResourceManager.GetString("SolutionStore_NotFoundAtLocationWithId", resourceCulture);
             }
         }
         

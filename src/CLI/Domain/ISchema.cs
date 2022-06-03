@@ -68,7 +68,7 @@ namespace Automate.CLI.Domain
 
         Automation Object { get; }
 
-        CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem solutionItem);
+        CommandExecutionResult Execute(DraftDefinition draft, DraftItem draftItem);
     }
 
     internal interface ICodeTemplateSchema

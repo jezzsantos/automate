@@ -8,38 +8,38 @@ namespace Automate.CLI.Domain
     {
         private readonly IApplicationExecutor applicationExecutor;
         private readonly Automation automation;
-        private readonly ISolutionPathResolver solutionPathResolver;
+        private readonly IDraftPathResolver draftPathResolver;
 
         public CliCommand(string name, string applicationName, string arguments) : this(name, applicationName,
-            arguments, new SolutionPathResolver(), new ApplicationExecutor())
+            arguments, new DraftPathResolver(), new ApplicationExecutor())
         {
         }
 
         internal CliCommand(string name, string applicationName, string arguments,
-            ISolutionPathResolver solutionPathResolver, IApplicationExecutor applicationExecutor) : this(
+            IDraftPathResolver draftPathResolver, IApplicationExecutor applicationExecutor) : this(
             new Automation(name, AutomationType.CliCommand, new Dictionary<string, object>
             {
                 { nameof(ApplicationName), applicationName },
                 { nameof(Arguments), arguments }
-            }), solutionPathResolver, applicationExecutor)
+            }), draftPathResolver, applicationExecutor)
         {
             applicationName.GuardAgainstNull(nameof(applicationName));
         }
 
         private CliCommand(Automation automation) : this(
-            automation, new SolutionPathResolver(), new ApplicationExecutor())
+            automation, new DraftPathResolver(), new ApplicationExecutor())
         {
         }
 
-        private CliCommand(Automation automation, ISolutionPathResolver solutionPathResolver,
+        private CliCommand(Automation automation, IDraftPathResolver draftPathResolver,
             IApplicationExecutor applicationExecutor)
         {
             automation.GuardAgainstNull(nameof(automation));
-            solutionPathResolver.GuardAgainstNull(nameof(solutionPathResolver));
+            draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
 
             this.automation = automation;
-            this.solutionPathResolver = solutionPathResolver;
+            this.draftPathResolver = draftPathResolver;
             this.applicationExecutor = applicationExecutor;
         }
 
@@ -76,16 +76,16 @@ namespace Automate.CLI.Domain
 
         public string Name => this.automation.Name;
 
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
+        public CommandExecutionResult Execute(DraftDefinition draft, DraftItem target)
         {
             var outcome = new CommandExecutionResult(Name);
 
             var applicationName = ApplicationName.HasValue()
-                ? this.solutionPathResolver.ResolveExpression(
+                ? this.draftPathResolver.ResolveExpression(
                     DomainMessages.CliCommand_ApplicationName_Description.Format(Id), ApplicationName, target)
                 : string.Empty;
             var arguments = Arguments.HasValue()
-                ? this.solutionPathResolver.ResolveExpression(
+                ? this.draftPathResolver.ResolveExpression(
                     DomainMessages.CliCommand_Arguments_Description.Format(Id), Arguments, target)
                 : string.Empty;
 

@@ -40,7 +40,7 @@ namespace CLI.UnitTests.Application
             this.patternPathResolver.Setup(ppr => ppr.Resolve(It.IsAny<PatternDefinition>(), It.IsAny<string>()))
                 .Returns((PatternDefinition model, string _) => model);
             this.textTemplatingEngine = new Mock<ITextTemplatingEngine>();
-            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
+            this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                 .Returns("anoutput");
             this.textTemplatingEngine.Setup(tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
                 .Returns("anoutput");

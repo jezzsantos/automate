@@ -12,18 +12,18 @@ namespace Automate.CLI.Domain
         private readonly Automation automation;
         private readonly IFilePathResolver filePathResolver;
         private readonly IFileSystemWriter fileSystemWriter;
-        private readonly ISolutionPathResolver solutionPathResolver;
+        private readonly IDraftPathResolver draftPathResolver;
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
         public CodeTemplateCommand(string name, string codeTemplateId, bool isOneOff, string filePath) : this(
-            new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(),
+            new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new DraftPathResolver(),
             new TextTemplatingEngine(), name, codeTemplateId, isOneOff, filePath)
         {
         }
 
         internal CodeTemplateCommand(IFilePathResolver filePathResolver,
             IFileSystemWriter fileSystemWriter,
-            ISolutionPathResolver solutionPathResolver,
+            IDraftPathResolver draftPathResolver,
             ITextTemplatingEngine textTemplatingEngine,
             string name, string codeTemplateId, bool isOneOff, string filePath) : this(new Automation(name,
             AutomationType.CodeTemplateCommand, new Dictionary<string, object>
@@ -31,7 +31,7 @@ namespace Automate.CLI.Domain
             { nameof(CodeTemplateId), codeTemplateId },
             { nameof(IsOneOff), isOneOff },
             { nameof(FilePath), filePath }
-        }), filePathResolver, fileSystemWriter, solutionPathResolver, textTemplatingEngine)
+        }), filePathResolver, fileSystemWriter, draftPathResolver, textTemplatingEngine)
         {
             codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
             filePath.GuardAgainstNullOrEmpty(nameof(filePath));
@@ -40,26 +40,26 @@ namespace Automate.CLI.Domain
         }
 
         private CodeTemplateCommand(Automation automation) : this(
-            automation, new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new SolutionPathResolver(), new TextTemplatingEngine())
+            automation, new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new DraftPathResolver(), new TextTemplatingEngine())
         {
         }
 
         private CodeTemplateCommand(Automation automation,
             IFilePathResolver filePathResolver,
             IFileSystemWriter fileSystemWriter,
-            ISolutionPathResolver solutionPathResolver,
+            IDraftPathResolver draftPathResolver,
             ITextTemplatingEngine textTemplatingEngine)
         {
             automation.GuardAgainstNull(nameof(automation));
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
             fileSystemWriter.GuardAgainstNull(nameof(fileSystemWriter));
-            solutionPathResolver.GuardAgainstNull(nameof(solutionPathResolver));
+            draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
 
             this.automation = automation;
             this.filePathResolver = filePathResolver;
             this.fileSystemWriter = fileSystemWriter;
-            this.solutionPathResolver = solutionPathResolver;
+            this.draftPathResolver = draftPathResolver;
             this.textTemplatingEngine = textTemplatingEngine;
         }
 
@@ -102,11 +102,11 @@ namespace Automate.CLI.Domain
 
         public string Name => this.automation.Name;
 
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
+        public CommandExecutionResult Execute(DraftDefinition draft, DraftItem target)
         {
             var log = new List<string>();
 
-            var codeTemplate = solution.Toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
+            var codeTemplate = draft.Toolkit.CodeTemplateFiles.Safe().FirstOrDefault(ctf => ctf.Id == CodeTemplateId);
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(
@@ -116,7 +116,7 @@ namespace Automate.CLI.Domain
             var existingLink = target.ArtifactLinks.Safe()
                 .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(Id));
 
-            var destinationFilePath = this.solutionPathResolver.ResolveExpression(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(Id), FilePath, target);
+            var destinationFilePath = this.draftPathResolver.ResolveExpression(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(Id), FilePath, target);
             var destinationFullPath = destinationFilePath.StartsWith(CurrentDirectoryPrefix)
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
                     destinationFilePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
@@ -144,7 +144,7 @@ namespace Automate.CLI.Domain
             return new CommandExecutionResult(Name, log);
         }
 
-        private void GenerateAndOverwriteFile(SolutionItem target, CodeTemplateFile codeTemplate, string destinationFullPath, List<string> log)
+        private void GenerateAndOverwriteFile(DraftItem target, CodeTemplateFile codeTemplate, string destinationFullPath, List<string> log)
         {
             var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
 
@@ -164,7 +164,7 @@ namespace Automate.CLI.Domain
             log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format(oldFilePath, destinationFullPath));
         }
 
-        private void UpdateArtifactLink(SolutionItem target, ArtifactLink existingLink, bool existingLinkChangedLocation, bool destinationFileExists, string destinationFullPath, List<string> log)
+        private void UpdateArtifactLink(DraftItem target, ArtifactLink existingLink, bool existingLinkChangedLocation, bool destinationFileExists, string destinationFullPath, List<string> log)
         {
             var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
 

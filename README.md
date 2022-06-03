@@ -112,7 +112,7 @@ Now, that person (or you), can:
 
 * `automate install toolkit "<DOWNLOADLOCATION>/MyPattern1_0.1.0.toolkit"`
 
-3. Create a new 'Solution' from this installed toolkit:
+3. Create a new 'Draft' from this installed toolkit:
 
 * `automate configure on "{MyPattern1}" --and-set "Name=Banana"`
 

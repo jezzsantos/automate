@@ -24,7 +24,8 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.engine.Transform("adescription", string.Empty, new SolutionItem(toolkit, new Element("anelementname"), null));
+            var result = this.engine.Transform("adescription", string.Empty,
+                new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().BeEmpty();
         }
@@ -34,7 +35,8 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.engine.Transform("adescription", "atemplate", new SolutionItem(toolkit, new Element("anelementname"), null));
+            var result = this.engine.Transform("adescription", "atemplate",
+                new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().Be("atemplate");
         }
@@ -48,10 +50,10 @@ namespace CLI.UnitTests.Infrastructure
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
             pattern.AddElement(element);
-            var solution = new SolutionItem(toolkit, element, null);
-            solution.Materialise();
+            var draft = new DraftItem(toolkit, element, null);
+            draft.Materialise();
 
-            var result = this.engine.Transform("adescription", "{{anattributename}}", solution);
+            var result = this.engine.Transform("adescription", "{{anattributename}}", draft);
 
             result.Should().Be("adefaultvalue");
         }
@@ -63,7 +65,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.engine
                 .Invoking(x => x.Transform("adescription", "{{anything.}}",
-                    new SolutionItem(toolkit, new Element("anelementname"), null)))
+                    new DraftItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format("adescription",
                     "((11:0,11),(12:0,12)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" +
@@ -78,7 +80,7 @@ namespace CLI.UnitTests.Infrastructure
 
             this.engine
                 .Invoking(x => x.Transform("adescription", "{{parent.notexists}}",
-                    new SolutionItem(toolkit, new Element("anelementname"), null)))
+                    new DraftItem(toolkit, new Element("anelementname"), null)))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_TransformFailed.Format("adescription",
                     "<input>(1,10) : error : Cannot get the member parent.notexists for a null object." +

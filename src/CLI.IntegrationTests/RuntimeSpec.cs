@@ -117,73 +117,73 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenCreateSolution_ThenCreatesSolution()
+        public void WhenCreateDraft_ThenCreatesDraft()
         {
             ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CreateSolutionFromToolkit.FormatTemplate(solution.Name,
-                        solution.Id, solution.PatternName));
+                    OutputMessages.CommandLine_Output_CreateDraftFromToolkit.FormatTemplate(draft.Name,
+                        draft.Id, draft.PatternName));
         }
 
         [Fact]
-        public void WhenSwitchSolution_ThenSwitchesSolution()
+        public void WhenSwitchDraft_ThenSwitchesDraft()
         {
             ConfigureBuildAndInstallToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
-            var solution1 = this.setup.Solutions.First();
+            var draft1 = this.setup.Drafts.First();
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{solution1.Id}\"");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{draft1.Id}\"");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionSwitched.FormatTemplate(solution1.Name, solution1.Id));
+                    OutputMessages.CommandLine_Output_DraftSwitched.FormatTemplate(draft1.Name, draft1.Id));
         }
 
         [Fact]
-        public void WhenListInstalledSolutionsAndNone_ThenDisplaysNone()
+        public void WhenListInstalledDraftsAndNone_ThenDisplaysNone()
         {
             ConfigureBuildAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} drafts");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_NoInstalledSolutions);
+                    OutputMessages.CommandLine_Output_NoInstalledDrafts);
         }
 
         [Fact]
-        public void WhenListCreatedSolutionsAndOne_ThenDisplaysOne()
+        public void WhenListCreatedDraftsAndOne_ThenDisplaysOne()
         {
             ConfigureBuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
-            this.setup.RunCommand($"{CommandLineApi.ListCommandName} solutions");
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} drafts");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_InstalledSolutionsListed.FormatTemplate(
-                        $"{{\"Name\": \"{solution.Name}\", \"ID\": \"{solution.Id}\", \"Version\": \"{solution.Toolkit.Version}\"}}"));
+                    OutputMessages.CommandLine_Output_InstalledDraftsListed.FormatTemplate(
+                        $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndToolkitUpgraded_ThenDisplaysError()
+        public void WhenConfigureDraftAndToolkitUpgraded_ThenDisplaysError()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
@@ -193,133 +193,133 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue2\"");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should()
                 .DisplayError(
-                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
                         "0.1.0", "0.2.0"));
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnPattern_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndSetPropertyOnPattern_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue\"");
 
-            var item = this.setup.Solution.Model;
+            var item = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("APattern", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("APattern", item.Id));
             item.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnNewElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndSetPropertyOnNewElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
-            var item = this.setup.Solution.Model.Properties["AnElement1"];
+            var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("B");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnExistingElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}}");
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
-            var item = this.setup.Solution.Model.Properties["AnElement1"];
+            var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndReSetPropertyWithNullOnExistingElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndReSetPropertyWithNullOnExistingElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on \"\" --and-set \"AProperty1=\"");
 
-            var item = this.setup.Solution.Model;
+            var item = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate(item.Name, item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate(item.Name, item.Id));
             item.Properties["AProperty1"].Value.Should().BeNull();
         }
         [Fact]
-        public void WhenConfigureSolutionAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
-            var item = this.setup.Solution.Model.Properties["AnElement1"];
+            var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnNewCollectionItem_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndSetPropertyOnNewCollectionItem_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
 
-            var item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
+            var item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
-            var item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
+            var item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{item.Id}}} --and-set \"AProperty4=anewvalue\"");
 
-            item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
+            item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+                    OutputMessages.CommandLine_Output_DraftConfigured.FormatTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndResetElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndResetElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty5=avalue1\"");
@@ -330,11 +330,11 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} reset {{AnElement3}}");
 
-            var elementItem = this.setup.Solution.Model.Properties["AnElement3"];
+            var elementItem = this.setup.Draft.Model.Properties["AnElement3"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionResetElement.FormatTemplate("AnElement3",
+                    OutputMessages.CommandLine_Output_DraftResetElement.FormatTemplate("AnElement3",
                         elementItem.Id));
             elementItem.Properties["AProperty5"].Value.Should().Be("ADefaultValue1");
             elementItem.Properties["AProperty6"].Value.Should().Be(25);
@@ -342,9 +342,9 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndClearCollection_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndClearCollection_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue1\"");
@@ -355,77 +355,77 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} clear {{ACollection2}}");
 
-            var collectionItem = this.setup.Solution.Model.Properties["ACollection2"];
+            var collectionItem = this.setup.Draft.Model.Properties["ACollection2"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionEmptyCollection.FormatTemplate("ACollection2",
+                    OutputMessages.CommandLine_Output_DraftEmptyCollection.FormatTemplate("ACollection2",
                         collectionItem.Id));
             collectionItem.Items.Count.Should().Be(0);
         }
 
         [Fact]
-        public void WhenConfigureSolutionAndDeleteElement_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndDeleteElement_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
-            var elementItem = this.setup.Solution.Model.Properties["AnElement3"];
+            var elementItem = this.setup.Draft.Model.Properties["AnElement3"];
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} delete {{AnElement3}}");
 
-            var solutionItem = this.setup.Solution.Model;
+            var draftItem = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionDelete.FormatTemplate("AnElement3",
+                    OutputMessages.CommandLine_Output_DraftDelete.FormatTemplate("AnElement3",
                         elementItem.Id));
-            solutionItem.Properties.Should().NotContainKey("AnElement3");
+            draftItem.Properties.Should().NotContainKey("AnElement3");
         }
 
         [Fact]
-        public void WhenViewSolution_ThenDisplaysConfiguration()
+        public void WhenViewDraft_ThenDisplaysConfiguration()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name,
-                    solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftConfiguration.FormatTemplate(draft.Name,
+                    draft.Id,
                     new
                     {
-                        solution.Model.Id,
+                        draft.Model.Id,
                         AProperty1 = "avalue1",
                         AnElement1 = new
                         {
-                            solution.Model.Properties["AnElement1"].Id,
+                            draft.Model.Properties["AnElement1"].Id,
                             AProperty3 = "A",
                             ACollection1 = new
                             {
-                                solution.Model.Properties["AnElement1"].Properties["ACollection1"].Id
+                                draft.Model.Properties["AnElement1"].Properties["ACollection1"].Id
                             }
                         },
                         ACollection2 = new
                         {
-                            solution.Model.Properties["ACollection2"].Id,
+                            draft.Model.Properties["ACollection2"].Id,
                             Items = new[]
                             {
                                 new
                                 {
-                                    solution.Model.Properties["ACollection2"].Items.Single().Id,
+                                    draft.Model.Properties["ACollection2"].Items.Single().Id,
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
                         },
                         AnElement3 = new
                         {
-                            solution.Model.Properties["AnElement3"].Id,
+                            draft.Model.Properties["AnElement3"].Id,
                             AProperty5 = "ADefaultValue1",
                             AProperty6 = 25
                         }
@@ -433,43 +433,43 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewSolutionWithTodo_ThenDisplaysConfigurationSchemaAndValidation()
+        public void WhenViewDraftWithTodo_ThenDisplaysConfigurationSchemaAndValidation()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} solution --todo");
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} draft --todo");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name,
-                    solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftConfiguration.FormatTemplate(draft.Name,
+                    draft.Id,
                     new
                     {
-                        solution.Model.Id,
+                        draft.Model.Id,
                         AProperty1 = "avalue1",
                         AnElement1 = new
                         {
-                            solution.Model.Properties["AnElement1"].Id
+                            draft.Model.Properties["AnElement1"].Id
                         },
                         ACollection2 = new
                         {
-                            solution.Model.Properties["ACollection2"].Id,
+                            draft.Model.Properties["ACollection2"].Id,
                             Items = new[]
                             {
                                 new
                                 {
-                                    solution.Model.Properties["ACollection2"].Items.Single().Id,
+                                    draft.Model.Properties["ACollection2"].Items.Single().Id,
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
                         },
                         AnElement3 = new
                         {
-                            solution.Model.Properties["AnElement3"].Id,
+                            draft.Model.Properties["AnElement3"].Id,
                             AProperty5 = "ADefaultValue1",
                             AProperty6 = 25
                         }
@@ -518,8 +518,8 @@ namespace CLI.IntegrationTests
                         this.setup.Pattern.Id));
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Name, solution.Id,
+                    OutputMessages.CommandLine_Output_DraftValidationFailed
+                        .FormatTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
                         ));
         }
@@ -527,16 +527,16 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenValidateAndErrors_ThenDisplaysErrors()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Name, solution.Id,
+                    OutputMessages.CommandLine_Output_DraftValidationFailed
+                        .FormatTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
                             $"2. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}" +
                             $"3. {{APattern.ACollection2}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
@@ -546,35 +546,35 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenValidateAndNoErrors_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Name,
-                        solution.Id));
+                    OutputMessages.CommandLine_Output_DraftValidationSuccess.FormatTemplate(draft.Name,
+                        draft.Id));
         }
 
         [Fact]
         public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationFailed
-                        .FormatTemplate(solution.Name, solution.Id,
+                    OutputMessages.CommandLine_Output_DraftValidationFailed
+                        .FormatTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
                             $"2. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}" +
                             $"3. {{APattern.ACollection2}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
@@ -585,7 +585,7 @@ namespace CLI.IntegrationTests
         public void WhenExecuteLaunchPointAndFails_ThenDisplaysResults()
         {
             var testDirectory = Environment.CurrentDirectory;
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -611,10 +611,10 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenExecuteLaunchPointOnSolution_ThenDisplaysSuccess()
+        public void WhenExecuteLaunchPointOnDraft_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -623,7 +623,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
-            var artifactLink = this.setup.Solution.Model.ArtifactLinks.First().Path;
+            var artifactLink = this.setup.Draft.Model.ArtifactLinks.First().Path;
             var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -640,7 +640,7 @@ namespace CLI.IntegrationTests
         public void WhenExecuteLaunchPointOnElement_ThenDisplaysSuccess()
         {
             var testDirectory = Environment.CurrentDirectory;
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -649,7 +649,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint3 --on {{AnElement1}}");
 
-            var artifactLink = this.setup.Solution.Model.Properties["AnElement1"].ArtifactLinks.First().Path;
+            var artifactLink = this.setup.Draft.Model.Properties["AnElement1"].ArtifactLinks.First().Path;
             var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -663,31 +663,31 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndToolkitNotUpgraded_ThenDisplaysWarning()
+        public void WhenUpgradeDraftAndToolkitNotUpgraded_ThenDisplaysWarning()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning.FormatTemplate(
-                    solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.1.0",
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning.FormatTemplate(
+                    draft.Name, draft.Id, draft.PatternName, "0.1.0", "0.1.0",
                     $"* {MigrationChangeType.Abort}: " +
-                    MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion.FormatTemplate(solution.PatternName,
-                        solution.Toolkit.Version) + $"{Environment.NewLine}"));
+                    MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion.FormatTemplate(draft.PatternName,
+                        draft.Toolkit.Version) + $"{Environment.NewLine}"));
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndToolkitUpgradedWithChanges_ThenDisplaysSuccess()
+        public void WhenUpgradeDraftAndToolkitUpgradedWithChanges_ThenDisplaysSuccess()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -697,21 +697,21 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             BuildReversionAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
-                    solution.Id, solution.PatternName, "0.1.0", "0.2.0",
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                    draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
-                    MigrationMessages.SolutionItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
+                    MigrationMessages.DraftItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndToolkitNotAutoUpgradeable_ThenDisplaysError()
+        public void WhenUpgradeDraftAndToolkitNotAutoUpgradeable_ThenDisplaysError()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -721,22 +721,22 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
             BuildReversionAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             const string newVersion = "1.0.0";
             this.setup.Should()
-                .DisplayError(OutputMessages.CommandLine_Output_SolutionUpgradeFailed.FormatTemplate(solution.Name,
-                    solution.Id, solution.PatternName, "0.1.0", newVersion,
+                .DisplayError(OutputMessages.CommandLine_Output_DraftUpgradeFailed.FormatTemplate(draft.Name,
+                    draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Abort}: " +
-                    MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(
-                        solution.PatternName, newVersion) + $"{Environment.NewLine}"));
+                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(
+                        draft.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
         [Fact]
-        public void WhenUpgradeSolutionAndToolkitNotAutoUpgradeableAndForced_ThenDisplaysResults()
+        public void WhenUpgradeDraftAndToolkitNotAutoUpgradeableAndForced_ThenDisplaysResults()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -746,23 +746,23 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
             BuildReversionAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution --force");
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft --force");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             const string newVersion = "1.0.0";
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
-                    solution.Id, solution.PatternName, "0.1.0", newVersion,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                    draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Breaking}: " +
-                    MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced.FormatTemplate(
-                        solution.PatternName, newVersion) + $"{Environment.NewLine}"));
+                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced.FormatTemplate(
+                        draft.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
         [Fact]
-        public void WhenUpgradeSolutionWithNonBreakingChanges_ThenDisplaysResults()
+        public void WhenUpgradeDraftWithNonBreakingChanges_ThenDisplaysResults()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
@@ -773,14 +773,14 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate3");
             BuildReversionAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} solution");
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
 
-            var solution = this.setup.Solution;
+            var draft = this.setup.Draft;
             var codeTemplate = this.setup.Pattern.CodeTemplates.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
-                    solution.Id, solution.PatternName, "0.1.0", "0.2.0",
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                    draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
                     MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name,
                         codeTemplate.Id) + $"{Environment.NewLine}"));
@@ -789,7 +789,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenViewToolkit_ThenDisplaysPatternTree()
         {
-            CreateSolutionFromBuiltToolkit();
+            CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
 
@@ -822,7 +822,7 @@ namespace CLI.IntegrationTests
             }
         }
 
-        private void CreateSolutionFromBuiltToolkit()
+        private void CreateDraftFromBuiltToolkit()
         {
             ConfigureBuildAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");

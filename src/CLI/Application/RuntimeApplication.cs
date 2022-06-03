@@ -11,43 +11,43 @@ namespace Automate.CLI.Application
     {
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
-        private readonly ISolutionPathResolver solutionPathResolver;
-        private readonly ISolutionStore solutionStore;
+        private readonly IDraftPathResolver draftPathResolver;
+        private readonly IDraftStore draftStore;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(string currentDirectory) : this(currentDirectory, new PatternStore(currentDirectory),
-            new ToolkitStore(currentDirectory), new SolutionStore(currentDirectory), new SystemIoFilePathResolver(),
-            new SolutionPathResolver())
+            new ToolkitStore(currentDirectory), new DraftStore(currentDirectory), new SystemIoFilePathResolver(),
+            new DraftPathResolver())
         {
         }
 
         private RuntimeApplication(string currentDirectory, IPatternStore patternStore, IToolkitStore toolkitStore,
-            ISolutionStore solutionStore, IFilePathResolver fileResolver, ISolutionPathResolver solutionPathResolver) :
-            this(toolkitStore, solutionStore, fileResolver,
-                new PatternToolkitPackager(patternStore, toolkitStore), solutionPathResolver)
+            IDraftStore draftStore, IFilePathResolver fileResolver, IDraftPathResolver draftPathResolver) :
+            this(toolkitStore, draftStore, fileResolver,
+                new PatternToolkitPackager(patternStore, toolkitStore), draftPathResolver)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
         }
 
-        internal RuntimeApplication(IToolkitStore toolkitStore, ISolutionStore solutionStore,
+        internal RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,
             IFilePathResolver fileResolver,
-            IPatternToolkitPackager packager, ISolutionPathResolver solutionPathResolver)
+            IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver)
         {
             toolkitStore.GuardAgainstNull(nameof(toolkitStore));
-            solutionStore.GuardAgainstNull(nameof(solutionStore));
+            draftStore.GuardAgainstNull(nameof(draftStore));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
             packager.GuardAgainstNull(nameof(packager));
-            solutionPathResolver.GuardAgainstNull(nameof(solutionPathResolver));
+            draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             this.toolkitStore = toolkitStore;
-            this.solutionStore = solutionStore;
+            this.draftStore = draftStore;
             this.fileResolver = fileResolver;
             this.packager = packager;
-            this.solutionPathResolver = solutionPathResolver;
+            this.draftPathResolver = draftPathResolver;
         }
 
-        public string CurrentSolutionId => this.solutionStore.GetCurrent()?.Id;
+        public string CurrentDraftId => this.draftStore.GetCurrent()?.Id;
 
-        public string CurrentSolutionName => this.solutionStore.GetCurrent()?.Name;
+        public string CurrentDraftName => this.draftStore.GetCurrent()?.Name;
 
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
@@ -70,7 +70,7 @@ namespace Automate.CLI.Application
             return this.toolkitStore.ListAll();
         }
 
-        public SolutionDefinition CreateSolution(string toolkitName, string solutionName)
+        public DraftDefinition CreateDraft(string toolkitName, string draftName)
         {
             var toolkit = this.toolkitStore.FindByName(toolkitName);
             if (toolkit.NotExists())
@@ -78,28 +78,28 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
-            var solution = new SolutionDefinition(toolkit, solutionName);
+            var draft = new DraftDefinition(toolkit, draftName);
 
-            return this.solutionStore.Create(solution);
+            return this.draftStore.Create(draft);
         }
 
-        public List<SolutionDefinition> ListCreatedSolutions()
+        public List<DraftDefinition> ListCreatedDrafts()
         {
-            return this.solutionStore.ListAll();
+            return this.draftStore.ListAll();
         }
 
-        public void SwitchCurrentSolution(string solutionId)
+        public void SwitchCurrentDraft(string draftId)
         {
-            solutionId.GuardAgainstNullOrEmpty(nameof(solutionId));
+            draftId.GuardAgainstNullOrEmpty(nameof(draftId));
 
-            this.solutionStore.ChangeCurrent(solutionId);
+            this.draftStore.ChangeCurrent(draftId);
         }
 
-        public SolutionItem ConfigureSolution(string addElementExpression,
+        public DraftItem ConfigureDraft(string addElementExpression,
             string addToCollectionExpression, string onElementExpression,
             Dictionary<string, string> propertyAssignments)
         {
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
             if (addElementExpression.HasNoValue()
                 && addToCollectionExpression.HasNoValue()
@@ -107,202 +107,202 @@ namespace Automate.CLI.Application
                 && propertyAssignments.HasNone())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
-                        solution.Id));
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_NoChanges.Format(
+                        draft.Id));
             }
 
             if (addElementExpression.HasValue() && addToCollectionExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_AddAndAddTo.Format(
-                        solution.Id, addElementExpression, addToCollectionExpression));
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_AddAndAddTo.Format(
+                        draft.Id, addElementExpression, addToCollectionExpression));
             }
 
             if (onElementExpression.HasValue() && addElementExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(onElementExpression),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAdd.Format(
-                        solution.Id, onElementExpression, addElementExpression));
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAdd.Format(
+                        draft.Id, onElementExpression, addElementExpression));
             }
 
             if (onElementExpression.HasValue() && addToCollectionExpression.HasValue())
             {
                 throw new ArgumentOutOfRangeException(nameof(onElementExpression),
-                    ExceptionMessages.RuntimeApplication_ConfigureSolution_OnAndAddTo.Format(
-                        solution.Id, onElementExpression, addToCollectionExpression));
+                    ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAddTo.Format(
+                        draft.Id, onElementExpression, addToCollectionExpression));
             }
 
-            var target = ResolveTargetItem(solution, addElementExpression, addToCollectionExpression,
+            var target = ResolveTargetItem(draft, addElementExpression, addToCollectionExpression,
                 onElementExpression);
             if (propertyAssignments.Safe().Any())
             {
                 target.SetProperties(propertyAssignments);
             }
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
             return target;
         }
 
-        public SolutionItem ConfigureSolutionAndResetElement(string elementExpression)
+        public DraftItem ConfigureDraftAndResetElement(string elementExpression)
         {
             elementExpression.GuardAgainstNullOrEmpty(nameof(elementExpression));
 
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
-            var target = ResolveTargetItem(solution, null, null, elementExpression);
+            var target = ResolveTargetItem(draft, null, null, elementExpression);
             target.ResetAllProperties();
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
             return target;
         }
 
-        public SolutionItem ConfigureSolutionAndClearCollection(string collectionExpression)
+        public DraftItem ConfigureDraftAndClearCollection(string collectionExpression)
         {
             collectionExpression.GuardAgainstNullOrEmpty(nameof(collectionExpression));
 
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
-            var target = ResolveTargetItem(solution, null, null, collectionExpression);
+            var target = ResolveTargetItem(draft, null, null, collectionExpression);
             target.ClearCollectionItems();
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
             return target;
         }
 
-        public SolutionItem ConfigureSolutionAndDelete(string expression)
+        public DraftItem ConfigureDraftAndDelete(string expression)
         {
             expression.GuardAgainstNullOrEmpty(nameof(expression));
 
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
-            var target = ResolveTargetItem(solution, null, null, expression);
+            var target = ResolveTargetItem(draft, null, null, expression);
 
             if (target.IsPattern)
             {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_ConfigureSolution_DeletePattern);
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_ConfigureDraft_DeletePattern);
             }
 
             target.Parent.Delete(target);
 
-            this.solutionStore.Save(solution);
+            this.draftStore.Save(draft);
 
             return target;
         }
 
         public (string Configuration, PatternDefinition Pattern, ValidationResults Validation)
-            GetSolutionConfiguration(bool includeSchema, bool includeValidationResults)
+            GetDraftConfiguration(bool includeSchema, bool includeValidationResults)
         {
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
             var validation = includeValidationResults
                 ? Validate(null)
                 : ValidationResults.None;
 
             var schema = includeSchema
-                ? solution.Toolkit.Pattern
+                ? draft.Toolkit.Pattern
                 : null;
 
-            return (solution.GetConfiguration(), schema, validation);
+            return (draft.GetConfiguration(), schema, validation);
         }
 
         public ToolkitDefinition GetCurrentToolkit()
         {
-            var solution = EnsureCurrentSolutionExists();
+            var draft = EnsureCurrentDraftExists();
 
-            return solution.Toolkit;
+            return draft.Toolkit;
         }
 
         public ValidationResults Validate(string itemExpression)
         {
-            var solution = EnsureCurrentSolutionExists();
-            var target = ResolveTargetItem(solution, itemExpression);
+            var draft = EnsureCurrentDraftExists();
+            var target = ResolveTargetItem(draft, itemExpression);
 
             return target.Validate();
         }
 
         public CommandExecutionResult ExecuteLaunchPoint(string name, string itemExpression)
         {
-            var solution = EnsureCurrentSolutionExists();
-            var target = ResolveTargetItem(solution, itemExpression);
+            var draft = EnsureCurrentDraftExists();
+            var target = ResolveTargetItem(draft, itemExpression);
 
-            var validationResults = solution.Validate();
+            var validationResults = draft.Validate();
             if (validationResults.Any())
             {
                 return new CommandExecutionResult(name, validationResults);
             }
 
-            var result = target.ExecuteCommand(solution, name);
-            this.solutionStore.Save(solution);
+            var result = target.ExecuteCommand(draft, name);
+            this.draftStore.Save(draft);
 
             return result;
         }
 
-        public SolutionUpgradeResult UpgradeSolution(bool force)
+        public DraftUpgradeResult UpgradeDraft(bool force)
         {
-            var solution = EnsureCurrentSolutionExists(true);
+            var draft = EnsureCurrentDraftExists(true);
 
-            var latestToolkit = this.toolkitStore.FindById(solution.Toolkit.Id);
+            var latestToolkit = this.toolkitStore.FindById(draft.Toolkit.Id);
 
-            var result = solution.Upgrade(latestToolkit, force);
-            this.solutionStore.Save(solution);
+            var result = draft.Upgrade(latestToolkit, force);
+            this.draftStore.Save(draft);
 
             return result;
         }
 
-        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string itemExpression)
+        private DraftItem ResolveTargetItem(DraftDefinition draft, string itemExpression)
         {
-            var target = solution.Model;
+            var target = draft.Model;
             if (itemExpression.HasValue())
             {
-                var solutionItem = this.solutionPathResolver.ResolveItem(solution, itemExpression);
-                if (solutionItem.NotExists())
+                var draftItem = this.draftPathResolver.ResolveItem(draft, itemExpression);
+                if (draftItem.NotExists())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(solution.PatternName,
+                        ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(draft.PatternName,
                             itemExpression));
                 }
-                target = solutionItem;
+                target = draftItem;
             }
 
             return target;
         }
 
-        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string addElementExpression,
+        private DraftItem ResolveTargetItem(DraftDefinition draft, string addElementExpression,
             string addToCollectionExpression, string onElementExpression)
         {
-            var target = solution.Model;
+            var target = draft.Model;
             if (addElementExpression.HasValue())
             {
-                var solutionItem = this.solutionPathResolver.ResolveItem(solution, addElementExpression);
-                if (solutionItem.NotExists())
+                var draftItem = this.draftPathResolver.ResolveItem(draft, addElementExpression);
+                if (draftItem.NotExists())
                 {
                     throw new AutomateException(
                         ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
-                            solution.PatternName,
+                            draft.PatternName,
                             addElementExpression));
                 }
 
-                if (solutionItem.IsMaterialised)
+                if (draftItem.IsMaterialised)
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ConfigureSolution_AddElementExists.Format(
+                        ExceptionMessages.RuntimeApplication_ConfigureDraft_AddElementExists.Format(
                             addElementExpression));
                 }
 
-                target = solutionItem.Materialise();
+                target = draftItem.Materialise();
             }
 
             if (addToCollectionExpression.HasValue())
             {
-                var collection = this.solutionPathResolver.ResolveItem(solution, addToCollectionExpression);
+                var collection = this.draftPathResolver.ResolveItem(draft, addToCollectionExpression);
                 if (collection.NotExists())
                 {
                     throw new AutomateException(
                         ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
-                            solution.PatternName,
+                            draft.PatternName,
                             addToCollectionExpression));
                 }
 
@@ -311,51 +311,51 @@ namespace Automate.CLI.Application
 
             if (onElementExpression.HasValue())
             {
-                var solutionItem = this.solutionPathResolver.ResolveItem(solution, onElementExpression);
-                if (solutionItem.NotExists())
+                var draftItem = this.draftPathResolver.ResolveItem(draft, onElementExpression);
+                if (draftItem.NotExists())
                 {
                     throw new AutomateException(
                         ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format(
-                            solution.PatternName,
+                            draft.PatternName,
                             onElementExpression));
                 }
 
-                if (!solutionItem.IsMaterialised)
+                if (!draftItem.IsMaterialised)
                 {
                     throw new AutomateException(
-                        ExceptionMessages.RuntimeApplication_ConfigureSolution_OnElementNotExists.Format(
+                        ExceptionMessages.RuntimeApplication_ConfigureDraft_OnElementNotExists.Format(
                             onElementExpression));
                 }
 
-                target = solutionItem;
+                target = draftItem;
             }
             return target;
         }
 
-        private SolutionDefinition EnsureCurrentSolutionExists(bool skipVersionCheck = false)
+        private DraftDefinition EnsureCurrentDraftExists(bool skipVersionCheck = false)
         {
-            var solution = this.solutionStore.GetCurrent();
-            if (solution.NotExists())
+            var draft = this.draftStore.GetCurrent();
+            if (draft.NotExists())
             {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentSolution);
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
 
             if (skipVersionCheck)
             {
-                return solution;
+                return draft;
             }
 
-            var currentVersion = solution.Toolkit.Version;
-            var toolkit = this.toolkitStore.FindById(solution.Toolkit.Id);
+            var currentVersion = draft.Toolkit.Version;
+            var toolkit = this.toolkitStore.FindById(draft.Toolkit.Id);
             var installedVersion = toolkit.Version;
             if (currentVersion != installedVersion)
             {
                 throw new AutomateException(
-                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
                         currentVersion, installedVersion));
             }
 
-            return solution;
+            return draft;
         }
     }
 }

@@ -150,9 +150,9 @@ namespace Automate.CLI.Domain
 
         public Automation Object { get; }
 
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem solutionItem)
+        public CommandExecutionResult Execute(DraftDefinition draft, DraftItem draftItem)
         {
-            return Object.Execute(solution, solutionItem);
+            return Object.Execute(draft, draftItem);
         }
     }
 

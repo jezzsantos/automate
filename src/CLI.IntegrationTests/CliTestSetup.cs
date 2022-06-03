@@ -40,9 +40,9 @@ namespace CLI.IntegrationTests
 
         public string Location => this.repository.PatternLocation;
 
-        internal SolutionDefinition Solution => Solutions.FirstOrDefault();
+        internal DraftDefinition Draft => Drafts.FirstOrDefault();
 
-        internal List<SolutionDefinition> Solutions => this.repository.ListSolutions();
+        internal List<DraftDefinition> Drafts => this.repository.ListDrafts();
 
         internal ToolkitDefinition Toolkit => Toolkits.FirstOrDefault();
 

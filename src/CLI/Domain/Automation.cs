@@ -65,26 +65,26 @@ namespace Automate.CLI.Domain
             return new Automation(properties, factory);
         }
 
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem target)
+        public CommandExecutionResult Execute(DraftDefinition draft, DraftItem target)
         {
             switch (Type)
             {
                 case AutomationType.CodeTemplateCommand:
                 {
                     var automation = CodeTemplateCommand.FromAutomation(this);
-                    return automation.Execute(solution, target);
+                    return automation.Execute(draft, target);
                 }
 
                 case AutomationType.CliCommand:
                 {
                     var automation = CliCommand.FromAutomation(this);
-                    return automation.Execute(solution, target);
+                    return automation.Execute(draft, target);
                 }
 
                 case AutomationType.CommandLaunchPoint:
                 {
                     var automation = CommandLaunchPoint.FromAutomation(this);
-                    return automation.Execute(solution, target);
+                    return automation.Execute(draft, target);
                 }
 
                 case AutomationType.TestingOnly:

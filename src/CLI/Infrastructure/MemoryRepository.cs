@@ -6,7 +6,7 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal class MemoryRepository : IPatternRepository, IToolkitRepository, ISolutionRepository, ILocalStateRepository
+    internal class MemoryRepository : IPatternRepository, IToolkitRepository, IDraftRepository, ILocalStateRepository
     {
         public const string InMemoryLocation = "in-memory";
 
@@ -14,8 +14,8 @@ namespace Automate.CLI.Infrastructure
         private readonly Dictionary<string, byte[]> inMemoryCodeTemplates = new Dictionary<string, byte[]>();
         private readonly Dictionary<string, PatternDefinition> inMemoryPatterns =
             new Dictionary<string, PatternDefinition>();
-        private readonly Dictionary<string, SolutionDefinition> inMemorySolutions =
-            new Dictionary<string, SolutionDefinition>();
+        private readonly Dictionary<string, DraftDefinition> inMemoryDrafts =
+            new Dictionary<string, DraftDefinition>();
 
         // ReSharper disable once CollectionNeverUpdated.Local
         private readonly Dictionary<string, ToolkitDefinition> inMemoryToolkits =
@@ -65,7 +65,7 @@ namespace Automate.CLI.Infrastructure
         {
             this.inMemoryPatterns.Clear();
             this.inMemoryToolkits.Clear();
-            this.inMemorySolutions.Clear();
+            this.inMemoryDrafts.Clear();
             this.inMemoryState = new LocalState();
         }
 
@@ -101,38 +101,38 @@ namespace Automate.CLI.Infrastructure
             };
         }
 
-        public string SolutionLocation => InMemoryLocation;
+        public string DraftLocation => InMemoryLocation;
 
-        public void NewSolution(SolutionDefinition solution)
+        public void NewDraft(DraftDefinition draft)
         {
-            this.inMemorySolutions.Add(solution.Id, solution);
+            this.inMemoryDrafts.Add(draft.Id, draft);
         }
 
-        public void UpsertSolution(SolutionDefinition solution)
+        public void UpsertDraft(DraftDefinition draft)
         {
-            this.inMemorySolutions[solution.Id] = solution;
+            this.inMemoryDrafts[draft.Id] = draft;
         }
 
-        public SolutionDefinition GetSolution(string id)
+        public DraftDefinition GetDraft(string id)
         {
-            if (this.inMemorySolutions.ContainsKey(id))
+            if (this.inMemoryDrafts.ContainsKey(id))
             {
-                return this.inMemorySolutions[id];
+                return this.inMemoryDrafts[id];
             }
 
             throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Format(id));
         }
 
-        public SolutionDefinition FindSolutionById(string id)
+        public DraftDefinition FindDraftById(string id)
         {
-            return this.inMemorySolutions
+            return this.inMemoryDrafts
                 .FirstOrDefault(p => p.Key == id).Value;
         }
 
-        public List<SolutionDefinition> ListSolutions()
+        public List<DraftDefinition> ListDrafts()
         {
-            return this.inMemorySolutions
-                .Select(solution => solution.Value)
+            return this.inMemoryDrafts
+                .Select(draft => draft.Value)
                 .ToList();
         }
 

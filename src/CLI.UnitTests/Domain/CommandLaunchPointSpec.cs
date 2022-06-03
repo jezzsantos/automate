@@ -50,11 +50,11 @@ namespace CLI.UnitTests.Domain
         [Fact]
         public void WhenExecuteAndCommandNotFound_ThenThrows()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
-            var solutionItem = solution.Model;
+            var draft = new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
+            var draftItem = draft.Model;
 
             this.launchPoint
-                .Invoking(x => x.Execute(solution, solutionItem))
+                .Invoking(x => x.Execute(draft, draftItem))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(this.launchPoint.CommandIds.First()));
@@ -65,13 +65,12 @@ namespace CLI.UnitTests.Domain
         {
             var automation =
                 new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
-            var pattern = new PatternDefinition("apatternname");
             pattern.AddAutomation(automation);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            var solutionItem = solution.Model;
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            var draftItem = draft.Model;
 
             var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
-                .Execute(solution, solutionItem);
+                .Execute(draft, draftItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("testingonly");
@@ -87,15 +86,14 @@ namespace CLI.UnitTests.Domain
             var element2 = new Element("anelementname2");
             element2.AddAutomation(automation);
             element1.AddElement(element2);
-            var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            var solutionItem = solution.Model
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["anelementname2"].Materialise();
 
             var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
-                .Execute(solution, solutionItem);
+                .Execute(draft, draftItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().ContainSingle("testingonly");
@@ -111,17 +109,16 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
-            var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            var solutionItem = solution.Model
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
-            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
             var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
-                .Execute(solution, solutionItem);
+                .Execute(draft, draftItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().Contain("testingonly", "testingonly");
@@ -137,17 +134,16 @@ namespace CLI.UnitTests.Domain
             var collection1 = new Element("acollectionname1", ElementCardinality.OneOrMany);
             collection1.AddAutomation(automation);
             element1.AddElement(collection1);
-            var pattern = new PatternDefinition("apatternname");
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            var solutionItem = solution.Model
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            var draftItem = draft.Model
                 .Properties["anelementname1"].Materialise()
                 .Properties["acollectionname1"].Materialise();
-            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
-            solution.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["anelementname1"].Properties["acollectionname1"].MaterialiseCollectionItem();
 
             var result = new CommandLaunchPoint("alaunchpointname", new List<string> { automation.Id })
-                .Execute(solution, solutionItem);
+                .Execute(draft, draftItem);
 
             result.CommandName.Should().Be("alaunchpointname");
             result.Log.Should().Contain("testingonly",

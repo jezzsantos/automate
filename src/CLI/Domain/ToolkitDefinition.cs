@@ -76,7 +76,7 @@ namespace Automate.CLI.Domain
                     .ToList());
         }
 
-        public void MigratePattern(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+        public void MigratePattern(ToolkitDefinition latestToolkit, DraftUpgradeResult result)
         {
             MigrateCodeTemplateFiles(latestToolkit, result);
             
@@ -108,7 +108,7 @@ namespace Automate.CLI.Domain
             }
         }
 
-        private void MigrateCodeTemplateFiles(ToolkitDefinition latestToolkit, SolutionUpgradeResult result)
+        private void MigrateCodeTemplateFiles(ToolkitDefinition latestToolkit, DraftUpgradeResult result)
         {
             latestToolkit.GuardAgainstNull(nameof(latestToolkit));
 
@@ -124,7 +124,7 @@ namespace Automate.CLI.Domain
             SyncCodeFileTemplates(result, currentTemplateFiles, codeTemplates, latestTemplateFiles, latestCodeTemplates);
         }
 
-        private void SyncCodeFileTemplates(SolutionUpgradeResult result, List<CodeTemplateFile> currentTemplateFiles, List<(CodeTemplate Template, IPatternElement Parent)> currentCodeTemplates, List<CodeTemplateFile> latestTemplateFiles,
+        private void SyncCodeFileTemplates(DraftUpgradeResult result, List<CodeTemplateFile> currentTemplateFiles, List<(CodeTemplate Template, IPatternElement Parent)> currentCodeTemplates, List<CodeTemplateFile> latestTemplateFiles,
             List<(CodeTemplate Template, IPatternElement Parent)> latestCodeTemplates)
         {
             var templateFilesToDelete = new List<string>();

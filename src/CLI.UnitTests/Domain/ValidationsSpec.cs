@@ -120,7 +120,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenIsRuntimeFilePathWithSolutionPath_ThenReturnsTrue()
+        public void WhenIsRuntimeFilePathWithDraftPath_ThenReturnsTrue()
         {
             var result = Validations.IsRuntimeFilePath("~/adirectory/afilename.anextension");
 
@@ -128,7 +128,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenIsRuntimeFilePathWithSolutionPathContainingExpressions_ThenReturnsTrue()
+        public void WhenIsRuntimeFilePathWithDraftPathContainingExpressions_ThenReturnsTrue()
         {
             var result = Validations.IsRuntimeFilePath("~/adirectory/{{anelementname.anattributename}}/{{anelementname.anattributename}}.anextension");
 
@@ -136,7 +136,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenIsRuntimeFilePathWithSolutionPathAndInvalidPathChar_ThenReturnsFalse()
+        public void WhenIsRuntimeFilePathWithDraftPathAndInvalidPathChar_ThenReturnsFalse()
         {
             var invalidChar = Path.GetInvalidPathChars().First();
             var result = Validations.IsRuntimeFilePath($"~/a{invalidChar}directory/afilename.anextension");
@@ -145,7 +145,7 @@ namespace CLI.UnitTests.Domain
         }
 
         [Fact]
-        public void WhenIsRuntimeFilePathWithSolutionPathAndInvalidFilenameChar_ThenReturnsFalse()
+        public void WhenIsRuntimeFilePathWithDraftPathAndInvalidFilenameChar_ThenReturnsFalse()
         {
             var invalidChar = Path.GetInvalidFileNameChars().First();
             var result = Validations.IsRuntimeFilePath($"~/adirectory/a{invalidChar}filename.anextension");

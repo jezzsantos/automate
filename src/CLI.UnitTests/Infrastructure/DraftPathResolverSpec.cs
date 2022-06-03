@@ -10,17 +10,17 @@ using Attribute = Automate.CLI.Domain.Attribute;
 namespace CLI.UnitTests.Infrastructure
 {
     [Trait("Category", "Unit")]
-    public class SolutionPathResolverSpec
+    public class DraftPathResolverSpec
     {
-        private readonly SolutionPathResolver resolver;
+        private readonly DraftPathResolver resolver;
 
-        public SolutionPathResolverSpec()
+        public DraftPathResolverSpec()
         {
-            this.resolver = new SolutionPathResolver();
+            this.resolver = new DraftPathResolver();
         }
 
         [Fact]
-        public void WhenResolveAndSolutionIsNull_ThenReturnsNull()
+        public void WhenResolveAndDraftIsNull_ThenReturnsNull()
         {
             this.resolver
                 .Invoking(x => x.ResolveItem(null, "anexpression"))
@@ -31,7 +31,7 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsNull_ThenReturnsNull()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), null))
+                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), null))
                 .Should().Throw<ArgumentNullException>();
         }
 
@@ -39,36 +39,36 @@ namespace CLI.UnitTests.Infrastructure
         public void WhenResolveAndExpressionIsInvalidFormat_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "notavalidexpression"))
+                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "notavalidexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("notavalidexpression"));
+                .WithMessage(ExceptionMessages.DraftPathResolver_InvalidExpression.Format("notavalidexpression"));
         }
 
         [Fact]
         public void WhenResolveAndExpressionIsEmpty_ThenThrows()
         {
             this.resolver
-                .Invoking(x => x.ResolveItem(new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "{}"))
+                .Invoking(x => x.ResolveItem(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname"))), "{}"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.SolutionPathResolver_InvalidExpression.Format("{}"));
+                .WithMessage(ExceptionMessages.DraftPathResolver_InvalidExpression.Format("{}"));
         }
 
         [Fact]
         public void WhenResolveAndExpressionIsJustNameOfPattern_ThenReturnsPattern()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
+            var draft = new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
 
-            var result = this.resolver.ResolveItem(solution, "{apatternname}");
+            var result = this.resolver.ResolveItem(draft, "{apatternname}");
 
-            result.Should().Be(solution.Model);
+            result.Should().Be(draft.Model);
         }
 
         [Fact]
         public void WhenResolveAndExpressionElementNotExist_ThenReturnsNull()
         {
-            var solution = new SolutionDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
+            var draft = new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
 
-            var result = this.resolver.ResolveItem(solution, "{anunknownelementname}");
+            var result = this.resolver.ResolveItem(draft, "{anunknownelementname}");
 
             result.Should().BeNull();
         }
@@ -79,9 +79,9 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
 
-            var result = this.resolver.ResolveItem(solution, "{anelementname}");
+            var result = this.resolver.ResolveItem(draft, "{anelementname}");
 
             result.ElementSchema.Object.Should().Be(element);
         }
@@ -94,11 +94,11 @@ namespace CLI.UnitTests.Infrastructure
             var element = new Element("anelementname");
             collection.AddElement(element);
             pattern.AddElement(collection);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            var collectionInstance = solution.Model.Properties["acollectionname"].MaterialiseCollectionItem();
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            var collectionInstance = draft.Model.Properties["acollectionname"].MaterialiseCollectionItem();
             var elementInstance = collectionInstance.Properties["anelementname"].Materialise();
 
-            var result = this.resolver.ResolveItem(solution, $"{{apatternname.acollectionname.{collectionInstance.Id}.anelementname}}");
+            var result = this.resolver.ResolveItem(draft, $"{{apatternname.acollectionname.{collectionInstance.Id}.anelementname}}");
 
             result.Id.Should().Be(elementInstance.Id);
         }
@@ -109,9 +109,9 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
 
-            var result = this.resolver.ResolveItem(solution, "{apatternname.anelementname}");
+            var result = this.resolver.ResolveItem(draft, "{apatternname.anelementname}");
 
             result.ElementSchema.Object.Should().Be(element);
         }
@@ -122,9 +122,9 @@ namespace CLI.UnitTests.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             var element = new Element("anelementname");
             pattern.AddElement(element);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
 
-            var result = this.resolver.ResolveItem(solution, "{anelementname}");
+            var result = this.resolver.ResolveItem(draft, "{anelementname}");
 
             result.ElementSchema.Object.Should().Be(element);
         }
@@ -139,10 +139,10 @@ namespace CLI.UnitTests.Infrastructure
             element2.AddElement(element3);
             element1.AddElement(element2);
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            solution.Model.Properties["anelementname1"].Materialise();
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["anelementname1"].Materialise();
 
-            var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
+            var result = this.resolver.ResolveItem(draft, "{anelementname1.anelementname2.anelementname3}");
 
             result.Should().BeNull();
         }
@@ -157,11 +157,11 @@ namespace CLI.UnitTests.Infrastructure
             element2.AddElement(element3);
             element1.AddElement(element2);
             pattern.AddElement(element1);
-            var solution = new SolutionDefinition(new ToolkitDefinition(pattern));
-            solution.Model.Properties["anelementname1"].Materialise().Properties["anelementname2"].Materialise()
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["anelementname1"].Materialise().Properties["anelementname2"].Materialise()
                 .Properties["anelementname3"].Materialise();
 
-            var result = this.resolver.ResolveItem(solution, "{anelementname1.anelementname2.anelementname3}");
+            var result = this.resolver.ResolveItem(draft, "{anelementname1.anelementname2.anelementname3}");
 
             result.ElementSchema.Object.Should().Be(element3);
         }
@@ -171,7 +171,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.resolver.ResolveExpression("adescription", null, new SolutionItem(toolkit, new Element("anelementname"), null));
+            var result = this.resolver.ResolveExpression("adescription", null, new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().BeNull();
         }
@@ -181,7 +181,7 @@ namespace CLI.UnitTests.Infrastructure
         {
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression", new SolutionItem(toolkit, new Element("anelementname"), null));
+            var result = this.resolver.ResolveExpression("adescription", "anexpression", new DraftItem(toolkit, new Element("anelementname"), null));
 
             result.Should().Be("anexpression");
         }
@@ -194,10 +194,10 @@ namespace CLI.UnitTests.Infrastructure
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
             pattern.AddElement(element);
-            var solutionItem = new SolutionItem(new ToolkitDefinition(pattern), element, null);
-            solutionItem.Materialise();
+            var draftItem = new DraftItem(new ToolkitDefinition(pattern), element, null);
+            draftItem.Materialise();
 
-            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression", solutionItem);
+            var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression", draftItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }
@@ -210,11 +210,11 @@ namespace CLI.UnitTests.Infrastructure
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
             pattern.AddElement(element);
-            var solutionItem = new SolutionItem(new ToolkitDefinition(pattern), pattern);
-            solutionItem.Properties["anelementname"].Materialise();
+            var draftItem = new DraftItem(new ToolkitDefinition(pattern), pattern);
+            draftItem.Properties["anelementname"].Materialise();
 
             var result = this.resolver.ResolveExpression("adescription",
-                "anexpression{{anelementname.Parent.anelementname.anattributename}}anexpression", solutionItem);
+                "anexpression{{anelementname.Parent.anelementname.anattributename}}anexpression", draftItem);
 
             result.Should().Be("anexpressionadefaultvalueanexpression");
         }

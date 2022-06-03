@@ -30,9 +30,9 @@ namespace Automate.CLI.Domain
             {
                 return ToolkitDefinition.Rehydrate(properties, this);
             }
-            if (persistableType == typeof(SolutionDefinition))
+            if (persistableType == typeof(DraftDefinition))
             {
-                return SolutionDefinition.Rehydrate(properties, this);
+                return DraftDefinition.Rehydrate(properties, this);
             }
             if (persistableType == typeof(Element))
             {
@@ -58,13 +58,13 @@ namespace Automate.CLI.Domain
             {
                 return ArtifactLink.Rehydrate(properties, this);
             }
-            if (persistableType == typeof(SolutionItem))
+            if (persistableType == typeof(DraftItem))
             {
-                return SolutionItem.Rehydrate(properties, this);
+                return DraftItem.Rehydrate(properties, this);
             }
-            if (persistableType == typeof(SolutionItemSchema))
+            if (persistableType == typeof(DraftItemSchema))
             {
-                return SolutionItemSchema.Rehydrate(properties, this);
+                return DraftItemSchema.Rehydrate(properties, this);
             }
             if (persistableType == typeof(LocalState))
             {

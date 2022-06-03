@@ -3,23 +3,23 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Domain
 {
-    internal class SolutionUpgradeResult
+    internal class DraftUpgradeResult
     {
         private readonly List<MigrationChange> log;
 
-        public SolutionUpgradeResult(SolutionDefinition solution, string fromVersion, string toVersion) : this(solution, fromVersion, toVersion, new List<MigrationChange>())
+        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion) : this(draft, fromVersion, toVersion, new List<MigrationChange>())
         {
         }
 
-        public SolutionUpgradeResult(SolutionDefinition solution, string fromVersion, string toVersion, List<MigrationChange> log)
+        public DraftUpgradeResult(DraftDefinition draft, string fromVersion, string toVersion, List<MigrationChange> log)
         {
-            solution.GuardAgainstNull(nameof(solution));
+            draft.GuardAgainstNull(nameof(draft));
             fromVersion.GuardAgainstNull(nameof(fromVersion));
             toVersion.GuardAgainstNull(nameof(toVersion));
             log.GuardAgainstNull(nameof(log));
 
             IsSuccess = true;
-            Solution = solution;
+            Draft = draft;
             this.log = log;
             FromVersion = fromVersion;
             ToVersion = toVersion;
@@ -27,7 +27,7 @@ namespace Automate.CLI.Domain
 
         public bool IsSuccess { get; private set; }
 
-        public SolutionDefinition Solution { get; }
+        public DraftDefinition Draft { get; }
 
         public IReadOnlyList<MigrationChange> Log => this.log;
 
@@ -58,7 +58,7 @@ namespace Automate.CLI.Domain
             Add(new MigrationChange(type, messageTemplate, args));
         }
 
-        public void Append(SolutionUpgradeResult result)
+        public void Append(DraftUpgradeResult result)
         {
             result.GuardAgainstNull(nameof(result));
 

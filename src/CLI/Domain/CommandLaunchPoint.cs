@@ -83,28 +83,28 @@ namespace Automate.CLI.Domain
 
         public string Name => this.automation.Name;
 
-        public CommandExecutionResult Execute(SolutionDefinition solution, SolutionItem _)
+        public CommandExecutionResult Execute(DraftDefinition draft, DraftItem _)
         {
             var outcome = new CommandExecutionResult(Name);
 
             CommandIds.ToListSafe().ForEach(cmdId =>
             {
-                var commands = solution.FindByAutomation(cmdId);
+                var commands = draft.FindByAutomation(cmdId);
                 if (commands.HasNone())
                 {
                     throw new AutomateException(ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Format(cmdId));
                 }
 
-                commands.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.SolutionItem, cmdId));
+                commands.ForEach(auto => ExecuteCommandSafely(auto.Automation, auto.DraftItem, cmdId));
             });
 
             return outcome;
 
-            void ExecuteCommandSafely(IAutomationSchema command, SolutionItem solutionItem, string cmdId)
+            void ExecuteCommandSafely(IAutomationSchema command, DraftItem draftItem, string cmdId)
             {
                 try
                 {
-                    var result = command.Execute(solution, solutionItem);
+                    var result = command.Execute(draft, draftItem);
                     outcome.Add(result.Log);
                 }
                 catch (Exception ex)

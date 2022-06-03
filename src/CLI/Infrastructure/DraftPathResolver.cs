@@ -6,11 +6,11 @@ using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal class SolutionPathResolver : ISolutionPathResolver
+    internal class DraftPathResolver : IDraftPathResolver
     {
-        public SolutionItem ResolveItem(SolutionDefinition solution, string expression)
+        public DraftItem ResolveItem(DraftDefinition draft, string expression)
         {
-            solution.GuardAgainstNull(nameof(solution));
+            draft.GuardAgainstNull(nameof(draft));
             expression.GuardAgainstNullOrEmpty(nameof(expression));
 
             var expressionPath = Regex.Match(expression, @"^\{(?<path>[a-zA-Z0-9\.]*)\}")
@@ -19,30 +19,30 @@ namespace Automate.CLI.Infrastructure
             if (!expressionPath.HasValue())
             {
                 throw new AutomateException(
-                    ExceptionMessages.SolutionPathResolver_InvalidExpression.Format(expression));
+                    ExceptionMessages.DraftPathResolver_InvalidExpression.Format(expression));
             }
 
             var expressionParts = expressionPath.SafeSplit(".").ToArray();
             if (expressionParts.HasNone())
             {
                 throw new AutomateException(
-                    ExceptionMessages.SolutionPathResolver_InvalidExpression.Format(expression));
+                    ExceptionMessages.DraftPathResolver_InvalidExpression.Format(expression));
             }
 
             if (expressionParts.Length == 1
-                && expressionParts.First().EqualsOrdinal(solution.PatternName))
+                && expressionParts.First().EqualsOrdinal(draft.PatternName))
             {
-                return solution.Model;
+                return draft.Model;
             }
 
-            if (expressionParts.First().EqualsOrdinal(solution.PatternName))
+            if (expressionParts.First().EqualsOrdinal(draft.PatternName))
             {
                 expressionParts = expressionParts.Skip(1).ToArray();
             }
 
             var remainingParts = new Queue<string>(expressionParts);
             var nextPart = remainingParts.Dequeue();
-            var target = solution.Model;
+            var target = draft.Model;
             while (nextPart.Exists())
             {
                 var descendantProperty = target.Properties.Exists()
@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure
             return target;
         }
 
-        public string ResolveExpression(string description, string expression, SolutionItem solutionItem)
+        public string ResolveExpression(string description, string expression, DraftItem draftItem)
         {
             description.GuardAgainstNullOrEmpty(nameof(description));
 
@@ -78,12 +78,12 @@ namespace Automate.CLI.Infrastructure
             {
                 return null;
             }
-            return Transform(expression, description, solutionItem);
+            return Transform(expression, description, draftItem);
         }
 
-        private static string Transform(string template, string description, SolutionItem solutionItem)
+        private static string Transform(string template, string description, DraftItem draftItem)
         {
-            var configuration = solutionItem.GetConfiguration(true);
+            var configuration = draftItem.GetConfiguration(true);
             return configuration.Transform(description, template);
         }
     }

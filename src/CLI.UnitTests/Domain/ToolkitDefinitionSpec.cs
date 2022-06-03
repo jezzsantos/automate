@@ -16,13 +16,13 @@ namespace CLI.UnitTests.Domain
         public void WhenMigratePatternAndNoTemplates_ThenReturnsEmptyResult()
         {
             var originalToolkit = MakeDetachedToolkit(new PatternDefinition("apatternname"));
-            var solution = new SolutionDefinition(originalToolkit);
+            var draft = new DraftDefinition(originalToolkit);
 
-            var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
+            var result = new DraftUpgradeResult(draft, "0.0.0", "0.1.0");
 
-            solution.Toolkit.MigratePattern(originalToolkit, result);
+            draft.Toolkit.MigratePattern(originalToolkit, result);
 
-            solution.Toolkit.Version.Should().Be("0.1.0");
+            draft.Toolkit.Version.Should().Be("0.1.0");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -38,22 +38,22 @@ namespace CLI.UnitTests.Domain
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
                 { codeTemplate2.Id, new byte[] { 0x04, 0x05, 0x06 } }
             });
-            var solution = new SolutionDefinition(originalToolkit);
+            var draft = new DraftDefinition(originalToolkit);
             Thread.Sleep(TimeSpan.FromSeconds(1)); // Delay for LastModified comparisons
             var updatedToolkit = MakeDetachedToolkit(pattern, new Dictionary<string, byte[]>
             {
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
                 { codeTemplate2.Id, new byte[] { 0x09, 0x08, 0x07 } }
             });
-            var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
+            var result = new DraftUpgradeResult(draft, "0.0.0", "0.1.0");
 
-            solution.Toolkit.MigratePattern(updatedToolkit, result);
+            draft.Toolkit.MigratePattern(updatedToolkit, result);
 
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate2.Id);
-            solution.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
-            solution.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
-            solution.Toolkit.Version.Should().Be("0.2.0");
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate2.Id);
+            draft.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
+            draft.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
+            draft.Toolkit.Version.Should().Be("0.2.0");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().ContainSingle(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -71,16 +71,16 @@ namespace CLI.UnitTests.Domain
             {
                 { codeTemplate.Id, new byte[] { 0x01, 0x02, 0x03 } }
             });
-            var solution = new SolutionDefinition(originalToolkit);
+            var draft = new DraftDefinition(originalToolkit);
             pattern.DeleteCodeTemplate(codeTemplate.Name, true);
             var updatedToolkit = MakeDetachedToolkit(pattern);
-            var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
+            var result = new DraftUpgradeResult(draft, "0.0.0", "0.1.0");
 
-            solution.Toolkit.MigratePattern(updatedToolkit, result);
+            draft.Toolkit.MigratePattern(updatedToolkit, result);
 
-            solution.Toolkit.Pattern.CodeTemplates.Should().BeEmpty();
-            solution.Toolkit.CodeTemplateFiles.Should().BeEmpty();
-            solution.Toolkit.Version.Should().Be("1.0.0");
+            draft.Toolkit.Pattern.CodeTemplates.Should().BeEmpty();
+            draft.Toolkit.CodeTemplateFiles.Should().BeEmpty();
+            draft.Toolkit.Version.Should().Be("1.0.0");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().ContainSingle(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -98,22 +98,22 @@ namespace CLI.UnitTests.Domain
             {
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } }
             });
-            var solution = new SolutionDefinition(originalToolkit);
+            var draft = new DraftDefinition(originalToolkit);
             var codeTemplate2 = pattern.AddCodeTemplate("atemplatename2", "afullpath", "anextension");
             var updatedToolkit = MakeDetachedToolkit(pattern, new Dictionary<string, byte[]>
             {
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
                 { codeTemplate2.Id, new byte[] { 0x09, 0x08, 0x07 } }
             });
-            var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
+            var result = new DraftUpgradeResult(draft, "0.0.0", "0.1.0");
 
-            solution.Toolkit.MigratePattern(updatedToolkit, result);
+            draft.Toolkit.MigratePattern(updatedToolkit, result);
 
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate2.Id);
-            solution.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
-            solution.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
-            solution.Toolkit.Version.Should().Be("0.2.0");
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate2.Id);
+            draft.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
+            draft.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
+            draft.Toolkit.Version.Should().Be("0.2.0");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().ContainSingle(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -133,7 +133,7 @@ namespace CLI.UnitTests.Domain
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
                 { codeTemplate2.Id, new byte[] { 0x05, 0x06, 0x07 } }
             });
-            var solution = new SolutionDefinition(originalToolkit);
+            var draft = new DraftDefinition(originalToolkit);
             var codeTemplate3 = pattern.AddCodeTemplate("atemplatename3", "afullpath", "anextension");
             pattern.DeleteCodeTemplate(codeTemplate2.Name, true);
             var updatedToolkit = MakeDetachedToolkit(pattern, new Dictionary<string, byte[]>
@@ -141,16 +141,16 @@ namespace CLI.UnitTests.Domain
                 { codeTemplate1.Id, new byte[] { 0x01, 0x02, 0x03 } },
                 { codeTemplate3.Id, new byte[] { 0x09, 0x08, 0x07 } }
             });
-            var result = new SolutionUpgradeResult(solution, "0.0.0", "0.1.0");
+            var result = new DraftUpgradeResult(draft, "0.0.0", "0.1.0");
 
-            solution.Toolkit.MigratePattern(updatedToolkit, result);
+            draft.Toolkit.MigratePattern(updatedToolkit, result);
 
-            solution.Toolkit.Pattern.CodeTemplates.Should().HaveCount(2);
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
-            solution.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate3.Id);
-            solution.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
-            solution.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
-            solution.Toolkit.Version.Should().Be("1.0.0");
+            draft.Toolkit.Pattern.CodeTemplates.Should().HaveCount(2);
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate1.Id);
+            draft.Toolkit.Pattern.CodeTemplates.Should().Contain(x => x.Id == codeTemplate3.Id);
+            draft.Toolkit.CodeTemplateFiles[0].Contents.Should().ContainInOrder(0x01, 0x02, 0x03);
+            draft.Toolkit.CodeTemplateFiles[1].Contents.Should().ContainInOrder(0x09, 0x08, 0x07);
+            draft.Toolkit.Version.Should().Be("1.0.0");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking

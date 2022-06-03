@@ -131,10 +131,10 @@
     </data>
     <data name="CommandLine_Output_InstalledToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' (v.{Version}) has been installed and is ready to use with command:
-`automate run toolkit &lt;PatternName&gt; --name "SolutionName"`</value>
+`automate run toolkit &lt;PatternName&gt; --name "DraftName"`</value>
     </data>
-    <data name="CommandLine_Output_CreateSolutionFromToolkit" xml:space="preserve">
-        <value>Created a new Solution '{Name}' (ID: '{SolutionId}') from toolkit: '{PatternName}'</value>
+    <data name="CommandLine_Output_CreateDraftFromToolkit" xml:space="preserve">
+        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{PatternName}'</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
         <value>There are no installed Toolkits yet</value>
@@ -143,47 +143,47 @@
         <value>Installed toolkits:
 {Toolkits}</value>
     </data>
-    <data name="CommandLine_Output_NoInstalledSolutions" xml:space="preserve">
-        <value>There are no Solutions yet. Use this command to create one:
-`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;</value>
+    <data name="CommandLine_Output_NoInstalledDrafts" xml:space="preserve">
+        <value>There are no Drafts yet. Use this command to create one:
+`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;</value>
     </data>
-    <data name="CommandLine_Output_InstalledSolutionsListed" xml:space="preserve">
-        <value>Created Solutions:
-{Solutions}</value>
+    <data name="CommandLine_Output_InstalledDraftsListed" xml:space="preserve">
+        <value>Created Drafts:
+{Drafts}</value>
     </data>
-    <data name="CommandLine_Output_NoSolutionSelected" xml:space="preserve">
-        <value>No Solution is being configured. You must first run one of these commands:
-`automate run toolkit &lt;PatternName&gt; --name &lt;SolutionName&gt;` to create a new solution from an existing toolkit, or
-`automate run switch &lt;SolutionID&gt;` to switch to this existing solution</value>
+    <data name="CommandLine_Output_NoDraftSelected" xml:space="preserve">
+        <value>No Draft is being configured. You must first run one of these commands:
+`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;` to create a new draft from an existing toolkit, or
+`automate run switch &lt;DraftID&gt;` to switch to this existing draft</value>
     </data>
-    <data name="CommandLine_Output_CurrentSolutionInUse" xml:space="preserve">
-        <value>The Solution: '{SolutionName}' (ID: '{SolutionId}') is now being configured</value>
+    <data name="CommandLine_Output_CurrentDraftInUse" xml:space="preserve">
+        <value>The Draft: '{DraftName}' (ID: '{DraftId}') is now being configured</value>
     </data>
-    <data name="CommandLine_Output_SolutionSwitched" xml:space="preserve">
-        <value>The Solution: '{SolutionName}' (ID: '{SolutionId}') is now the default</value>
+    <data name="CommandLine_Output_DraftSwitched" xml:space="preserve">
+        <value>The Draft: '{DraftName}' (ID: '{DraftId}') is now the default</value>
     </data>
-    <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
-        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was configured successfully</value>
+    <data name="CommandLine_Output_DraftConfigured" xml:space="preserve">
+        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was configured successfully</value>
     </data>
-    <data name="CommandLine_Output_SolutionResetElement" xml:space="preserve">
-        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was reset successfully</value>
+    <data name="CommandLine_Output_DraftResetElement" xml:space="preserve">
+        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was reset successfully</value>
     </data>
-    <data name="CommandLine_Output_SolutionEmptyCollection" xml:space="preserve">
-        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was cleared successfully</value>
+    <data name="CommandLine_Output_DraftEmptyCollection" xml:space="preserve">
+        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was cleared successfully</value>
     </data>
-    <data name="CommandLine_Output_SolutionDelete" xml:space="preserve">
-        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was deleted successfully</value>
+    <data name="CommandLine_Output_DraftDelete" xml:space="preserve">
+        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
-    <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
-        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is configured as:
+    <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
+        <value>Draft '{DraftName}' (ID: '{DraftId}') is configured as:
 {Configuration}</value>
     </data>
-    <data name="CommandLine_Output_SolutionValidationFailed" xml:space="preserve">
-        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is not correctly configured in these ways:
+    <data name="CommandLine_Output_DraftValidationFailed" xml:space="preserve">
+        <value>Draft '{DraftName}' (ID: '{DraftId}') is not correctly configured in these ways:
 {Errors}</value>
     </data>
-    <data name="CommandLine_Output_SolutionValidationSuccess" xml:space="preserve">
-        <value>Solution '{SolutionName}' (ID: '{SolutionId}') is configured correctly</value>
+    <data name="CommandLine_Output_DraftValidationSuccess" xml:space="preserve">
+        <value>Draft '{DraftName}' (ID: '{DraftId}') is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecutionSucceeded" xml:space="preserve">
         <value>The Command: '{Command}' executed successfully:
@@ -193,16 +193,16 @@
         <value>The Command: '{Command}' did not completely succeed. Some commands failed:
 {Log}</value>
     </data>
-    <data name="CommandLine_Output_SolutionUpgradeSucceeded" xml:space="preserve">
-        <value>Successfully upgraded Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+    <data name="CommandLine_Output_DraftUpgradeSucceeded" xml:space="preserve">
+        <value>Successfully upgraded Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
-    <data name="CommandLine_Output_SolutionUpgradeWithWarning" xml:space="preserve">
-        <value>Aborted upgrade of Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+    <data name="CommandLine_Output_DraftUpgradeWithWarning" xml:space="preserve">
+        <value>Aborted upgrade of Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
-    <data name="CommandLine_Output_SolutionUpgradeFailed" xml:space="preserve">
-        <value>Failed to upgrade Solution '{SolutionName}' (ID: '{SolutionId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+    <data name="CommandLine_Output_DraftUpgradeFailed" xml:space="preserve">
+        <value>Failed to upgrade Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">

@@ -23,15 +23,15 @@ namespace CLI.UnitTests.Domain
         public class GivenACommand
         {
             private readonly Mock<IApplicationExecutor> applicationExecutor;
-            private readonly Mock<ISolutionPathResolver> solutionPathResolver;
+            private readonly Mock<IDraftPathResolver> draftPathResolver;
 
             public GivenACommand()
             {
-                this.solutionPathResolver = new Mock<ISolutionPathResolver>();
-                this.solutionPathResolver
+                this.draftPathResolver = new Mock<IDraftPathResolver>();
+                this.draftPathResolver
                     .Setup(spr =>
-                        spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SolutionItem>()))
-                    .Returns((string _, string expr, SolutionItem _) => expr);
+                        spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
+                    .Returns((string _, string expr, DraftItem _) => expr);
                 this.applicationExecutor = new Mock<IApplicationExecutor>();
             }
 
@@ -39,15 +39,15 @@ namespace CLI.UnitTests.Domain
             public void WhenExecuteAndApplicationFails_ThenReturnsFailure()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new SolutionItem(toolkit, new Element("anelementname"), null);
-                var solution = new SolutionDefinition(toolkit);
+                var target = new DraftItem(toolkit, new Element("anelementname"), null);
+                var draft = new DraftDefinition(toolkit);
                 this.applicationExecutor.Setup(ae =>
                         ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))
                     .Returns(ApplicationExecutionProcessResult.Failure("amessage"));
 
                 var command = new CliCommand("acommandname", "anapplicationname", "arguments",
-                    this.solutionPathResolver.Object, this.applicationExecutor.Object);
-                var result = command.Execute(solution, target);
+                    this.draftPathResolver.Object, this.applicationExecutor.Object);
+                var result = command.Execute(draft, target);
 
                 result.IsSuccess.Should().BeFalse();
                 result.Log.Should()
@@ -59,15 +59,15 @@ namespace CLI.UnitTests.Domain
             public void WhenExecuteAndApplicationSucceeds_ThenReturnsSuccess()
             {
                 var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new SolutionItem(toolkit, new Element("anelementname"), null);
-                var solution = new SolutionDefinition(toolkit);
+                var target = new DraftItem(toolkit, new Element("anelementname"), null);
+                var draft = new DraftDefinition(toolkit);
                 this.applicationExecutor.Setup(ae =>
                         ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))
                     .Returns(ApplicationExecutionProcessResult.Success("amessage"));
 
                 var command = new CliCommand("acommandname", "anapplicationname", "arguments",
-                    this.solutionPathResolver.Object, this.applicationExecutor.Object);
-                var result = command.Execute(solution, target);
+                    this.draftPathResolver.Object, this.applicationExecutor.Object);
+                var result = command.Execute(draft, target);
 
                 result.IsSuccess.Should().BeTrue();
                 result.Log.Should()
