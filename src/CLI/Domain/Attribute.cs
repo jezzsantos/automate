@@ -293,7 +293,7 @@ namespace Automate.CLI.Domain
                     return value is bool;
 
                 case "int":
-                    return value is int;
+                    return value is int or long;
 
                 case "decimal":
                     return value is decimal;
