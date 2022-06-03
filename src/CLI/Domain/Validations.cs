@@ -68,7 +68,13 @@ namespace Automate.CLI.Domain
         {
             var propertyNameExpression = $@"{NameIdentifierExpression}";
             const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
-            return Regex.IsMatch(name, propertyNameExpression) && Regex.IsMatch(value, propertyValueExpression);
+            var isValidName = Regex.IsMatch(name, propertyNameExpression);
+
+            var isValidValue = value.HasValue()
+                ? Regex.IsMatch(value, propertyValueExpression)
+                : true;
+
+            return isValidName && isValidValue;
         }
 
         public static bool IsVersionInstruction(string instruction)

@@ -169,6 +169,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The property assignment &apos;{0}&apos; does not have a name.
+        /// </summary>
+        internal static string CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName {
+            get {
+                return ResourceManager.GetString("CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The pattern definition could not be found for: &apos;{0}&apos;.
         /// </summary>
         internal static string JsonFileRepository_PatternNotFound {

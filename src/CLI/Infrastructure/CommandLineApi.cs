@@ -986,7 +986,7 @@ namespace Automate.CLI.Infrastructure
                 }
 
                 var nameValues = sets
-                    .Select(ParsePropertyAssignment)
+                    .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(expression, null, null, nameValues);
@@ -1003,7 +1003,7 @@ namespace Automate.CLI.Infrastructure
                     sets.AddRange(andSet);
                 }
                 var nameValues = sets
-                    .Select(ParsePropertyAssignment)
+                    .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(null, expression, null, nameValues);
@@ -1020,7 +1020,7 @@ namespace Automate.CLI.Infrastructure
                     sets.AddRange(andSet);
                 }
                 var nameValues = sets
-                    .Select(ParsePropertyAssignment)
+                    .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
                 var solutionItem = Runtime.ConfigureSolution(null, null, expression, nameValues);
@@ -1171,12 +1171,39 @@ namespace Automate.CLI.Infrastructure
 
                 return builder.ToString();
             }
+        }
+    }
 
-            private static (string Name, string Value) ParsePropertyAssignment(string expression)
+    internal static class CommandLineExtensions
+    {
+        public const string Delimiter = "=";
+
+        public static (string Name, string Value) SplitPropertyAssignment(this string expression)
+        {
+            expression.GuardAgainstNullOrEmpty(nameof(expression));
+
+            var indexOfDelimiter = expression.IndexOf(Delimiter, StringComparison.Ordinal);
+            var hasDelimiter = indexOfDelimiter > -1;
+            if (!hasDelimiter)
             {
-                var parts = expression.Split('=');
-                return (parts.First(), parts.Last());
+                return (expression, null);
             }
+
+            var name = expression.Substring(0, indexOfDelimiter);
+            if (name.HasNoValue())
+            {
+                throw new AutomateException(ExceptionMessages
+                    .CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Format(expression));
+            }
+
+            var value = expression.Substring(indexOfDelimiter + 1);
+            if (value.HasNoValue())
+            {
+                return (name, null);
+            }
+
+            return (name, value);
+
         }
     }
 

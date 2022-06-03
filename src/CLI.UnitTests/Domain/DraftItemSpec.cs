@@ -696,12 +696,12 @@ namespace CLI.UnitTests.Domain
             solutionItem
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
-                    { "notavalidpropertyassignment", "" }
+                    { "notavalidpropertyassignment", "^" }
                 }))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ExceptionMessages.SolutionItem_ConfigureSolution_PropertyAssignmentInvalid.Format(
-                        "notavalidpropertyassignment=", "notavalidpropertyassignment", solutionItem.Id) + "*");
+                        "notavalidpropertyassignment=^", "notavalidpropertyassignment", solutionItem.Id) + "*");
         }
 
         [Fact]

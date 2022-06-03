@@ -310,4 +310,7 @@
     <data name="AuthoringApplication_EditingCodeTemplateError" xml:space="preserve">
         <value>Failed to edit CodeTemplate with '{0}', error was: '{1}'</value>
     </data>
+    <data name="CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName" xml:space="preserve">
+        <value>The property assignment '{0}' does not have a name</value>
+    </data>
 </root>

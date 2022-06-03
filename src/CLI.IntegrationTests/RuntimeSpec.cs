@@ -250,6 +250,20 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenConfigureSolutionAndReSetPropertyWithNullOnExistingElement_ThenDisplaysSuccess()
+        {
+            CreateSolutionFromBuiltToolkit();
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on \"\" --and-set \"AProperty1=\"");
+
+            var item = this.setup.Solution.Model;
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate(item.Name, item.Id));
+            item.Properties["AProperty1"].Value.Should().BeNull();
+        }
+        [Fact]
         public void WhenConfigureSolutionAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
