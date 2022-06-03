@@ -165,6 +165,15 @@
     <data name="CommandLine_Output_SolutionConfigured" xml:space="preserve">
         <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was configured successfully</value>
     </data>
+    <data name="CommandLine_Output_SolutionResetElement" xml:space="preserve">
+        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was reset successfully</value>
+    </data>
+    <data name="CommandLine_Output_SolutionEmptyCollection" xml:space="preserve">
+        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was cleared successfully</value>
+    </data>
+    <data name="CommandLine_Output_SolutionDelete" xml:space="preserve">
+        <value>The Solution Item '{SolutionName}' (ID: '{SolutionItemId}') was deleted successfully</value>
+    </data>
     <data name="CommandLine_Output_SolutionConfiguration" xml:space="preserve">
         <value>Solution '{SolutionName}' (ID: '{SolutionId}') is configured as:
 {Configuration}</value>

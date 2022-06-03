@@ -1391,6 +1391,199 @@ namespace CLI.UnitTests.Domain
                 && (string)x.Arguments[2] == "anewdefaultvalue");
         }
 
+        [Fact]
+        public void WhenResetAllPropertiesAndIsCollection_ThenThrows()
+        {
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
+            this.pattern.AddElement(collection);
+            var collectionItem = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["acollectionname"].Materialise();
+
+            collectionItem
+                .Invoking(x => x.ResetAllProperties())
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ResetPropertiesForNonElement);
+        }
+
+        [Fact]
+        public void WhenResetAllPropertiesAndIsAttribute_ThenThrows()
+        {
+            var attribute = new Attribute("anattributename");
+            this.pattern.AddAttribute(attribute);
+            var attributeItem = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["anattributename"];
+
+            attributeItem
+                .Invoking(x => x.ResetAllProperties())
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ResetPropertiesForNonElement);
+        }
+
+        [Fact]
+        public void WhenResetAllPropertiesOnPattern_ThenResetsProperties()
+        {
+            var attribute1 = new Attribute("anattributename1");
+            var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue2");
+            var attribute3 = new Attribute("anattributename3", "int");
+            this.pattern.AddAttribute(attribute1);
+            this.pattern.AddAttribute(attribute2);
+            this.pattern.AddAttribute(attribute3);
+
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            patternItem.Properties["anattributename1"].Value = "avalue1";
+            patternItem.Properties["anattributename2"].Value = "avalue2";
+            patternItem.Properties["anattributename3"].Value = 25;
+
+            patternItem.ResetAllProperties();
+
+            patternItem.Properties["anattributename1"].Value.Should().BeNull();
+            patternItem.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            patternItem.Properties["anattributename3"].Value.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenResetAllPropertiesOnElement_ThenResetsProperties()
+        {
+            var attribute1 = new Attribute("anattributename1");
+            var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue2");
+            var attribute3 = new Attribute("anattributename3", "int");
+            var element = new Element("anelementname");
+            element.AddAttribute(attribute1);
+            element.AddAttribute(attribute2);
+            element.AddAttribute(attribute3);
+            this.pattern.AddElement(element);
+
+            var elementName = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["anelementname"].Materialise();
+            elementName.Properties["anattributename1"].Value = "avalue1";
+            elementName.Properties["anattributename2"].Value = "avalue2";
+            elementName.Properties["anattributename3"].Value = 25;
+
+            elementName.ResetAllProperties();
+
+            elementName.Properties["anattributename1"].Value.Should().BeNull();
+            elementName.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            elementName.Properties["anattributename3"].Value.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenClearCollectionItemsAndNotIsCollection_ThenThrows()
+        {
+            var element = new Element("anelementname");
+            this.pattern.AddElement(element);
+            var elementItem = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["anelementname"].Materialise();
+
+            elementItem
+                .Invoking(x => x.ClearCollectionItems())
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_ClearCollectionForNonCollection);
+        }
+
+        [Fact]
+        public void WhenClearCollectionItems_ThenClearsCollectionItems()
+        {
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
+            this.pattern.AddElement(collection);
+            var collectionItem = new SolutionItem(this.toolkit, this.pattern)
+                .Properties["acollectionname"].Materialise();
+            collectionItem.MaterialiseCollectionItem();
+            collectionItem.MaterialiseCollectionItem();
+            collectionItem.MaterialiseCollectionItem();
+
+            collectionItem.ClearCollectionItems();
+
+            collectionItem.Items.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void WhenDeleteAndDeletePattern_ThenThrows()
+        {
+            var element = new Element("anelementname");
+            this.pattern.AddElement(element);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+
+            patternItem
+                .Invoking(x => x.Delete(patternItem))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_DeleteForNonElementChild);
+        }
+
+        [Fact]
+        public void WhenDeleteAndDeleteChildAttribute_ThenThrows()
+        {
+            var attribute = new Attribute("anattributename");
+            this.pattern.AddAttribute(attribute);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            var attributeItem = patternItem.Properties["anattributename"];
+
+            attributeItem
+                .Invoking(x => x.Delete(attributeItem))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_DeleteForNonElement);
+        }
+
+        [Fact]
+        public void WhenDeleteAndDeleteChildElement_ThenDeletes()
+        {
+            var element = new Element("anelementname");
+            this.pattern.AddElement(element);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            var elementItem = patternItem.Properties["anelementname"];
+
+            patternItem.Delete(elementItem);
+
+            patternItem.Properties.Should().NotContainKey("anelementname");
+        }
+
+        [Fact]
+        public void WhenDeleteAndDeleteChildCollection_ThenDeletes()
+        {
+            var collection = new Element("acollectionname", ElementCardinality.ZeroOrMany);
+            this.pattern.AddElement(collection);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            var collectionItem = patternItem.Properties["acollectionname"];
+
+            patternItem.Delete(collectionItem);
+
+            patternItem.Properties.Should().NotContainKey("acollectionname");
+        }
+
+        [Fact]
+        public void WhenDeleteAndNotAChild_ThenThrows()
+        {
+            var element1 = new Element("anelementname1");
+            var element2 = new Element("anelementname2");
+            this.pattern.AddElement(element1);
+            this.pattern.AddElement(element2);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            var elementItem1 = patternItem.Properties["anelementname1"];
+            var elementItem2 = patternItem.Properties["anelementname2"];
+
+            elementItem1
+                .Invoking(x => x.Delete(elementItem2))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.SolutionItem_DeleteWithUnknownChild);
+        }
+
+        [Fact]
+        public void WhenDeleteAndDeleteCollectionItem_ThenDeletes()
+        {
+            var collection = new Element("acollectionname", ElementCardinality.ZeroOrMany);
+            this.pattern.AddElement(collection);
+            var patternItem = new SolutionItem(this.toolkit, this.pattern);
+            var collectionItem = patternItem.Properties["acollectionname"];
+            var itemItem1 = collectionItem.MaterialiseCollectionItem();
+            var itemItem2 = collectionItem.MaterialiseCollectionItem();
+            var itemItem3 = collectionItem.MaterialiseCollectionItem();
+
+            collectionItem.Delete(itemItem2);
+
+            collectionItem.Items.Count.Should().Be(2);
+            collectionItem.Items[0].Should().Be(itemItem1);
+            collectionItem.Items[1].Should().Be(itemItem3);
+        }
+
         private static PatternDefinition ClonePattern(PatternDefinition originalPattern)
         {
             var factory = new AutomatePersistableFactory();

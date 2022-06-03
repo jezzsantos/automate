@@ -96,13 +96,15 @@ namespace Automate.CLI.Application
         }
 
         public SolutionItem ConfigureSolution(string addElementExpression,
-            string addToCollectionExpression, string onElementExpression, Dictionary<string, string> propertyAssignments)
+            string addToCollectionExpression, string onElementExpression,
+            Dictionary<string, string> propertyAssignments)
         {
             var solution = EnsureCurrentSolutionExists();
 
-            if (!addElementExpression.HasValue() && !addToCollectionExpression.HasValue()
-                                                 && !onElementExpression.HasValue()
-                                                 && propertyAssignments.HasNone())
+            if (addElementExpression.HasNoValue()
+                && addToCollectionExpression.HasNoValue()
+                && onElementExpression.HasNoValue()
+                && propertyAssignments.HasNone())
             {
                 throw new ArgumentOutOfRangeException(nameof(addElementExpression),
                     ExceptionMessages.RuntimeApplication_ConfigureSolution_NoChanges.Format(
@@ -130,11 +132,60 @@ namespace Automate.CLI.Application
                         solution.Id, onElementExpression, addToCollectionExpression));
             }
 
-            var target = ResolveTargetItem(solution, addElementExpression, addToCollectionExpression, onElementExpression);
+            var target = ResolveTargetItem(solution, addElementExpression, addToCollectionExpression,
+                onElementExpression);
             if (propertyAssignments.Safe().Any())
             {
                 target.SetProperties(propertyAssignments);
             }
+
+            this.solutionStore.Save(solution);
+
+            return target;
+        }
+
+        public SolutionItem ConfigureSolutionAndResetElement(string elementExpression)
+        {
+            elementExpression.GuardAgainstNullOrEmpty(nameof(elementExpression));
+
+            var solution = EnsureCurrentSolutionExists();
+
+            var target = ResolveTargetItem(solution, null, null, elementExpression);
+            target.ResetAllProperties();
+
+            this.solutionStore.Save(solution);
+
+            return target;
+        }
+
+        public SolutionItem ConfigureSolutionAndClearCollection(string collectionExpression)
+        {
+            collectionExpression.GuardAgainstNullOrEmpty(nameof(collectionExpression));
+
+            var solution = EnsureCurrentSolutionExists();
+
+            var target = ResolveTargetItem(solution, null, null, collectionExpression);
+            target.ClearCollectionItems();
+
+            this.solutionStore.Save(solution);
+
+            return target;
+        }
+
+        public SolutionItem ConfigureSolutionAndDelete(string expression)
+        {
+            expression.GuardAgainstNullOrEmpty(nameof(expression));
+
+            var solution = EnsureCurrentSolutionExists();
+
+            var target = ResolveTargetItem(solution, null, null, expression);
+
+            if (target.IsPattern)
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_ConfigureSolution_DeletePattern);
+            }
+
+            target.Parent.Delete(target);
 
             this.solutionStore.Save(solution);
 
@@ -219,7 +270,8 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string addElementExpression, string addToCollectionExpression, string onElementExpression)
+        private SolutionItem ResolveTargetItem(SolutionDefinition solution, string addElementExpression,
+            string addToCollectionExpression, string onElementExpression)
         {
             var target = solution.Model;
             if (addElementExpression.HasValue())
@@ -298,7 +350,9 @@ namespace Automate.CLI.Application
             var installedVersion = toolkit.Version;
             if (currentVersion != installedVersion)
             {
-                throw new AutomateException(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, currentVersion, installedVersion));
+                throw new AutomateException(
+                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                        currentVersion, installedVersion));
             }
 
             return solution;

@@ -136,7 +136,7 @@ namespace Automate.CLI.Domain
                             _ => null
                         };
                     }
-                    prop.SetProperty(testValue);
+                    prop.SetValue(testValue);
                 }
             }
         }

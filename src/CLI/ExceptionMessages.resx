@@ -173,9 +173,6 @@
     <data name="RuntimeApplication_ConfigureSolution_NoChanges" xml:space="preserve">
         <value>Tried to configure solution ID: '{0}' without any changes to any elements or collections</value>
     </data>
-    <data name="SolutionItem_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
-        <value>Tried to configure property: '{1}' (on element: '{2}') but contains invalid assignment: '{0}'</value>
-    </data>
     <data name="RuntimeApplication_ItemExpressionNotFound" xml:space="preserve">
         <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
     </data>
@@ -184,6 +181,12 @@
     </data>
     <data name="RuntimeApplication_ConfigureSolution_OnElementNotExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') has not been created yet, and cannot be configured</value>
+    </data>
+    <data name="RuntimeApplication_ConfigureSolution_DeletePattern" xml:space="preserve">
+        <value>Tried to delete the pattern, which cannot be deleted</value>
+    </data>
+    <data name="SolutionItem_ConfigureSolution_PropertyAssignmentInvalid" xml:space="preserve">
+        <value>Tried to configure property: '{1}' (on element: '{2}') but contains invalid assignment: '{0}'</value>
     </data>
     <data name="SolutionItem_ConfigureSolution_ElementPropertyNotExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') does not have a property called: '{1}'</value>
@@ -243,6 +246,24 @@
     </data>
     <data name="SolutionItem_ConfigurationForNonElement" xml:space="preserve">
         <value>Cannot fetch configuration for a non-element</value>
+    </data>
+    <data name="SolutionItem_ResetPropertiesForNonElement" xml:space="preserve">
+        <value>Cannot reset properties for a non-element</value>
+    </data>
+    <data name="SolutionItem_ClearItemsForNonCollection" xml:space="preserve">
+        <value>Cannot clear items for a non-collection</value>
+    </data>
+    <data name="SolutionItem_ClearCollectionForNonCollection" xml:space="preserve">
+        <value>Cannot clear items for a non-collection</value>
+    </data>
+    <data name="SolutionItem_DeleteForNonElement" xml:space="preserve">
+        <value>Cannot delete on a non-element</value>
+    </data>
+    <data name="SolutionItem_DeleteForNonElementChild" xml:space="preserve">
+        <value>Can only delete an element or collection</value>
+    </data>
+    <data name="SolutionItem_DeleteWithUnknownChild" xml:space="preserve">
+        <value>Can only delete a child of the element or collection</value>
     </data>
     <data name="PersistableExtensions_GenericListNotGeneric" xml:space="preserve">
         <value>is not a generic type</value>

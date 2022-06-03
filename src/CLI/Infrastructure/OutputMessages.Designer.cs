@@ -481,6 +481,33 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was deleted successfully.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionDelete {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was cleared successfully.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionEmptyCollection {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionEmptyCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Solution Item &apos;{SolutionName}&apos; (ID: &apos;{SolutionItemId}&apos;) was reset successfully.
+        /// </summary>
+        internal static string CommandLine_Output_SolutionResetElement {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_SolutionResetElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Solution: &apos;{SolutionName}&apos; (ID: &apos;{SolutionId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_SolutionSwitched {

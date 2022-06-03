@@ -18,7 +18,8 @@ namespace CLI.IntegrationTests
 
         public RuntimeSpec(CliTestSetup setup)
         {
-            this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "../../../../../tools/TestApp/TestApp.exe"));
+            this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                "../../../../../tools/TestApp/TestApp.exe"));
             this.setup = setup;
             this.setup.ResetRepository();
             DeleteCodeFolder();
@@ -184,27 +185,34 @@ namespace CLI.IntegrationTests
         {
             CreateSolutionFromBuiltToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             BuildReversionAndInstallToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue2\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue2\"");
 
             var solution = this.setup.Solution;
-            this.setup.Should().DisplayError(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, "0.1.0", "0.2.0"));
+            this.setup.Should()
+                .DisplayError(
+                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                        "0.1.0", "0.2.0"));
         }
-        
+
         [Fact]
         public void WhenConfigureSolutionAndSetPropertyOnPattern_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue\"");
 
             var item = this.setup.Solution.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("APattern", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("APattern", item.Id));
             item.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
@@ -213,12 +221,14 @@ namespace CLI.IntegrationTests
         {
             CreateSolutionFromBuiltToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
             var item = this.setup.Solution.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("B");
         }
 
@@ -228,12 +238,14 @@ namespace CLI.IntegrationTests
             CreateSolutionFromBuiltToolkit();
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}}");
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
             var item = this.setup.Solution.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
 
@@ -241,14 +253,17 @@ namespace CLI.IntegrationTests
         public void WhenConfigureSolutionAndReSetPropertyOnExistingElement_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
             var item = this.setup.Solution.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
 
@@ -257,12 +272,14 @@ namespace CLI.IntegrationTests
         {
             CreateSolutionFromBuiltToolkit();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
 
             var item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
@@ -270,23 +287,92 @@ namespace CLI.IntegrationTests
         public void WhenConfigureSolutionAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
             var item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
 
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{item.Id}}} --and-set \"AProperty4=anewvalue\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{item.Id}}} --and-set \"AProperty4=anewvalue\"");
 
             item = this.setup.Solution.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionConfigured.FormatTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndResetElement_ThenDisplaysSuccess()
+        {
+            CreateSolutionFromBuiltToolkit();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty5=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty6=99\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty7=avalue2\"");
+
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} reset {{AnElement3}}");
+
+            var elementItem = this.setup.Solution.Model.Properties["AnElement3"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionResetElement.FormatTemplate("AnElement3",
+                        elementItem.Id));
+            elementItem.Properties["AProperty5"].Value.Should().Be("ADefaultValue1");
+            elementItem.Properties["AProperty6"].Value.Should().Be(25);
+            elementItem.Properties["AProperty7"].Value.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndClearCollection_ThenDisplaysSuccess()
+        {
+            CreateSolutionFromBuiltToolkit();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue2\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue3\"");
+
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} clear {{ACollection2}}");
+
+            var collectionItem = this.setup.Solution.Model.Properties["ACollection2"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionEmptyCollection.FormatTemplate("ACollection2",
+                        collectionItem.Id));
+            collectionItem.Items.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndDeleteElement_ThenDisplaysSuccess()
+        {
+            CreateSolutionFromBuiltToolkit();
+
+            var elementItem = this.setup.Solution.Model.Properties["AnElement3"];
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} delete {{AnElement3}}");
+
+            var solutionItem = this.setup.Solution.Model;
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_SolutionDelete.FormatTemplate("AnElement3",
+                        elementItem.Id));
+            solutionItem.Properties.Should().NotContainKey("AnElement3");
         }
 
         [Fact]
         public void WhenViewSolution_ThenDisplaysConfiguration()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -296,7 +382,8 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solution;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name,
+                    solution.Id,
                     new
                     {
                         solution.Model.Id,
@@ -321,6 +408,12 @@ namespace CLI.IntegrationTests
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
+                        },
+                        AnElement3 = new
+                        {
+                            solution.Model.Properties["AnElement3"].Id,
+                            AProperty5 = "ADefaultValue1",
+                            AProperty6 = 25
                         }
                     }.ToJson<dynamic>()));
         }
@@ -329,7 +422,8 @@ namespace CLI.IntegrationTests
         public void WhenViewSolutionWithTodo_ThenDisplaysConfigurationSchemaAndValidation()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
 
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} solution --todo");
@@ -337,7 +431,8 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solution;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name, solution.Id,
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionConfiguration.FormatTemplate(solution.Name,
+                    solution.Id,
                     new
                     {
                         solution.Model.Id,
@@ -357,11 +452,19 @@ namespace CLI.IntegrationTests
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
+                        },
+                        AnElement3 = new
+                        {
+                            solution.Model.Properties["AnElement3"].Id,
+                            AProperty5 = "ADefaultValue1",
+                            AProperty6 = 25
                         }
                     }.ToJson<dynamic>()));
             var pattern = this.setup.Pattern;
-            var codeTemplatePath1 = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
-            var codeTemplatePath2 = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code2.code"));
+            var codeTemplatePath1 =
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
+            var codeTemplatePath2 =
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code2.code"));
             var element1 = this.setup.Pattern.Elements.First();
             this.setup.Should()
                 .DisplayMessage(
@@ -377,6 +480,7 @@ namespace CLI.IntegrationTests
                         $"\t\t- ALaunchPoint2 [{pattern.Automation[4].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id};{pattern.Automation[3].Id}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
                         $"\t\t- AProperty1 (string, required){Environment.NewLine}" +
+                        $"\t\t- AProperty2 (int){Environment.NewLine}" +
                         $"\t- Elements:{Environment.NewLine}" +
                         $"\t\t- AnElement1 [{element1.Id}] (element){Environment.NewLine}" +
                         $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
@@ -388,9 +492,14 @@ namespace CLI.IntegrationTests
                         $"\t\t\t\t- AProperty3 (string, oneof: A;B;C){Environment.NewLine}" +
                         $"\t\t\t- Elements:{Environment.NewLine}" +
                         $"\t\t\t\t- ACollection1 [{element1.Elements.First().Id}] (collection){Environment.NewLine}" +
-                        $"\t\t- ACollection2 [{pattern.Elements.Last().Id}] (collection){Environment.NewLine}" +
+                        $"\t\t- ACollection2 [{pattern.Elements[1].Id}] (collection){Environment.NewLine}" +
                         $"\t\t\t- Attributes:{Environment.NewLine}" +
-                        $"\t\t\t\t- AProperty4 (string, default: ADefaultValue4){Environment.NewLine}"
+                        $"\t\t\t\t- AProperty4 (string, default: ADefaultValue4){Environment.NewLine}" +
+                        $"\t\t- AnElement3 [{pattern.Elements.Last().Id}] (element){Environment.NewLine}" +
+                        $"\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty5 (string, default: ADefaultValue1){Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty6 (int, default: 25){Environment.NewLine}" +
+                        $"\t\t\t\t- AProperty7 (string){Environment.NewLine}"
                         ,
                         this.setup.Pattern.Id));
             this.setup.Should()
@@ -424,7 +533,8 @@ namespace CLI.IntegrationTests
         public void WhenValidateAndNoErrors_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -435,7 +545,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Name, solution.Id));
+                    OutputMessages.CommandLine_Output_SolutionValidationSuccess.FormatTemplate(solution.Name,
+                        solution.Id));
         }
 
         [Fact]
@@ -461,7 +572,8 @@ namespace CLI.IntegrationTests
         {
             var testDirectory = Environment.CurrentDirectory;
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -473,9 +585,11 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionFailed.FormatTemplate("ALaunchPoint2",
-                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs", path) + $"{Environment.NewLine}" +
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs", path) +
+                    $"{Environment.NewLine}" +
                     "* " + DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(commandId,
-                        ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
+                        ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(
+                            DomainMessages.CodeTemplateCommand_FilePathExpression_Description.Format(commandId),
                             $"((20:0,20),(21:0,21)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
                             $"((19:0,19),(19:0,19)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
                             "* " + InfrastructureMessages.ApplicationExecutor_Succeeded.Format(this.testApplicationName,
@@ -487,7 +601,8 @@ namespace CLI.IntegrationTests
         {
             var testDirectory = Environment.CurrentDirectory;
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -498,7 +613,8 @@ namespace CLI.IntegrationTests
             var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate("ALaunchPoint1",
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate(
+                    "ALaunchPoint1",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs",
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
@@ -511,7 +627,8 @@ namespace CLI.IntegrationTests
         {
             var testDirectory = Environment.CurrentDirectory;
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -522,7 +639,8 @@ namespace CLI.IntegrationTests
             var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate("ALaunchPoint3",
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate(
+                    "ALaunchPoint3",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("parentsubstitutiontest.cs",
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
@@ -534,7 +652,8 @@ namespace CLI.IntegrationTests
         public void WhenUpgradeSolutionAndToolkitNotUpgraded_ThenDisplaysWarning()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -544,15 +663,19 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solution;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.1.0",
-                    $"* {MigrationChangeType.Abort}: " + MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion.FormatTemplate(solution.PatternName, solution.Toolkit.Version) + $"{Environment.NewLine}"));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeWithWarning.FormatTemplate(
+                    solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.1.0",
+                    $"* {MigrationChangeType.Abort}: " +
+                    MigrationMessages.SolutionDefinition_Upgrade_SameToolkitVersion.FormatTemplate(solution.PatternName,
+                        solution.Toolkit.Version) + $"{Environment.NewLine}"));
         }
 
         [Fact]
         public void WhenUpgradeSolutionAndToolkitUpgradedWithChanges_ThenDisplaysSuccess()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -565,15 +688,18 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solution;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.2.0",
-                    $"* {MigrationChangeType.NonBreaking}: " + MigrationMessages.SolutionItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
+                    solution.Id, solution.PatternName, "0.1.0", "0.2.0",
+                    $"* {MigrationChangeType.NonBreaking}: " +
+                    MigrationMessages.SolutionItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
         }
 
         [Fact]
         public void WhenUpgradeSolutionAndToolkitNotAutoUpgradeable_ThenDisplaysError()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -586,15 +712,19 @@ namespace CLI.IntegrationTests
             var solution = this.setup.Solution;
             const string newVersion = "1.0.0";
             this.setup.Should()
-                .DisplayError(OutputMessages.CommandLine_Output_SolutionUpgradeFailed.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", newVersion,
-                    $"* {MigrationChangeType.Abort}: " + MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(solution.PatternName, newVersion) + $"{Environment.NewLine}"));
+                .DisplayError(OutputMessages.CommandLine_Output_SolutionUpgradeFailed.FormatTemplate(solution.Name,
+                    solution.Id, solution.PatternName, "0.1.0", newVersion,
+                    $"* {MigrationChangeType.Abort}: " +
+                    MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(
+                        solution.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
         [Fact]
         public void WhenUpgradeSolutionAndToolkitNotAutoUpgradeableAndForced_ThenDisplaysResults()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -608,15 +738,19 @@ namespace CLI.IntegrationTests
             const string newVersion = "1.0.0";
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", newVersion,
-                    $"* {MigrationChangeType.Breaking}: " + MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced.FormatTemplate(solution.PatternName, newVersion) + $"{Environment.NewLine}"));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
+                    solution.Id, solution.PatternName, "0.1.0", newVersion,
+                    $"* {MigrationChangeType.Breaking}: " +
+                    MigrationMessages.SolutionDefinition_Upgrade_BreakingChangeForced.FormatTemplate(
+                        solution.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
         [Fact]
         public void WhenUpgradeSolutionWithNonBreakingChanges_ThenDisplaysResults()
         {
             CreateSolutionFromBuiltToolkit();
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
@@ -631,8 +765,11 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.CodeTemplates.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name, solution.Id, solution.PatternName, "0.1.0", "0.2.0",
-                    $"* {MigrationChangeType.NonBreaking}: " + MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name, codeTemplate.Id) + $"{Environment.NewLine}"));
+                .DisplayMessage(OutputMessages.CommandLine_Output_SolutionUpgradeSucceeded.FormatTemplate(solution.Name,
+                    solution.Id, solution.PatternName, "0.1.0", "0.2.0",
+                    $"* {MigrationChangeType.NonBreaking}: " +
+                    MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name,
+                        codeTemplate.Id) + $"{Environment.NewLine}"));
         }
 
         [Fact]
@@ -648,11 +785,16 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_ToolkitConfiguration.FormatTemplate(
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
+                        $"\t- AProperty2 (attribute) (int){Environment.NewLine}" +
                         $"\t- AnElement1 (element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t\t- AProperty3 (attribute) (string, oneof: A;B;C){Environment.NewLine}" +
                         $"\t\t- ACollection1 (collection){Environment.NewLine}" +
                         $"\t- ACollection2 (collection){Environment.NewLine}" +
-                        $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}"
+                        $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}" +
+                        $"\t- AnElement3 (element){Environment.NewLine}" +
+                        $"\t\t- AProperty5 (attribute) (string, default: ADefaultValue1){Environment.NewLine}" +
+                        $"\t\t- AProperty6 (attribute) (int, default: 25){Environment.NewLine}" +
+                        $"\t\t- AProperty7 (attribute) (string){Environment.NewLine}"
                         ,
                         this.setup.Pattern.Id));
         }
@@ -693,7 +835,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint2");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --isoftype int");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1 --autocreate false");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
@@ -713,12 +855,21 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.ACollection2}} --defaultvalueis ADefaultValue4");
 
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement3");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty5 --aschildof {{APattern.AnElement3}} --defaultvalueis ADefaultValue1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty6 --aschildof {{APattern.AnElement3}} --isoftype int --defaultvalueis 25");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty7 --aschildof {{APattern.AnElement3}}");
+
             this.setup.Should().DisplayNoError();
 
             return BuildReversionAndInstallToolkit();
         }
 
-        private string BuildReversionAndInstallToolkit(string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
+        private string BuildReversionAndInstallToolkit(
+            string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;

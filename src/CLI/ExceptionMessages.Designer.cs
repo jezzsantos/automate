@@ -475,6 +475,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tried to delete the pattern, which cannot be deleted.
+        /// </summary>
+        internal static string RuntimeApplication_ConfigureSolution_DeletePattern {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_ConfigureSolution_DeletePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tried to configure solution ID: &apos;{0}&apos; without any changes to any elements or collections.
         /// </summary>
         internal static string RuntimeApplication_ConfigureSolution_NoChanges {
@@ -566,6 +575,24 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
+        /// </summary>
+        internal static string SolutionItem_ClearCollectionForNonCollection {
+            get {
+                return ResourceManager.GetString("SolutionItem_ClearCollectionForNonCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot clear items for a non-collection.
+        /// </summary>
+        internal static string SolutionItem_ClearItemsForNonCollection {
+            get {
+                return ResourceManager.GetString("SolutionItem_ClearItemsForNonCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot fetch configuration for a non-element.
         /// </summary>
         internal static string SolutionItem_ConfigurationForNonElement {
@@ -607,6 +634,33 @@ namespace Automate.CLI {
         internal static string SolutionItem_ConfigureSolution_PropertyAssignmentInvalid {
             get {
                 return ResourceManager.GetString("SolutionItem_ConfigureSolution_PropertyAssignmentInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete on a non-element.
+        /// </summary>
+        internal static string SolutionItem_DeleteForNonElement {
+            get {
+                return ResourceManager.GetString("SolutionItem_DeleteForNonElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only delete an element or collection.
+        /// </summary>
+        internal static string SolutionItem_DeleteForNonElementChild {
+            get {
+                return ResourceManager.GetString("SolutionItem_DeleteForNonElementChild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only delete a child of the element or collection.
+        /// </summary>
+        internal static string SolutionItem_DeleteWithUnknownChild {
+            get {
+                return ResourceManager.GetString("SolutionItem_DeleteWithUnknownChild", resourceCulture);
             }
         }
         
@@ -679,6 +733,15 @@ namespace Automate.CLI {
         internal static string SolutionItem_PatternAlreadyMaterialised {
             get {
                 return ResourceManager.GetString("SolutionItem_PatternAlreadyMaterialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot reset properties for a non-element.
+        /// </summary>
+        internal static string SolutionItem_ResetPropertiesForNonElement {
+            get {
+                return ResourceManager.GetString("SolutionItem_ResetPropertiesForNonElement", resourceCulture);
             }
         }
         

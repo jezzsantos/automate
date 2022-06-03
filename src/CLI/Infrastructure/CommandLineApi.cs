@@ -338,19 +338,31 @@ namespace Automate.CLI.Infrastructure
                     new Argument("Expression", "The expression of the element to configure"),
                     new Option("--and-set", "A Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleAddTo)),
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureAddTo)),
                 new Command("add-one-to", "Add a new item to a collection in the solution")
                 {
                     new Argument("Expression", "The expression of the element/collection to add to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleAddOneTo)),
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureAddOneTo)),
                 new Command("on", "Set the properties of an existing item in the solution")
                 {
                     new Argument("Expression", "The expression of the element/collection to assign to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleSet))
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureOn)),
+                new Command("reset", "Reset all the properties of an existing item in the solution")
+                {
+                    new Argument("Expression", "The expression of the element to reset")
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureResetElement)),
+                new Command("clear", "Deletes all the items from an existing collection in the solution")
+                {
+                    new Argument("Expression", "The expression of the collection to clear")
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureClearCollection)),
+                new Command("delete", "Deletes an existing item in the solution")
+                {
+                    new Argument("Expression", "The expression of the element/collection to delete")
+                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.HandleConfigureDelete))
             };
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
@@ -964,7 +976,7 @@ namespace Automate.CLI.Infrastructure
                     Runtime.CurrentSolutionId);
             }
 
-            internal static void HandleAddTo(string expression, string[] andSet, bool outputStructured,
+            internal static void HandleConfigureAddTo(string expression, string[] andSet, bool outputStructured,
                 IConsole console)
             {
                 var sets = new List<string>();
@@ -982,7 +994,7 @@ namespace Automate.CLI.Infrastructure
                     solutionItem.Name, solutionItem.Id);
             }
 
-            internal static void HandleAddOneTo(string expression, string[] andSet, bool outputStructured,
+            internal static void HandleConfigureAddOneTo(string expression, string[] andSet, bool outputStructured,
                 IConsole console)
             {
                 var sets = new List<string>();
@@ -999,7 +1011,8 @@ namespace Automate.CLI.Infrastructure
                     solutionItem.Name, solutionItem.Id);
             }
 
-            internal static void HandleSet(string expression, string[] andSet, bool outputStructured, IConsole console)
+            internal static void HandleConfigureOn(string expression, string[] andSet, bool outputStructured,
+                IConsole console)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
@@ -1012,6 +1025,28 @@ namespace Automate.CLI.Infrastructure
 
                 var solutionItem = Runtime.ConfigureSolution(null, null, expression, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionConfigured,
+                    solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleConfigureResetElement(string expression, bool outputStructured, IConsole console)
+            {
+                var solutionItem = Runtime.ConfigureSolutionAndResetElement(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionResetElement,
+                    solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleConfigureClearCollection(string expression, bool outputStructured,
+                IConsole console)
+            {
+                var solutionItem = Runtime.ConfigureSolutionAndClearCollection(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionEmptyCollection,
+                    solutionItem.Name, solutionItem.Id);
+            }
+
+            internal static void HandleConfigureDelete(string expression, bool outputStructured, IConsole console)
+            {
+                var solutionItem = Runtime.ConfigureSolutionAndDelete(expression);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_SolutionDelete,
                     solutionItem.Name, solutionItem.Id);
             }
 

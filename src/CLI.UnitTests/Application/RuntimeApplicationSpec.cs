@@ -50,7 +50,6 @@ namespace CLI.UnitTests.Application
             this.application.CurrentSolutionId.Should().BeNull();
         }
 
-        
         [Fact]
         public void WhenInstallToolkitAndFileNotExist_ThenThrows()
         {
@@ -132,9 +131,11 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.GetCurrentToolkit())
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id, "0.0.0", "0.2.0"));
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_CurrentSolutionUpgraded.Format(solution.Name, solution.Id,
+                        "0.0.0", "0.2.0"));
         }
-        
+
         [Fact]
         public void WhenSwitchCurrentSolutionAndSolutionNotExists_ThenThrows()
         {
@@ -378,6 +379,79 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
+        public void WhenConfigureSolutionAndResetElement_ThenResetsAllAttributes()
+        {
+            var attribute1 = new Attribute("anattributename1");
+            var attribute2 = new Attribute("anattributename2", defaultValue: "adefaultvalue");
+            var element = new Element("anelementname");
+            element.AddAttribute(attribute1);
+            element.AddAttribute(attribute2);
+            this.pattern.AddElement(element);
+            ResetToolkit();
+            var solution = this.application.CreateSolution("apatternname", null);
+            var solutionItem = solution.Model.Properties["anelementname"].Materialise();
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solutionItem);
+
+            var result = this.application.ConfigureSolutionAndResetElement("anelementexpression");
+
+            result.Properties["anattributename1"].Value.Should().BeNull();
+            result.Properties["anattributename2"].Value.Should().Be("adefaultvalue");
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndClearCollection_ThenEmptiesCollection()
+        {
+            var collection = new Element("acollectioname", ElementCardinality.ZeroOrMany);
+            this.pattern.AddElement(collection);
+            ResetToolkit();
+            var solution = this.application.CreateSolution("apatternname", null);
+            var collectionItem = solution.Model.Properties["acollectioname"].Materialise();
+            collectionItem.MaterialiseCollectionItem();
+            collectionItem.MaterialiseCollectionItem();
+            collectionItem.MaterialiseCollectionItem();
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(collectionItem);
+
+            var result = this.application.ConfigureSolutionAndClearCollection("acollectionexpression");
+
+            result.Items.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndDeletePattern_ThenThrows()
+        {
+            var element = new Element("anelementname");
+            this.pattern.AddElement(element);
+            ResetToolkit();
+            var solution = this.application.CreateSolution("apatternname", null);
+            var solutionItem = solution.Model;
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solutionItem);
+
+            this.application
+                .Invoking(x => x.ConfigureSolutionAndDelete("anelementexpression"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.RuntimeApplication_ConfigureSolution_DeletePattern);
+        }
+
+        [Fact]
+        public void WhenConfigureSolutionAndDelete_ThenDeletesElement()
+        {
+            var element = new Element("anelementname");
+            this.pattern.AddElement(element);
+            ResetToolkit();
+            var solution = this.application.CreateSolution("apatternname", null);
+            var solutionItem = solution.Model.Properties["anelementname"].Materialise();
+            this.solutionPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<SolutionDefinition>(), It.IsAny<string>()))
+                .Returns(solutionItem);
+
+            var result = this.application.ConfigureSolutionAndDelete("anelementexpression");
+
+            result.Properties.Should().NotContainKey("anelementname");
+        }
+
+        [Fact]
         public void WhenGetConfigurationAndCurrentSolutionNotExists_ThenThrows()
         {
             this.application
@@ -481,7 +555,9 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.Validate("anelementexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname", "anelementexpression"));
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname",
+                        "anelementexpression"));
         }
 
         [Fact]
@@ -554,14 +630,17 @@ namespace CLI.UnitTests.Application
             this.application
                 .Invoking(x => x.ExecuteLaunchPoint("acommandname", "anelementexpression"))
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname", "anelementexpression"));
+                .WithMessage(
+                    ExceptionMessages.RuntimeApplication_ItemExpressionNotFound.Format("apatternname",
+                        "anelementexpression"));
         }
 
         [Fact]
         public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
         {
             var element = new Element("anelementname", displayName: "adisplayname", description: "adescription");
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             element.AddAutomation(automation);
             this.pattern.AddElement(element);
             ResetToolkit();
@@ -579,7 +658,8 @@ namespace CLI.UnitTests.Application
         [Fact]
         public void WhenExecuteLaunchPointOnSolution_ThenReturnsResult()
         {
-            var automation = new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnly, new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
             ResetToolkit();
             var solution = this.application.CreateSolution("apatternname", null);
