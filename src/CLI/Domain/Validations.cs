@@ -60,7 +60,7 @@ namespace Automate.CLI.Domain
 
             string ReplaceTemplatingExpressions()
             {
-                return Regex.Replace(remainingPath, $@"{{{{{NameIdentifierExpression}}}}}", "anexpression");
+                return Regex.Replace(remainingPath, "{{[\x00-\x7F]+}}", "anexpression");
             }
         }
 
