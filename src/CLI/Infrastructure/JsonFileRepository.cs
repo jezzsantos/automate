@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Automate.CLI.Domain;
@@ -289,10 +288,9 @@ namespace Automate.CLI.Infrastructure
             var fullPath = Directory.GetParent(filename)?.FullName ?? string.Empty;
             if (fullPath.HasValue())
             {
-                var directory = new DirectoryInfo(fullPath);
-                if (!directory.Exists)
+                if (!Directory.Exists(fullPath))
                 {
-                    directory.Create();
+                    Directory.CreateDirectory(fullPath);
                 }
             }
         }
@@ -327,7 +325,7 @@ namespace Automate.CLI.Infrastructure
 
         private static string GetExportedToolkitDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            return InfrastructureConstants.GetExportDirectory();
         }
 
         private string CreateFilenameForImportedToolkitById(string id)

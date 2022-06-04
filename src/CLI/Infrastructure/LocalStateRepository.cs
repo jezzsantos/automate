@@ -73,10 +73,9 @@ namespace Automate.CLI.Infrastructure
             var fullPath = Directory.GetParent(filename)?.FullName ?? string.Empty;
             if (fullPath.HasValue())
             {
-                var directory = new DirectoryInfo(fullPath);
-                if (!directory.Exists)
+                if (!Directory.Exists(fullPath))
                 {
-                    directory.Create();
+                    Directory.CreateDirectory(fullPath);
                 }
             }
         }

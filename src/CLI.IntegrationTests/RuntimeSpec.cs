@@ -80,8 +80,7 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var locationV2 = Path.Combine(desktopFolder, "APattern_0.2.0.toolkit");
+            var locationV2 = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
 
             this.setup.Should().DisplayNoError();
@@ -889,8 +888,8 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, $"APattern_{latestVersion}.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(),
+                $"APattern_{latestVersion}.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();

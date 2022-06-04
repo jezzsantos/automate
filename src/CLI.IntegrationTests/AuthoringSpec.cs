@@ -788,8 +788,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -805,8 +804,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -824,8 +822,7 @@ namespace CLI.IntegrationTests
 
             var pattern = this.setup.Pattern;
             var codeTemplate = pattern.CodeTemplates.First();
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -851,8 +848,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -876,8 +872,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion 0.1.0 --force");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -904,8 +899,7 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var location = Path.Combine(desktopFolder, "APattern_0.1.0.toolkit");
+            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
