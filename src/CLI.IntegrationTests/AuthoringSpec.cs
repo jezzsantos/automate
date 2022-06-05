@@ -599,7 +599,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --targetpath ~/afilepath");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" ----oneoff true --targetpath anewpath");
+                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" --isoneoff true --targetpath anewpath");
 
             var command = this.setup.Pattern.Automation.First();
             this.setup.Should().DisplayNoError();
