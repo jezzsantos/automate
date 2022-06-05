@@ -56,7 +56,7 @@ namespace Automate.CLI.Domain
         private static uint GetRandomPositiveNumber()
         {
             var randomByte = new byte[sizeof(uint)];
-            using (var rng = new RNGCryptoServiceProvider())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randomByte);
                 return BitConverter.ToUInt32(randomByte, 0);

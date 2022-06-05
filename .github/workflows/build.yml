@@ -18,7 +18,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 6.0.x
       - name: Restore dependencies
         run: dotnet restore src/Automate.sln
       - name: Build
@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: OSX-64 Binary
-          path: src/CLI/bin/Release/net5.0/osx-x64/publish/
+          path: src/CLI/bin/Release/net6.0/osx-x64/publish/
           if-no-files-found: error
       - name: Package (LinuxOS)
         run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime linux-x64 src/CLI/CLI.csproj
@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Linux-64 Binary
-          path: src/CLI/bin/Release/net5.0/linux-x64/publish/
+          path: src/CLI/bin/Release/net6.0/linux-x64/publish/
           if-no-files-found: error
       - name: Package (Windows)
         run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime win-x64 src/CLI/CLI.csproj
@@ -49,5 +49,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Win-64 Binary
-          path: src/CLI/bin/Release/net5.0/win-x64/publish/
+          path: src/CLI/bin/Release/net6.0/win-x64/publish/
           if-no-files-found: error

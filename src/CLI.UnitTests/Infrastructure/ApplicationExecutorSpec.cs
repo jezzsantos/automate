@@ -23,13 +23,16 @@ namespace CLI.UnitTests.Infrastructure
         [Fact]
         public void WhenRunApplicationProcessAndNotFound_ThenReturnsFailure()
         {
-            var result = this.executor.RunApplicationProcess(true, "anapplicationname", null);
+            const string unknownApplicationName = "anapplicationname";
+
+            var result = this.executor.RunApplicationProcess(true, unknownApplicationName, null);
 
             result.IsSuccess.Should().BeFalse();
 
             result.Error.Should()
-                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format("anapplicationname", null,
-                    "The system cannot find the file specified."));
+                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(unknownApplicationName, null,
+                    $"An error occurred trying to start process '{unknownApplicationName}' with working directory '{Environment.CurrentDirectory}'." +
+                    " The system cannot find the file specified."));
         }
 
         [Fact]
