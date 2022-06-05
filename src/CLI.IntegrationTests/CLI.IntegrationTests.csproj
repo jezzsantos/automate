@@ -33,6 +33,12 @@
         <Content Include="Assets\TestData\data1.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Content Include="Assets\Toolkits\OlderRuntimeVersion.toolkit">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\Toolkits\BeforeFirstVersionSupportingRuntimeVersion.toolkit">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

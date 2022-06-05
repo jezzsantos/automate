@@ -80,6 +80,9 @@ namespace Automate.CLI.Infrastructure
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile.Format(
                         installer.FullPath));
             }
+
+            toolkit.VerifyRuntimeCompatability();
+            
             return toolkit;
         }
     }

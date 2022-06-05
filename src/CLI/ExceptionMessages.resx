@@ -319,4 +319,13 @@
     <data name="DictionaryEntryEnumerator_OutOfRange" xml:space="preserve">
         <value>Enumerator is before or after the collection</value>
     </data>
+    <data name="ToolkitDefinition_CompatabilityToolkitNoVersion" xml:space="preserve">
+        <value>This toolkit has been built with an older version of `{2}` pre-dating (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}'). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}' or higher)</value>
+    </data>
+    <data name="ToolkitDefinition_CompatabilityToolkitOutOfDate" xml:space="preserve">
+        <value>This toolkit has been built with an older version of `{2}` (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}'). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}' or higher)</value>
+    </data>
+    <data name="ToolkitDefinition_CompatabilityRuntimeOutOfDate" xml:space="preserve">
+        <value>This toolkit has been built with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}'). You must install a newer version of `{2}` first (v{0} or higher)</value>
+    </data>
 </root>

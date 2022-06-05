@@ -1,0 +1,13 @@
+{
+  "Id": "TESTER01",
+  "Version": "1.0.0",
+  "Pattern": {
+    "Id": "TESTER01",
+    "Name": "apatternname",
+    "DisplayName": "apatternname",
+    "ToolkitVersion": {
+      "Current": "1.0.0",
+      "LastChanges": "NoChange"
+    }
+  }
+}

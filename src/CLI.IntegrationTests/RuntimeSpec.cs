@@ -90,6 +90,34 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenInstallToolkitWithMissingRuntimeVersion_ThenDisplaysError()
+        {
+            var location = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                "Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit"));
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
+
+            var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
+            var runtimeName = ToolkitConstants.GetRuntimeProductName();
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Format(
+                    ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
+        }
+
+        [Fact]
+        public void WhenInstallToolkitWithOlderIncompatibleRuntimeVersion_ThenDisplaysError()
+        {
+            var location = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                "Assets/Toolkits/OlderRuntimeVersion.toolkit"));
+            this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
+
+            var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
+            var runtimeName = ToolkitConstants.GetRuntimeProductName();
+            this.setup.Should()
+                .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format(
+                    "0.1.0-preview", runtimeVersion, runtimeName));
+        }
+
+        [Fact]
         public void WhenListInstalledToolkitsAndNone_ThenDisplaysNone()
         {
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} toolkits");

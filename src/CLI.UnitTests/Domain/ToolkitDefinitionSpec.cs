@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Automate.CLI;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
@@ -12,6 +13,20 @@ namespace CLI.UnitTests.Domain
     [Trait("Category", "Unit")]
     public class ToolkitDefinitionSpec
     {
+        [Fact]
+        public void WhenConstructed_ThenAssigned()
+        {
+            var pattern = new PatternDefinition("apatternname");
+
+            var result = new ToolkitDefinition(pattern);
+
+            result.Pattern.Should().Be(pattern);
+            result.PatternName.Should().Be("apatternname");
+            result.Version.Should().Be("0.0.0");
+            result.RuntimeVersion.Should().Be(ToolkitConstants.GetRuntimeVersion());
+            result.CodeTemplateFiles.Should().BeEmpty();
+        }
+
         [Fact]
         public void WhenMigratePatternAndNoTemplates_ThenReturnsEmptyResult()
         {
@@ -162,6 +177,124 @@ namespace CLI.UnitTests.Domain
                 && x.MessageTemplate == MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added
                 && (string)x.Arguments[0] == codeTemplate3.Name
                 && (string)x.Arguments[1] == codeTemplate3.Id);
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsNonExistent_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.3.0-preview", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Format(
+                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, "0.3.0-preview",
+                        "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndRuntimeVersionIsBreaking_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.2.0-preview", "0.1.0-preview"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format("0.1.0-preview",
+                        "0.2.0-preview",
+                        "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndRuntimeVersionIsNonBreaking_ThenSucceeds()
+        {
+            ToolkitDefinition.VerifyRuntimeCompatability("0.1.0-preview", "0.1.1-preview");
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsNonBreaking_ThenSucceeds()
+        {
+            ToolkitDefinition.VerifyRuntimeCompatability("0.1.1-preview", "0.1.0-preview");
+        }
+
+        [Fact]
+        public void
+            WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsBreaking_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.1.0-preview", "0.2.0-preview"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format("0.2.0-preview",
+                        "0.1.0-preview", "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndToolkitPreReleaseAndToolkitVersionIsBackInPreview_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.1.0", "1.0.0-preview"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format("1.0.0-preview",
+                        "1.1.0", "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndToolkitPreReleaseAndToolkitVersionIsAheadInPreview_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "1.1.0-preview"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format("1.1.0-preview",
+                        "1.0.0", "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndRuntimePreReleaseAndRuntimeVersionIsAheadInPreview_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.1.0-preview", "1.0.0"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format("1.0.0",
+                        "1.1.0-preview", "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndRuntimePreReleaseAndInstalledRuntimeIsBackInPreview_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0-preview", "1.1.0"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format("1.1.0",
+                        "1.0.0-preview", "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndRuntimeVersionIsBreaking_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "0.1.0"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format("0.1.0", "1.0.0",
+                        "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndToolkitVersionIsBreaking_ThenThrows()
+        {
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "2.0.0"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format("2.0.0", "1.0.0",
+                        "automate"));
+        }
+
+        [Fact]
+        public void WhenVerifyRuntimeCompatabilityAndRuntimeVersionIsNonBreaking_ThenSucceeds()
+        {
+            ToolkitDefinition.VerifyRuntimeCompatability("0.2.0", "0.1.0");
+        }
+
+        [Fact]
+        public void
+            WhenVerifyRuntimeCompatabilityAndToolkitVersionIsNonBreaking_ThenThrows()
+        {
+            ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "1.1.0");
         }
 
         private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern,

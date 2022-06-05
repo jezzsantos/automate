@@ -78,6 +78,8 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ToolkitNotFound.Format(toolkitName));
             }
 
+            toolkit.VerifyRuntimeCompatability();
+
             var draft = new DraftDefinition(toolkit, draftName);
 
             return this.draftStore.Create(draft);
@@ -100,6 +102,7 @@ namespace Automate.CLI.Application
             Dictionary<string, string> propertyAssignments)
         {
             var draft = EnsureCurrentDraftExists();
+            
 
             if (addElementExpression.HasNoValue()
                 && addToCollectionExpression.HasNoValue()
@@ -354,6 +357,8 @@ namespace Automate.CLI.Application
                     ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
                         currentVersion, installedVersion));
             }
+
+            toolkit.VerifyRuntimeCompatability();
 
             return draft;
         }

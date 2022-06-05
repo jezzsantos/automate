@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Automate.CLI.Extensions;
+using Semver;
 
 namespace Automate.CLI.Domain
 {
@@ -18,6 +19,7 @@ namespace Automate.CLI.Domain
             Version = version.Exists()
                 ? version.ToString(ToolkitVersion.VersionFieldCount)
                 : pattern.ToolkitVersion.Current;
+            RuntimeVersion = ToolkitConstants.GetRuntimeVersion();
             this.codeTemplateFiles = new List<CodeTemplateFile>();
         }
 
@@ -25,11 +27,14 @@ namespace Automate.CLI.Domain
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Version = properties.Rehydrate<string>(factory, nameof(Version));
+            RuntimeVersion = properties.Rehydrate<string>(factory, nameof(RuntimeVersion));
             Pattern = properties.Rehydrate<PatternDefinition>(factory, nameof(Pattern));
             this.codeTemplateFiles = properties.Rehydrate<List<CodeTemplateFile>>(factory, nameof(CodeTemplateFiles));
         }
 
         public string Version { get; private set; }
+
+        public string RuntimeVersion { get; private set; }
 
         public string PatternName => Pattern.Name;
 
@@ -42,6 +47,7 @@ namespace Automate.CLI.Domain
             var properties = new PersistableProperties();
             properties.Dehydrate(nameof(Id), Id);
             properties.Dehydrate(nameof(Version), Version);
+            properties.Dehydrate(nameof(RuntimeVersion), RuntimeVersion);
             properties.Dehydrate(nameof(Pattern), Pattern);
             properties.Dehydrate(nameof(CodeTemplateFiles), CodeTemplateFiles);
 
@@ -84,7 +90,78 @@ namespace Automate.CLI.Domain
             Version = latestToolkit.Pattern.ToolkitVersion.Current;
         }
 
+        public void VerifyRuntimeCompatability()
+        {
+            VerifyRuntimeCompatability(ToolkitConstants.GetRuntimeVersion(), RuntimeVersion);
+        }
+
         public string Id { get; }
+
+        internal static void VerifyRuntimeCompatability(string runtimeVersion, string toolkitRuntimeVersion)
+        {
+            var runtimeName = ToolkitConstants.GetRuntimeProductName();
+            var installedRuntime = SemVersion.Parse(runtimeVersion, SemVersionStyles.Any);
+            var toolkitRuntime = toolkitRuntimeVersion.HasValue()
+                ? SemVersion.Parse(toolkitRuntimeVersion, SemVersionStyles.Any)
+                : null;
+
+            if (toolkitRuntime.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Format(
+                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, installedRuntime, runtimeName));
+            }
+
+            if (IsToolkitOutOfDate())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format(toolkitRuntime,
+                        installedRuntime, runtimeName));
+            }
+
+            if (IsRuntimeOutOfDate())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format(toolkitRuntime,
+                        installedRuntime, runtimeName));
+            }
+
+            bool IsToolkitOutOfDate()
+            {
+                if (installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime.Minor > toolkitRuntime.Minor;
+                }
+                if (!installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime > toolkitRuntime.WithoutPrerelease();
+                }
+                if (installedRuntime.IsPrerelease && !toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime.WithoutPrerelease() > toolkitRuntime;
+                }
+
+                return installedRuntime.Major > toolkitRuntime.Major;
+            }
+
+            bool IsRuntimeOutOfDate()
+            {
+                if (installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime.Minor < toolkitRuntime.Minor;
+                }
+                if (!installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime < toolkitRuntime.WithoutPrerelease();
+                }
+                if (installedRuntime.IsPrerelease && !toolkitRuntime.IsPrerelease)
+                {
+                    return installedRuntime.WithoutPrerelease() < toolkitRuntime;
+                }
+
+                return installedRuntime.Major < toolkitRuntime.Major;
+            }
+        }
 
         private void AddCodeTemplateFile(CodeTemplateFile file)
         {

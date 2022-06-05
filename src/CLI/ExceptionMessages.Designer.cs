@@ -892,6 +892,33 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This toolkit has been built with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}&apos;). You must install a newer version of `{2}` first (v{0} or higher).
+        /// </summary>
+        internal static string ToolkitDefinition_CompatabilityRuntimeOutOfDate {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_CompatabilityRuntimeOutOfDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This toolkit has been built with an older version of `{2}` pre-dating (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}&apos;). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}&apos; or higher).
+        /// </summary>
+        internal static string ToolkitDefinition_CompatabilityToolkitNoVersion {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_CompatabilityToolkitNoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This toolkit has been built with an older version of `{2}` (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}&apos;). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}&apos; or higher).
+        /// </summary>
+        internal static string ToolkitDefinition_CompatabilityToolkitOutOfDate {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_CompatabilityToolkitOutOfDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A toolkit with id: &apos;{0}&apos; cannot be found in the toolkit store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string ToolkitStore_NotFoundAtLocationWithId {
