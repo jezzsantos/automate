@@ -61,7 +61,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; to element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) to element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_AttributeAdded {
             get {
@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Attribute: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_AttributeDeleted {
             get {
@@ -79,7 +79,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Attribute: &apos;{Name}&apos; with ID: {Id}, successfully.
+        ///   Looks up a localized string similar to Updated Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) on element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_AttributeUpdated {
             get {
@@ -107,7 +107,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added CLI Command: &apos;{Name}&apos; with ID: {CommandId}.
+        ///   Looks up a localized string similar to Added CLI Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CliCommandAdded {
             get {
@@ -116,7 +116,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated CLI Command &apos;{Name}&apos; with ID: {Id}, with app: {ApplicationName}, and Arguments: {Arguments}.
+        ///   Looks up a localized string similar to Updated CLI Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, with app: {ApplicationName}, and Arguments: {Arguments}.
         /// </summary>
         internal static string CommandLine_Output_CliCommandUpdated {
             get {
@@ -125,7 +125,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; with ID: {CommandId}.
+        ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
             get {
@@ -134,7 +134,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; with ID: {Id}, with path: {FilePath}, and OneOff: {OneOff}.
+        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, with path: {FilePath}, and OneOff: {OneOff}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandUpdated {
             get {
@@ -143,7 +143,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id} from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to element &apos;{ParentId}&apos;, from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {
@@ -152,7 +152,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id} by &apos;{ApplicationPath}&apos; at &apos;{EditorPath}&apos;.
+        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, with &apos;{ApplicationPath}&apos; from &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedEdited {
             get {
@@ -161,7 +161,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateDeleted {
             get {
@@ -170,7 +170,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; (ID: {Id}) outputs:
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) outputs:
         ///{Output}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTested {
@@ -180,7 +180,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data from testing Code Template &apos;{Name}&apos; (ID: {Id}) has been exported to: &apos;{Exported}&apos;.
+        ///   Looks up a localized string similar to Data from testing Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) has been exported to: &apos;{Exported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestExported {
             get {
@@ -189,7 +189,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data for testing Code Template &apos;{Name}&apos; (ID: {Id}) was imported from: &apos;{Imported}&apos;.
+        ///   Looks up a localized string similar to Data for testing Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) was imported from: &apos;{Imported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestImported {
             get {
@@ -198,7 +198,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
             get {
@@ -207,7 +207,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Collection: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CollectionDeleted {
             get {
@@ -216,7 +216,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Collection: &apos;{Name}&apos; with ID: {Id}, successfully.
+        ///   Looks up a localized string similar to Updated Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) on element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CollectionUpdated {
             get {
@@ -225,7 +225,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Command: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CommandDeleted {
             get {
@@ -263,7 +263,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft: &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is now being configured.
+        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is now being configured.
         /// </summary>
         internal static string CommandLine_Output_CurrentDraftInUse {
             get {
@@ -281,7 +281,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is configured as:
+        ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_DraftConfiguration {
@@ -291,7 +291,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{raftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
         /// </summary>
         internal static string CommandLine_Output_DraftConfigured {
             get {
@@ -300,7 +300,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was deleted successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{Name}&apos; (ID: &apos;{DraftItemId}&apos;) was deleted successfully.
         /// </summary>
         internal static string CommandLine_Output_DraftDelete {
             get {
@@ -309,7 +309,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was cleared successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{Name}&apos; (ID: &apos;{DraftItemId}&apos;) was cleared successfully.
         /// </summary>
         internal static string CommandLine_Output_DraftEmptyCollection {
             get {
@@ -318,7 +318,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was reset successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{Name}&apos; (ID: &apos;{DraftItemId}&apos;) was reset successfully.
         /// </summary>
         internal static string CommandLine_Output_DraftResetElement {
             get {
@@ -327,7 +327,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft: &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is now the default.
+        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_DraftSwitched {
             get {
@@ -336,7 +336,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to upgrade Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///   Looks up a localized string similar to Failed to upgrade Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
         ///{Log}.
         /// </summary>
         internal static string CommandLine_Output_DraftUpgradeFailed {
@@ -346,7 +346,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successfully upgraded Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///   Looks up a localized string similar to Successfully upgraded Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
         ///{Log}.
         /// </summary>
         internal static string CommandLine_Output_DraftUpgradeSucceeded {
@@ -356,7 +356,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aborted upgrade of Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
+        ///   Looks up a localized string similar to Aborted upgrade of Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
         ///{Log}.
         /// </summary>
         internal static string CommandLine_Output_DraftUpgradeWithWarning {
@@ -366,7 +366,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is not correctly configured in these ways:
+        ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is not correctly configured in these ways:
         ///{Errors}.
         /// </summary>
         internal static string CommandLine_Output_DraftValidationFailed {
@@ -376,7 +376,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) is configured correctly.
+        ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is configured correctly.
         /// </summary>
         internal static string CommandLine_Output_DraftValidationSuccess {
             get {
@@ -395,7 +395,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; to element &apos;{ParentId}&apos;, with ID: {Id}.
+        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
             get {
@@ -404,7 +404,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Element: &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_ElementDeleted {
             get {
@@ -413,7 +413,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Element: &apos;{Name}&apos; with ID: {Id}, successfully.
+        ///   Looks up a localized string similar to Updated Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) on element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_ElementUpdated {
             get {
@@ -452,7 +452,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; with ID: {Id}, for commands: {Commands}.
+        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) to element &apos;{ParentId}&apos;, for commands: {Commands}.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
@@ -461,7 +461,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Launch Point &apos;{Name}&apos; from element {ParentId}, with ID: {Id}.
+        ///   Looks up a localized string similar to Deleted Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointDeleted {
             get {
@@ -470,7 +470,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; with ID: {Id}, with commands: {Commands}.
+        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) on element &apos;{ParentId}&apos;, with commands: {Commands}.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointUpdated {
             get {
@@ -500,7 +500,7 @@ namespace Automate.CLI.Infrastructure {
         
         /// <summary>
         ///   Looks up a localized string similar to There are no Drafts yet. Use this command to create one:
-        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;.
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`.
         /// </summary>
         internal static string CommandLine_Output_NoInstalledDrafts {
             get {

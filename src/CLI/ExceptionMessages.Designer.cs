@@ -892,7 +892,10 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This toolkit has been built with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}&apos;). You must install a newer version of `{2}` first (v{0} or higher).
+        ///   Looks up a localized string similar to This toolkit has been built (by its author) with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
+        ///1. Upgrade your installation of `{2}` to a newer version of `{2}` (v{0} or higher)
+        ///or 2. Obtain a downgraded version of this toolkit (from its author) built against a compatible version of `{2}` (such as v{0})
+        ///.
         /// </summary>
         internal static string ToolkitDefinition_CompatabilityRuntimeOutOfDate {
             get {
@@ -901,7 +904,10 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This toolkit has been built with an older version of `{2}` pre-dating (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}&apos;). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}&apos; or higher).
+        ///   Looks up a localized string similar to This toolkit has been built (by its author) with an older version of `{2}` prior to (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
+        ///1. Downgrade your installation of `{2}` to an older version prior to (v{0}) 
+        ///or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher
+        ///.
         /// </summary>
         internal static string ToolkitDefinition_CompatabilityToolkitNoVersion {
             get {
@@ -910,7 +916,10 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This toolkit has been built with an older version of `{2}` (v{0}), and is now not compatible with the currently installed version of `{2}` (v{1}&apos;). You must obtain an upgraded version of this toolkit which has been built against a compatible version `{2}` (v{1}&apos; or higher).
+        ///   Looks up a localized string similar to This toolkit has been built (by its author) with an older version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
+        ///1. Downgrade your installation of `{2}` to version (v{0}) 
+        ///or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher)
+        ///.
         /// </summary>
         internal static string ToolkitDefinition_CompatabilityToolkitOutOfDate {
             get {

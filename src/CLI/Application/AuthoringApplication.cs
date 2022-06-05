@@ -253,7 +253,8 @@ namespace Automate.CLI.Application
             return target.CodeTemplates.ToListSafe();
         }
 
-        public Automation AddCodeTemplateCommand(string templateName, string name, bool isOneOff,
+        public (IPatternElement Parent, Automation Command) AddCodeTemplateCommand(string templateName, string name,
+            bool isOneOff,
             string filePath, string parentExpression)
         {
             templateName.GuardAgainstNullOrEmpty(nameof(templateName));
@@ -267,7 +268,7 @@ namespace Automate.CLI.Application
                 var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, filePath);
                 this.store.Save(pattern);
 
-                return command;
+                return (target, command);
             }
             catch (AutomateException ex)
             {
@@ -284,7 +285,8 @@ namespace Automate.CLI.Application
             }
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath,
+        public (IPatternElement Parent, Automation Command) UpdateCodeTemplateCommand(string commandName, string name,
+            bool? isOneOff, string filePath,
             string parentExpression)
         {
             commandName.GuardAgainstNullOrEmpty(nameof(commandName));
@@ -295,10 +297,11 @@ namespace Automate.CLI.Application
             var command = target.UpdateCodeTemplateCommand(commandName, name, isOneOff, filePath);
             this.store.Save(pattern);
 
-            return command;
+            return (target, command);
         }
 
-        public Automation AddCliCommand(string applicationName, string arguments, string name, string parentExpression)
+        public (IPatternElement Parent, Automation Command) AddCliCommand(string applicationName, string arguments,
+            string name, string parentExpression)
         {
             applicationName.GuardAgainstNull(nameof(applicationName));
 
@@ -308,10 +311,11 @@ namespace Automate.CLI.Application
             var command = target.AddCliCommand(name, applicationName, arguments);
             this.store.Save(pattern);
 
-            return command;
+            return (target, command);
         }
 
-        public Automation UpdateCliCommand(string commandName, string name, string applicationName, string arguments,
+        public (IPatternElement Parent, Automation Command) UpdateCliCommand(string commandName, string name,
+            string applicationName, string arguments,
             string parentExpression)
         {
             commandName.GuardAgainstNull(nameof(commandName));
@@ -322,7 +326,7 @@ namespace Automate.CLI.Application
             var command = target.UpdateCliCommand(commandName, name, applicationName, arguments);
             this.store.Save(pattern);
 
-            return command;
+            return (target, command);
         }
 
         public (IPatternElement Parent, Automation Command) DeleteCommand(string commandName, string parentExpression)
@@ -338,7 +342,8 @@ namespace Automate.CLI.Application
             return (target, command);
         }
 
-        public Automation AddCommandLaunchPoint(string name, List<string> commandIds, string parentExpression)
+        public (IPatternElement Parent, Automation LaunchPoint) AddCommandLaunchPoint(string name,
+            List<string> commandIds, string parentExpression)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
 
@@ -348,10 +353,11 @@ namespace Automate.CLI.Application
             var launchPoint = target.AddCommandLaunchPoint(name, commandIds);
             this.store.Save(pattern);
 
-            return launchPoint;
+            return (target, launchPoint);
         }
 
-        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
+        public (IPatternElement Parent, Automation LaunchPoint) UpdateCommandLaunchPoint(string launchPointName,
+            string name, List<string> commandIds,
             string sourceExpression, string parentExpression)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
@@ -364,7 +370,7 @@ namespace Automate.CLI.Application
             var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
             this.store.Save(pattern);
 
-            return launchPoint;
+            return (target, launchPoint);
         }
 
         public (IPatternElement Parent, Automation LaunchPoint) DeleteCommandLaunchPoint(string launchPointName,

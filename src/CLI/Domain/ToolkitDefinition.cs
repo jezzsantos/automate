@@ -97,69 +97,69 @@ namespace Automate.CLI.Domain
 
         public string Id { get; }
 
-        internal static void VerifyRuntimeCompatability(string runtimeVersion, string toolkitRuntimeVersion)
+        internal static void VerifyRuntimeCompatability(string currentRuntimeVersion, string toolkitRuntimeVersion)
         {
             var runtimeName = ToolkitConstants.GetRuntimeProductName();
-            var installedRuntime = SemVersion.Parse(runtimeVersion, SemVersionStyles.Any);
-            var toolkitRuntime = toolkitRuntimeVersion.HasValue()
+            var runtimeVersion = SemVersion.Parse(currentRuntimeVersion, SemVersionStyles.Any);
+            var toolkitVersion = toolkitRuntimeVersion.HasValue()
                 ? SemVersion.Parse(toolkitRuntimeVersion, SemVersionStyles.Any)
                 : null;
 
-            if (toolkitRuntime.NotExists())
+            if (toolkitVersion.NotExists())
             {
                 throw new AutomateException(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Format(
-                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, installedRuntime, runtimeName));
+                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
             }
 
             if (IsToolkitOutOfDate())
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format(toolkitRuntime,
-                        installedRuntime, runtimeName));
+                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Format(toolkitVersion,
+                        runtimeVersion, runtimeName));
             }
 
             if (IsRuntimeOutOfDate())
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format(toolkitRuntime,
-                        installedRuntime, runtimeName));
+                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Format(toolkitVersion,
+                        runtimeVersion, runtimeName));
             }
 
             bool IsToolkitOutOfDate()
             {
-                if (installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                if (runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime.Minor > toolkitRuntime.Minor;
+                    return runtimeVersion.Minor > toolkitVersion.Minor;
                 }
-                if (!installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                if (!runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime > toolkitRuntime.WithoutPrerelease();
+                    return runtimeVersion > toolkitVersion.WithoutPrerelease();
                 }
-                if (installedRuntime.IsPrerelease && !toolkitRuntime.IsPrerelease)
+                if (runtimeVersion.IsPrerelease && !toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime.WithoutPrerelease() > toolkitRuntime;
+                    return runtimeVersion.WithoutPrerelease() > toolkitVersion;
                 }
 
-                return installedRuntime.Major > toolkitRuntime.Major;
+                return runtimeVersion.Major > toolkitVersion.Major;
             }
 
             bool IsRuntimeOutOfDate()
             {
-                if (installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                if (runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime.Minor < toolkitRuntime.Minor;
+                    return runtimeVersion.Minor < toolkitVersion.Minor;
                 }
-                if (!installedRuntime.IsPrerelease && toolkitRuntime.IsPrerelease)
+                if (!runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime < toolkitRuntime.WithoutPrerelease();
+                    return runtimeVersion < toolkitVersion.WithoutPrerelease();
                 }
-                if (installedRuntime.IsPrerelease && !toolkitRuntime.IsPrerelease)
+                if (runtimeVersion.IsPrerelease && !toolkitVersion.IsPrerelease)
                 {
-                    return installedRuntime.WithoutPrerelease() < toolkitRuntime;
+                    return runtimeVersion.WithoutPrerelease() < toolkitVersion;
                 }
 
-                return installedRuntime.Major < toolkitRuntime.Major;
+                return runtimeVersion.Major < toolkitVersion.Major;
             }
         }
 

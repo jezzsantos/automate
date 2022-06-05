@@ -620,35 +620,36 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleAddCodeTemplateCommand(string codeTemplateName, string name, bool isOneOff,
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
+                var (parent, command) =
+                    Authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
-                    command.Name,
-                    command.Id);
+                    command.Name, command.Id, parent.Id);
             }
 
             internal static void HandleUpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff,
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
+                var (parent, command) =
+                    Authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
-                    command.Name, command.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
+                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
                     command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
             }
 
             internal static void HandleAddCliCommand(string applicationName, string arguments, string name,
                 string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
+                var (parent, command) = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
-                    command.Name, command.Id);
+                    command.Name, command.Id, parent.Id);
             }
 
             internal static void HandleUpdateCliCommand(string commandName, string app, string arguments,
                 string name, string asChildOf, bool outputStructured, IConsole console)
             {
-                var command = Authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
+                var (parent, command) = Authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandUpdated,
-                    command.Name, command.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
+                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
                     command.Metadata[nameof(CliCommand.Arguments)]);
             }
 
@@ -657,7 +658,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var (parent, command) = Authoring.DeleteCommand(commandName, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandDeleted,
-                    command.Name, parent.Id, command.Id);
+                    command.Name, command.Id, parent.Id);
             }
 
             internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
@@ -665,9 +666,10 @@ namespace Automate.CLI.Infrastructure
             {
                 var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var launchPoint = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
+                var (parent, launchPoint) = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
-                    launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                    launchPoint.Name, launchPoint.Id, parent.Id,
+                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
             internal static void HandleUpdateLaunchPoint(string launchPointName, string name, string add,
@@ -676,9 +678,11 @@ namespace Automate.CLI.Infrastructure
             {
                 var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var launchPoint = Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
+                var (parent, launchPoint) =
+                    Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
-                    launchPoint.Name, launchPoint.Id, launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                    launchPoint.Name, launchPoint.Id, parent.Id,
+                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
             }
 
             internal static void HandleDeleteLaunchPoint(string launchPointName, string asChildOf,
@@ -686,7 +690,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var (parent, launchPoint) = Authoring.DeleteCommandLaunchPoint(launchPointName, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointDeleted,
-                    launchPoint.Name, parent.Id, launchPoint.Id);
+                    launchPoint.Name, launchPoint.Id, parent.Id);
             }
 
             internal static void HandleAddElement(string name, bool? autoCreate, string displayedAs, string describedAs,
@@ -697,8 +701,8 @@ namespace Automate.CLI.Infrastructure
                     isRequired
                         ? ElementCardinality.One
                         : ElementCardinality.ZeroOrOne, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, parent.Id,
-                    element.Id);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, element.Id,
+                    parent.Id);
             }
 
             internal static void HandleUpdateElement(string elementName, string name, bool? autoCreate,
@@ -708,8 +712,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, element) = Authoring.UpdateElement(elementName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
-                    parent.Id,
-                    element.Id);
+                    element.Id, parent.Id);
             }
 
             internal static void HandleAddCollection(string name, bool? autoCreate, string displayedAs,
@@ -720,7 +723,7 @@ namespace Automate.CLI.Infrastructure
                     ? ElementCardinality.OneOrMany
                     : ElementCardinality.ZeroOrMany, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
-                    parent.Id, collection.Id);
+                    collection.Id, parent.Id);
             }
 
             internal static void HandleUpdateCollection(string collectionName, string name, bool? autoCreate,
@@ -730,7 +733,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, element) = Authoring.UpdateElement(collectionName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
-                    parent.Id, element.Id);
+                    element.Id, parent.Id);
             }
 
             internal static void HandleAddAttribute(string name, string isOfType, string defaultValueIs,
@@ -740,7 +743,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, attribute) =
                     Authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
-                    parent.Id, attribute.Id);
+                    attribute.Id, parent.Id);
             }
 
             internal static void HandleUpdatePattern(string name, string displayedAs, string describedAs,
@@ -759,8 +762,7 @@ namespace Automate.CLI.Infrastructure
                     Authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
                         asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeUpdated,
-                    attribute.Name,
-                    parent.Id, attribute.Id);
+                    attribute.Name, attribute.Id, parent.Id);
             }
 
             internal static void HandleDeleteAttribute(string name, string asChildOf, bool outputStructured,
@@ -769,7 +771,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, attribute) =
                     Authoring.DeleteAttribute(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeDeleted, name,
-                    parent.Id, attribute.Id);
+                    attribute.Id, parent.Id);
             }
 
             internal static void HandleDeleteElement(string name, string asChildOf, bool outputStructured,
@@ -778,7 +780,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, element) =
                     Authoring.DeleteElement(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementDeleted, name,
-                    parent.Id, element.Id);
+                    element.Id, parent.Id);
             }
 
             internal static void HandleDeleteCollection(string name, string asChildOf, bool outputStructured,
@@ -787,7 +789,7 @@ namespace Automate.CLI.Infrastructure
                 var (parent, element) =
                     Authoring.DeleteElement(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionDeleted, name,
-                    parent.Id, element.Id);
+                    element.Id, parent.Id);
             }
 
             internal static void HandleCreatePattern(string name, string displayedAs,
@@ -820,8 +822,8 @@ namespace Automate.CLI.Infrastructure
                 var currentDirectory = Environment.CurrentDirectory;
                 var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, parent.Id,
-                    template.Template.Id, template.Template.Metadata.OriginalFilePath, template.Location);
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
+                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
             }
 
             internal static void HandleEditCodeTemplate(string templateName, string with, string args, string asChildOf,
@@ -829,8 +831,8 @@ namespace Automate.CLI.Infrastructure
             {
                 var (parent, template, location) = Authoring.EditCodeTemplate(templateName, with, args, asChildOf);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, parent.Id,
-                    template.Id, with, location);
+                    OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, template.Id,
+                    parent.Id, with, location);
             }
 
             internal static void HandleDeleteCodeTemplate(string templateName, string asChildOf,
@@ -838,7 +840,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var (parent, template) = Authoring.DeleteCodeTemplate(templateName, asChildOf);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, parent.Id, template.Id);
+                    OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, template.Id, parent.Id);
             }
 
             internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData,

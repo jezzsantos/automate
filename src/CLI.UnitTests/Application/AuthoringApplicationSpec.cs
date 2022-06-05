@@ -18,7 +18,6 @@ namespace CLI.UnitTests.Application
     public class AuthoringApplicationSpec
     {
         private readonly AuthoringApplication application;
-        private readonly Mock<IApplicationExecutor> applicationExecutor;
         private readonly Mock<IPatternToolkitPackager> builder;
         private readonly Mock<IFilePathResolver> filePathResolver;
         private readonly Mock<IPatternPathResolver> patternPathResolver;
@@ -46,13 +45,13 @@ namespace CLI.UnitTests.Application
             this.textTemplatingEngine.Setup(tte =>
                     tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary>()))
                 .Returns("anoutput");
-            this.applicationExecutor = new Mock<IApplicationExecutor>();
+            var applicationExecutor = new Mock<IApplicationExecutor>();
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
             this.application =
                 new AuthoringApplication(this.store, this.filePathResolver.Object, this.patternPathResolver.Object,
-                    this.builder.Object, this.textTemplatingEngine.Object, this.applicationExecutor.Object);
+                    this.builder.Object, this.textTemplatingEngine.Object, applicationExecutor.Object);
         }
 
         [Fact]
@@ -460,7 +459,7 @@ namespace CLI.UnitTests.Application
             automation.Name.Should().Be("acommandname");
             automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(false);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("~/apath");
-            result.Id.Should().Be(automation.Id);
+            result.Command.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -477,8 +476,9 @@ namespace CLI.UnitTests.Application
             var result = this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath",
                 "{apatternname.anelementname}");
 
-            result.Name.Should().Be("acommandname");
-            this.application.GetCurrentPattern().Elements.Single().Automation.Single().Id.Should().Be(result.Id);
+            result.Command.Name.Should().Be("acommandname");
+            this.application.GetCurrentPattern().Elements.Single().Automation.Single().Id.Should()
+                .Be(result.Command.Id);
         }
 
         [Fact]
@@ -515,13 +515,13 @@ namespace CLI.UnitTests.Application
                 this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "~/apath", null);
 
             var result =
-                this.application.UpdateCodeTemplateCommand(command.Name, "anewname", true, "anewpath", null);
+                this.application.UpdateCodeTemplateCommand(command.Command.Name, "anewname", true, "anewpath", null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("anewname");
             automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(true);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
-            result.Id.Should().Be(automation.Id);
+            result.Command.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -538,14 +538,14 @@ namespace CLI.UnitTests.Application
                 "{apatternname.anelementname}");
 
             var result =
-                this.application.UpdateCodeTemplateCommand(command.Name, "anewname", true, "anewpath",
+                this.application.UpdateCodeTemplateCommand(command.Command.Name, "anewname", true, "anewpath",
                     "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             automation.Name.Should().Be("anewname");
             automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(true);
             automation.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("anewpath");
-            result.Id.Should().Be(automation.Id);
+            result.Command.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -586,7 +586,7 @@ namespace CLI.UnitTests.Application
             automation.Name.Should().Be("acommandname");
             automation.Metadata[nameof(CliCommand.ApplicationName)].Should().Be("anapplicationname");
             automation.Metadata[nameof(CliCommand.Arguments)].Should().Be("anargument");
-            result.Id.Should().Be(automation.Id);
+            result.Command.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -603,8 +603,9 @@ namespace CLI.UnitTests.Application
             var result = this.application.AddCliCommand("anapplicationname", null, "acommandname",
                 "{apatternname.anelementname}");
 
-            result.Name.Should().Be("acommandname");
-            this.application.GetCurrentPattern().Elements.Single().Automation.Single().Id.Should().Be(result.Id);
+            result.Command.Name.Should().Be("acommandname");
+            this.application.GetCurrentPattern().Elements.Single().Automation.Single().Id.Should()
+                .Be(result.Command.Id);
         }
 
         [Fact]
@@ -644,12 +645,13 @@ namespace CLI.UnitTests.Application
 
             var result =
                 this.application.AddCommandLaunchPoint("alaunchpointname",
-                    new List<string> { command1.Id, command2.Id }, null);
+                    new List<string> { command1.Command.Id, command2.Command.Id }, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("alaunchpointname");
-            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
-            result.Id.Should().Be(automation.Id);
+            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should()
+                .Be($"{command1.Command.Id};{command2.Command.Id}");
+            result.LaunchPoint.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -666,11 +668,11 @@ namespace CLI.UnitTests.Application
 
             var result =
                 this.application.AddCommandLaunchPoint("alaunchpointname",
-                    new List<string> { command.Id }, "{apatternname.anelementname}");
+                    new List<string> { command.Command.Id }, "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
-            result.Name.Should().Be("alaunchpointname");
-            result.Id.Should().Be(automation.Id);
+            result.LaunchPoint.Name.Should().Be("alaunchpointname");
+            result.LaunchPoint.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -710,16 +712,18 @@ namespace CLI.UnitTests.Application
             var command2 =
                 this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
             var launchPoint =
-                this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, null);
+                this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Command.Id },
+                    null);
 
             var result =
-                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname",
-                    new List<string> { command1.Id, command2.Id }, null, null);
+                this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",
+                    new List<string> { command1.Command.Id, command2.Command.Id }, null, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("anewname");
-            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
-            result.Id.Should().Be(automation.Id);
+            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should()
+                .Be($"{command1.Command.Id};{command2.Command.Id}");
+            result.LaunchPoint.Id.Should().Be(automation.Id);
         }
 
         [Fact]
@@ -737,16 +741,18 @@ namespace CLI.UnitTests.Application
             var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath",
                 "{apatternname.anelementname}");
             var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { command1.Id }, "{apatternname.anelementname}");
+                new List<string> { command1.Command.Id }, "{apatternname.anelementname}");
 
             var result =
-                this.application.UpdateCommandLaunchPoint(launchPoint.Name, "anewname",
-                    new List<string> { command1.Id, command2.Id }, null, "{apatternname.anelementname}");
+                this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",
+                    new List<string> { command1.Command.Id, command2.Command.Id }, null,
+                    "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             automation.Name.Should().Be("anewname");
-            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
-            result.Id.Should().Be(automation.Id);
+            automation.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should()
+                .Be($"{command1.Command.Id};{command2.Command.Id}");
+            result.LaunchPoint.Id.Should().Be(automation.Id);
         }
 
         [Fact]

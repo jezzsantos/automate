@@ -49,78 +49,78 @@
 {Patterns}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added Code Template: '{Name}' from element {ParentId}, with ID: {Id} from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
+        <value>Added Code Template: '{Name}' (ID: '{Id}') to element '{ParentId}', from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplatedEdited" xml:space="preserve">
-        <value>Editing Code Template: '{Name}' from element {ParentId}, with ID: {Id} by '{ApplicationPath}' at '{EditorPath}'</value>
+        <value>Editing Code Template: '{Name}' (ID: '{Id}') on element '{ParentId}', with '{ApplicationPath}' from '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateDeleted" xml:space="preserve">
-        <value>Deleted Code Template: '{Name}' from element {ParentId}, with ID: {Id}</value>
+        <value>Deleted Code Template: '{Name}' (ID: '{Id}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
-        <value>Code Template '{Name}' (ID: {Id}) outputs:
+        <value>Code Template '{Name}' (ID: '{Id}') outputs:
 {Output}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestImported" xml:space="preserve">
-        <value>Data for testing Code Template '{Name}' (ID: {Id}) was imported from: '{Imported}'</value>
+        <value>Data for testing Code Template '{Name}' (ID: '{Id}') was imported from: '{Imported}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestExported" xml:space="preserve">
-        <value>Data from testing Code Template '{Name}' (ID: {Id}) has been exported to: '{Exported}'</value>
+        <value>Data from testing Code Template '{Name}' (ID: '{Id}') has been exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_PatternConfiguration" xml:space="preserve">
         <value>Pattern is configured as:
 {Tree}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
-        <value>Added Attribute: '{Name}' to element {ParentId}, with ID: {Id}</value>
+        <value>Added Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_AttributeUpdated" xml:space="preserve">
-        <value>Updated Attribute: '{Name}' with ID: {Id}, successfully</value>
+        <value>Updated Attribute: '{Name}' (ID: '{AttributeId}') on element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_AttributeDeleted" xml:space="preserve">
-        <value>Deleted Attribute: '{Name}' from element {ParentId}, with ID: {Id}</value>
-    </data>
-    <data name="CommandLine_Output_ElementDeleted" xml:space="preserve">
-        <value>Deleted Element: '{Name}' from element {ParentId}, with ID: {Id}</value>
-    </data>
-    <data name="CommandLine_Output_CollectionDeleted" xml:space="preserve">
-        <value>Deleted Collection: '{Name}' from element {ParentId}, with ID: {Id}</value>
+        <value>Deleted Attribute: '{Name}' (ID: '{AttributeId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
-        <value>Added Element: '{Name}' to element '{ParentId}', with ID: {Id}</value>
+        <value>Added Element: '{Name}' (ID: '{ElementId}') to element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_ElementUpdated" xml:space="preserve">
-        <value>Updated Element: '{Name}' with ID: {Id}, successfully</value>
+        <value>Updated Element: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_ElementDeleted" xml:space="preserve">
+        <value>Deleted Element: '{Name}' (ID: '{ElementId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
-        <value>Added Collection: '{Name}' to element '{ParentId}', with ID: {Id}</value>
+        <value>Added Collection: '{Name}' (ID: '{ElementId}') to element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CollectionUpdated" xml:space="preserve">
-        <value>Updated Collection: '{Name}' with ID: {Id}, successfully</value>
+        <value>Updated Collection: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_CollectionDeleted" xml:space="preserve">
+        <value>Deleted Collection: '{Name}' (ID: '{ElementId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
-        <value>Added Code Template Command: '{Name}' with ID: {CommandId}</value>
+        <value>Added Code Template Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandUpdated" xml:space="preserve">
-        <value>Updated Code Template Command '{Name}' with ID: {Id}, with path: {FilePath}, and OneOff: {OneOff}</value>
+        <value>Updated Code Template Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', with path: {FilePath}, and OneOff: {OneOff}</value>
     </data>
     <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
-        <value>Added CLI Command: '{Name}' with ID: {CommandId}</value>
+        <value>Added CLI Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CliCommandUpdated" xml:space="preserve">
-        <value>Updated CLI Command '{Name}' with ID: {Id}, with app: {ApplicationName}, and Arguments: {Arguments}</value>
+        <value>Updated CLI Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', with app: {ApplicationName}, and Arguments: {Arguments}</value>
     </data>
     <data name="CommandLine_Output_CommandDeleted" xml:space="preserve">
-        <value>Deleted Command: '{Name}' from element {ParentId}, with ID: {Id}</value>
+        <value>Deleted Command: '{Name}' (ID: '{CommandId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
-        <value>Added Launch Point '{Name}' with ID: {Id}, for commands: {Commands}</value>
+        <value>Added Launch Point '{Name}' (ID: '{LaunchPointId}') to element '{ParentId}', for commands: {Commands}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointUpdated" xml:space="preserve">
-        <value>Updated Launch Point '{Name}' with ID: {Id}, with commands: {Commands}</value>
+        <value>Updated Launch Point '{Name}' (ID: '{LaunchPointId}') on element '{ParentId}', with commands: {Commands}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointDeleted" xml:space="preserve">
-        <value>Deleted Launch Point '{Name}' from element {ParentId}, with ID: {Id}</value>
+        <value>Deleted Launch Point '{Name}' (ID: '{LaunchPointId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:
@@ -145,7 +145,7 @@
     </data>
     <data name="CommandLine_Output_NoInstalledDrafts" xml:space="preserve">
         <value>There are no Drafts yet. Use this command to create one:
-`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;</value>
+`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`</value>
     </data>
     <data name="CommandLine_Output_InstalledDraftsListed" xml:space="preserve">
         <value>Created Drafts:
@@ -157,33 +157,33 @@
 `automate run switch &lt;DraftID&gt;` to switch to this existing draft</value>
     </data>
     <data name="CommandLine_Output_CurrentDraftInUse" xml:space="preserve">
-        <value>The Draft: '{DraftName}' (ID: '{DraftId}') is now being configured</value>
+        <value>The Draft: '{Name}' (ID: '{DraftId}') is now being configured</value>
     </data>
     <data name="CommandLine_Output_DraftSwitched" xml:space="preserve">
-        <value>The Draft: '{DraftName}' (ID: '{DraftId}') is now the default</value>
+        <value>The Draft: '{Name}' (ID: '{DraftId}') is now the default</value>
     </data>
     <data name="CommandLine_Output_DraftConfigured" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was configured successfully</value>
+        <value>The Draft Item '{raftName}' (ID: '{DraftItemId}') was configured successfully</value>
     </data>
     <data name="CommandLine_Output_DraftResetElement" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was reset successfully</value>
+        <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was reset successfully</value>
     </data>
     <data name="CommandLine_Output_DraftEmptyCollection" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was cleared successfully</value>
+        <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was cleared successfully</value>
     </data>
     <data name="CommandLine_Output_DraftDelete" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was deleted successfully</value>
+        <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
     <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
-        <value>Draft '{DraftName}' (ID: '{DraftId}') is configured as:
+        <value>Draft '{Name}' (ID: '{DraftId}') is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationFailed" xml:space="preserve">
-        <value>Draft '{DraftName}' (ID: '{DraftId}') is not correctly configured in these ways:
+        <value>Draft '{Name}' (ID: '{DraftId}') is not correctly configured in these ways:
 {Errors}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationSuccess" xml:space="preserve">
-        <value>Draft '{DraftName}' (ID: '{DraftId}') is configured correctly</value>
+        <value>Draft '{Name}' (ID: '{DraftId}') is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecutionSucceeded" xml:space="preserve">
         <value>The Command: '{Command}' executed successfully:
@@ -194,15 +194,15 @@
 {Log}</value>
     </data>
     <data name="CommandLine_Output_DraftUpgradeSucceeded" xml:space="preserve">
-        <value>Successfully upgraded Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+        <value>Successfully upgraded Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_DraftUpgradeWithWarning" xml:space="preserve">
-        <value>Aborted upgrade of Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+        <value>Aborted upgrade of Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_DraftUpgradeFailed" xml:space="preserve">
-        <value>Failed to upgrade Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+        <value>Failed to upgrade Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">

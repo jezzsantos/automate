@@ -258,12 +258,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty");
 
+            var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("AProperty",
-                        this.setup.Pattern.Id, this.setup.Pattern.Attributes.Single().Id));
-            this.setup.Pattern.Attributes.Single().IsRequired.Should().BeFalse();
+                        attribute.Id, this.setup.Pattern.Id));
+            attribute.IsRequired.Should().BeFalse();
         }
 
         [Fact]
@@ -272,12 +273,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty --isrequired");
 
+            var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("AProperty",
-                        this.setup.Pattern.Id, this.setup.Pattern.Attributes.Single().Id));
-            this.setup.Pattern.Attributes.Single().IsRequired.Should().BeTrue();
+                        attribute.Id, this.setup.Pattern.Id));
+            attribute.IsRequired.Should().BeTrue();
         }
 
         [Fact]
@@ -286,12 +288,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty --isrequired false");
 
+            var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("AProperty",
-                        this.setup.Pattern.Id, this.setup.Pattern.Attributes.Single().Id));
-            this.setup.Pattern.Attributes.Single().IsRequired.Should().BeFalse();
+                        attribute.Id, this.setup.Pattern.Id));
+            attribute.IsRequired.Should().BeFalse();
         }
 
         [Fact]
@@ -304,12 +307,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty --aschildof {{APattern.AnElement1.AnElement2}}");
 
+            var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeAdded.FormatTemplate("AProperty",
-                        this.setup.Pattern.Elements.Single().Elements.Single().Id,
-                        this.setup.Pattern.Elements.Single().Elements.Single().Attributes.Single().Id));
+                        element.Elements.Single().Attributes.Single().Id,
+                        element.Elements.Single().Id));
         }
 
         [Fact]
@@ -326,7 +330,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeUpdated.FormatTemplate(attribute.Name,
-                        this.setup.Pattern.Id, attribute.Id));
+                        attribute.Id, this.setup.Pattern.Id));
             attribute.Name.Should().Be("AProperty2");
             attribute.IsRequired.Should().BeTrue();
             attribute.DataType.Should().Be("int");
@@ -346,7 +350,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_AttributeDeleted.FormatTemplate(attribute.Name,
-                        this.setup.Pattern.Id, attribute.Id));
+                        attribute.Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -368,7 +372,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("AnElement",
-                        this.setup.Pattern.Id, this.setup.Pattern.Elements.Single().Id));
+                        this.setup.Pattern.Elements.Single().Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -381,12 +385,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-element AnElement3 --aschildof {{APattern.AnElement1.AnElement2}}");
 
+            var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_ElementAdded.FormatTemplate("AnElement3",
-                        this.setup.Pattern.Elements.Single().Elements.Single().Id,
-                        this.setup.Pattern.Elements.Single().Elements.Single().Elements.Single().Id));
+                        element.Elements.Single().Elements.Single().Id,
+                        element.Elements.Single().Id));
         }
 
         [Fact]
@@ -403,7 +408,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_ElementUpdated.FormatTemplate(element.Name,
-                        this.setup.Pattern.Id, element.Id));
+                        element.Id, this.setup.Pattern.Id));
             element.Name.Should().Be("AnElement2");
             element.DisplayName.Should().Be("adisplayname");
             element.Description.Should().Be("adescription");
@@ -424,7 +429,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_ElementDeleted.FormatTemplate(element.Name,
-                        this.setup.Pattern.Id, element.Id));
+                        element.Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -443,11 +448,12 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-collection ACollection --displayedas ADisplayName --describedas ADescription");
 
+            var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CollectionAdded.FormatTemplate("ACollection",
-                        this.setup.Pattern.Id, this.setup.Pattern.Elements.Single().Id));
+                        element.Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -455,15 +461,15 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-collection ACollection");
-            var element = this.setup.Pattern.Elements.Single();
+            var collection = this.setup.Pattern.Elements.Single();
 
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-collection ACollection");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CollectionDeleted.FormatTemplate(element.Name,
-                        this.setup.Pattern.Id, element.Id));
+                    OutputMessages.CommandLine_Output_CollectionDeleted.FormatTemplate(collection.Name,
+                        collection.Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -531,7 +537,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplatedEdited.FormatTemplate(codeTemplate.Name,
-                        this.setup.Pattern.Id, codeTemplate.Id, testApplicationName, codeTemplateLocation));
+                        codeTemplate.Id, this.setup.Pattern.Id, testApplicationName, codeTemplateLocation));
         }
 
         [Fact]
@@ -548,7 +554,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateDeleted.FormatTemplate(codeTemplate.Name,
-                        this.setup.Pattern.Id, codeTemplate.Id));
+                        codeTemplate.Id, this.setup.Pattern.Id));
             this.setup.Pattern.CodeTemplates.Should().BeEmpty();
         }
 
@@ -587,7 +593,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.FormatTemplate("CodeTemplateCommand1",
-                        this.setup.Pattern.Automation.Single().Id));
+                        this.setup.Pattern.Automation.Single().Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -606,7 +612,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.FormatTemplate(command.Name,
-                        command.Id, "anewpath", true));
+                        command.Id, this.setup.Pattern.Id, "anewpath", true));
         }
 
         [Fact]
@@ -628,7 +634,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CommandDeleted.FormatTemplate(command.Name,
-                        this.setup.Pattern.Id, command.Id));
+                        command.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().BeEmpty();
         }
 
@@ -643,7 +649,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CliCommandAdded.FormatTemplate("ACommandName",
-                        this.setup.Pattern.Automation.Single().Id));
+                        this.setup.Pattern.Automation.Single().Id, this.setup.Pattern.Id));
         }
 
         [Fact]
@@ -660,7 +666,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CliCommandUpdated.FormatTemplate(command.Name,
-                        command.Id, "AnApplication2", "Arguments2"));
+                        command.Id, this.setup.Pattern.Id, "AnApplication2", "Arguments2"));
         }
 
         [Fact]
@@ -680,7 +686,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CommandDeleted.FormatTemplate(command.Name,
-                        this.setup.Pattern.Id, command.Id));
+                        command.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().BeEmpty();
         }
 
@@ -702,6 +708,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id,
+                        this.setup.Pattern.Id,
                         commandId));
         }
 
@@ -723,6 +730,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_LaunchPointAdded.FormatTemplate(launchPoint.Name, launchPoint.Id,
+                        this.setup.Pattern.Id,
                         commandId));
         }
 
@@ -748,7 +756,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_LaunchPointUpdated.FormatTemplate(launchPoint.Name,
-                        launchPoint.Id, new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
+                        launchPoint.Id, this.setup.Pattern.Id,
+                        new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
         }
 
         [Fact]
@@ -769,7 +778,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_LaunchPointDeleted.FormatTemplate(launchPoint.Name,
-                        this.setup.Pattern.Id, launchPoint.Id));
+                        launchPoint.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().ContainSingle(x => x.Id == command.Id);
         }
 
