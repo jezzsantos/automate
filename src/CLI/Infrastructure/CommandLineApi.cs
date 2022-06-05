@@ -847,23 +847,23 @@ namespace Automate.CLI.Infrastructure
                 string exportData, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var result = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
+                var test = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported,
-                        name, result.Template.Id, exportData);
+                        name, test.Template.Id, test.ExportedFilePath);
                     console.WriteOutputLine();
                 }
 
                 if (importData.HasValue())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported,
-                        name, result.Template.Id, importData);
+                        name, test.Template.Id, importData);
                     console.WriteOutputLine();
                 }
 
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name,
-                    result.Template.Id, result.Output);
+                    test.Template.Id, test.Output);
             }
 
             internal static void HandleListPatterns(bool outputStructured, IConsole console)

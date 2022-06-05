@@ -414,14 +414,17 @@ namespace Automate.CLI.Application
                 return new CodeTemplateTest(codeTemplate, GenerateImportedCode(importedData));
             }
 
-            var generatedData = GenerateTestData();
+            var generatedData = GenerateTestData(true);
             var code = GenerateGeneratedCode(generatedData);
+
+            var exportedFilePath = string.Empty;
             if (exportedRelativeFilePath.HasValue())
             {
-                ExportResult(generatedData);
+                var generatedDataForExport = GenerateTestData(false);
+                exportedFilePath = ExportResult(generatedDataForExport);
             }
 
-            return new CodeTemplateTest(codeTemplate, code);
+            return new CodeTemplateTest(codeTemplate, code, exportedFilePath);
 
             string GenerateImportedCode(Dictionary<string, object> data)
             {
@@ -468,7 +471,7 @@ namespace Automate.CLI.Application
                 return importedData;
             }
 
-            LazyDraftItemDictionary GenerateTestData()
+            LazyDraftItemDictionary GenerateTestData(bool includeAncestry)
             {
                 var draft = pattern.CreateTestDraft();
                 var draftItem = draft.FindByCodeTemplate(codeTemplate.Id);
@@ -478,16 +481,17 @@ namespace Automate.CLI.Application
                         ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestDraft
                             .Format(codeTemplate.Id));
                 }
-                return draftItem.GetConfiguration(true);
+                return draftItem.GetConfiguration(includeAncestry);
             }
 
-            void ExportResult(LazyDraftItemDictionary data)
+            string ExportResult(LazyDraftItemDictionary data)
             {
                 var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
                 try
                 {
                     this.fileResolver.CreateFileAtPath(fullPath,
                         SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
+                    return fullPath;
                 }
                 catch (Exception ex)
                 {

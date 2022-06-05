@@ -916,7 +916,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenTestTemplate_ThenDisplaysRenderedTemplate()
+        public void WhenTestCodeTemplate_ThenDisplaysRenderedTemplate()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
@@ -941,7 +941,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenTestTemplateWithImportedData_ThenDisplaysRenderedTemplate()
+        public void WhenTestCodeTemplateWithImportedData_ThenDisplaysRenderedTemplate()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
@@ -962,6 +962,31 @@ namespace CLI.IntegrationTests
                         $"A{Environment.NewLine}" +
                         $"aproperty11{Environment.NewLine}" +
                         $"A{Environment.NewLine}"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateAndExportData_ThenExportsToFile()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestCommandName} codetemplate ATemplateName --aschildof {{APattern.AnElement1}} --export-data \"exported.json\"");
+
+            var template = this.setup.Pattern.Elements.Single().CodeTemplates.First();
+            var exportedFile = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "exported.json"));
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateTestExported.FormatTemplate("ATemplateName",
+                        template.Id,
+                        exportedFile));
         }
     }
 }
