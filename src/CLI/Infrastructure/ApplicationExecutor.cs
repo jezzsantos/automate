@@ -12,14 +12,20 @@ namespace Automate.CLI.Infrastructure
         public ApplicationExecutionProcessResult RunApplicationProcess(bool awaiting, string applicationName,
             string arguments)
         {
+            applicationName.GuardAgainstNullOrEmpty(nameof(applicationName));
+            
             var outcome = new ApplicationExecutionProcessResult();
 
             try
             {
+                var appName = Environment.ExpandEnvironmentVariables(applicationName);
+                var args = arguments.HasValue()
+                    ? Environment.ExpandEnvironmentVariables(arguments)
+                    : arguments;
                 var process = Process.Start(new ProcessStartInfo
                 {
-                    FileName = applicationName,
-                    Arguments = arguments,
+                    FileName = appName,
+                    Arguments = args,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     WorkingDirectory = Environment.CurrentDirectory
