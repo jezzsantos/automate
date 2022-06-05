@@ -28,6 +28,9 @@
         <value>Executed command line: '{0} {1}', output:
 {2}</value>
     </data>
+    <data name="ApplicationExecutor_Succeeded_NotAwaited" xml:space="preserve">
+        <value>Executed command line: '{0} {1}'</value>
+    </data>
     <data name="ApplicationExecutor_ExecutionFailed" xml:space="preserve">
         <value>Command line: '{0} {1}' failed execution. Errors were:
 {2}</value>

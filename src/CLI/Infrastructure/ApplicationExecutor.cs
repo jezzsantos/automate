@@ -9,7 +9,7 @@ namespace Automate.CLI.Infrastructure
     {
         internal static readonly TimeSpan HangTime = TimeSpan.FromSeconds(5);
 
-        public ApplicationExecutionProcessResult RunApplicationProcess(bool awaiting, string applicationName,
+        public ApplicationExecutionProcessResult RunApplicationProcess(bool awaitForExit, string applicationName,
             string arguments)
         {
             applicationName.GuardAgainstNullOrEmpty(nameof(applicationName));
@@ -46,7 +46,13 @@ namespace Automate.CLI.Infrastructure
                         InfrastructureMessages.ApplicationExecutor_ProcessExited.Format(process.ExitCode));
                 }
 
-                if (awaiting)
+                if (!awaitForExit)
+                {
+                    outcome.Succeeds(
+                        InfrastructureMessages.ApplicationExecutor_Succeeded_NotAwaited.Format(applicationName,
+                            arguments));
+                }
+                else
                 {
                     var success = process.WaitForExit((int)HangTime.TotalMilliseconds);
                     if (success)
@@ -69,19 +75,6 @@ namespace Automate.CLI.Infrastructure
                             arguments,
                             InfrastructureMessages.ApplicationExecutor_Hung.Format(HangTime.TotalSeconds)));
                     }
-                }
-                else
-                {
-                    var error = process.StandardError.ReadToEnd();
-                    if (error.HasValue())
-                    {
-                        throw new Exception(error);
-                    }
-
-                    var output = process.StandardOutput.ReadToEnd();
-                    outcome.Succeeds(
-                        InfrastructureMessages.ApplicationExecutor_Succeeded.Format(applicationName, arguments,
-                            output));
                 }
             }
             catch (Exception ex)

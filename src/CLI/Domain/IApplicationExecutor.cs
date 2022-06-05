@@ -3,7 +3,7 @@
     internal interface IApplicationExecutor
     {
         ApplicationExecutionProcessResult
-            RunApplicationProcess(bool awaiting, string applicationName, string arguments);
+            RunApplicationProcess(bool awaitForExit, string applicationName, string arguments);
     }
 
     internal class ApplicationExecutionProcessResult

@@ -97,5 +97,14 @@ namespace Automate.CLI.Infrastructure {
                 return ResourceManager.GetString("ApplicationExecutor_Succeeded", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executed command line: &apos;{0} {1}&apos;.
+        /// </summary>
+        internal static string ApplicationExecutor_Succeeded_NotAwaited {
+            get {
+                return ResourceManager.GetString("ApplicationExecutor_Succeeded_NotAwaited", resourceCulture);
+            }
+        }
     }
 }
