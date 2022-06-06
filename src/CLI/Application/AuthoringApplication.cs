@@ -395,8 +395,7 @@ namespace Automate.CLI.Application
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var codeTemplate = target.CodeTemplates.Safe()
-                .FirstOrDefault(template => template.Name.EqualsIgnoreCase(codeTemplateName));
+            var codeTemplate = Try.Safely(() => target.FindCodeTemplateByName(codeTemplateName));
             if (codeTemplate.NotExists())
             {
                 throw new AutomateException(parentExpression.HasValue()
@@ -410,21 +409,23 @@ namespace Automate.CLI.Application
 
             if (importedRelativeFilePath.HasValue())
             {
-                var importedData = ImportData();
-                return new CodeTemplateTest(codeTemplate, GenerateImportedCode(importedData));
+                var importedData = ImportData(this.fileResolver, rootPath, importedRelativeFilePath);
+                var importedOutput = GenerateImportedCode(importedData);
+                return new CodeTemplateTest(codeTemplate, importedOutput);
             }
 
             var generatedData = GenerateTestData(true);
-            var code = GenerateGeneratedCode(generatedData);
+            var output = GenerateGeneratedCode(generatedData);
 
             var exportedFilePath = string.Empty;
             if (exportedRelativeFilePath.HasValue())
             {
                 var generatedDataForExport = GenerateTestData(false);
-                exportedFilePath = ExportResult(generatedDataForExport);
+                exportedFilePath =
+                    ExportResult(this.fileResolver, generatedDataForExport, rootPath, exportedRelativeFilePath);
             }
 
-            return new CodeTemplateTest(codeTemplate, code, exportedFilePath);
+            return new CodeTemplateTest(codeTemplate, output, exportedFilePath);
 
             string GenerateImportedCode(Dictionary<string, object> data)
             {
@@ -447,30 +448,6 @@ namespace Automate.CLI.Application
                 return contents;
             }
 
-            Dictionary<string, object> ImportData()
-            {
-                var fullPath = this.fileResolver.CreatePath(rootPath, importedRelativeFilePath);
-                if (!this.fileResolver.ExistsAtPath(fullPath))
-                {
-                    throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format(fullPath));
-                }
-
-                var importedJson = this.fileResolver.GetFileAtPath(fullPath);
-                Dictionary<string, object> importedData;
-                try
-                {
-                    var json = SystemIoFileConstants.Encoding.GetString(importedJson.GetContents());
-                    importedData = json.FromJson();
-                }
-                catch (Exception ex)
-                {
-                    throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataImport_NotValidJson, ex);
-                }
-
-                return importedData;
-            }
-
             LazyDraftItemDictionary GenerateTestData(bool includeAncestry)
             {
                 var draft = pattern.CreateTestDraft();
@@ -483,22 +460,79 @@ namespace Automate.CLI.Application
                 }
                 return draftItem.GetConfiguration(includeAncestry);
             }
+        }
 
-            string ExportResult(LazyDraftItemDictionary data)
+        public CodeTemplateCommandTest TestCodeTemplateCommand(string commandName, string parentExpression,
+            string rootPath,
+            string importedRelativeFilePath, string exportedRelativeFilePath)
+        {
+            commandName.GuardAgainstNullOrEmpty(nameof(commandName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var command = Try.Safely(() => target.FindCodeTemplateCommandByName(commandName));
+            if (command.NotExists())
             {
-                var fullPath = this.fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
-                try
-                {
-                    this.fileResolver.CreateFileAtPath(fullPath,
-                        SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
-                    return fullPath;
-                }
-                catch (Exception ex)
+                throw new AutomateException(parentExpression.HasValue()
+                    ? ExceptionMessages.AuthoringApplication_CodeTemplateCommandNotExistsElement.Format(commandName,
+                        parentExpression)
+                    : ExceptionMessages.AuthoringApplication_CodeTemplateCommandNotExistsRoot.Format(commandName,
+                        parentExpression));
+            }
+
+            var textTemplate = GetFilePathTemplate();
+
+            if (importedRelativeFilePath.HasValue())
+            {
+                var importedData = ImportData(this.fileResolver, rootPath, importedRelativeFilePath);
+                var importedOutput = GenerateImportedCode(importedData);
+                return new CodeTemplateCommandTest(command, importedOutput);
+            }
+
+            var generatedData = GenerateTestData(true);
+            var output = GenerateGeneratedCode(generatedData);
+
+            var exportedFilePath = string.Empty;
+            if (exportedRelativeFilePath.HasValue())
+            {
+                var generatedDataForExport = GenerateTestData(false);
+                exportedFilePath =
+                    ExportResult(this.fileResolver, generatedDataForExport, rootPath, exportedRelativeFilePath);
+            }
+
+            return new CodeTemplateCommandTest(command, output, exportedFilePath);
+
+            string GetFilePathTemplate()
+            {
+                return command.FilePath;
+            }
+
+            string GenerateImportedCode(Dictionary<string, object> data)
+            {
+                return this.textTemplatingEngine.Transform(
+                    ApplicationMessages.AuthoringApplication_TestCodeTemplate_Description.Format(command.Id),
+                    textTemplate, data);
+            }
+
+            string GenerateGeneratedCode(LazyDraftItemDictionary data)
+            {
+                return this.textTemplatingEngine.Transform(
+                    ApplicationMessages.AuthoringApplication_TestCodeTemplate_Description.Format(command.Id),
+                    textTemplate, data);
+            }
+
+            LazyDraftItemDictionary GenerateTestData(bool includeAncestry)
+            {
+                var draft = pattern.CreateTestDraft();
+                var draftItems = draft.FindByAutomation(command.Id);
+                if (draftItems.HasNone())
                 {
                     throw new AutomateException(
-                        ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile
-                            .Format(fullPath, ex.Message));
+                        ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestDraft
+                            .Format(command.Id));
                 }
+                return draftItems.First().DraftItem.GetConfiguration(includeAncestry);
             }
         }
 
@@ -536,6 +570,50 @@ namespace Automate.CLI.Application
             }
 
             return pattern;
+        }
+
+        private static Dictionary<string, object> ImportData(IFilePathResolver fileResolver, string rootPath,
+            string importedRelativeFilePath)
+        {
+            var fullPath = fileResolver.CreatePath(rootPath, importedRelativeFilePath);
+            if (!fileResolver.ExistsAtPath(fullPath))
+            {
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format(fullPath));
+            }
+
+            var importedJson = fileResolver.GetFileAtPath(fullPath);
+            Dictionary<string, object> importedData;
+            try
+            {
+                var json = SystemIoFileConstants.Encoding.GetString(importedJson.GetContents());
+                importedData = json.FromJson();
+            }
+            catch (Exception ex)
+            {
+                throw new AutomateException(ExceptionMessages.AuthoringApplication_TestDataImport_NotValidJson, ex);
+            }
+
+            return importedData;
+        }
+
+        private static string ExportResult(IFilePathResolver fileResolver, LazyDraftItemDictionary data,
+            string rootPath,
+            string exportedRelativeFilePath)
+        {
+            var fullPath = fileResolver.CreatePath(rootPath, exportedRelativeFilePath);
+            try
+            {
+                fileResolver.CreateFileAtPath(fullPath,
+                    SystemIoFileConstants.Encoding.GetBytes(data.ToJson()));
+                return fullPath;
+            }
+            catch (Exception ex)
+            {
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile
+                        .Format(fullPath, ex.Message));
+            }
         }
     }
 }

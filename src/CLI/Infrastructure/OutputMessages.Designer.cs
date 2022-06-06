@@ -134,6 +134,34 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) target path resolves to:
+        ///{Output}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateCommandTested {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateCommandTested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data from testing Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) has been exported to: &apos;{Exported}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateCommandTestExported {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateCommandTestExported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data for testing Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) was imported from: &apos;{Imported}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateCommandTestImported {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateCommandTestImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, with path: {FilePath}, and OneOff: {OneOff}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandUpdated {

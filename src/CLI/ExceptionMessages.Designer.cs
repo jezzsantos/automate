@@ -70,6 +70,24 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate Command with name: &apos;{0}&apos; does not exist on element referenced by: &apos;{1}&apos;.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateCommandNotExistsElement {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateCommandNotExistsElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate Command with ID: &apos;{0}&apos; does not exist on the pattern.
+        /// </summary>
+        internal static string AuthoringApplication_CodeTemplateCommandNotExistsRoot {
+            get {
+                return ResourceManager.GetString("AuthoringApplication_CodeTemplateCommandNotExistsRoot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A CodeTemplate with name: &apos;{0}&apos; does not exist on element referenced by: &apos;{1}&apos;.
         /// </summary>
         internal static string AuthoringApplication_CodeTemplateNotExistsElement {
@@ -543,6 +561,15 @@ namespace Automate.CLI {
         internal static string PatternElement_CodeTemplateByNameExists {
             get {
                 return ResourceManager.GetString("PatternElement_CodeTemplateByNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A CodeTemplate Command with name: &apos;{0}&apos; was not found.
+        /// </summary>
+        internal static string PatternElement_CodeTemplateCommandNotFound {
+            get {
+                return ResourceManager.GetString("PatternElement_CodeTemplateCommandNotFound", resourceCulture);
             }
         }
         

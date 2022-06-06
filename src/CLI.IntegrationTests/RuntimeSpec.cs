@@ -687,7 +687,7 @@ namespace CLI.IntegrationTests
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
-            contents.Should().Be($"B{Environment.NewLine}avalue1{Environment.NewLine}B");
+            contents.Should().Be($"B{Environment.NewLine}avalue1{Environment.NewLine}");
         }
 
         [Fact]

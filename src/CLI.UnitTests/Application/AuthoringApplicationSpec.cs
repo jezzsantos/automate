@@ -783,7 +783,7 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenTestCodeTemplateCommandAndCurrentPatternNotExists_ThenThrows()
+        public void WhenTestCodeTemplateAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
                 .Invoking(x => x.TestCodeTemplate("atemplatename", null, null, null, null))
@@ -792,7 +792,7 @@ namespace CLI.UnitTests.Application
         }
 
         [Fact]
-        public void WhenTestCodeTemplateCommandAndCodeTemplateNotExists_ThenThrows()
+        public void WhenTestCodeTemplateAndCodeTemplateNotExists_ThenThrows()
         {
             this.application.CreateNewPattern("apatternname", null, null);
 
@@ -948,6 +948,172 @@ namespace CLI.UnitTests.Application
             result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte =>
                 tte.Transform(It.IsAny<string>(), "atexttemplate", It.IsAny<IDictionary>()));
+            this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndCurrentPatternNotExists_ThenThrows()
+        {
+            this.application
+                .Invoking(x => x.TestCodeTemplateCommand("acommandname", null, null, null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndCodeTemplateNotExists_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+
+            this.application
+                .Invoking(x => x.TestCodeTemplateCommand("acommandname", null, null, null, null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_CodeTemplateCommandNotExistsRoot.Format("acommandname"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandOnPattern_ThenReturnsResult()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+
+            var result = this.application.TestCodeTemplateCommand("acommandname", null, null, null, null);
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandOnDescendantElement_ThenReturnsResult()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AddElement("anelementname", ElementCardinality.One, false, null, null, null);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.anelementname}"))
+                .Returns(this.application.GetCurrentPattern().Elements.Single);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.anelementname}");
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath",
+                "{apatternname.anelementname}");
+
+            var result =
+                this.application.TestCodeTemplateCommand("acommandname", "{apatternname.anelementname}", null, null,
+                    null);
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandOnDescendantCollection_ThenReturnsResult()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AddElement("acollectionname", ElementCardinality.One, false, null, null, null);
+            this.patternPathResolver.Setup(ppr =>
+                    ppr.Resolve(It.IsAny<PatternDefinition>(), "{apatternname.acollectionname}"))
+                .Returns(this.application.GetCurrentPattern().Elements.Single);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename",
+                "{apatternname.acollectionname}");
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath",
+                "{apatternname.acollectionname}");
+
+            var result =
+                this.application.TestCodeTemplateCommand("acommandname", "{apatternname.acollectionname}", null, null,
+                    null);
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndImportDataNotExist_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+            this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
+                .Returns(false);
+
+            this.application
+                .Invoking(x => x.TestCodeTemplateCommand("acommandname", null, "arootpath", "animportpath", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_TestDataImport_NotFoundAtLocation.Format("afullpath"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndImportDataNotJson_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+            this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
+                .Returns(true);
+            this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
+                .Returns(Mock.Of<IFile>(file => file.GetContents() == SystemIoFileConstants.Encoding.GetBytes("\t")));
+
+            this.application
+                .Invoking(x => x.TestCodeTemplateCommand("acommandname", null, "arootpath", "animportpath", null))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.AuthoringApplication_TestDataImport_NotValidJson);
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndImportData_ThenReturnsResult()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+            this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
+                .Returns(true);
+            this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
+                .Returns(Mock.Of<IFile>(file =>
+                    file.GetContents() == SystemIoFileConstants.Encoding.GetBytes("{\"aname\":\"avalue\"}")));
+
+            var result =
+                this.application.TestCodeTemplateCommand("acommandname", null, "arootpath", "animportpath", null);
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "afilepath",
+                It.Is<Dictionary<string, object>>(dic =>
+                    (string)dic["aname"] == "avalue")));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndExportDataAndNotFile_ThenThrows()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+            this.filePathResolver.Setup(pr => pr.CreateFileAtPath(It.IsAny<string>(), It.IsAny<byte[]>()))
+                .Throws(new FileNotFoundException("anerrormessage"));
+
+            this.application
+                .Invoking(x => x.TestCodeTemplateCommand("acommandname", null, "arootpath", null, "anexportpath"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(
+                    ExceptionMessages.AuthoringApplication_TestDataExport_NotValidFile.Format("afullpath",
+                        "anerrormessage"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndExportData_ThenWritesData()
+        {
+            this.application.CreateNewPattern("apatternname", null, null);
+            this.application.AttachCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
+
+            var result =
+                this.application.TestCodeTemplateCommand("acommandname", null, "arootpath", null, "anexportpath");
+
+            result.Output.Should().Be("anoutput");
+            this.textTemplatingEngine.Verify(tte =>
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }
     }

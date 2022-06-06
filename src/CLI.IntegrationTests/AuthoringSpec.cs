@@ -919,11 +919,13 @@ namespace CLI.IntegrationTests
         public void WhenTestCodeTemplate_ThenDisplaysRenderedTemplate()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
 
@@ -935,20 +937,22 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName", template.Id,
-                        $"A{Environment.NewLine}" +
-                        $"aproperty11{Environment.NewLine}" +
-                        $"A{Environment.NewLine}"));
+                        $"adefaultvalue3{Environment.NewLine}" +
+                        $"adefaultvalue1{Environment.NewLine}" +
+                        $"adefaultvalue2{Environment.NewLine}"));
         }
 
         [Fact]
         public void WhenTestCodeTemplateWithImportedData_ThenDisplaysRenderedTemplate()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
             this.setup.RunCommand(
@@ -959,20 +963,105 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.FormatTemplate("ATemplateName", template.Id,
-                        $"A{Environment.NewLine}" +
-                        $"aproperty11{Environment.NewLine}" +
-                        $"A{Environment.NewLine}"));
+                        $"avalue3{Environment.NewLine}" +
+                        $"avalue1{Environment.NewLine}" +
+                        $"avalue2{Environment.NewLine}"));
         }
 
         [Fact]
         public void WhenTestCodeTemplateAndExportData_ThenExportsToFile()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --typeis int");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
             this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestCommandName} codetemplate ATemplateName --aschildof {{APattern.AnElement1}} --export-data \"exported.json\"");
+
+            var template = this.setup.Pattern.Elements.Single().CodeTemplates.First();
+            var exportedFile = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "exported.json"));
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateTestExported.FormatTemplate("ATemplateName",
+                        template.Id,
+                        exportedFile));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommand_ThenDisplaysRenderedTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --aschildof {{APattern.AnElement1}} --targetpath \"~/{{{{Parent.AProperty1}}}}/{{{{AProperty3}}}}/afilename.anextension\"");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestCommandName} codetemplate-command ACommandName --aschildof {{APattern.AnElement1}}");
+
+            var command = this.setup.Pattern.Elements.Single().Automation.First();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandTested.FormatTemplate("ACommandName",
+                        command.Id,
+                        "~/adefaultvalue1/adefaultvalue3/afilename.anextension"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandWithImportedData_ThenDisplaysRenderedTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --name ACommandName --aschildof {{APattern.AnElement1}} --targetpath \"~/{{{{Parent.AProperty1}}}}/{{{{AProperty3}}}}/afilename.anextension\"");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestCommandName} codetemplate-command ACommandName --aschildof {{APattern.AnElement1}} --import-data \"Assets/TestData/data1.json\"");
+
+            var command = this.setup.Pattern.Elements.Single().Automation.First();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandTested.FormatTemplate("ACommandName",
+                        command.Id,
+                        "~/avalue1/avalue3/afilename.anextension"));
+        }
+
+        [Fact]
+        public void WhenTestCodeTemplateCommandAndExportData_ThenExportsToFile()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis adefaultvalue1");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue2");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis adefaultvalue3");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ATemplateName --aschildof {{APattern.AnElement1}}");
 

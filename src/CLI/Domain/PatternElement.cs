@@ -756,6 +756,18 @@ namespace Automate.CLI.Domain
             return codeTemplate;
         }
 
+        public CodeTemplateCommand FindCodeTemplateCommandByName(string name)
+        {
+            var automation = Automation.FirstOrDefault(auto =>
+                auto.Type == AutomationType.CodeTemplateCommand && auto.Name.EqualsIgnoreCase(name));
+            if (automation.NotExists())
+            {
+                throw new AutomateException(ExceptionMessages.PatternElement_CodeTemplateCommandNotFound.Format(name));
+            }
+
+            return CodeTemplateCommand.FromAutomation(automation);
+        }
+
         public virtual bool Accept(IPatternVisitor visitor)
         {
             var abort = false;

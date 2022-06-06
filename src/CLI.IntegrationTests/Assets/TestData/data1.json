@@ -1,12 +1,12 @@
 {
-  "Id": "eE5Fh1bc",
+  "Id": "00000001",
   "Parent": {
-    "Id": "wJyTGRx0",
-    "AProperty1": "aproperty11",
+    "Id": "00000002",
+    "AProperty1": "avalue1",
     "AnElement1": {
-      "Id": "eE5Fh1bc",
-      "AProperty3": "A"
+      "Id": "00000003",
+      "AProperty2": "avalue2"
     }
   },
-  "AProperty3": "A"
+  "AProperty3": "avalue3"
 }

@@ -74,6 +74,8 @@ namespace Automate.CLI.Domain
         public void DeleteCommandLaunchPoint(string id);
 
         CodeTemplate FindCodeTemplateByName(string name);
+
+        CodeTemplateCommand FindCodeTemplateCommandByName(string name);
     }
 
     internal interface INamedEntity : IIdentifiableEntity

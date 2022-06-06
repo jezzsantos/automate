@@ -286,9 +286,9 @@ namespace Automate.CLI.Infrastructure
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
             {
-                new Command("codetemplate", "Tests the code template")
+                new Command("codetemplate", "Tests a code template")
                 {
-                    new Argument("Name", "The name of the code template"),
+                    new Argument("TemplateName", "The name of the code template"),
                     new Option("--aschildof",
                         "The expression of the element/collection on which the code template exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
@@ -298,7 +298,20 @@ namespace Automate.CLI.Infrastructure
                     new Option("--export-data",
                         "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplate))
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplate)),
+                new Command("codetemplate-command", "Tests a code template command")
+                {
+                    new Argument("CommandName", "The name of the command"),
+                    new Option("--aschildof",
+                        "The expression of the element/collection on which the command exists",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--import-data",
+                        "Import the specified data for the test. A relative path to the JSON file, from the current directory",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--export-data",
+                        "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleTestCodeTemplateCommand))
             };
             var buildCommands = new Command(BuildCommandName, "Building toolkits from patterns")
             {
@@ -843,27 +856,56 @@ namespace Automate.CLI.Infrastructure
                     OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, template.Id, parent.Id);
             }
 
-            internal static void HandleTestCodeTemplate(string name, string asChildOf, string importData,
+            internal static void HandleTestCodeTemplate(string templateName, string asChildOf, string importData,
                 string exportData, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var test = Authoring.TestCodeTemplate(name, asChildOf, currentDirectory, importData, exportData);
+                var test =
+                    Authoring.TestCodeTemplate(templateName, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported,
-                        name, test.Template.Id, test.ExportedFilePath);
+                        templateName, test.Template.Id, test.ExportedFilePath);
                     console.WriteOutputLine();
                 }
 
                 if (importData.HasValue())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported,
-                        name, test.Template.Id, importData);
+                        templateName, test.Template.Id, importData);
                     console.WriteOutputLine();
                 }
 
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested, name,
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested,
+                    templateName,
                     test.Template.Id, test.Output);
+            }
+
+            internal static void HandleTestCodeTemplateCommand(string commandName, string asChildOf, string importData,
+                string exportData, bool outputStructured, IConsole console)
+            {
+                var currentDirectory = Environment.CurrentDirectory;
+                var test = Authoring.TestCodeTemplateCommand(commandName, asChildOf, currentDirectory, importData,
+                    exportData);
+                if (exportData.HasValue())
+                {
+                    console.WriteOutput(outputStructured,
+                        OutputMessages.CommandLine_Output_CodeTemplateCommandTestExported,
+                        commandName, test.Command.Id, test.ExportedFilePath);
+                    console.WriteOutputLine();
+                }
+
+                if (importData.HasValue())
+                {
+                    console.WriteOutput(outputStructured,
+                        OutputMessages.CommandLine_Output_CodeTemplateCommandTestImported,
+                        commandName, test.Command.Id, importData);
+                    console.WriteOutputLine();
+                }
+
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandTested,
+                    commandName,
+                    test.Command.Id, test.Output);
             }
 
             internal static void HandleListPatterns(bool outputStructured, IConsole console)

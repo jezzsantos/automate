@@ -23,7 +23,7 @@ namespace Automate.CLI.Infrastructure
 
         public void CopyTo(string destination)
         {
-            var directoryName = Path.GetDirectoryName(destination) ?? string.Empty;
+            var directoryName = Path.GetDirectoryName(ExpandVariables(destination)) ?? string.Empty;
             if (!Directory.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
@@ -35,6 +35,11 @@ namespace Automate.CLI.Infrastructure
         public byte[] GetContents()
         {
             return File.ReadAllBytes(FullPath);
+        }
+
+        private static string ExpandVariables(string path)
+        {
+            return Environment.ExpandEnvironmentVariables(path);
         }
     }
 }
