@@ -24,6 +24,8 @@ What if you had a library of these kinds of tools (for this codebase) stored in 
 
 Automate is a tool for Tech Leads, Lead Developers or Tech Consultants to give their fellow codebase contributors dev tools that capture and apply their coding patterns consistently across to their codebases as they evolve and change.
 
+![The Idea](docs/Concept.png)
+
 ## How does it work?
 
 It works like this:
