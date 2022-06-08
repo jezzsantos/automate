@@ -38,7 +38,7 @@ namespace CLI.IntegrationTests
 
         internal LocalState LocalState => this.repository.GetLocalState();
 
-        public string Location => this.repository.PatternLocation;
+        public string PatternStoreLocation => this.repository.PatternLocation;
 
         internal DraftDefinition Draft => Drafts.FirstOrDefault();
 
@@ -47,6 +47,8 @@ namespace CLI.IntegrationTests
         internal ToolkitDefinition Toolkit => Toolkits.FirstOrDefault();
 
         internal List<ToolkitDefinition> Toolkits => this.repository.ListToolkits();
+
+        internal IPatternRepository PatternStore => this.repository;
 
         public void ResetRepository()
         {
