@@ -94,7 +94,8 @@ namespace Automate.CLI.Application
         {
             draftId.GuardAgainstNullOrEmpty(nameof(draftId));
 
-            this.draftStore.ChangeCurrent(draftId);
+            var draft = this.draftStore.ChangeCurrent(draftId);
+            this.toolkitStore.ChangeCurrent(draft.Toolkit.Id);
         }
 
         public DraftItem ConfigureDraft(string addElementExpression,
@@ -102,7 +103,6 @@ namespace Automate.CLI.Application
             Dictionary<string, string> propertyAssignments)
         {
             var draft = EnsureCurrentDraftExists();
-            
 
             if (addElementExpression.HasNoValue()
                 && addToCollectionExpression.HasNoValue()
@@ -211,11 +211,11 @@ namespace Automate.CLI.Application
             return (draft.GetConfiguration(), schema, validation);
         }
 
-        public ToolkitDefinition GetCurrentToolkit()
+        public ToolkitDefinition ViewCurrentToolkit()
         {
-            var draft = EnsureCurrentDraftExists();
+            var toolkit = EnsureCurrentToolkitExists();
 
-            return draft.Toolkit;
+            return toolkit;
         }
 
         public ValidationResults Validate(string itemExpression)
@@ -335,7 +335,7 @@ namespace Automate.CLI.Application
             return target;
         }
 
-        private DraftDefinition EnsureCurrentDraftExists(bool skipVersionCheck = false)
+        private DraftDefinition EnsureCurrentDraftExists(bool skipVersionChecks = false)
         {
             var draft = this.draftStore.GetCurrent();
             if (draft.NotExists())
@@ -343,7 +343,7 @@ namespace Automate.CLI.Application
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
 
-            if (skipVersionCheck)
+            if (skipVersionChecks)
             {
                 return draft;
             }
@@ -361,6 +361,18 @@ namespace Automate.CLI.Application
             toolkit.VerifyRuntimeCompatability();
 
             return draft;
+        }
+
+        private ToolkitDefinition EnsureCurrentToolkitExists()
+        {
+            var toolkit = this.toolkitStore.GetCurrent();
+            if (toolkit.NotExists())
+            {
+                throw new AutomateException(
+                    ExceptionMessages.RuntimeApplication_NoCurrentToolkit);
+            }
+
+            return toolkit;
         }
     }
 }

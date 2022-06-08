@@ -12,11 +12,13 @@ namespace Automate.CLI.Infrastructure
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
             relativeOrAbsolutePath.GuardAgainstNullOrEmpty(nameof(relativeOrAbsolutePath));
 
-            return Path.GetFullPath(Path.Combine(ExpandVariables(rootPath), relativeOrAbsolutePath));
+            return Path.GetFullPath(Path.Combine(ExpandVariables(rootPath), ExpandVariables(relativeOrAbsolutePath)));
         }
 
         public string GetFileExtension(string absolutePath)
         {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+
             return Path.GetExtension(ExpandVariables(absolutePath));
         }
 
@@ -29,16 +31,23 @@ namespace Automate.CLI.Infrastructure
 
         public IFile GetFileAtPath(string absolutePath)
         {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+            
             return new SystemIoFile(ExpandVariables(absolutePath));
         }
 
         public string GetFilename(string absolutePath)
         {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+           
             return Path.GetFileName(ExpandVariables(absolutePath));
         }
 
         public void CreateFileAtPath(string absolutePath, byte[] contents)
         {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+            contents.GuardAgainstNull(nameof(contents));
+            
             File.WriteAllBytes(ExpandVariables(absolutePath), contents);
         }
 

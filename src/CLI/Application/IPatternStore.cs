@@ -13,7 +13,7 @@ namespace Automate.CLI.Application
 
         PatternDefinition Find(string name);
 
-        void ChangeCurrent(string id);
+        PatternDefinition ChangeCurrent(string id);
 
         string UploadCodeTemplate(PatternDefinition pattern, string codeTemplateId, IFile file);
 

@@ -13,7 +13,7 @@ namespace Automate.CLI.Application
 
         DraftDefinition FindById(string id);
 
-        void ChangeCurrent(string id);
+        DraftDefinition ChangeCurrent(string id);
 
         DraftDefinition GetCurrent();
 

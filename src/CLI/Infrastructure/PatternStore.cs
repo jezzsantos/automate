@@ -81,7 +81,7 @@ namespace Automate.CLI.Infrastructure
             return pattern;
         }
 
-        public void ChangeCurrent(string id)
+        public PatternDefinition ChangeCurrent(string id)
         {
             var pattern = this.patternRepository.FindPatternById(id);
             if (pattern.NotExists())
@@ -94,6 +94,8 @@ namespace Automate.CLI.Infrastructure
             var state = this.localStateRepository.GetLocalState();
             state.SetCurrentPattern(pattern.Id);
             this.localStateRepository.SaveLocalState(state);
+
+            return pattern;
         }
 
         public void Save(PatternDefinition pattern)

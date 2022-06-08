@@ -1136,7 +1136,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void HandleViewToolkit(bool all, bool outputStructured, IConsole console)
             {
-                var pattern = Runtime.GetCurrentToolkit().Pattern;
+                var pattern = Runtime.ViewCurrentToolkit().Pattern;
 
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_ToolkitConfiguration, pattern.Name, pattern.Id,

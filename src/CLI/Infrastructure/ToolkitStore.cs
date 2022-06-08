@@ -51,7 +51,7 @@ namespace Automate.CLI.Infrastructure
             ChangeCurrent(toolkit.Id);
         }
 
-        public void ChangeCurrent(string id)
+        public ToolkitDefinition ChangeCurrent(string id)
         {
             var toolkit = this.toolkitRepository.FindToolkitById(id);
             if (toolkit.NotExists())
@@ -64,6 +64,8 @@ namespace Automate.CLI.Infrastructure
             var state = this.localStateRepository.GetLocalState();
             state.SetCurrentToolkit(id);
             this.localStateRepository.SaveLocalState(state);
+
+            return toolkit;
         }
 
         public ToolkitDefinition FindByName(string name)

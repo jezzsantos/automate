@@ -816,6 +816,43 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenViewToolkitAndNone_ThenDisplaysError()
+        {
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
+
+            this.setup.Should().DisplayError(ExceptionMessages.RuntimeApplication_NoCurrentToolkit);
+        }
+
+        [Fact]
+        public void WhenViewToolkitAndNoDraft_ThenDisplaysPatternTree()
+        {
+            ConfigureBuildAndInstallToolkit();
+
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
+
+            var pattern = this.setup.Pattern;
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration.FormatTemplate(pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current,
+                        $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
+                        $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
+                        $"\t- AProperty2 (attribute) (int){Environment.NewLine}" +
+                        $"\t- AnElement1 (element) (attached with 1 code templates){Environment.NewLine}" +
+                        $"\t\t- AProperty3 (attribute) (string, oneof: A;B;C){Environment.NewLine}" +
+                        $"\t\t- ACollection1 (collection){Environment.NewLine}" +
+                        $"\t- ACollection2 (collection){Environment.NewLine}" +
+                        $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}" +
+                        $"\t- AnElement3 (element){Environment.NewLine}" +
+                        $"\t\t- AProperty5 (attribute) (string, default: ADefaultValue1){Environment.NewLine}" +
+                        $"\t\t- AProperty6 (attribute) (int, default: 25){Environment.NewLine}" +
+                        $"\t\t- AProperty7 (attribute) (string){Environment.NewLine}"
+                        ,
+                        this.setup.Pattern.Id));
+        }
+
+        [Fact]
         public void WhenViewToolkit_ThenDisplaysPatternTree()
         {
             CreateDraftFromBuiltToolkit();

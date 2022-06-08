@@ -160,8 +160,11 @@
     <data name="ToolkitStore_NotFoundAtLocationWithId" xml:space="preserve">
         <value>A toolkit with id: '{0}' cannot be found in the toolkit store at location: '{1}'</value>
     </data>
+    <data name="RuntimeApplication_NoCurrentToolkit" xml:space="preserve">
+        <value>There is no current toolkit yet. Install a new toolkit with `automate install toolkit "&lt;FilePath&gt;"`</value>
+    </data>
     <data name="RuntimeApplication_NoCurrentDraft" xml:space="preserve">
-        <value>Draft does not yet exist</value>
+        <value>There is no current draft yet. Create a new draft with `automate run toolkit "&lt;PatternName&gt;"`, or use `automate run switch "&lt;DraftId&gt;"` to switch to an existing draft</value>
     </data>
     <data name="RuntimeApplication_CurrentDraftUpgraded" xml:space="preserve">
         <value>The installed toolkit for this draft '{0}' (ID: '{1}') has been upgraded from version: '{2}' to version: '{3}'. Please upgrade this draft with command:

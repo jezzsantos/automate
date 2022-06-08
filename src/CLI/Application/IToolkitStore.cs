@@ -9,7 +9,9 @@ namespace Automate.CLI.Application
 
         void Import(ToolkitDefinition toolkit);
 
-        void ChangeCurrent(string id);
+        ToolkitDefinition GetCurrent();
+
+        ToolkitDefinition ChangeCurrent(string id);
 
         ToolkitDefinition FindByName(string name);
 

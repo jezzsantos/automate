@@ -845,11 +845,20 @@ namespace Automate.CLI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft does not yet exist.
+        ///   Looks up a localized string similar to There is no current draft yet. Create a new draft with `automate run toolkit &quot;&lt;PatternName&gt;&quot;`, or use `automate run switch &quot;&lt;DraftId&gt;&quot;` to switch to an existing draft.
         /// </summary>
         internal static string RuntimeApplication_NoCurrentDraft {
             get {
                 return ResourceManager.GetString("RuntimeApplication_NoCurrentDraft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no current toolkit yet. Install a new toolkit with `automate install toolkit &quot;&lt;FilePath&gt;&quot;`.
+        /// </summary>
+        internal static string RuntimeApplication_NoCurrentToolkit {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_NoCurrentToolkit", resourceCulture);
             }
         }
         

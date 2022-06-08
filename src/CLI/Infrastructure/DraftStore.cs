@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure
                 .FirstOrDefault(sol => sol.Id == id);
         }
 
-        public void ChangeCurrent(string id)
+        public DraftDefinition ChangeCurrent(string id)
         {
             var draft = this.draftRepository.FindDraftById(id);
             if (draft.NotExists())
@@ -83,6 +83,8 @@ namespace Automate.CLI.Infrastructure
             var state = this.localStateRepository.GetLocalState();
             state.SetCurrentDraft(draft.Id);
             this.localStateRepository.SaveLocalState(state);
+
+            return draft;
         }
     }
 }
