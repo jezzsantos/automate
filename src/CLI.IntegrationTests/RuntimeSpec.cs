@@ -510,7 +510,8 @@ namespace CLI.IntegrationTests
             var element1 = this.setup.Pattern.Elements.First();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_PatternConfiguration.FormatTemplate(
+                    OutputMessages.CommandLine_Output_PatternConfiguration.FormatTemplate(pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +
                         $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code){Environment.NewLine}" +
@@ -821,10 +822,12 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
 
+            var pattern = this.setup.Pattern;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration.FormatTemplate(
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration.FormatTemplate(pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
                         $"\t- AProperty2 (attribute) (int){Environment.NewLine}" +

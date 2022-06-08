@@ -818,7 +818,8 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternConfiguration,
+                    OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
+                    pattern.ToolkitVersion.Current,
                     FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
@@ -876,6 +877,8 @@ namespace Automate.CLI.Infrastructure
                     console.WriteOutputLine();
                 }
 
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_TextTemplatingExpressionReference);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested,
                     templateName,
                     test.Template.Id, test.Output);
@@ -903,6 +906,8 @@ namespace Automate.CLI.Infrastructure
                     console.WriteOutputLine();
                 }
 
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_TextTemplatingExpressionReference);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandTested,
                     commandName,
                     test.Command.Id, test.Output);
@@ -1107,7 +1112,8 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutputLine();
                     console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_PatternConfiguration,
+                        OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current,
                         AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
                 }
 
@@ -1133,7 +1139,8 @@ namespace Automate.CLI.Infrastructure
                 var pattern = Runtime.GetCurrentToolkit().Pattern;
 
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration,
+                    OutputMessages.CommandLine_Output_ToolkitConfiguration, pattern.Name, pattern.Id,
+                    pattern.ToolkitVersion.Current,
                     AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
             }
 

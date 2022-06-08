@@ -557,7 +557,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern is configured as:
+        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is configured as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_PatternConfiguration {
@@ -594,7 +594,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit pattern is defined as:
+        ///   Looks up a localized string similar to Templating Expression Language Reference: https://github.com/scriban/scriban/tree/master/doc.
+        /// </summary>
+        internal static string CommandLine_Output_TextTemplatingExpressionReference {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_TextTemplatingExpressionReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolkit pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_ToolkitConfiguration {
