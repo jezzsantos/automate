@@ -547,8 +547,8 @@ namespace Automate.CLI.Infrastructure {
         
         /// <summary>
         ///   Looks up a localized string similar to No Pattern is being edited. You must first run one of these commands:
-        ///`automate pattern create &lt;Name&gt;` to create a new pattern, or
-        ///`automate pattern use &lt;Name&gt;` to switch to this existing pattern.
+        ///`automate create pattern &lt;Name&gt;` to create a new pattern, or
+        ///`automate edit switch &lt;Name&gt;` to switch to an existing pattern.
         /// </summary>
         internal static string CommandLine_Output_NoPatternSelected {
             get {
