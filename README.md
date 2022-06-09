@@ -69,7 +69,7 @@ If this sounds like your situation, then maybe we can help you define (and enfor
 See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on each of the commands below.
 
 1. Install the **automate** tool:
-    * Installers are here: `https://github.com/jezzsantos/automate/releases`
+    * Platform installers are all here: `https://github.com/jezzsantos/automate/releases`
     * Otherwise, if .NET installed: `dotnet tool install --global automate`
 
 2. Navigate to your codebase, and harvest your first pattern from it:
@@ -131,4 +131,4 @@ It can be reinstalled (by its user) to rewrite any new and improved code, using 
 
 At present, we are in the validation stage. Validation, viability, and research work are captured in the `docs` and `discovery` folders.
 
-There is a detailed prototype walk-through available which you can follow: [prototype scenario](discovery/prototypes/cli/Syntax.md) to see how things are done.
+Keen to see an example? There is a demo toolkit with a walk-through available which you can follow: [demo](discovery\demo\Demo Script.md)
