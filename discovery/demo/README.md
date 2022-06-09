@@ -108,15 +108,15 @@ The next thing I'm gonna do is install this tool called **automate.exe**
 > automate.exe is already on Nuget.org as a tool, so it simple to install on any .Net machine.
 
 ```
-dotnet tool install --global automate --version 0.2.3-preview
+dotnet tool install --global automate --version 0.2.2-preview
 ```
 
 Then, I am going to install this new toolkit Mary gave me this morning to use.
 
-> First I must manually copy the `RestAPI_0.24.0.toolkit` file (from this repo) to my desktop and hit his command:
+> First I must manually copy the `RestAPI_0.8.0.toolkit` file (from this repo) to my desktop and hit his command:
 
 ```
-automate install toolkit "%UserProfile%\Desktop\RestAPI_0.24.0.toolkit"
+automate install toolkit "%UserProfile%\Desktop\RestAPI_0.8.0.toolkit"
 ```
 
 OK, now I've installed this command-line tool my tech lead gave me this morning, so let's now see what toolkits I have installed:
@@ -125,7 +125,7 @@ OK, now I've installed this command-line tool my tech lead gave me this morning,
 automate list toolkits
 ```
 
-OK, looks like I have the "**RestAPI**" (v0.24.0) toolkit installed - that's the one I want to use
+OK, looks like I have the "**RestAPI**" toolkit installed - that's the one I want to use
 
 ## The Model
 
