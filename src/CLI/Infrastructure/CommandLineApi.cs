@@ -174,6 +174,20 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplate)),
+                new Command("add-codetemplate-with-command",
+                    "Adds a code template to an element, with a command to render it")
+                {
+                    new Argument("FilePath", "A relative path to the code file, from the current directory"),
+                    new Option("--targetpath", "The full path of the generated file, with filename.", typeof(string),
+                        arity: ArgumentArity.ExactlyOne),
+                    new Option("--isoneoff",
+                        "Only generate the file the first time if it does not already exist",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
+                    new Option("--name", "A friendly name for the code template",
+                        arity: ArgumentArity.ZeroOrOne),
+                    new Option("--aschildof", "The expression of the element/collection to add the code template to",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateWithCommand)),
                 new Command("codetemplate", "Edits a code template in an editor")
                 {
                     new Argument("TemplateName", "The name of the code template"),
@@ -196,11 +210,11 @@ namespace Automate.CLI.Infrastructure
                     new Argument("CodeTemplateName", "The name of the code template"),
                     new Option("--name", "A name for the command", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
+                    new Option("--targetpath", "The full path of the generated file, with filename.", typeof(string),
+                        arity: ArgumentArity.ExactlyOne),
                     new Option("--isoneoff",
                         "Only generate the file the first time if it does not already exist",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne),
-                    new Option("--targetpath", "The full path of the generated file, with filename.", typeof(string),
-                        arity: ArgumentArity.ExactlyOne),
                     new Option("--aschildof", "The expression of the element/collection to add the command to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCodeTemplateCommand)),
@@ -833,11 +847,16 @@ namespace Automate.CLI.Infrastructure
             internal static void HandleAddCodeTemplate(string filepath, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
-                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
+                AddCodeTemplate(filepath, name, asChildOf, outputStructured, console);
+            }
+
+            internal static void HandleAddCodeTemplateWithCommand(string filepath, string name, bool isOneOff,
+                string targetPath, string asChildOf, bool outputStructured, IConsole console)
+            {
+                var template = AddCodeTemplate(filepath, name, asChildOf, outputStructured, console);
+
+                HandleAddCodeTemplateCommand(template.Name, null, isOneOff, targetPath, asChildOf,
+                    outputStructured, console);
             }
 
             internal static void HandleEditCodeTemplate(string templateName, string with, string args, string asChildOf,
@@ -939,6 +958,18 @@ namespace Automate.CLI.Infrastructure
                 var configuration = new PatternConfigurationVisitor(isDetailed);
                 pattern.TraverseDescendants(configuration);
                 return configuration.ToString();
+            }
+
+            private static CodeTemplate AddCodeTemplate(string filepath, string name, string asChildOf,
+                bool outputStructured, IConsole console)
+            {
+                var currentDirectory = Environment.CurrentDirectory;
+                var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
+                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
+
+                return template.Template;
             }
         }
 

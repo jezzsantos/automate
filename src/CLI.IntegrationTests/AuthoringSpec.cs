@@ -519,6 +519,30 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenAddCodeTemplateWithCommand_ThenAddsTemplateAndCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-with-command \"Assets/CodeTemplates/code1.code\" --targetpath ~/afilepath --name ATemplateName");
+
+            var pattern = this.setup.Pattern;
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var codeTemplateLocation =
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                    JsonFileRepository.GetCodeTemplateLocation(pattern.Id, codeTemplate.Id, "code")));
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded.FormatTemplate("ATemplateName",
+                        codeTemplate.Id, pattern.Id, codeTemplate.Metadata.OriginalFilePath, codeTemplateLocation));
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.FormatTemplate("CodeTemplateCommand1",
+                        this.setup.Pattern.Automation.Single().Id, pattern.Id));
+            this.setup.Pattern.CodeTemplates.Should().ContainSingle(x => x.Name == "ATemplateName");
+        }
+
+        [Fact]
         public void WhenEditCodeTemplateWithEditor_ThenEditsTemplate()
         {
             var testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
