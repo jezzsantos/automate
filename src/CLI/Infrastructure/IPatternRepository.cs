@@ -25,6 +25,8 @@ namespace Automate.CLI.Infrastructure
 
         string GetCodeTemplateLocation(PatternDefinition pattern, string codeTemplateId, string extension);
 
+        void DeleteTemplate(PatternDefinition pattern, string codeTemplateId, string extension);
+
         CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId,
             string extension);
     }

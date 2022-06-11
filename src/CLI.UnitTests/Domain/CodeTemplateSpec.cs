@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Automate.CLI.Domain;
 using FluentAssertions;
 using Xunit;
@@ -13,12 +12,7 @@ namespace CLI.UnitTests.Domain
 
         public CodeTemplateSpec()
         {
-            var testDirectory = Path.Combine(Environment.CurrentDirectory, "CodeTemplateSpec");
-            this.template = new CodeTemplate("aname", Path.Combine(testDirectory, "afilepath.txt"), "txt");
-            if (Directory.Exists(testDirectory))
-            {
-                Directory.Delete(testDirectory, true);
-            }
+            this.template = new CodeTemplate("aname", "afilepath.txt", "txt");
         }
 
         [Fact]
@@ -26,8 +20,7 @@ namespace CLI.UnitTests.Domain
         {
             this.template.Name.Should().Be("aname");
             this.template.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-            this.template.Metadata.OriginalFilePath.Should().Be(Path.Combine(Environment.CurrentDirectory,
-                Path.Combine("CodeTemplateSpec", "afilepath.txt")));
+            this.template.Metadata.OriginalFilePath.Should().Be("afilepath.txt");
             this.template.Metadata.OriginalFileExtension.Should().Be("txt");
         }
     }

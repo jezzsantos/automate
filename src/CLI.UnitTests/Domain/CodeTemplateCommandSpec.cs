@@ -55,7 +55,7 @@ namespace CLI.UnitTests.Domain
         public class GivenANormalCommand
         {
             private readonly CodeTemplateCommand command;
-            private readonly Mock<IFileSystemWriter> fileSystemWriter;
+            private readonly Mock<IFileSystemReaderWriter> fileSystem;
             private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
             public GivenANormalCommand()
@@ -65,14 +65,14 @@ namespace CLI.UnitTests.Domain
                     .Returns("c:\\anabsolutepath\\afilename.cs");
                 filePathResolver.Setup(fpr => fpr.GetFilename(It.IsAny<string>()))
                     .Returns("afilename.cs");
-                this.fileSystemWriter = new Mock<IFileSystemWriter>();
+                this.fileSystem = new Mock<IFileSystemReaderWriter>();
                 var draftPathResolver = new Mock<IDraftPathResolver>();
                 draftPathResolver
                     .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns((string _, string expr, DraftItem _) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
-                this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
+                this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystem.Object,
                     draftPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
                     false, "~/afilepath.cs");
             }
@@ -88,7 +88,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(false);
 
                 var result = this.command.Execute(draft, target);
@@ -102,10 +102,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", target));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -118,7 +118,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -133,10 +133,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -151,7 +151,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(false);
                 var draft = new DraftDefinition(toolkit);
 
@@ -168,10 +168,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete("anoriginalpath"));
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete("anoriginalpath"));
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -186,7 +186,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -203,10 +203,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete("anoriginalpath"));
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete("anoriginalpath"));
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -221,7 +221,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(false);
                 var draft = new DraftDefinition(toolkit);
 
@@ -236,10 +236,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -253,7 +253,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -268,10 +268,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
         }
 
@@ -279,7 +279,7 @@ namespace CLI.UnitTests.Domain
         public class GivenAOneOffCommand
         {
             private readonly CodeTemplateCommand command;
-            private readonly Mock<IFileSystemWriter> fileSystemWriter;
+            private readonly Mock<IFileSystemReaderWriter> fileSystem;
             private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
             public GivenAOneOffCommand()
@@ -289,14 +289,14 @@ namespace CLI.UnitTests.Domain
                     .Returns("c:\\anabsolutepath\\afilename.cs");
                 filePathResolver.Setup(fpr => fpr.GetFilename(It.IsAny<string>()))
                     .Returns("afilename.cs");
-                this.fileSystemWriter = new Mock<IFileSystemWriter>();
+                this.fileSystem = new Mock<IFileSystemReaderWriter>();
                 var draftPathResolver = new Mock<IDraftPathResolver>();
                 draftPathResolver
                     .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
-                    .Returns((string description, string expr, DraftItem item) => expr);
+                    .Returns((string _, string expr, DraftItem _) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
 
-                this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystemWriter.Object,
+                this.command = new CodeTemplateCommand(filePathResolver.Object, this.fileSystem.Object,
                     draftPathResolver.Object, this.textTemplateEngine.Object, "acommandname", "acodetemplateid",
                     true, "~/afilepath.cs");
             }
@@ -308,7 +308,7 @@ namespace CLI.UnitTests.Domain
                 var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
                 toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
                     { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -325,9 +325,9 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Verify(
                     tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()),
                     Times.Never);
-                this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -342,7 +342,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -358,9 +358,9 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Verify(
                     tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()),
                     Times.Never);
-                this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Delete("anoriginalpath"));
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete("anoriginalpath"));
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -375,7 +375,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(false);
                 var draft = new DraftDefinition(toolkit);
 
@@ -391,9 +391,9 @@ namespace CLI.UnitTests.Domain
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(
                     tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()), Times.Never);
-                this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move("apath", "c:\\anabsolutepath\\afilename.cs"));
+                this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move("apath", "c:\\anabsolutepath\\afilename.cs"));
             }
 
             [Fact]
@@ -407,7 +407,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(true);
                 var draft = new DraftDefinition(toolkit);
 
@@ -422,9 +422,9 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Verify(
                     tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()),
                     Times.Never);
-                this.fileSystemWriter.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -439,7 +439,7 @@ namespace CLI.UnitTests.Domain
                 this.textTemplateEngine.Setup(tte =>
                         tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns("acontent");
-                this.fileSystemWriter.Setup(fsw => fsw.Exists(It.IsAny<string>()))
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
                     .Returns(false);
                 var draft = new DraftDefinition(toolkit);
 
@@ -454,10 +454,10 @@ namespace CLI.UnitTests.Domain
                     && link.Tag == "afilename.cs"
                     && link.Path == "c:\\anabsolutepath\\afilename.cs");
                 this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystemWriter.Verify(fw => fw.Write(It.Is<string>(content =>
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
                     content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
-                this.fileSystemWriter.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystemWriter.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
         }
     }

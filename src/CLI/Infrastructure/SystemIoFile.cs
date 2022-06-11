@@ -19,8 +19,6 @@ namespace Automate.CLI.Infrastructure
 
         public string Extension => Path.GetExtension(FullPath);
 
-        public DateTime LastModifiedUtc => File.GetLastWriteTimeUtc(FullPath);
-
         public void CopyTo(string destination)
         {
             var directoryName = Path.GetDirectoryName(ExpandVariables(destination)) ?? string.Empty;

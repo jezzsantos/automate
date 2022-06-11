@@ -1,14 +1,10 @@
-﻿using System;
-
-namespace Automate.CLI.Domain
+﻿namespace Automate.CLI.Domain
 {
     internal interface IFile
     {
         string FullPath { get; }
 
         string Extension { get; }
-
-        DateTime LastModifiedUtc { get; }
 
         void CopyTo(string destination);
 

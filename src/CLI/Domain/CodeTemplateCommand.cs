@@ -12,17 +12,17 @@ namespace Automate.CLI.Domain
         private readonly Automation automation;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IFilePathResolver filePathResolver;
-        private readonly IFileSystemWriter fileSystemWriter;
+        private readonly IFileSystemReaderWriter fileSystem;
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
         public CodeTemplateCommand(string name, string codeTemplateId, bool isOneOff, string filePath) : this(
-            new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new DraftPathResolver(),
+            new SystemIoFilePathResolver(), new SystemIoFileSystemReaderWriter(), new DraftPathResolver(),
             new TextTemplatingEngine(), name, codeTemplateId, isOneOff, filePath)
         {
         }
 
         internal CodeTemplateCommand(IFilePathResolver filePathResolver,
-            IFileSystemWriter fileSystemWriter,
+            IFileSystemReaderWriter fileSystem,
             IDraftPathResolver draftPathResolver,
             ITextTemplatingEngine textTemplatingEngine,
             string name, string codeTemplateId, bool isOneOff, string filePath) : this(new Automation(name,
@@ -31,7 +31,7 @@ namespace Automate.CLI.Domain
                 { nameof(CodeTemplateId), codeTemplateId },
                 { nameof(IsOneOff), isOneOff },
                 { nameof(FilePath), filePath }
-            }), filePathResolver, fileSystemWriter, draftPathResolver, textTemplatingEngine)
+            }), filePathResolver, fileSystem, draftPathResolver, textTemplatingEngine)
         {
             codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
             filePath.GuardAgainstNullOrEmpty(nameof(filePath));
@@ -40,26 +40,26 @@ namespace Automate.CLI.Domain
         }
 
         private CodeTemplateCommand(Automation automation) : this(
-            automation, new SystemIoFilePathResolver(), new SystemIoFileSystemWriter(), new DraftPathResolver(),
+            automation, new SystemIoFilePathResolver(), new SystemIoFileSystemReaderWriter(), new DraftPathResolver(),
             new TextTemplatingEngine())
         {
         }
 
         private CodeTemplateCommand(Automation automation,
             IFilePathResolver filePathResolver,
-            IFileSystemWriter fileSystemWriter,
+            IFileSystemReaderWriter fileSystem,
             IDraftPathResolver draftPathResolver,
             ITextTemplatingEngine textTemplatingEngine)
         {
             automation.GuardAgainstNull(nameof(automation));
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
-            fileSystemWriter.GuardAgainstNull(nameof(fileSystemWriter));
+            fileSystem.GuardAgainstNull(nameof(fileSystem));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
 
             this.automation = automation;
             this.filePathResolver = filePathResolver;
-            this.fileSystemWriter = fileSystemWriter;
+            this.fileSystem = fileSystem;
             this.draftPathResolver = draftPathResolver;
             this.textTemplatingEngine = textTemplatingEngine;
         }
@@ -123,7 +123,7 @@ namespace Automate.CLI.Domain
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
                     destinationFilePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
                 : destinationFilePath;
-            var destinationFileExists = this.fileSystemWriter.Exists(destinationFullPath);
+            var destinationFileExists = this.fileSystem.FileExists(destinationFullPath);
             var existingLinkChangedLocation = existingLink.Exists()
                 ? existingLink.Path.NotEqualsIgnoreCase(destinationFullPath)
                 : false;
@@ -159,7 +159,7 @@ namespace Automate.CLI.Domain
                 DomainMessages.CodeTemplateCommand_TemplateContent_Description.Format(codeTemplate.Id), contents,
                 target);
 
-            this.fileSystemWriter.Write(generatedCode, destinationFullPath);
+            this.fileSystem.Write(generatedCode, destinationFullPath);
             log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(destinationFilename,
                 destinationFullPath));
         }
@@ -167,7 +167,7 @@ namespace Automate.CLI.Domain
         private void MoveExistingFile(ArtifactLink existingLink, string destinationFullPath, List<string> log)
         {
             var oldFilePath = existingLink.Path;
-            this.fileSystemWriter.Move(oldFilePath, destinationFullPath);
+            this.fileSystem.Move(oldFilePath, destinationFullPath);
             log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format(oldFilePath, destinationFullPath));
         }
 
@@ -185,13 +185,13 @@ namespace Automate.CLI.Domain
                     {
                         if (destinationFileExists)
                         {
-                            this.fileSystemWriter.Delete(oldFilePath);
+                            this.fileSystem.Delete(oldFilePath);
                             log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format(oldFilePath));
                         }
                     }
                     else
                     {
-                        this.fileSystemWriter.Delete(oldFilePath);
+                        this.fileSystem.Delete(oldFilePath);
                         log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format(oldFilePath));
                     }
                 }

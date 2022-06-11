@@ -125,6 +125,12 @@ namespace Automate.CLI.Infrastructure
             return this.patternRepository.ListPatterns();
         }
 
+        public void DeleteCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate)
+        {
+            this.patternRepository.DeleteTemplate(pattern, codeTemplate.Id,
+                codeTemplate.Metadata.OriginalFileExtension);
+        }
+
         private bool ExistsByName(string name)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));

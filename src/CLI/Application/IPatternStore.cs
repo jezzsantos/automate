@@ -22,5 +22,7 @@ namespace Automate.CLI.Application
         CodeTemplateContent DownloadCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate);
 
         List<PatternDefinition> ListAll();
+
+        void DeleteCodeTemplate(PatternDefinition pattern, CodeTemplate codeTemplate);
     }
 }

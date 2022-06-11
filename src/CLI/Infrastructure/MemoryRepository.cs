@@ -124,6 +124,11 @@ namespace Automate.CLI.Infrastructure
             return InMemoryLocation;
         }
 
+        public void DeleteTemplate(PatternDefinition pattern, string codeTemplateId, string extension)
+        {
+            this.inMemoryCodeTemplates.Remove(codeTemplateId);
+        }
+
         public CodeTemplateContent DownloadPatternCodeTemplate(PatternDefinition pattern, string codeTemplateId,
             string extension)
         {

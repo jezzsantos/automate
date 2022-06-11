@@ -528,8 +528,7 @@ namespace CLI.IntegrationTests
             var pattern = this.setup.Pattern;
             var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             var codeTemplateLocation =
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
-                    JsonFileRepository.GetCodeTemplateLocation(pattern.Id, codeTemplate.Id, "code")));
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
@@ -556,10 +555,8 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} codetemplate \"ATemplateName\" --with \"{testApplicationName}\" --args \"--opens\"");
 
-            var pattern = this.setup.Pattern;
             var codeTemplateLocation =
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
-                    JsonFileRepository.GetCodeTemplateLocation(pattern.Id, codeTemplate.Id, "code")));
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -569,7 +566,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenDeleteCodeTemplate_ThenDeletesTemplate()
+        public void WhenDeleteCodeTemplate_ThenDeletesCodeTemplateAndLocalFile()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -578,12 +575,15 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-codetemplate \"ATemplateName\"");
 
+            var codeTemplateLocation =
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_CodeTemplateDeleted.FormatTemplate(codeTemplate.Name,
                         codeTemplate.Id, this.setup.Pattern.Id));
             this.setup.Pattern.CodeTemplates.Should().BeEmpty();
+            File.Exists(codeTemplateLocation).Should().BeFalse();
         }
 
         [Fact]

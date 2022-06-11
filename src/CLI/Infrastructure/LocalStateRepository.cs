@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Automate.CLI.Domain;
+﻿using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
 
 namespace Automate.CLI.Infrastructure
@@ -8,34 +7,40 @@ namespace Automate.CLI.Infrastructure
     {
         private const string StateFilename = "LocalState.json";
         private readonly string currentDirectory;
+        private readonly IFileSystemReaderWriter fileSystem;
         private readonly IPersistableFactory persistableFactory;
 
         internal LocalStateRepository(string currentDirectory) : this(currentDirectory,
-            new AutomatePersistableFactory())
+            new SystemIoFileSystemReaderWriter(), new AutomatePersistableFactory())
         {
         }
 
-        private LocalStateRepository(string currentDirectory, IPersistableFactory persistableFactory)
+        private LocalStateRepository(string currentDirectory, IFileSystemReaderWriter fileSystem,
+            IPersistableFactory persistableFactory)
         {
             currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
+            fileSystem.GuardAgainstNull(nameof(fileSystem));
             persistableFactory.GuardAgainstNull(nameof(persistableFactory));
             this.currentDirectory = currentDirectory;
+            this.fileSystem = fileSystem;
             this.persistableFactory = persistableFactory;
         }
 
-        public string Location => Path.Combine(this.currentDirectory, InfrastructureConstants.RootPersistencePath);
+        public string Location =>
+            this.fileSystem.MakePath(this.currentDirectory, InfrastructureConstants.RootPersistencePath);
 
         public LocalState GetLocalState()
         {
             var filename = CreateFilenameForState();
-            if (!File.Exists(filename))
+            if (!this.fileSystem.FileExists(filename))
             {
                 var state = new LocalState();
                 WriteState(filename, state);
                 return state;
             }
 
-            return File.ReadAllText(filename).FromJson<LocalState>(this.persistableFactory);
+            return this.fileSystem.ReadAllText(filename)
+                .FromJson<LocalState>(this.persistableFactory);
         }
 
         public void SaveLocalState(LocalState state)
@@ -46,10 +51,10 @@ namespace Automate.CLI.Infrastructure
 
         public void DestroyAll()
         {
-            if (Directory.Exists(Location))
+            if (this.fileSystem.DirectoryExists(Location))
             {
                 var stateFilename = CreateFilenameForState();
-                File.Delete(stateFilename);
+                this.fileSystem.Delete(stateFilename);
             }
         }
 
@@ -57,27 +62,18 @@ namespace Automate.CLI.Infrastructure
         {
             EnsurePathExists(filename);
 
-            using (var file = File.CreateText(filename))
-            {
-                file.Write(state.ToJson(this.persistableFactory));
-            }
+            var contents = state.ToJson(this.persistableFactory);
+            this.fileSystem.Write(contents, filename);
         }
 
-        private static string CreateFilenameForState()
+        private string CreateFilenameForState()
         {
-            return Path.Combine(InfrastructureConstants.RootPersistencePath, StateFilename);
+            return this.fileSystem.MakePath(InfrastructureConstants.RootPersistencePath, StateFilename);
         }
 
-        private static void EnsurePathExists(string filename)
+        private void EnsurePathExists(string filename)
         {
-            var fullPath = Directory.GetParent(filename)?.FullName ?? string.Empty;
-            if (fullPath.HasValue())
-            {
-                if (!Directory.Exists(fullPath))
-                {
-                    Directory.CreateDirectory(fullPath);
-                }
-            }
+            this.fileSystem.EnsureFileDirectoryExists(filename);
         }
     }
 }

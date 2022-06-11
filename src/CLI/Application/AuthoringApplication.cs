@@ -242,6 +242,8 @@ namespace Automate.CLI.Application
             var template = target.DeleteCodeTemplate(templateName, true);
             this.store.Save(pattern);
 
+            this.store.DeleteCodeTemplate(pattern, template);
+
             return (target, template);
         }
 
