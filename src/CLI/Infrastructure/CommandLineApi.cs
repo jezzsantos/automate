@@ -273,6 +273,8 @@ namespace Automate.CLI.Infrastructure
                     new Option("--name", "A name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the launch point to",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--from", "The expression of the element/collection to add commands from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.HandleAddCommandLaunchPoint)),
                 new Command("update-command-launchpoint", "Updates an existing launch point")
@@ -688,12 +690,13 @@ namespace Automate.CLI.Infrastructure
                     command.Name, command.Id, parent.Id);
             }
 
-            internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string asChildOf,
+            internal static void HandleAddCommandLaunchPoint(string commandIdentifiers, string name, string from,
+                string asChildOf,
                 bool outputStructured, IConsole console)
             {
                 var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var (parent, launchPoint) = Authoring.AddCommandLaunchPoint(name, cmdIds, asChildOf);
+                var (parent, launchPoint) = Authoring.AddCommandLaunchPoint(name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
                     launchPoint.Name, launchPoint.Id, parent.Id,
                     launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);

@@ -345,14 +345,17 @@ namespace Automate.CLI.Application
         }
 
         public (IPatternElement Parent, Automation LaunchPoint) AddCommandLaunchPoint(string name,
-            List<string> commandIds, string parentExpression)
+            List<string> commandIds, string sourceExpression, string parentExpression)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
+            var source = sourceExpression.HasValue()
+                ? ResolveTargetElement(pattern, sourceExpression)
+                : target;
 
-            var launchPoint = target.AddCommandLaunchPoint(name, commandIds);
+            var launchPoint = target.AddCommandLaunchPoint(name, commandIds, source);
             this.store.Save(pattern);
 
             return (target, launchPoint);
@@ -367,7 +370,9 @@ namespace Automate.CLI.Application
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
-            var source = ResolveTargetElement(pattern, sourceExpression);
+            var source = sourceExpression.HasValue()
+                ? ResolveTargetElement(pattern, sourceExpression)
+                : target; 
 
             var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
             this.store.Save(pattern);

@@ -460,7 +460,8 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
-            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            var launchPoint =
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCodeTemplateCommand(command.Id, false);
 
@@ -476,7 +477,7 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCodeTemplateCommand(command.Id, true);
 
@@ -494,7 +495,7 @@ namespace CLI.UnitTests.Domain
             var command1 = this.element.AddCodeTemplateCommand("acommandname1", codeTemplate.Name, false, "afilepath");
             var command2 = this.element.AddCodeTemplateCommand("acommandname2", codeTemplate.Name, false, "afilepath");
             var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { command1.Id, command2.Id });
+                new List<string> { command1.Id, command2.Id }, this.element);
 
             this.element.DeleteCodeTemplateCommand(command1.Id, true);
 
@@ -582,7 +583,8 @@ namespace CLI.UnitTests.Domain
         public void WhenDeleteCliCommandAndNotIncludeReferencingLaunchPoints_ThenDeletesCommandOnly()
         {
             var command = this.element.AddCliCommand("acommandname", "anapplicationname", null);
-            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            var launchPoint =
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCliCommand(command.Id, false);
 
@@ -595,7 +597,7 @@ namespace CLI.UnitTests.Domain
             WhenDeleteCliCommandAndIncludeAutomationAndHasReferencingLaunchPoint_ThenDeletesCommandAndLaunchPoint()
         {
             var command = this.element.AddCliCommand("acommandname", "anapplicationname", null);
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCliCommand(command.Id, true);
 
@@ -610,7 +612,7 @@ namespace CLI.UnitTests.Domain
             var command1 = this.element.AddCliCommand("acommandname1", "anapplicationname", null);
             var command2 = this.element.AddCliCommand("acommandname2", "anapplicationname", null);
             var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { command1.Id, command2.Id });
+                new List<string> { command1.Id, command2.Id }, this.element);
 
             this.element.DeleteCliCommand(command1.Id, true);
 
@@ -628,10 +630,11 @@ namespace CLI.UnitTests.Domain
         {
             this.element.AddCodeTemplate("atemplatename", "afullpath", "anextension");
             var command = this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element
-                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }))
+                .Invoking(x =>
+                    x.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_AutomationByNameExists.Format("alaunchpointname"));
         }
@@ -640,7 +643,7 @@ namespace CLI.UnitTests.Domain
         public void WhenAddCommandLaunchPointAndNoCommands_ThenThrows()
         {
             this.element
-                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string>()))
+                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname", new List<string>(), this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.PatternElement_NoCommandIds);
         }
@@ -650,7 +653,7 @@ namespace CLI.UnitTests.Domain
         {
             this.element
                 .Invoking(x =>
-                    x.AddCommandLaunchPoint(null, new List<string> { "acmdid" }))
+                    x.AddCommandLaunchPoint(null, new List<string> { "acmdid" }, this.element))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternElement_CommandIdNotFound.Format("acmdid"));
@@ -664,7 +667,8 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
             var result =
-                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id });
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id, command2.Id },
+                    this.pattern);
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -679,11 +683,21 @@ namespace CLI.UnitTests.Domain
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
             var result = this.pattern.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { PatternElement.LaunchPointSelectionWildcard });
+                new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
             this.pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenAddCommandLaunchPointToPatternWithWildcardAndNoAutomation_ThenThrows()
+        {
+            this.pattern
+                .Invoking(x => x.AddCommandLaunchPoint("alaunchpointname",
+                    new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.PatternElement_NoCommandsToLaunch);
         }
 
         [Fact]
@@ -694,7 +708,7 @@ namespace CLI.UnitTests.Domain
             var command2 = this.element.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
 
             var result = this.element.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { PatternElement.LaunchPointSelectionWildcard });
+                new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.element);
 
             result.Name.Should().Be("alaunchpointname");
             result.Metadata[nameof(CommandLaunchPoint.CommandIds)].Should().Be($"{command1.Id};{command2.Id}");
@@ -707,7 +721,7 @@ namespace CLI.UnitTests.Domain
             this.element.AddCodeTemplate("atemplatename", "afullpath", "anextension");
             var command = this.element.AddCodeTemplateCommand("acommandname", "atemplatename", false, "~/apath");
 
-            var result = this.element.AddCommandLaunchPoint(null, new List<string> { command.Id });
+            var result = this.element.AddCommandLaunchPoint(null, new List<string> { command.Id }, this.element);
 
             result.Name.Should().Be("CommandLaunchPoint2");
             result.Should().Be(this.element.Automation[1]);
@@ -757,7 +771,7 @@ namespace CLI.UnitTests.Domain
             this.pattern.AddCodeTemplate("atemplatename", "afullpath", "anextension");
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.pattern);
 
             var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname",
                 new List<string> { PatternElement.LaunchPointSelectionWildcard }, this.pattern);
@@ -775,7 +789,7 @@ namespace CLI.UnitTests.Domain
             this.pattern.AddCodeTemplate("atemplatename", "afullpath", "anextension");
             var command1 = this.pattern.AddCodeTemplateCommand("acommandname1", "atemplatename", false, "~/apath");
             var command2 = this.pattern.AddCodeTemplateCommand("acommandname2", "atemplatename", false, "~/apath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Id }, this.pattern);
 
             var result = this.element.UpdateCommandLaunchPoint("alaunchpointname", "anewname",
                 new List<string> { command2.Id }, this.element);
@@ -844,7 +858,7 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCodeTemplate(codeTemplate.Name, true);
 
@@ -865,7 +879,7 @@ namespace CLI.UnitTests.Domain
             var command2 = this.element.AddCodeTemplateCommand("acommandname2", codeTemplate1.Name, false, "afilepath");
             var command3 = this.element.AddCodeTemplateCommand("acommandname3", codeTemplate2.Name, false, "afilepath");
             var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { command1.Id, command2.Id, command3.Id });
+                new List<string> { command1.Id, command2.Id, command3.Id }, this.element);
 
             this.element.DeleteCodeTemplate(codeTemplate1.Name, true);
 
@@ -896,7 +910,8 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
-            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            var launchPoint =
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteCommandLaunchPoint(launchPoint.Id);
 
@@ -922,7 +937,7 @@ namespace CLI.UnitTests.Domain
             var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteAutomation(command.Name);
 
@@ -935,7 +950,7 @@ namespace CLI.UnitTests.Domain
         public void WhenDeleteAutomationForCliCommand_ThenDeletesCommand()
         {
             var command = this.element.AddCliCommand("acommandname", "anapp", null);
-            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteAutomation(command.Name);
 
@@ -947,7 +962,8 @@ namespace CLI.UnitTests.Domain
         public void WhenDeleteAutomationForLaunchPoint_ThenDeletesLaunchPoint()
         {
             var command = this.element.AddCliCommand("acommandname", "anapp", null);
-            var launchPoint = this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id });
+            var launchPoint =
+                this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
 
             this.element.DeleteAutomation(launchPoint.Name);
 

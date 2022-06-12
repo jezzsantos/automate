@@ -646,6 +646,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There are no commands on this element to add to the launch point.
+        /// </summary>
+        internal static string PatternElement_NoCommandsToLaunch {
+            get {
+                return ResourceManager.GetString("PatternElement_NoCommandsToLaunch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid pattern expression.
         /// </summary>
         internal static string PatternPathResolver_InvalidExpression {

@@ -108,6 +108,9 @@
     <data name="PatternElement_NoCommandIds" xml:space="preserve">
         <value>No commands were added to the launch point</value>
     </data>
+    <data name="PatternElement_NoCommandsToLaunch" xml:space="preserve">
+        <value>There are no commands on this element to add to the launch point</value>
+    </data>
     <data name="PatternElement_AutomationNotExistsByName" xml:space="preserve">
         <value>A '{0} automation with name: '{1}' does not exist</value>
     </data>

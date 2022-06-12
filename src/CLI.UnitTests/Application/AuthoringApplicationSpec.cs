@@ -612,7 +612,7 @@ namespace CLI.UnitTests.Application
         public void WhenAddCommandLaunchPointAndCurrentPatternNotExists_ThenThrows()
         {
             this.application
-                .Invoking(x => x.AddCommandLaunchPoint(null, new List<string> { "acmdid" }, null))
+                .Invoking(x => x.AddCommandLaunchPoint(null, new List<string> { "acmdid" }, null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -627,7 +627,7 @@ namespace CLI.UnitTests.Application
 
             this.application
                 .Invoking(x =>
-                    x.AddCommandLaunchPoint(null, new List<string> { "acmdid1" }, "anunknownparent"))
+                    x.AddCommandLaunchPoint(null, new List<string> { "acmdid1" }, null, "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.AuthoringApplication_PathExpressionNotFound.Format("anunknownparent"));
@@ -645,7 +645,7 @@ namespace CLI.UnitTests.Application
 
             var result =
                 this.application.AddCommandLaunchPoint("alaunchpointname",
-                    new List<string> { command1.Command.Id, command2.Command.Id }, null);
+                    new List<string> { command1.Command.Id, command2.Command.Id }, null, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("alaunchpointname");
@@ -668,7 +668,7 @@ namespace CLI.UnitTests.Application
 
             var result =
                 this.application.AddCommandLaunchPoint("alaunchpointname",
-                    new List<string> { command.Command.Id }, "{apatternname.anelementname}");
+                    new List<string> { command.Command.Id }, null, "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
             result.LaunchPoint.Name.Should().Be("alaunchpointname");
@@ -713,7 +713,7 @@ namespace CLI.UnitTests.Application
                 this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath", null);
             var launchPoint =
                 this.application.AddCommandLaunchPoint("alaunchpointname", new List<string> { command1.Command.Id },
-                    null);
+                    null, null);
 
             var result =
                 this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",
@@ -741,7 +741,7 @@ namespace CLI.UnitTests.Application
             var command2 = this.application.AddCodeTemplateCommand("atemplatename", "acommandname2", false, "~/apath",
                 "{apatternname.anelementname}");
             var launchPoint = this.application.AddCommandLaunchPoint("alaunchpointname",
-                new List<string> { command1.Command.Id }, "{apatternname.anelementname}");
+                new List<string> { command1.Command.Id }, null, "{apatternname.anelementname}");
 
             var result =
                 this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",

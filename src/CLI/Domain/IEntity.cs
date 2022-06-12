@@ -66,7 +66,7 @@ namespace Automate.CLI.Domain
 
         Automation DeleteAutomation(string name);
 
-        Automation AddCommandLaunchPoint(string name, List<string> commandIds);
+        Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement sourceElement);
 
         Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
             IPatternElement sourceElement);

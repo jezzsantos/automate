@@ -603,9 +603,10 @@ namespace Automate.CLI.Domain
             }
         }
 
-        public Automation AddCommandLaunchPoint(string name, List<string> commandIds)
+        public Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement sourceElement)
         {
             commandIds.GuardAgainstNull(nameof(commandIds));
+            sourceElement.GuardAgainstNull(nameof(sourceElement));
 
             if (commandIds.HasNone())
             {
@@ -615,7 +616,12 @@ namespace Automate.CLI.Domain
                 && commandIds.First() == LaunchPointSelectionWildcard)
             {
                 commandIds.Clear();
-                commandIds.AddRange(GetAllLaunchableAutomation(Automation));
+                var launchables = GetAllLaunchableAutomation(sourceElement.Automation);
+                if (launchables.HasNone())
+                {
+                    throw new AutomateException(ExceptionMessages.PatternElement_NoCommandsToLaunch);
+                }
+                commandIds.AddRange(launchables);
             }
             else
             {
@@ -647,6 +653,7 @@ namespace Automate.CLI.Domain
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
             commandIds.GuardAgainstNull(nameof(commandIds));
+            sourceElement.GuardAgainstNull(nameof(sourceElement));
 
             if (commandIds.HasNone())
             {
@@ -656,7 +663,12 @@ namespace Automate.CLI.Domain
                 && commandIds.First() == LaunchPointSelectionWildcard)
             {
                 commandIds.Clear();
-                commandIds.AddRange(GetAllLaunchableAutomation(sourceElement.Automation));
+                var launchables = GetAllLaunchableAutomation(sourceElement.Automation);
+                if (launchables.HasNone())
+                {
+                    throw new AutomateException(ExceptionMessages.PatternElement_NoCommandsToLaunch);
+                }
+                commandIds.AddRange(launchables);
             }
             else
             {
