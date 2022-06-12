@@ -17,7 +17,7 @@
         <Company>$(Authors)</Company>
         <Product>$(Title)</Product>
         <Copyright>Copyright 2022</Copyright>
-        <VersionPrefix>0.2.2</VersionPrefix>
+        <VersionPrefix>0.2.3</VersionPrefix>
         <VersionSuffix>-preview</VersionSuffix>
         <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
         <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
