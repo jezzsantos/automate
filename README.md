@@ -1,5 +1,7 @@
 [![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
 
+![](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
+
       ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
       ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
