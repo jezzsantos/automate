@@ -10,7 +10,7 @@ namespace Automate.CLI.Application
 {
     internal class AuthoringApplication
     {
-        private readonly IApplicationExecutor applictionExecutor;
+        private readonly IApplicationExecutor applicationExecutor;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
         private readonly IPatternPathResolver patternResolver;
@@ -46,7 +46,7 @@ namespace Automate.CLI.Application
             this.patternResolver = patternResolver;
             this.packager = packager;
             this.textTemplatingEngine = textTemplatingEngine;
-            this.applictionExecutor = applicationExecutor;
+            this.applicationExecutor = applicationExecutor;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -176,7 +176,7 @@ namespace Automate.CLI.Application
             return (target, attribute);
         }
 
-        public (IPatternElement Parent, UploadedCodeTemplate Template) AttachCodeTemplate(string rootPath,
+        public (IPatternElement Parent, UploadedCodeTemplate Template) AddCodeTemplate(string rootPath,
             string relativeFilePath, string name,
             string parentExpression)
         {
@@ -205,6 +205,41 @@ namespace Automate.CLI.Application
             return (target, new UploadedCodeTemplate(codeTemplate, location));
         }
 
+        public (IPatternElement Parent, UploadedCodeTemplate Template, Automation Command) AddCodeTemplateWithCommand(
+            string rootPath, string relativeFilePath, string name, bool isOneOff, string targetPath,
+            string parentExpression)
+        {
+            rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
+            relativeFilePath.GuardAgainstNullOrEmpty(nameof(relativeFilePath));
+            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
+
+            var pattern = EnsureCurrentPatternExists();
+
+            var fullPath = this.fileResolver.CreatePath(rootPath, relativeFilePath);
+            if (!this.fileResolver.ExistsAtPath(fullPath))
+            {
+                throw new AutomateException(
+                    ExceptionMessages.AuthoringApplication_CodeTemplate_NotFoundAtLocation.Format(rootPath,
+                        relativeFilePath));
+            }
+            var extension = this.fileResolver.GetFileExtension(fullPath);
+
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var codeTemplate = target.AddCodeTemplate(name, fullPath, extension);
+            this.store.Save(pattern);
+
+            var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
+            var location = this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
+
+            var count = target.Automation.Count + 1;
+            var commandName = $"{name}Command{count}";
+            var command = target.AddCodeTemplateCommand(commandName, codeTemplate.Name, isOneOff, targetPath);
+            this.store.Save(pattern);
+
+            return (target, new UploadedCodeTemplate(codeTemplate, location), command);
+        }
+
         public (IPatternElement Parent, CodeTemplate Template, string Location) EditCodeTemplate(string templateName,
             string editorPath, string arguments,
             string parentExpression)
@@ -221,7 +256,7 @@ namespace Automate.CLI.Application
                 ? $"{arguments} {location}"
                 : location;
 
-            var result = this.applictionExecutor.RunApplicationProcess(false, editorPath, args);
+            var result = this.applicationExecutor.RunApplicationProcess(false, editorPath, args);
             if (!result.IsSuccess)
             {
                 throw new AutomateException(
@@ -256,18 +291,17 @@ namespace Automate.CLI.Application
         }
 
         public (IPatternElement Parent, Automation Command) AddCodeTemplateCommand(string templateName, string name,
-            bool isOneOff,
-            string filePath, string parentExpression)
+            bool isOneOff, string targetPath, string parentExpression)
         {
             templateName.GuardAgainstNullOrEmpty(nameof(templateName));
-            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
+            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
             try
             {
-                var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, filePath);
+                var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, targetPath);
                 this.store.Save(pattern);
 
                 return (target, command);
@@ -372,7 +406,7 @@ namespace Automate.CLI.Application
             var target = ResolveTargetElement(pattern, parentExpression);
             var source = sourceExpression.HasValue()
                 ? ResolveTargetElement(pattern, sourceExpression)
-                : target; 
+                : target;
 
             var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
             this.store.Save(pattern);

@@ -776,16 +776,25 @@ namespace Automate.CLI.Infrastructure
             internal static void AddCodeTemplate(string filepath, string name, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                AddCodeTemplateInternal(filepath, name, asChildOf, outputStructured, console);
+                var currentDirectory = Environment.CurrentDirectory;
+                var (parent, template) = Authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
+                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
             }
 
             internal static void AddCodeTemplateWithCommand(string filepath, string name, bool isOneOff,
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
-                var template = AddCodeTemplateInternal(filepath, name, asChildOf, outputStructured, console);
-
-                AddCodeTemplateCommand(template.Name, null, isOneOff, targetPath, asChildOf,
-                    outputStructured, console);
+                var currentDirectory = Environment.CurrentDirectory;
+                var (parent, template, command) = Authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
+                    name, isOneOff, targetPath, asChildOf);
+                console.WriteOutput(outputStructured,
+                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
+                    template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
+                    template.Location);
+                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
+                    command.Name, command.Id, parent.Id);
             }
 
             internal static void EditCodeTemplate(string templateName, string with, string args, string asChildOf,
@@ -961,18 +970,6 @@ namespace Automate.CLI.Infrastructure
                 var configuration = new PatternConfigurationVisitor(isDetailed);
                 pattern.TraverseDescendants(configuration);
                 return configuration.ToString();
-            }
-
-            private static CodeTemplate AddCodeTemplateInternal(string filepath, string name, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template) = Authoring.AttachCodeTemplate(currentDirectory, filepath, name, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
-                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
-
-                return template.Template;
             }
         }
 

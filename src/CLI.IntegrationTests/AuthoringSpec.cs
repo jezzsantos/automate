@@ -536,7 +536,7 @@ namespace CLI.IntegrationTests
                         codeTemplate.Id, pattern.Id, codeTemplate.Metadata.OriginalFilePath, codeTemplateLocation));
             this.setup.Should()
                 .DisplayMessage(
-                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.FormatTemplate("CodeTemplateCommand1",
+                    OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.FormatTemplate("ATemplateNameCommand1",
                         this.setup.Pattern.Automation.Single().Id, pattern.Id));
             this.setup.Pattern.CodeTemplates.Should().ContainSingle(x => x.Name == "ATemplateName");
         }
