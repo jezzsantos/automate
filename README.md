@@ -1,6 +1,6 @@
 [![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
-
-![](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
+___[![Discord](https://img.shields.io/badge/automate-%237289DA.svg?style=plastic&logo=discord&logoColor=white)](https://discord.gg/uN8vxaGxRT)
+___![](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
 
       ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
@@ -32,12 +32,12 @@ Automate is a tool for Tech Leads, Lead Developers or Tech Consultants to give t
 
 Automate may look like other kinds of templating or scaffolding-type developer tools, but there are some important differences (under the covers) that make a big difference in the long run:
 
-1. The toolkits that you build with automate are NOT defined by, nor controlled by, the big vendors of the other software tools you are using (i.e.  Microsoft, IBM, JetBrains, etc). Instead, you and your team get to define them. This means they are more specific to the way you write code, and how you want to do things. (*break away from silly sample patterns*).
+1. The toolkits that you build with automate are NOT defined by, nor controlled by, the big vendors of the other software tools you are using (i.e. Microsoft, IBM, JetBrains, etc). Instead, you and your team get to define them. This means they are more specific to the way you write code, and how you want to do things. (*break away from silly sample patterns*).
 2. The toolkits that you build with automate will adapt and evolve as the code in your codebase changes and evolves. (*you have full control*)
 3. Your toolkits are stored inside your codebase, and source controlled along with your codebase. (*everyone on the codebase gets to use them*).
-4. Your toolkits are meant to be used throughout the lifecycle of your codebase, not just used once at project start-up. 
-5. Your toolkits can chain together ANY developer tooling to help you get your job done better. Not just code generation. 
-6. Your toolkits can be used with ANY programming language, on any platform, doing any kind of software development. 
+4. Your toolkits are meant to be used throughout the lifecycle of your codebase, not just used once at project start-up.
+5. Your toolkits can chain together ANY developer tooling to help you get your job done better. Not just code generation.
+6. Your toolkits can be used with ANY programming language, on any platform, doing any kind of software development.
 
 ## How does it work?
 
@@ -95,8 +95,8 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
     * `automate create pattern "MyPattern1"`
 
-    > For this example, we are going to assume that you have the following files and folders in the current directory (where you are running this tool). You can adjust the commands below to suit the files of any codebase.
-    > ```
+   > For this example, we are going to assume that you have the following files and folders in the current directory (where you are running this tool). You can adjust the commands below to suit the files of any codebase.
+   > ```
     > ¡
     > ├ 📂Controllers
     > │ └ 📜BookingController.cs
@@ -121,7 +121,7 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
 6. Generate the toolkit for this pattern to share with others on your team:
 
-   * `automate build toolkit`
+    * `automate build toolkit`
 
    > This will build, version a self-contained toolkit file. It will export it to the desktop on your machine, and provide you with the command to install it into this codebase.
 
@@ -151,9 +151,9 @@ Now, that person (or you), can:
 
 5. Now run the toolkit:
 
-    * `automate execute command "Generate"` 
+    * `automate execute command "Generate"`
 
-    This command will generate the code from the code template into the destination folder (`--targetpath`), using the value of the `Name` property which you configured as `Banana`
+   This command will generate the code from the code template into the destination folder (`--targetpath`), using the value of the `Name` property which you configured as `Banana`
 
 If you now open that generated file, you will also see the value of `Banana` in the contents of the file.
 
