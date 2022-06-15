@@ -25,10 +25,10 @@
         </value>
     </resheader>
     <data name="CodeTemplateCommand_Log_GeneratedFile" xml:space="preserve">
-        <value>Generated file: '{0}' to: '{1}'</value>
+        <value>Generated new file: '{0}' (with template `{1}`) to: '{2}'</value>
     </data>
     <data name="CodeTemplateCommand_Log_UpdatedLink" xml:space="preserve">
-        <value>Updated link to file: '{0}' at: '{1}'</value>
+        <value>Tracking generated file: '{0}' at: '{1}'</value>
     </data>
     <data name="CodeTemplateCommand_Log_Warning_Deleted" xml:space="preserve">
         <value>Previously generated file: '{0}' has changed location or name, and was deleted</value>

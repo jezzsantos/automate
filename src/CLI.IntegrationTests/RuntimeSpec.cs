@@ -18,11 +18,10 @@ namespace CLI.IntegrationTests
 
         public RuntimeSpec(CliTestSetup setup)
         {
-            this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
-                "../../../../../tools/TestApp/TestApp.exe"));
+            this.testApplicationName = GetFilePathInOutput("../../../../../tools/TestApp/TestApp.exe");
             this.setup = setup;
             this.setup.ResetRepository();
-            DeleteCodeFolder();
+            DeleteOutputFolders();
         }
 
         [Fact]
@@ -80,7 +79,7 @@ namespace CLI.IntegrationTests
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
 
-            var locationV2 = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
+            var locationV2 = GetFilePathOfExportedToolkit("APattern_0.2.0.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {locationV2}");
 
             this.setup.Should().DisplayNoError();
@@ -92,8 +91,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkitWithMissingRuntimeVersion_ThenDisplaysError()
         {
-            var location = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
-                "Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit"));
+            var location = GetFilePathInOutput("Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
@@ -106,8 +104,7 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenInstallToolkitWithOlderIncompatibleRuntimeVersion_ThenDisplaysError()
         {
-            var location = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
-                "Assets/Toolkits/OlderRuntimeVersion.toolkit"));
+            var location = GetFilePathInOutput("Assets/Toolkits/OlderRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
@@ -205,26 +202,6 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_InstalledDraftsListed.FormatTemplate(
                         $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
-        }
-
-        [Fact]
-        public void WhenConfigureDraftAndToolkitUpgraded_ThenDisplaysError()
-        {
-            CreateDraftFromBuiltToolkit();
-
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
-            BuildReversionAndInstallToolkit();
-
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue2\"");
-
-            var draft = this.setup.Draft;
-            this.setup.Should()
-                .DisplayError(
-                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
-                        "0.1.0", "0.2.0"));
         }
 
         [Fact]
@@ -503,10 +480,8 @@ namespace CLI.IntegrationTests
                         }
                     }.ToJson<dynamic>()));
             var pattern = this.setup.Pattern;
-            var codeTemplatePath1 =
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code1.code"));
-            var codeTemplatePath2 =
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Assets/CodeTemplates/code2.code"));
+            var codeTemplatePath1 = GetFilePathInOutput("Assets/CodeTemplates/code1.code");
+            var codeTemplatePath2 = GetFilePathInOutput("Assets/CodeTemplates/code2.code");
             var element1 = this.setup.Pattern.Elements.First();
             this.setup.Should()
                 .DisplayMessage(
@@ -613,7 +588,6 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenExecuteLaunchPointAndFails_ThenDisplaysResults()
         {
-            var testDirectory = Environment.CurrentDirectory;
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
@@ -623,12 +597,14 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2");
 
-            var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
+            var path = GetFilePathInOutput(@"code/Bnamingtest.cs");
             var commandId = this.setup.Pattern.Automation[2].Id;
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionFailed.FormatTemplate("ALaunchPoint2",
-                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs", path) +
+                    "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs",
+                        codeTemplate.Id, path) +
                     $"{Environment.NewLine}" +
                     "* " + DomainMessages.CommandLaunchPoint_CommandIdFailedExecution.Format(commandId,
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Format(
@@ -642,7 +618,6 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenExecuteLaunchPointOnDraft_ThenDisplaysSuccess()
         {
-            var testDirectory = Environment.CurrentDirectory;
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
@@ -653,12 +628,14 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
             var artifactLink = this.setup.Draft.Model.ArtifactLinks.First().Path;
-            var path = Path.Combine(testDirectory, @"code\Bnamingtest.cs");
+            var path = GetFilePathInOutput(@"code/Bnamingtest.cs");
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate(
                     "ALaunchPoint1",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("Bnamingtest.cs",
+                        codeTemplate.Id,
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
@@ -668,7 +645,6 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenExecuteLaunchPointOnElement_ThenDisplaysSuccess()
         {
-            var testDirectory = Environment.CurrentDirectory;
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
@@ -679,12 +655,14 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint3 --on {{AnElement1}}");
 
             var artifactLink = this.setup.Draft.Model.Properties["AnElement1"].ArtifactLinks.First().Path;
-            var path = Path.Combine(testDirectory, @"code\parentsubstitutiontest.cs");
+            var path = GetFilePathInOutput(@"code/parentsubstitutiontest.cs");
+            var codeTemplate = this.setup.Pattern.Elements.First().CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate(
                     "ALaunchPoint3",
                     "* " + DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("parentsubstitutiontest.cs",
+                        codeTemplate.Id,
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
@@ -711,108 +689,6 @@ namespace CLI.IntegrationTests
                     $"* {MigrationChangeType.Abort}: " +
                     MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion.FormatTemplate(draft.PatternName,
                         draft.Toolkit.Version) + $"{Environment.NewLine}"));
-        }
-
-        [Fact]
-        public void WhenUpgradeDraftAndToolkitUpgradedWithChanges_ThenDisplaysSuccess()
-        {
-            CreateDraftFromBuiltToolkit();
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
-
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
-            BuildReversionAndInstallToolkit();
-
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
-
-            var draft = this.setup.Draft;
-            this.setup.Should().DisplayNoError();
-            this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
-                    draft.Id, draft.PatternName, "0.1.0", "0.2.0",
-                    $"* {MigrationChangeType.NonBreaking}: " +
-                    MigrationMessages.DraftItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
-        }
-
-        [Fact]
-        public void WhenUpgradeDraftAndToolkitNotAutoUpgradeable_ThenDisplaysError()
-        {
-            CreateDraftFromBuiltToolkit();
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
-
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
-            BuildReversionAndInstallToolkit();
-
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
-
-            var draft = this.setup.Draft;
-            const string newVersion = "1.0.0";
-            this.setup.Should()
-                .DisplayError(OutputMessages.CommandLine_Output_DraftUpgradeFailed.FormatTemplate(draft.Name,
-                    draft.Id, draft.PatternName, "0.1.0", newVersion,
-                    $"* {MigrationChangeType.Abort}: " +
-                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(
-                        draft.PatternName, newVersion) + $"{Environment.NewLine}"));
-        }
-
-        [Fact]
-        public void WhenUpgradeDraftAndToolkitNotAutoUpgradeableAndForced_ThenDisplaysResults()
-        {
-            CreateDraftFromBuiltToolkit();
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
-
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} delete-attribute \"AProperty1\"");
-            BuildReversionAndInstallToolkit();
-
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft --force");
-
-            var draft = this.setup.Draft;
-            const string newVersion = "1.0.0";
-            this.setup.Should().DisplayNoError();
-            this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
-                    draft.Id, draft.PatternName, "0.1.0", newVersion,
-                    $"* {MigrationChangeType.Breaking}: " +
-                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced.FormatTemplate(
-                        draft.PatternName, newVersion) + $"{Environment.NewLine}"));
-        }
-
-        [Fact]
-        public void WhenUpgradeDraftWithNonBreakingChanges_ThenDisplaysResults()
-        {
-            CreateDraftFromBuiltToolkit();
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
-
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate3");
-            BuildReversionAndInstallToolkit();
-
-            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft");
-
-            var draft = this.setup.Draft;
-            var codeTemplate = this.setup.Pattern.CodeTemplates.Last();
-            this.setup.Should().DisplayNoError();
-            this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
-                    draft.Id, draft.PatternName, "0.1.0", "0.2.0",
-                    $"* {MigrationChangeType.NonBreaking}: " +
-                    MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name,
-                        codeTemplate.Id) + $"{Environment.NewLine}"));
         }
 
         [Fact]
@@ -881,9 +757,19 @@ namespace CLI.IntegrationTests
                         this.setup.Pattern.Id));
         }
 
-        private static void DeleteCodeFolder()
+        private static string GetFilePathInOutput(string filename)
         {
-            var directory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "code"));
+            return Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, filename));
+        }
+
+        private static string GetFilePathOfExportedToolkit(string filename)
+        {
+            return Path.GetFullPath(Path.Combine(InfrastructureConstants.GetExportDirectory(), filename));
+        }
+
+        private static void DeleteOutputFolders()
+        {
+            var directory = new DirectoryInfo(GetFilePathInOutput("code"));
             if (directory.Exists)
             {
                 directory.Delete(true);
@@ -947,17 +833,16 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
 
-            return BuildReversionAndInstallToolkit();
+            return BuildAndInstallToolkit();
         }
 
-        private string BuildReversionAndInstallToolkit(
+        private string BuildAndInstallToolkit(
             string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;
 
-            var location = Path.Combine(InfrastructureConstants.GetExportDirectory(),
-                $"APattern_{latestVersion}.toolkit");
+            var location = GetFilePathOfExportedToolkit($"APattern_{latestVersion}.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();

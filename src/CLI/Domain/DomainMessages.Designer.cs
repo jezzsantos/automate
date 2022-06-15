@@ -88,7 +88,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generated file: &apos;{0}&apos; to: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Generated new file: &apos;{0}&apos; (with template `{1}`) to: &apos;{2}&apos;.
         /// </summary>
         internal static string CodeTemplateCommand_Log_GeneratedFile {
             get {
@@ -97,7 +97,7 @@ namespace Automate.CLI.Domain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated link to file: &apos;{0}&apos; at: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Tracking generated file: &apos;{0}&apos; at: &apos;{1}&apos;.
         /// </summary>
         internal static string CodeTemplateCommand_Log_UpdatedLink {
             get {

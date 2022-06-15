@@ -160,7 +160,7 @@ namespace Automate.CLI.Domain
                 target);
 
             this.fileSystem.Write(generatedCode, destinationFullPath);
-            log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(destinationFilename,
+            log.Add(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format(destinationFilename, CodeTemplateId,
                 destinationFullPath));
         }
 
@@ -187,6 +187,11 @@ namespace Automate.CLI.Domain
                         {
                             this.fileSystem.Delete(oldFilePath);
                             log.Add(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format(oldFilePath));
+                        }
+                        else
+                        {
+                            log.Add(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format(destinationFilename,
+                                destinationFullPath));
                         }
                     }
                     else

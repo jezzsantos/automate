@@ -52,13 +52,13 @@ namespace CLI.UnitTests.Domain
         }
 
         [Trait("Category", "Unit")]
-        public class GivenANormalCommand
+        public class GivenAEverytimeCommand
         {
             private readonly CodeTemplateCommand command;
             private readonly Mock<IFileSystemReaderWriter> fileSystem;
             private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
-            public GivenANormalCommand()
+            public GivenAEverytimeCommand()
             {
                 var filePathResolver = new Mock<IFilePathResolver>();
                 filePathResolver.Setup(fpr => fpr.CreatePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -96,6 +96,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 target.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -127,6 +128,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -160,6 +162,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .Contain(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 result.Log.Should()
                     .Contain(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format("anoriginalpath"));
@@ -195,6 +198,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .Contain(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 result.Log.Should()
                     .Contain(DomainMessages.CodeTemplateCommand_Log_Warning_Deleted.Format("anoriginalpath"));
@@ -230,6 +234,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -262,6 +267,7 @@ namespace CLI.UnitTests.Domain
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
                     .ContainSingle(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
                         "c:\\anabsolutepath\\afilename.cs"));
                 ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -383,7 +389,10 @@ namespace CLI.UnitTests.Domain
 
                 result.CommandName.Should().Be("acommandname");
                 result.Log.Should()
-                    .ContainSingle(DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format("apath",
+                    .Contain(DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format("apath",
+                        "c:\\anabsolutepath\\afilename.cs"));
+                result.Log.Should()
+                    .Contain(DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format("afilename.cs",
                         "c:\\anabsolutepath\\afilename.cs"));
                 ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -394,6 +403,40 @@ namespace CLI.UnitTests.Domain
                 this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
                 this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
                 this.fileSystem.Verify(fsw => fsw.Move("apath", "c:\\anabsolutepath\\afilename.cs"));
+            }
+
+            [Fact]
+            public void
+                WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
+            {
+                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+                var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
+                ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
+                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
+                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
+                this.textTemplateEngine.Setup(tte =>
+                        tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
+                    .Returns("acontent");
+                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
+                    .Returns(false);
+                var draft = new DraftDefinition(toolkit);
+
+                var result = this.command.Execute(draft, ownerDraft);
+
+                result.CommandName.Should().Be("acommandname");
+                result.Log.Should()
+                    .Contain(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
+                        "acodetemplateid",
+                        "c:\\anabsolutepath\\afilename.cs"));
+                ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
+                    link.CommandId == this.command.Id
+                    && link.Tag == "afilename.cs"
+                    && link.Path == "c:\\anabsolutepath\\afilename.cs");
+                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
+                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
+                    content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
+                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
+                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
 
             [Fact]
@@ -423,39 +466,6 @@ namespace CLI.UnitTests.Domain
                     tte => tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()),
                     Times.Never);
                 this.fileSystem.Verify(fw => fw.Write(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-                this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
-                this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            }
-
-            [Fact]
-            public void
-                WhenExecuteAndSameArtifactLinkExistsButFileNotExists_ThenGeneratesNewFileAndUpdatesArtifactLink()
-            {
-                var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var ownerDraft = new DraftItem(toolkit, new Element("anelementname"), null);
-                ownerDraft.AddArtifactLink(this.command.Id, "c:\\anabsolutepath\\afilename.cs", "atag");
-                toolkit.AddCodeTemplateFiles(new List<CodeTemplateFile>
-                    { new(CodeTemplateFile.Encoding.GetBytes("atemplate"), "acodetemplateid") });
-                this.textTemplateEngine.Setup(tte =>
-                        tte.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
-                    .Returns("acontent");
-                this.fileSystem.Setup(fsw => fsw.FileExists(It.IsAny<string>()))
-                    .Returns(false);
-                var draft = new DraftDefinition(toolkit);
-
-                var result = this.command.Execute(draft, ownerDraft);
-
-                result.CommandName.Should().Be("acommandname");
-                result.Log.Should()
-                    .Contain(DomainMessages.CodeTemplateCommand_Log_GeneratedFile.Format("afilename.cs",
-                        "c:\\anabsolutepath\\afilename.cs"));
-                ownerDraft.ArtifactLinks.Should().ContainSingle(link =>
-                    link.CommandId == this.command.Id
-                    && link.Tag == "afilename.cs"
-                    && link.Path == "c:\\anabsolutepath\\afilename.cs");
-                this.textTemplateEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atemplate", ownerDraft));
-                this.fileSystem.Verify(fw => fw.Write(It.Is<string>(content =>
-                    content == "acontent"), "c:\\anabsolutepath\\afilename.cs"));
                 this.fileSystem.Verify(fsw => fsw.Delete(It.IsAny<string>()), Times.Never);
                 this.fileSystem.Verify(fsw => fsw.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             }
