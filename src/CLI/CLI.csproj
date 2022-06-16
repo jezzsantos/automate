@@ -131,4 +131,12 @@
             <DependentUpon>ApplicationMessages.resx</DependentUpon>
         </Compile>
     </ItemGroup>
+
+    <!-- Install the dotnet tool locally (but only in Release) -->
+    <Target Name="Install locally" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+        <Exec Command="dotnet tool uninstall --global $(PackageId)" ContinueOnError="WarnAndContinue"/>
+        <Exec Command="dotnet pack --no-build --configuration $(Configuration) /p:Version=$(PackageVersion)"/>
+        <Exec Command="dotnet tool install --global --add-source .\nupkg $(PackageId) --version $(PackageVersion)"/>
+        <Message Importance="high" Text="'$(PackageId)' installed locally, successfully"/>
+    </Target>
 </Project>
