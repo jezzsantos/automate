@@ -2,9 +2,9 @@ name: Create Release
 
 on:
   push:
-    branches: [ "main" ]
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-'
+      - 'v[0-9]+.[0-9]+.[0-9]+-preview'
 
 env:
   IS_CI_BUILD: 'true'
@@ -23,6 +23,14 @@ jobs:
         run: dotnet restore src/Automate.sln
       - name: Build
         run: dotnet build src/Automate.sln --no-restore
+      - name: NuGet Pack
+        run: dotnet pack --configuration Release src/CLI/CLI.csproj
+      - name: Upload NuGet
+        uses: actions/upload-artifact@v2
+        with:
+          name: Nuget Binary
+          path: src/CLI/nupkg
+          if-no-files-found: error
       - name: Package (MacOS)
         run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime osx-x64 src/CLI/CLI.csproj
       - name: Upload Package (MacOS)

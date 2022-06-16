@@ -27,27 +27,3 @@ jobs:
         run: dotnet test --filter Category=Unit src/Automate.sln --no-build --verbosity normal
       - name: Integration Test
         run: dotnet test --filter Category=Integration src/Automate.sln --no-build --verbosity normal
-      - name: Package (MacOS)
-        run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime osx-x64 src/CLI/CLI.csproj
-      - name: Upload Package (MacOS)
-        uses: actions/upload-artifact@v2
-        with:
-          name: OSX-64 Binary
-          path: src/CLI/bin/Release/net6.0/osx-x64/publish/
-          if-no-files-found: error
-      - name: Package (LinuxOS)
-        run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime linux-x64 src/CLI/CLI.csproj
-      - name: Upload Package (LinuxOS)
-        uses: actions/upload-artifact@v2
-        with:
-          name: Linux-64 Binary
-          path: src/CLI/bin/Release/net6.0/linux-x64/publish/
-          if-no-files-found: error
-      - name: Package (Windows)
-        run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime win-x64 src/CLI/CLI.csproj
-      - name: Upload Package (Windows)
-        uses: actions/upload-artifact@v2
-        with:
-          name: Win-64 Binary
-          path: src/CLI/bin/Release/net6.0/win-x64/publish/
-          if-no-files-found: error
