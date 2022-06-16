@@ -1,0 +1,46 @@
+name: Create Release
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore src/Automate.sln
+    - name: Build
+      run: dotnet build src/Automate.sln --no-restore
+    - name: Package (MacOS)
+      run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime osx-x64 src/CLI/CLI.csproj
+    - name: Upload Package (MacOS)
+      uses: actions/upload-artifact@v2
+      with:
+        name: OSX-64 Binary
+        path: src/CLI/bin/Release/net6.0/osx-x64/publish/
+        if-no-files-found: error
+    - name: Package (LinuxOS)
+      run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime linux-x64 src/CLI/CLI.csproj
+    - name: Upload Package (LinuxOS)
+      uses: actions/upload-artifact@v2
+      with:
+        name: Linux-64 Binary
+        path: src/CLI/bin/Release/net6.0/linux-x64/publish/
+        if-no-files-found: error
+    - name: Package (Windows)
+      run: dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime win-x64 src/CLI/CLI.csproj
+    - name: Upload Package (Windows)
+      uses: actions/upload-artifact@v2
+      with:
+        name: Win-64 Binary
+        path: src/CLI/bin/Release/net6.0/win-x64/publish/
+        if-no-files-found: error
