@@ -975,7 +975,16 @@ namespace Automate.CLI.Infrastructure
                     return pattern.ToJson(PersistenceFactory);
                 }
 
-                var configuration = new PatternConfigurationVisitor(isDetailed);
+                var configuration = new PatternConfigurationVisitor(isDetailed
+                    ? VisitorConfigurationOptions.Detailed
+                    : VisitorConfigurationOptions.Simple);
+                pattern.TraverseDescendants(configuration);
+                return configuration.ToString();
+            }
+
+            internal static string FormatPatternLaunchableAutomation(PatternDefinition pattern)
+            {
+                var configuration = new PatternConfigurationVisitor(VisitorConfigurationOptions.OnlyLaunchPoints);
                 pattern.TraverseDescendants(configuration);
                 return configuration.ToString();
             }
@@ -1039,6 +1048,15 @@ namespace Automate.CLI.Infrastructure
                         OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                }
+                
+                if (todo)
+                {
+                    console.WriteOutputLine();
+                    console.WriteOutput(outputStructured,
+                        OutputMessages.CommandLine_Output_PatternLaunchableAutomation, pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current,
+                        AuthoringHandlers.FormatPatternLaunchableAutomation(pattern));
                 }
 
                 if (todo)

@@ -18,6 +18,11 @@ namespace Automate.CLI.Domain
                    && automation.Type != AutomationType.CommandLaunchPoint;
         }
 
+        public static bool IsLaunching(this Automation automation)
+        {
+            return automation.Type == AutomationType.CommandLaunchPoint;
+        }
+        
         public static IPatternSchema ToSchema(this PatternDefinition pattern)
         {
             return new PatternSchema(pattern);

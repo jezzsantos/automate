@@ -81,8 +81,12 @@
         <value>Data from testing Code Template Command '{Name}' (ID: '{Id}') has been exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_PatternConfiguration" xml:space="preserve">
-        <value>Pattern '{0}' (ID: '{1}, v{2}) is configured as:
+        <value>Pattern '{0}' (ID: '{1}, v{2}) is defined as:
 {Tree}</value>
+    </data>
+    <data name="CommandLine_Output_PatternLaunchableAutomation" xml:space="preserve">
+        <value>Pattern '{0}' (ID: '{1}, v{2}) has these launch points available:
+{LaunchPoints}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
         <value>Added Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}'</value>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
@@ -7,21 +8,28 @@ using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
 {
+    internal enum VisitorConfigurationOptions
+    {
+        Simple,
+        Detailed,
+        OnlyLaunchPoints
+    }
+
     internal class PatternConfigurationVisitor : IPatternVisitor
     {
         private const int MaxFilePathLength = 100;
-        private readonly bool isDetailed;
         private readonly StringBuilder output;
         private int indentLevel;
         private bool outputAttributesHeading;
         private bool outputAutomationHeading;
         private bool outputCodeTemplatesHeading;
         private bool outputElementsHeading;
+        private readonly VisitorConfigurationOptions options;
 
-        public PatternConfigurationVisitor(bool isDetailed)
+        public PatternConfigurationVisitor(VisitorConfigurationOptions options)
         {
             this.output = new StringBuilder();
-            this.isDetailed = isDetailed;
+            this.options = options;
         }
 
         public static string TruncateCodeTemplatePath(string path)
@@ -37,12 +45,12 @@ namespace Automate.CLI.Infrastructure
         public bool VisitPatternEnter(PatternDefinition pattern)
         {
             PrintIndented($"- {pattern.Name}", false);
-            if (this.isDetailed)
+            if (this.options == VisitorConfigurationOptions.Detailed)
             {
                 PrintInline($" [{pattern.Id}]");
             }
             PrintInline(" (root element)");
-            if (!this.isDetailed && pattern.CodeTemplates.HasAny())
+            if (this.options == VisitorConfigurationOptions.Simple && pattern.CodeTemplates.HasAny())
             {
                 PrintInline($" (attached with {pattern.CodeTemplates.Count} code templates)", true);
             }
@@ -67,18 +75,18 @@ namespace Automate.CLI.Infrastructure
                 this.outputElementsHeading = false;
             }
 
-            if (this.isDetailed)
+            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
             {
                 Indent();
             }
 
             PrintIndented($"- {element.Name}", false);
-            if (this.isDetailed)
+            if (this.options == VisitorConfigurationOptions.Detailed)
             {
                 PrintInline($" [{element.Id}]");
             }
             PrintInline($" ({(element.IsCollection ? "collection" : "element")})");
-            if (!this.isDetailed && element.CodeTemplates.HasAny())
+            if (this.options == VisitorConfigurationOptions.Simple && element.CodeTemplates.HasAny())
             {
                 PrintInline($" (attached with {element.CodeTemplates.Count} code templates)", true);
             }
@@ -92,7 +100,7 @@ namespace Automate.CLI.Infrastructure
 
         public bool VisitElementExit(Element element)
         {
-            if (this.isDetailed)
+            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
             {
                 OutDent();
             }
@@ -101,6 +109,11 @@ namespace Automate.CLI.Infrastructure
 
         public bool VisitAttribute(Attribute attribute)
         {
+            if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+            {
+                return true;
+            }
+            
             if (this.outputAttributesHeading)
             {
                 PrintIndented("- Attributes:");
@@ -110,7 +123,7 @@ namespace Automate.CLI.Infrastructure
             WithDetailedIndents(() =>
             {
                 PrintIndented(
-                    $"- {attribute.Name}{(this.isDetailed ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})");
+                    $"- {attribute.Name}{(this.options == VisitorConfigurationOptions.Detailed ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})");
             });
 
             return true;
@@ -120,13 +133,20 @@ namespace Automate.CLI.Infrastructure
         {
             if (this.outputAutomationHeading)
             {
-                PrintIndented("- Automation:");
+                if (this.options == VisitorConfigurationOptions.Detailed)
+                {
+                    PrintIndented("- Automation:");
+                }
+                if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintIndented("- LaunchPoints:");
+                }
                 this.outputAutomationHeading = false;
             }
 
             WithDetailedIndents(() =>
             {
-                if (this.isDetailed)
+                if (this.options == VisitorConfigurationOptions.Detailed)
                 {
                     PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})", false);
                     if (automation.Type == AutomationType.CodeTemplateCommand)
@@ -150,12 +170,24 @@ namespace Automate.CLI.Infrastructure
                         PrintEndOfLine();
                     }
                 }
+                if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    if (automation.IsLaunching())
+                    {
+                        PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})");
+                    }
+                }
             });
             return true;
         }
 
         public bool VisitCodeTemplate(CodeTemplate codeTemplate)
         {
+            if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+            {
+                return true;
+            }
+            
             if (this.outputCodeTemplatesHeading)
             {
                 PrintIndented("- CodeTemplates:");
@@ -164,7 +196,7 @@ namespace Automate.CLI.Infrastructure
 
             WithDetailedIndents(() =>
             {
-                if (this.isDetailed)
+                if (this.options == VisitorConfigurationOptions.Detailed)
                 {
                     PrintIndented(
                         $"- {codeTemplate.Name} [{codeTemplate.Id}] (original: {TruncatePath(codeTemplate.Metadata.OriginalFilePath)})");
@@ -181,10 +213,17 @@ namespace Automate.CLI.Infrastructure
 
         private bool VisitPatternElementEnter(PatternElement element)
         {
-            this.outputCodeTemplatesHeading = this.isDetailed && element.CodeTemplates.HasAny();
-            this.outputAutomationHeading = this.isDetailed && element.Automation.HasAny();
-            this.outputAttributesHeading = this.isDetailed && element.Attributes.HasAny();
-            this.outputElementsHeading = this.isDetailed && element.Elements.HasAny();
+            this.outputCodeTemplatesHeading =
+                this.options == VisitorConfigurationOptions.Detailed && element.CodeTemplates.HasAny();
+            this.outputAutomationHeading =
+                (this.options == VisitorConfigurationOptions.Detailed && element.Automation.HasAny())
+                || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
+                    element.Automation.Safe().Any(auto => auto.IsLaunching()));
+            this.outputAttributesHeading =
+                this.options == VisitorConfigurationOptions.Detailed && element.Attributes.HasAny();
+            this.outputElementsHeading =
+                this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints &&
+                element.Elements.HasAny();
 
             Indent();
 
@@ -234,12 +273,12 @@ namespace Automate.CLI.Infrastructure
 
         private void WithDetailedIndents(Action action)
         {
-            if (this.isDetailed)
+            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
             {
                 Indent();
             }
             action();
-            if (this.isDetailed)
+            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
             {
                 OutDent();
             }

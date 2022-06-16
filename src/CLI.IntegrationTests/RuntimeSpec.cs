@@ -522,6 +522,25 @@ namespace CLI.IntegrationTests
                         this.setup.Pattern.Id));
             this.setup.Should()
                 .DisplayMessage(
+                    OutputMessages.CommandLine_Output_PatternLaunchableAutomation.FormatTemplate(pattern.Name,
+                        pattern.Id,
+                        pattern.ToolkitVersion.Current,
+                        $"- APattern (root element){Environment.NewLine}" +
+                        $"\t- LaunchPoints:{Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint1 [{pattern.Automation[1].Id}] (CommandLaunchPoint){Environment.NewLine}" +
+                        $"\t\t- ALaunchPoint2 [{pattern.Automation[4].Id}] (CommandLaunchPoint){Environment.NewLine}" +
+                        $"\t- Elements:{Environment.NewLine}" +
+                        $"\t\t- AnElement1 (element){Environment.NewLine}" +
+                        $"\t\t\t- LaunchPoints:{Environment.NewLine}" +
+                        $"\t\t\t\t- ALaunchPoint3 [{element1.Automation.Last().Id}] (CommandLaunchPoint){Environment.NewLine}" +
+                        $"\t\t\t- Elements:{Environment.NewLine}" +
+                        $"\t\t\t\t- ACollection1 (collection){Environment.NewLine}" +
+                        $"\t\t- ACollection2 (collection){Environment.NewLine}" +
+                        $"\t\t- AnElement3 (element){Environment.NewLine}"
+                        ,
+                        this.setup.Pattern.Id));
+            this.setup.Should()
+                .DisplayMessage(
                     OutputMessages.CommandLine_Output_DraftValidationFailed
                         .FormatTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"

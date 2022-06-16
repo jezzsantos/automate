@@ -566,7 +566,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is configured as:
+        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_PatternConfiguration {
@@ -581,6 +581,16 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_PatternCreated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_PatternCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) has these launch points available:
+        ///{LaunchPoints}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternLaunchableAutomation {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternLaunchableAutomation", resourceCulture);
             }
         }
         
