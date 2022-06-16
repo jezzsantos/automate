@@ -2,12 +2,14 @@
 using System.Text;
 using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
+using Humanizer;
 using Attribute = Automate.CLI.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
 {
     internal class PatternConfigurationVisitor : IPatternVisitor
     {
+        private const int MaxFilePathLength = 100;
         private readonly bool isDetailed;
         private readonly StringBuilder output;
         private int indentLevel;
@@ -20,6 +22,11 @@ namespace Automate.CLI.Infrastructure
         {
             this.output = new StringBuilder();
             this.isDetailed = isDetailed;
+        }
+
+        public static string TruncateCodeTemplatePath(string path)
+        {
+            return TruncatePath(path);
         }
 
         public override string ToString()
@@ -125,7 +132,7 @@ namespace Automate.CLI.Infrastructure
                     if (automation.Type == AutomationType.CodeTemplateCommand)
                     {
                         PrintInline(
-                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, oneOff: {automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToLower()}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
+                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, {(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToBool() ? "onceonly" : "always")}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
                             true);
                     }
                     else if (automation.Type == AutomationType.CliCommand)
@@ -160,7 +167,7 @@ namespace Automate.CLI.Infrastructure
                 if (this.isDetailed)
                 {
                     PrintIndented(
-                        $"- {codeTemplate.Name} [{codeTemplate.Id}] (file: {codeTemplate.Metadata.OriginalFilePath}, ext: {codeTemplate.Metadata.OriginalFileExtension})");
+                        $"- {codeTemplate.Name} [{codeTemplate.Id}] (original: {TruncatePath(codeTemplate.Metadata.OriginalFilePath)})");
                 }
             });
 
@@ -236,6 +243,11 @@ namespace Automate.CLI.Infrastructure
             {
                 OutDent();
             }
+        }
+
+        private static string TruncatePath(string path)
+        {
+            return path.Truncate(MaxFilePathLength, Truncator.FixedLength, TruncateFrom.Left);
         }
     }
 }

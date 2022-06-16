@@ -184,9 +184,9 @@ namespace CLI.IntegrationTests
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +
-                        $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath}, ext: .code){Environment.NewLine}" +
+                        $"\t\t- ATemplateName [{pattern.CodeTemplates.Single().Id}] (original: {PatternConfigurationVisitor.TruncateCodeTemplatePath(codeTemplatePath)}){Environment.NewLine}" +
                         $"\t- Automation:{Environment.NewLine}" +
-                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, oneOff: false, path: ~/afilepath){Environment.NewLine}" +
+                        $"\t\t- ACodeTemplateCommand1 [{pattern.Automation.First().Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, always, path: ~/afilepath){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint [{pattern.Automation.Last().Id}] (CommandLaunchPoint) (ids: {commandId}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
                         $"\t\t- AProperty (string){Environment.NewLine}" +

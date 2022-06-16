@@ -489,11 +489,11 @@ namespace CLI.IntegrationTests
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +
-                        $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (file: {codeTemplatePath1}, ext: .code){Environment.NewLine}" +
+                        $"\t\t- ACodeTemplate1 [{pattern.CodeTemplates.Single().Id}] (original: {PatternConfigurationVisitor.TruncateCodeTemplatePath(codeTemplatePath1)}){Environment.NewLine}" +
                         $"\t- Automation:{Environment.NewLine}" +
-                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, oneOff: false, path: ~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs){Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand1 [{pattern.Automation[0].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, always, path: ~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint1 [{pattern.Automation[1].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id}){Environment.NewLine}" +
-                        $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, oneOff: false, path: ~/code/{{{{AnElement1.}}}}invalid.cs){Environment.NewLine}" +
+                        $"\t\t- CodeTemplateCommand3 [{pattern.Automation[2].Id}] (CodeTemplateCommand) (template: {pattern.CodeTemplates.Single().Id}, always, path: ~/code/{{{{AnElement1.}}}}invalid.cs){Environment.NewLine}" +
                         $"\t\t- CliCommand4 [{pattern.Automation[3].Id}] (CliCommand) (app: {this.testApplicationName}, args: --succeeds){Environment.NewLine}" +
                         $"\t\t- ALaunchPoint2 [{pattern.Automation[4].Id}] (CommandLaunchPoint) (ids: {pattern.Automation[0].Id};{pattern.Automation[2].Id};{pattern.Automation[3].Id}){Environment.NewLine}" +
                         $"\t- Attributes:{Environment.NewLine}" +
@@ -502,9 +502,9 @@ namespace CLI.IntegrationTests
                         $"\t- Elements:{Environment.NewLine}" +
                         $"\t\t- AnElement1 [{element1.Id}] (element){Environment.NewLine}" +
                         $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
-                        $"\t\t\t\t- ACodeTemplate2 [{element1.CodeTemplates.Single().Id}] (file: {codeTemplatePath2}, ext: .code){Environment.NewLine}" +
+                        $"\t\t\t\t- ACodeTemplate2 [{element1.CodeTemplates.Single().Id}] (original: {PatternConfigurationVisitor.TruncateCodeTemplatePath(codeTemplatePath2)}){Environment.NewLine}" +
                         $"\t\t\t- Automation:{Environment.NewLine}" +
-                        $"\t\t\t\t- CodeTemplateCommand1 [{element1.Automation.First().Id}] (CodeTemplateCommand) (template: {element1.CodeTemplates.Single().Id}, oneOff: false, path: ~/code/parentsubstitutiontest.cs){Environment.NewLine}" +
+                        $"\t\t\t\t- CodeTemplateCommand1 [{element1.Automation.First().Id}] (CodeTemplateCommand) (template: {element1.CodeTemplates.Single().Id}, always, path: ~/code/parentsubstitutiontest.cs){Environment.NewLine}" +
                         $"\t\t\t\t- ALaunchPoint3 [{element1.Automation.Last().Id}] (CommandLaunchPoint) (ids: {element1.Automation.First().Id}){Environment.NewLine}" +
                         $"\t\t\t- Attributes:{Environment.NewLine}" +
                         $"\t\t\t\t- AProperty3 (string, oneof: A;B;C){Environment.NewLine}" +
