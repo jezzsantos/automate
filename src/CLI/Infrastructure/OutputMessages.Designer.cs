@@ -450,6 +450,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Everything is up to date.
+        /// </summary>
+        internal static string CommandLine_Output_ExecuteLaunchPointSucceededNoOutput {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ExecuteLaunchPointSucceededNoOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created Drafts:
         ///{Drafts}.
         /// </summary>

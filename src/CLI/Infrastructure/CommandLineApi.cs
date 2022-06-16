@@ -1236,8 +1236,15 @@ namespace Automate.CLI.Infrastructure
             private static string FormatExecutionLog(IReadOnlyList<string> items)
             {
                 var builder = new StringBuilder();
-                items.ToList()
-                    .ForEach(item => { builder.AppendLine($"* {item}"); });
+                if (items.HasAny())
+                {
+                    items.ToList()
+                        .ForEach(item => { builder.AppendLine($"* {item}"); });
+                }
+                else
+                {
+                    builder.AppendLine($"* {OutputMessages.CommandLine_Output_ExecuteLaunchPointSucceededNoOutput}");
+                }
 
                 return builder.ToString();
             }

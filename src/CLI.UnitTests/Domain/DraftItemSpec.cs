@@ -45,7 +45,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
             result.Properties["aname"].Value.Should().BeNull();
             result.Properties["aname"].IsMaterialised.Should().BeFalse();
         }
@@ -60,7 +60,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(attribute.DefaultValue);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
         }
@@ -76,7 +76,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Object.Should().Be(attribute);
+            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
             result.Properties["aname"].Value.Should().Be(date);
             result.Properties["aname"].IsMaterialised.Should().BeTrue();
         }
@@ -93,7 +93,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["anelementname"].ElementSchema.Object.Should().Be(element);
+            result.Properties["anelementname"].ElementSchema.Element.Should().Be(element);
             result.Properties["anelementname"].Value.Should().BeNull();
             result.Properties["anelementname"].IsMaterialised.Should().BeFalse();
             result.Properties["anelementname"].Items.Should().BeNull();
@@ -111,7 +111,7 @@ namespace CLI.UnitTests.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["acollectionname"].ElementSchema.Object.Should().Be(element);
+            result.Properties["acollectionname"].ElementSchema.Element.Should().Be(element);
             result.Properties["acollectionname"].Value.Should().BeNull();
             result.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
             result.Properties["acollectionname"].Items.Should().BeNull();
@@ -138,7 +138,7 @@ namespace CLI.UnitTests.Domain
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
             var draftElement1 = result.Properties["anelementname1"];
-            draftElement1.ElementSchema.Object.Should().Be(element1);
+            draftElement1.ElementSchema.Element.Should().Be(element1);
             draftElement1.Value.Should().BeNull();
             draftElement1.IsMaterialised.Should().BeFalse();
             draftElement1.Items.Should().BeNull();

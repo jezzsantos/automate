@@ -48,35 +48,35 @@ namespace Automate.CLI.Domain
         public ElementSchema(Element element) : base(element)
         {
             element.GuardAgainstNull(nameof(element));
-            Object = element;
+            Element = element;
         }
 
-        public virtual bool IsCollection => Object.IsCollection;
+        public virtual bool IsCollection => Element.IsCollection;
 
-        public Element Object { get; }
+        public Element Element { get; }
 
         public virtual bool HasCardinalityOfAtLeastOne()
         {
-            return Object.HasCardinalityOfAtLeastOne();
+            return Element.HasCardinalityOfAtLeastOne();
         }
 
         public virtual bool HasCardinalityOfAtMostOne()
         {
-            return Object.HasCardinalityOfAtMostOne();
+            return Element.HasCardinalityOfAtMostOne();
         }
 
         public virtual bool HasCardinalityOfMany()
         {
-            return Object.HasCardinalityOfMany();
+            return Element.HasCardinalityOfMany();
         }
 
         public bool ShouldAutoCreate()
         {
             if (IsCollection)
             {
-                return Object.AutoCreate;
+                return Element.AutoCreate;
             }
-            return Object.AutoCreate && Object.Cardinality is ElementCardinality.One;
+            return Element.AutoCreate && Element.Cardinality is ElementCardinality.One;
         }
     }
 
@@ -109,29 +109,29 @@ namespace Automate.CLI.Domain
         public AttributeSchema(Attribute attribute)
         {
             attribute.GuardAgainstNull(nameof(attribute));
-            Object = attribute;
+            Attribute = attribute;
         }
 
-        public string DataType => Object.DataType;
+        public string DataType => Attribute.DataType;
 
-        public string Name => Object.Name;
+        public string Name => Attribute.Name;
 
-        public IReadOnlyList<string> Choices => Object.Choices;
+        public IReadOnlyList<string> Choices => Attribute.Choices;
 
-        public string DefaultValue => Object.DefaultValue;
+        public string DefaultValue => Attribute.DefaultValue;
 
-        public string Id => Object.Id;
+        public string Id => Attribute.Id;
 
-        public Attribute Object { get; }
+        public Attribute Attribute { get; }
 
         public bool IsValidDataType(string value)
         {
-            return Object.IsValidDataType(value);
+            return Attribute.IsValidDataType(value);
         }
 
         public IReadOnlyList<ValidationResult> Validate(ValidationContext context, object value)
         {
-            return Object.Validate(context, value);
+            return Attribute.Validate(context, value);
         }
     }
 
@@ -141,18 +141,18 @@ namespace Automate.CLI.Domain
         {
             automation.GuardAgainstNull(nameof(automation));
 
-            Object = automation;
+            Automation = automation;
         }
 
-        public string Name => Object.Name;
+        public string Name => Automation.Name;
 
-        public string Id => Object.Id;
+        public string Id => Automation.Id;
 
-        public Automation Object { get; }
+        public Automation Automation { get; }
 
         public CommandExecutionResult Execute(DraftDefinition draft, DraftItem draftItem)
         {
-            return Object.Execute(draft, draftItem);
+            return Automation.Execute(draft, draftItem);
         }
     }
 

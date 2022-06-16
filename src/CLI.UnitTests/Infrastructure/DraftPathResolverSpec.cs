@@ -89,7 +89,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(draft, "{anelementname}");
 
-            result.ElementSchema.Object.Should().Be(element);
+            result.ElementSchema.Element.Should().Be(element);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(draft, "{apatternname.anelementname}");
 
-            result.ElementSchema.Object.Should().Be(element);
+            result.ElementSchema.Element.Should().Be(element);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(draft, "{anelementname}");
 
-            result.ElementSchema.Object.Should().Be(element);
+            result.ElementSchema.Element.Should().Be(element);
         }
 
         [Fact]
@@ -170,7 +170,7 @@ namespace CLI.UnitTests.Infrastructure
 
             var result = this.resolver.ResolveItem(draft, "{anelementname1.anelementname2.anelementname3}");
 
-            result.ElementSchema.Object.Should().Be(element3);
+            result.ElementSchema.Element.Should().Be(element3);
         }
 
         [Fact]

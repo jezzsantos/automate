@@ -32,27 +32,27 @@ namespace CLI.UnitTests.Domain
             draft.Name.Should().Match("apatternname???");
             draft.Model.Should().NotBeNull();
             var draftElement1 = draft.Model.Properties["anelementname1"];
-            draftElement1.ElementSchema.Object.Should().Be(element1);
+            draftElement1.ElementSchema.Element.Should().Be(element1);
             draftElement1.Value.Should().BeNull();
             draftElement1.IsMaterialised.Should().BeFalse();
             draftElement1.Items.Should().BeNull();
             draftElement1.Properties.Should().BeNull();
 
             var draftCollection1 = draft.Model.Properties["acollectionname1"];
-            draftCollection1.ElementSchema.Object.Should().Be(collection1);
+            draftCollection1.ElementSchema.Element.Should().Be(collection1);
             draftCollection1.IsMaterialised.Should().BeFalse();
             draftCollection1.Items.Should().BeNull();
             draftCollection1.Properties.Should().BeNull();
 
             var draftElement2 = draft.Model.Properties["anelementname2"];
-            draftElement2.ElementSchema.Object.Should().Be(element2);
+            draftElement2.ElementSchema.Element.Should().Be(element2);
             draftElement2.Value.Should().BeNull();
             draftElement2.IsMaterialised.Should().BeFalse();
             draftElement2.Items.Should().BeNull();
             draftElement2.Properties.Should().BeNull();
 
             var draftCollection2 = draft.Model.Properties["acollectionname2"];
-            draftCollection2.ElementSchema.Object.Should().Be(collection2);
+            draftCollection2.ElementSchema.Element.Should().Be(collection2);
             draftCollection2.IsMaterialised.Should().BeFalse();
             draftCollection2.Items.Should().BeNull();
             draftCollection2.Properties.Should().BeNull();
@@ -81,7 +81,7 @@ namespace CLI.UnitTests.Domain
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model);
         }
 
@@ -107,7 +107,7 @@ namespace CLI.UnitTests.Domain
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
                     .Properties["anelementname3"]);
         }
@@ -134,7 +134,7 @@ namespace CLI.UnitTests.Domain
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
                     .Properties["acollectionname1"].Items[0]);
         }
@@ -158,7 +158,7 @@ namespace CLI.UnitTests.Domain
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().ContainSingle(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
         }
 
@@ -185,13 +185,13 @@ namespace CLI.UnitTests.Domain
             var pairs = draft.FindByAutomation(automation.Id);
 
             pairs.Should().Contain(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"]);
             pairs.Should().Contain(pair =>
-                pair.Automation.Object == automation
+                pair.Automation.Automation == automation
                 && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"]);
         }
 

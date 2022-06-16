@@ -30,7 +30,7 @@ namespace Automate.CLI.Domain
     {
         bool IsCollection { get; }
 
-        Element Object { get; }
+        Element Element { get; }
 
         bool HasCardinalityOfAtLeastOne();
 
@@ -53,7 +53,7 @@ namespace Automate.CLI.Domain
 
         string Id { get; }
 
-        Attribute Object { get; }
+        Attribute Attribute { get; }
 
         bool IsValidDataType(string value);
 
@@ -66,7 +66,7 @@ namespace Automate.CLI.Domain
 
         string Id { get; }
 
-        Automation Object { get; }
+        Automation Automation { get; }
 
         CommandExecutionResult Execute(DraftDefinition draft, DraftItem draftItem);
     }

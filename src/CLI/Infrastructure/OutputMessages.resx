@@ -222,4 +222,7 @@
         <value>Toolkit pattern '{0}' (ID: '{1}, v{2}) is defined as:
 {Tree}</value>
     </data>
+    <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">
+        <value>Everything is up to date</value>
+    </data>
 </root>
