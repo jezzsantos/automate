@@ -831,6 +831,7 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0",
                         exportedLocation));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -847,6 +848,7 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0",
                         exportedLocation));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -868,6 +870,7 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.2.0",
                         exportedLocation));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -888,6 +891,7 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.2.0",
                         exportedLocation));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -905,6 +909,7 @@ namespace CLI.IntegrationTests
                 .DisplayMessage(
                     OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0",
                         exportedLocation));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -932,6 +937,7 @@ namespace CLI.IntegrationTests
                                 VersionChanges.PatternElement_Attribute_Add
                                     .FormatTemplate(attribute.Id, pattern.Id)
                             }.ToBulletList())));
+            this.setup.Toolkit.Should().BeNull();
         }
 
         [Fact]
@@ -968,8 +974,27 @@ namespace CLI.IntegrationTests
                                     pattern.Id),
                                 VersionChanges.PatternElement_Attribute_Delete.FormatTemplate(attribute.Id, pattern.Id)
                             }.ToBulletList())));
+            this.setup.Toolkit.Should().BeNull();
         }
 
+        [Fact]
+        public void WhenBuildToolkitAndInstall_ThenBuildsFirstVersionOnDesktopAndInstalls()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --install");
+
+            var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_BuiltToolkit.FormatTemplate("APattern", "0.1.0",
+                        exportedLocation));
+            this.setup.Should()
+                .DisplayMessage(
+                    OutputMessages.CommandLine_Output_InstalledToolkit.FormatTemplate("APattern", "0.1.0"));
+            this.setup.Toolkit.Should().NotBeNull();
+        }
         [Fact]
         public void WhenTestCodeTemplate_ThenDisplaysRenderedTemplate()
         {

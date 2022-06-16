@@ -338,6 +338,8 @@ namespace Automate.CLI.Infrastructure
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--force",
                         "Force the specified version number even it it violates breaking changes checks",
+                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
+                    new Option("--install", "Install the built toolkit locally",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Build))
             };
@@ -947,7 +949,9 @@ namespace Automate.CLI.Infrastructure
                     launchPoint.Name, launchPoint.Id, parent.Id);
             }
 
-            internal static void Build(string asversion, bool force, bool outputStructured, IConsole console)
+            // ReSharper disable once IdentifierTypo
+            internal static void Build(string asversion, bool force, bool install, bool outputStructured,
+                IConsole console)
             {
                 var package = Authoring.BuildAndExportToolkit(asversion, force);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
@@ -956,6 +960,10 @@ namespace Automate.CLI.Infrastructure
                 {
                     console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning,
                         package.Message);
+                }
+                if (install)
+                {
+                    RuntimeHandlers.Install(package.ExportedLocation, outputStructured, console);
                 }
             }
 
