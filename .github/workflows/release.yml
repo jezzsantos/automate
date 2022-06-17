@@ -8,6 +8,15 @@ on:
 
 env:
   IS_CI_BUILD: 'true'
+  SOLUTION_PATH: 'src/Automate.sln'
+  CLIPROJECT_PATH: 'src/CLI/CLI.csproj'
+  BUILD_CONFIGURATION: 'Release'
+  OUTPUT_FILENAME: "automate"
+  OUTPUT_DIR: 'src/CLI/bin/Release/net6.0'
+  PUBLISH_DIR: 'src/publish'
+  TAG_NAME: '${{github.ref_name}}'
+  NUGET_APIKEY: '${{secrets.NUGET_APIKEY}}'
+  NUGET_OUTPUT_DIR: 'src/CLI/nupkg'
 
 jobs:
   build:
@@ -22,54 +31,59 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore src/Automate.sln
+        run: dotnet restore "${{env.SOLUTION_PATH}}"
       - name: Build
-        run: dotnet build src/Automate.sln --no-restore
-      - name: NuGet Pack
-        run: dotnet pack --configuration Release src/CLI/CLI.csproj
-      - name: Upload NuGet
-        uses: actions/upload-artifact@v2
-        with:
-          name: Nuget Binary
-          path: src/CLI/nupkg/
-          if-no-files-found: error
+        run: dotnet build "${{env.SOLUTION_PATH}}" --no-restore
       - name: Create Publish folder
-        run: mkdir "src/publish"
+        run: mkdir "${{env.PUBLISH_DIR}}"
       - name: Package (MacOS)
         run: |
-          dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime osx-x64 src/CLI/CLI.csproj
-          copy "src/CLI/bin/Release/net6.0/osx-x64/publish/automate" "src/publish/automate.OSX-x64"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime osx-x64 "${{env.CLIPROJECT_PATH}}"
+          copy "${{env.OUTPUT_DIR}}/osx-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.OSX-x64"
       - name: Upload Package (MacOS)
         uses: actions/upload-artifact@v2
         with:
           name: OSX-64 Binary
-          path: src/CLI/bin/Release/net6.0/osx-x64/publish/
+          path: ${{env.OUTPUT_DIR}}/osx-x64/publish/
           if-no-files-found: error
       - name: Package (LinuxOS)
         run: |
-          dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime linux-x64 src/CLI/CLI.csproj
-          copy "src/CLI/bin/Release/net6.0/osx-x64/publish/automate" "src/publish/automate.Linux-x64"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime linux-x64 "${{env.CLIPROJECT_PATH}}"
+          copy "${{env.OUTPUT_DIR}}/osx-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64"
       - name: Upload Package (LinuxOS)
         uses: actions/upload-artifact@v2
         with:
           name: Linux-64 Binary
-          path: src/CLI/bin/Release/net6.0/linux-x64/publish/
+          path: ${{env.OUTPUT_DIR}}/linux-x64/publish/
           if-no-files-found: error
       - name: Package (Windows)
         run: |
-          dotnet publish --configuration Release -p:PublishSingleFile=true --self-contained true --runtime win-x64 src/CLI/CLI.csproj
-          copy "src/CLI/bin/Release/net6.0/win-x64/publish/automate.exe" "src/publish/automate.Win-x64.exe"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime win-x64 "${{env.CLIPROJECT_PATH}}"
+          copy "${{env.OUTPUT_DIR}}/win-x64/publish/${{env.OUTPUT_FILENAME}}.exe" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Win-x64.exe"
       - name: Upload Package (Windows)
         uses: actions/upload-artifact@v2
         with:
           name: Win-64 Binary
-          path: src/CLI/bin/Release/net6.0/win-x64/publish/
+          path: ${{env.OUTPUT_DIR}}/win-x64/publish/
           if-no-files-found: error
+      - name: Package NuGet
+        run: dotnet pack --configuration ${{env.BUILD_CONFIGURATION}} "${{env.CLIPROJECT_PATH}}"
+      - name: Upload NuGet
+        uses: actions/upload-artifact@v2
+        with:
+          name: Nuget Binary
+          path: ${{env.NUGET_OUTPUT_DIR}}/
+          if-no-files-found: error
+      - name: Publish NuGet
+        run: |
+          cd "${{env.NUGET_OUTPUT_DIR}}"
+          dotnet nuget push "*.nupkg" --api-key ${{env.NUGET_APIKEY}} --source "https://api.nuget.org/v3/index.json"
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.ref_name }}
+          tag: ${{env.TAG_NAME}}
           prerelease: true
           draft: true
           generateReleaseNotes: true
-          artifacts: "src/publish/automate.OSX-x64,src/publish/automate.Linux-x64,src/publish/automate.Win-x64.exe,src/CLI/nupkg/automate*.nupkg"
+          artifacts: "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.OSX-x64,${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64,${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Win-x64.exe,${{env.NUGET_OUTPUT_DIR}}/*.nupkg"
+        
