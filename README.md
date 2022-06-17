@@ -1,7 +1,7 @@
 [![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
 __[![Nuget Tool](https://img.shields.io/nuget/v/automate?style=plastic&label=nuget)](https://www.nuget.org/packages/automate)
 __[![Discord](https://img.shields.io/badge/automate-%237289DA.svg?style=plastic&logo=discord&logoColor=white)](https://discord.gg/uN8vxaGxRT)
-__![](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
+__![Presence](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
 
       ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
@@ -27,7 +27,7 @@ What if you had a selection of these kinds of tools stored alongside that code, 
 
 Automate is a tool for Tech Leads, Lead Developers or Tech Consultants to give their fellow codebase contributors dev tools that capture and apply their coding patterns consistently across to their codebases as they evolve and change.
 
-![The Idea](docs/Concept.png)
+![The Idea](https://github.com/jezzsantos/automate/blob/main/docs/Concept.png)
 
 ## How is automate different from other similar tools?
 
