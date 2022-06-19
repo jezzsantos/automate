@@ -30,11 +30,12 @@ namespace Automate.Infrastructure
             return new ToolkitPackage(toolkit, exportedLocation, version.Message);
         }
 
-        public ToolkitDefinition UnPack(IFile installer)
+        public ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer)
         {
+            metadata.GuardAgainstNull(nameof(metadata));
             installer.GuardAgainstNull(nameof(installer));
 
-            var toolkit = UnpackToolkit(installer);
+            var toolkit = UnpackToolkit(metadata, installer);
 
             this.toolkitStore.Import(toolkit);
 
@@ -55,7 +56,7 @@ namespace Automate.Infrastructure
             return (version, toolkit);
         }
 
-        private ToolkitDefinition UnpackToolkit(IFile installer)
+        private ToolkitDefinition UnpackToolkit(IRuntimeMetadata metadata, IFile installer)
         {
             var contents = installer.GetContents();
 
@@ -81,7 +82,7 @@ namespace Automate.Infrastructure
                         installer.FullPath));
             }
 
-            toolkit.VerifyRuntimeCompatability();
+            toolkit.VerifyRuntimeCompatability(metadata);
 
             return toolkit;
         }

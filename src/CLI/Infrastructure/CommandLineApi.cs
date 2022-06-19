@@ -562,7 +562,8 @@ namespace Automate.CLI.Infrastructure
             return new RuntimeApplication(container.Resolve<IToolkitStore>(),
                 container.Resolve<IDraftStore>(),
                 container.Resolve<IFilePathResolver>(), container.Resolve<IPatternToolkitPackager>(),
-                container.Resolve<IDraftPathResolver>(), container.Resolve<IAutomationExecutor>());
+                container.Resolve<IDraftPathResolver>(), container.Resolve<IAutomationExecutor>(),
+                container.Resolve<IRuntimeMetadata>());
         }
 
         private static void WriteBanner()

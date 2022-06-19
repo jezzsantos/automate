@@ -93,17 +93,20 @@ namespace Automate.Domain
             Version = latestToolkit.Pattern.ToolkitVersion.Current;
         }
 
-        public void VerifyRuntimeCompatability()
+        public void VerifyRuntimeCompatability(IRuntimeMetadata metadata)
         {
-            VerifyRuntimeCompatability(ToolkitConstants.GetRuntimeVersion(), RuntimeVersion);
+            metadata.GuardAgainstNull(nameof(metadata));
+            VerifyRuntimeCompatability(metadata, RuntimeVersion);
         }
 
         public string Id { get; }
 
-        internal static void VerifyRuntimeCompatability(string currentRuntimeVersion, string toolkitRuntimeVersion)
+        internal static void VerifyRuntimeCompatability(IRuntimeMetadata metadata, string toolkitRuntimeVersion)
         {
-            var runtimeName = ToolkitConstants.GetRuntimeProductName();
-            var runtimeVersion = SemVersion.Parse(currentRuntimeVersion, SemVersionStyles.Any);
+            metadata.GuardAgainstNull(nameof(metadata));
+
+            var runtimeName = metadata.ProductName;
+            var runtimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
             var toolkitVersion = toolkitRuntimeVersion.HasValue()
                 ? SemVersion.Parse(toolkitRuntimeVersion, SemVersionStyles.Any)
                 : null;

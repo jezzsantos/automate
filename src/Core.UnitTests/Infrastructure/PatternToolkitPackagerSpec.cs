@@ -17,6 +17,7 @@ namespace Core.UnitTests.Infrastructure
         private readonly PatternToolkitPackager packager;
         private readonly Mock<IPatternStore> patternStore;
         private readonly Mock<IToolkitStore> toolkitStore;
+        private readonly Mock<IRuntimeMetadata> metadata;
 
         public PatternToolkitPackagerSpec()
         {
@@ -28,6 +29,10 @@ namespace Core.UnitTests.Infrastructure
                 .Returns(new PatternDefinition("apatternname"));
             this.packager = new PatternToolkitPackager(this.patternStore.Object,
                 this.toolkitStore.Object);
+            this.metadata = new Mock<IRuntimeMetadata>();
+            this.metadata.Setup(rm => rm.ProductName).Returns("aproductname");
+            this.metadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
+
         }
 
         [Fact]
@@ -174,7 +179,7 @@ namespace Core.UnitTests.Infrastructure
                 .Returns(Array.Empty<byte>());
 
             this.packager
-                .Invoking(x => x.UnPack(installer.Object))
+                .Invoking(x => x.UnPack(this.metadata.Object, installer.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile
@@ -191,7 +196,7 @@ namespace Core.UnitTests.Infrastructure
                 .Returns(new byte[] { 0x01 });
 
             this.packager
-                .Invoking(x => x.UnPack(installer.Object))
+                .Invoking(x => x.UnPack(this.metadata.Object, installer.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternToolkitPackager_InvalidInstallerFile
@@ -208,7 +213,7 @@ namespace Core.UnitTests.Infrastructure
             installer.Setup(f => f.GetContents())
                 .Returns(CodeTemplateFile.Encoding.GetBytes(toolkit.ToJson(new AutomatePersistableFactory())));
 
-            var result = this.packager.UnPack(installer.Object);
+            var result = this.packager.UnPack(this.metadata.Object, installer.Object);
 
             result.Id.Should().Be(toolkit.Id);
             this.toolkitStore.Verify(ts => ts.Import(It.Is<ToolkitDefinition>(t =>

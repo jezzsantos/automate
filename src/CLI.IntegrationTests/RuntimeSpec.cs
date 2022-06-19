@@ -95,8 +95,9 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
-            var runtimeName = ToolkitConstants.GetRuntimeProductName();
+            var metadata = new CliRuntimeMetadata();
+            var runtimeVersion = metadata.RuntimeVersion;
+            var runtimeName = metadata.ProductName;
             this.setup.Should()
                 .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Substitute(
                     ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
@@ -108,8 +109,9 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/OlderRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var runtimeVersion = ToolkitConstants.GetRuntimeVersion();
-            var runtimeName = ToolkitConstants.GetRuntimeProductName();
+            var metadata = new CliRuntimeMetadata();
+            var runtimeVersion = metadata.RuntimeVersion;
+            var runtimeName = metadata.ProductName;
             this.setup.Should()
                 .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute(
                     "0.1.0-preview", runtimeVersion, runtimeName));

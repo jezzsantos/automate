@@ -6,6 +6,6 @@ namespace Automate.Application
     {
         ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction);
 
-        ToolkitDefinition UnPack(IFile installer);
+        ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer);
     }
 }

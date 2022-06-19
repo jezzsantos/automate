@@ -9,6 +9,7 @@ namespace Automate.Application
     public class RuntimeApplication
     {
         private readonly IAutomationExecutor automationExecutor;
+        private readonly IRuntimeMetadata runtimeMetadata;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
@@ -18,7 +19,9 @@ namespace Automate.Application
         public RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,
             IFilePathResolver fileResolver,
             IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver,
-            IAutomationExecutor automationExecutor)
+            IAutomationExecutor automationExecutor,
+            IRuntimeMetadata runtimeMetadata
+        )
         {
             toolkitStore.GuardAgainstNull(nameof(toolkitStore));
             draftStore.GuardAgainstNull(nameof(draftStore));
@@ -26,12 +29,14 @@ namespace Automate.Application
             packager.GuardAgainstNull(nameof(packager));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             automationExecutor.GuardAgainstNull(nameof(automationExecutor));
+            runtimeMetadata.GuardAgainstNull(nameof(runtimeMetadata));
             this.toolkitStore = toolkitStore;
             this.draftStore = draftStore;
             this.fileResolver = fileResolver;
             this.packager = packager;
             this.draftPathResolver = draftPathResolver;
             this.automationExecutor = automationExecutor;
+            this.runtimeMetadata = runtimeMetadata;
         }
 
         public string CurrentDraftId => this.draftStore.GetCurrent()?.Id;
@@ -47,7 +52,7 @@ namespace Automate.Application
             }
 
             var installer = this.fileResolver.GetFileAtPath(installerLocation);
-            var toolkit = this.packager.UnPack(installer);
+            var toolkit = this.packager.UnPack(this.runtimeMetadata, installer);
 
             this.toolkitStore.Import(toolkit);
 
@@ -68,7 +73,7 @@ namespace Automate.Application
                     ExceptionMessages.RuntimeApplication_ToolkitNotFound.Substitute(toolkitName));
             }
 
-            toolkit.VerifyRuntimeCompatability();
+            toolkit.VerifyRuntimeCompatability(this.runtimeMetadata);
 
             var draft = new DraftDefinition(toolkit, draftName);
 
@@ -329,7 +334,7 @@ namespace Automate.Application
                         currentVersion, installedVersion));
             }
 
-            toolkit.VerifyRuntimeCompatability();
+            toolkit.VerifyRuntimeCompatability(this.runtimeMetadata);
 
             return draft;
         }

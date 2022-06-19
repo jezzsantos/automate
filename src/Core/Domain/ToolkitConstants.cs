@@ -12,12 +12,5 @@ namespace Automate.Domain
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
                 .InformationalVersion;
         }
-
-        internal static string GetRuntimeProductName()
-        {
-            return Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyProductAttribute>()!
-                .Product;
-        }
     }
 }

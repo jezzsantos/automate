@@ -29,11 +29,12 @@ namespace Core.UnitTests.Application
                 var packager = new Mock<IPatternToolkitPackager>();
                 var draftPathResolver = new Mock<IDraftPathResolver>();
                 var automationService = new Mock<IAutomationExecutor>();
+                var runtimeMetadata = new Mock<IRuntimeMetadata>();
 
                 this.application =
                     new RuntimeApplication(toolkitStore, draftStore,
                         fileResolver.Object,
-                        packager.Object, draftPathResolver.Object, automationService.Object);
+                        packager.Object, draftPathResolver.Object, automationService.Object, runtimeMetadata.Object);
             }
 
             [Fact]
@@ -70,11 +71,15 @@ namespace Core.UnitTests.Application
                 this.packager = new Mock<IPatternToolkitPackager>();
                 this.draftPathResolver = new Mock<IDraftPathResolver>();
                 this.automationExecutor = new Mock<IAutomationExecutor>();
+                var runtimeMetadata = new Mock<IRuntimeMetadata>();
+                runtimeMetadata.Setup(rm => rm.ProductName).Returns("aproductname");
+                runtimeMetadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
 
                 this.application =
                     new RuntimeApplication(this.toolkitStore, this.draftStore,
                         this.fileResolver.Object,
-                        this.packager.Object, this.draftPathResolver.Object, this.automationExecutor.Object);
+                        this.packager.Object, this.draftPathResolver.Object, this.automationExecutor.Object,
+                        runtimeMetadata.Object);
                 ImportToolkit("apatternname");
             }
 
@@ -101,7 +106,7 @@ namespace Core.UnitTests.Application
             [Fact]
             public void WhenInstallToolkit_ThenReturnsInstalledToolkit()
             {
-                this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IFile>()))
+                this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IRuntimeMetadata>(), It.IsAny<IFile>()))
                     .Returns(this.toolkit);
 
                 var result = this.application.InstallToolkit("aninstallerlocation");

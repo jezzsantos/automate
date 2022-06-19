@@ -184,119 +184,171 @@ namespace Core.UnitTests.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsNonExistent_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.3.0-preview", null))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.3.0-preview");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Substitute(
                         ToolkitConstants.FirstVersionSupportingRuntimeVersion, "0.3.0-preview",
-                        "automate"));
+                        "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndRuntimeVersionIsBreaking_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.2.0-preview", "0.1.0-preview"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.2.0-preview");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.1.0-preview"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute("0.1.0-preview",
                         "0.2.0-preview",
-                        "automate"));
+                        "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndRuntimeVersionIsNonBreaking_ThenSucceeds()
         {
-            ToolkitDefinition.VerifyRuntimeCompatability("0.1.0-preview", "0.1.1-preview");
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.1.0-preview");
+
+            ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.1.1-preview");
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsNonBreaking_ThenSucceeds()
         {
-            ToolkitDefinition.VerifyRuntimeCompatability("0.1.1-preview", "0.1.0-preview");
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.1.1-preview");
+
+            ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.1.0-preview");
         }
 
         [Fact]
         public void
             WhenVerifyRuntimeCompatabilityAndPreReleaseAndToolkitVersionIsBreaking_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("0.1.0-preview", "0.2.0-preview"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.1.0-preview");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.2.0-preview"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Substitute("0.2.0-preview",
-                        "0.1.0-preview", "automate"));
+                        "0.1.0-preview", "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndToolkitPreReleaseAndToolkitVersionIsBackInPreview_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.1.0", "1.0.0-preview"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.1.0");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "1.0.0-preview"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute("1.0.0-preview",
-                        "1.1.0", "automate"));
+                        "1.1.0", "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndToolkitPreReleaseAndToolkitVersionIsAheadInPreview_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "1.1.0-preview"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "1.1.0-preview"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Substitute("1.1.0-preview",
-                        "1.0.0", "automate"));
+                        "1.0.0", "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndRuntimePreReleaseAndRuntimeVersionIsAheadInPreview_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.1.0-preview", "1.0.0"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.1.0-preview");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "1.0.0"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute("1.0.0",
-                        "1.1.0-preview", "automate"));
+                        "1.1.0-preview", "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndRuntimePreReleaseAndInstalledRuntimeIsBackInPreview_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0-preview", "1.1.0"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0-preview");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "1.1.0"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Substitute("1.1.0",
-                        "1.0.0-preview", "automate"));
+                        "1.0.0-preview", "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndRuntimeVersionIsBreaking_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "0.1.0"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.1.0"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute("0.1.0", "1.0.0",
-                        "automate"));
+                        "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndToolkitVersionIsBreaking_ThenThrows()
         {
-            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "2.0.0"))
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0");
+
+            FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "2.0.0"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Substitute("2.0.0", "1.0.0",
-                        "automate"));
+                        "aproductname"));
         }
 
         [Fact]
         public void WhenVerifyRuntimeCompatabilityAndRuntimeVersionIsNonBreaking_ThenSucceeds()
         {
-            ToolkitDefinition.VerifyRuntimeCompatability("0.2.0", "0.1.0");
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("0.2.0");
+
+            ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "0.1.0");
         }
 
         [Fact]
         public void
             WhenVerifyRuntimeCompatabilityAndToolkitVersionIsNonBreaking_ThenThrows()
         {
-            ToolkitDefinition.VerifyRuntimeCompatability("1.0.0", "1.1.0");
+            var metadata = new Mock<IRuntimeMetadata>();
+            metadata.Setup(md => md.ProductName).Returns("aproductname");
+            metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0");
+
+            ToolkitDefinition.VerifyRuntimeCompatability(metadata.Object, "1.1.0");
         }
 
         private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern,
