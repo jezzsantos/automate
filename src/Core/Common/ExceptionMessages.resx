@@ -325,11 +325,11 @@ or 2. Obtain a downgraded version of this toolkit (from its author) built agains
     </data>
     <data name="TextTemplatingExtensions_HasSyntaxErrors" xml:space="preserve">
         <value>Template: '{0}' has errors:
-{1}</value>
+    {1}</value>
     </data>
     <data name="TextTemplatingExtensions_TransformFailed" xml:space="preserve">
         <value>Failed to transform template: '{0}', errors were:
-{1}</value>
+    {1}</value>
     </data>
     <data name="PersistableExtensions_FromJson_NoJson" xml:space="preserve">
         <value>An attempt to deserialize empty JSON</value>

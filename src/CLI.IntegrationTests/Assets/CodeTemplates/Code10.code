@@ -1,0 +1,5 @@
+{{AProperty1}}
+{{AnElement1.Parent.AProperty1}}
+{{AnElement1.AProperty2}}
+{{AnElement1.AnElement2.Parent.AProperty2}}
+{{AnElement1.AnElement2.AProperty3}}

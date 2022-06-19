@@ -620,7 +620,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2");
 
             var path = GetFilePathInOutput(@"code/Bnamingtest.cs");
-            var commandId = this.setup.Pattern.Automation[2].Id;
+            var command = this.setup.Pattern.Automation[2];
             var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
@@ -629,10 +629,10 @@ namespace CLI.IntegrationTests
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("Bnamingtest.cs",
                         codeTemplate.Id, path) +
                     $"{Environment.NewLine}" +
-                    "* " + InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(commandId,
+                    "* " + InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(command.Id,
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Substitute(
                             InfrastructureMessages.CodeTemplateCommand_FilePathExpression_Description.Substitute(
-                                commandId),
+                                command.Metadata[nameof(CodeTemplateCommand.FilePath)]),
                             $"((20:0,20),(21:0,21)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
                             $"((19:0,19),(19:0,19)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
                             "* " + InfrastructureMessages.ApplicationExecutor_Succeeded.Substitute(
@@ -693,6 +693,58 @@ namespace CLI.IntegrationTests
             artifactLink.Should().Be(path);
             var contents = File.ReadAllText(path);
             contents.Should().Be($"B{Environment.NewLine}avalue1{Environment.NewLine}");
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointOnMultiLevelPattern_ThenDisplaysSuccess()
+        {
+            CreateDraftFromBuiltToolkit(TestCaseSetup.Templating);
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern.AnElement1}} --and-set \"AProperty2=avalue2\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern.AnElement1.AnElement2}} --and-set \"AProperty3=avalue3\"");
+
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
+
+            var codeTemplate1 = this.setup.Pattern.CodeTemplates.Single();
+            var codeTemplate2 = this.setup.Pattern.Elements.Single().CodeTemplates.Single();
+            var codeTemplate3 = this.setup.Pattern.Elements.Single().Elements.Single().CodeTemplates.Single();
+            var artifactLink1 = this.setup.Draft.Model.ArtifactLinks.First().Path;
+            var artifactLink2 = this.setup.Draft.Model.Properties["AnElement1"].ArtifactLinks.First().Path;
+            var artifactLink3 = this.setup.Draft.Model.Properties["AnElement1"].Properties["AnElement2"].ArtifactLinks
+                .First().Path;
+            var codeFile1 = GetFilePathInOutput(@"code/avalue1/avalue2/avalue3/templating1.code");
+            var codeFile2 = GetFilePathInOutput(@"code/avalue1/avalue2/avalue3/templating2.code");
+            var codeFile3 = GetFilePathInOutput(@"code/avalue1/avalue2/avalue3/templating3.code");
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
+                    "ALaunchPoint1",
+                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating1.code",
+                        codeTemplate1.Id, codeFile1) + $"{Environment.NewLine}" +
+                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating2.code",
+                        codeTemplate2.Id, codeFile2) + $"{Environment.NewLine}" +
+                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating3.code",
+                        codeTemplate3.Id, codeFile3) + $"{Environment.NewLine}"
+                ));
+            artifactLink1.Should().Be(codeFile1);
+            artifactLink2.Should().Be(codeFile2);
+            artifactLink3.Should().Be(codeFile3);
+            var contents1 = File.ReadAllText(codeFile1);
+            contents1.Should()
+                .Be(
+                    $"avalue1{Environment.NewLine}avalue1{Environment.NewLine}avalue2{Environment.NewLine}avalue2{Environment.NewLine}avalue3");
+            var contents2 = File.ReadAllText(codeFile2);
+            contents2.Should()
+                .Be(
+                    $"avalue1{Environment.NewLine}avalue2{Environment.NewLine}avalue2{Environment.NewLine}avalue3{Environment.NewLine}avalue3");
+            var contents3 = File.ReadAllText(codeFile3);
+            contents3.Should()
+                .Be(
+                    $"avalue1{Environment.NewLine}avalue2{Environment.NewLine}avalue2{Environment.NewLine}avalue3{Environment.NewLine}avalue3");
         }
 
         [Fact]
@@ -802,60 +854,95 @@ namespace CLI.IntegrationTests
             }
         }
 
-        private void CreateDraftFromBuiltToolkit()
+        private void CreateDraftFromBuiltToolkit(TestCaseSetup testCase = TestCaseSetup.Normal)
         {
-            ConfigureBuildAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit(testCase);
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             this.setup.Should().DisplayNoError();
         }
 
-        private string ConfigureBuildAndInstallToolkit()
+        private string ConfigureBuildAndInstallToolkit(TestCaseSetup testCase = TestCaseSetup.Normal)
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs\"");
-            var commandId1 = this.setup.Pattern.Automation[0].Id;
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.}}}}invalid.cs\"");
-            var commandId2 = this.setup.Pattern.Automation[2].Id;
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-cli-command \"{this.testApplicationName}\" --arguments \"--succeeds\"");
-            var commandId3 = this.setup.Pattern.Automation[3].Id;
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint2");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --isoftype int");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1 --autocreate false");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
+            if (testCase == TestCaseSetup.Normal)
+            {
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs\"");
+                var commandId1 = this.setup.Pattern.Automation[0].Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.}}}}invalid.cs\"");
+                var commandId2 = this.setup.Pattern.Automation[2].Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-cli-command \"{this.testApplicationName}\" --arguments \"--succeeds\"");
+                var commandId3 = this.setup.Pattern.Automation[3].Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint2");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty2 --isoftype int");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1 --autocreate false");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --isoneof \"A;B;C\"");
 
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ACodeTemplate2 --aschildof {{APattern.AnElement1}}");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate2\" --targetpath \"~/code/parentsubstitutiontest.cs\" --aschildof {{APattern.AnElement1}}");
-            var commandId4 = this.setup.Pattern.Elements.First().Automation.Single().Id;
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId4} --name ALaunchPoint3 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code2.code\" --name ACodeTemplate2 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate2\" --targetpath \"~/code/parentsubstitutiontest.cs\" --aschildof {{APattern.AnElement1}}");
+                var commandId4 = this.setup.Pattern.Elements.First().Automation.Single().Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId4} --name ALaunchPoint3 --aschildof {{APattern.AnElement1}}");
 
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --isrequired");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.ACollection2}} --defaultvalueis ADefaultValue4");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --isrequired");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.ACollection2}} --defaultvalueis ADefaultValue4");
 
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement3");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty5 --aschildof {{APattern.AnElement3}} --defaultvalueis ADefaultValue1");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty6 --aschildof {{APattern.AnElement3}} --isoftype int --defaultvalueis 25");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty7 --aschildof {{APattern.AnElement3}}");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement3");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty5 --aschildof {{APattern.AnElement3}} --defaultvalueis ADefaultValue1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty6 --aschildof {{APattern.AnElement3}} --isoftype int --defaultvalueis 25");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty7 --aschildof {{APattern.AnElement3}}");
+            }
+
+            if (testCase == TestCaseSetup.Templating)
+            {
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code10.code\" --name ACodeTemplate1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AProperty1}}}}/{{{{AnElement1.AProperty2}}}}/{{{{AnElement1.AnElement2.AProperty3}}}}/templating1.code\"");
+                var commandId1 = this.setup.Pattern.Automation.Single().Id;
+
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate --aschildof {{APattern.AnElement1}} \"Assets/CodeTemplates/code11.code\" --name ACodeTemplate2");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command --aschildof {{APattern.AnElement1}} \"ACodeTemplate2\" --targetpath \"~/code/{{{{Parent.AProperty1}}}}/{{{{AProperty2}}}}/{{{{AnElement2.AProperty3}}}}/templating2.code\"");
+                var commandId2 = this.setup.Pattern.Elements.Single().Automation.Single().Id;
+
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-element AnElement2 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1.AnElement2}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate --aschildof {{APattern.AnElement1.AnElement2}} \"Assets/CodeTemplates/code12.code\" --name ACodeTemplate3");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command --aschildof {{APattern.AnElement1.AnElement2}} \"ACodeTemplate3\" --targetpath \"~/code/{{{{Parent.Parent.AProperty1}}}}/{{{{Parent.AProperty2}}}}/{{{{AProperty3}}}}/templating3.code\"");
+                var commandId3 = this.setup.Pattern.Elements.Single().Elements.Single().Automation.Single().Id;
+
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint1");
+            }
 
             this.setup.Should().DisplayNoError();
 
@@ -874,6 +961,12 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
 
             return location;
+        }
+
+        private enum TestCaseSetup
+        {
+            Normal = 0,
+            Templating = 1
         }
     }
 }

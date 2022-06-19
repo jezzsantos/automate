@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="6.3.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4"/>
-        <PackageReference Include="xunit" Version="2.4.1"/>
+        <PackageReference Include="FluentAssertions" Version="6.3.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+        <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -20,12 +20,21 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CLI\CLI.csproj"/>
+        <ProjectReference Include="..\CLI\CLI.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Content Include="Assets\CodeTemplates\Code1.code">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\CodeTemplates\Code10.code">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\CodeTemplates\Code11.code">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\CodeTemplates\Code12.code">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Assets\CodeTemplates\Code2.code">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -55,13 +55,13 @@
     </data>
     <data name="CommandLaunchPoint_CommandIdFailedExecution" xml:space="preserve">
         <value>Command: '{0}' failed to execute. Errors were:
-{1}</value>
+    {1}</value>
     </data>
     <data name="CodeTemplateCommand_FilePathExpression_Description" xml:space="preserve">
-        <value>CodeTemplateCommand ({0}) path expression</value>
+        <value>Target Path ({0})</value>
     </data>
     <data name="CodeTemplateCommand_TemplateContent_Description" xml:space="preserve">
-        <value>CodeTemplate ({0}) template</value>
+        <value>Template Content</value>
     </data>
     <data name="CliCommand_ApplicationName_Description" xml:space="preserve">
         <value>CliCommand ({0}) application name</value>

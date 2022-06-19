@@ -117,7 +117,7 @@ namespace Automate.CLI.Infrastructure
                 .FirstOrDefault(link => link.CommandId.EqualsIgnoreCase(command.Id));
 
             var destinationFilePath = this.draftPathResolver.ResolveExpression(
-                InfrastructureMessages.CodeTemplateCommand_FilePathExpression_Description.Substitute(command.Id),
+                InfrastructureMessages.CodeTemplateCommand_FilePathExpression_Description.Substitute(command.FilePath),
                 command.FilePath, result.ExecutableContext.Item);
             var destinationFullPath = destinationFilePath.StartsWith(CurrentDirectoryPrefix)
                 ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
@@ -160,7 +160,7 @@ namespace Automate.CLI.Infrastructure
                 ? CodeTemplateFile.Encoding.GetString(codeTemplate.Contents.ToArray())
                 : string.Empty;
             var generatedCode = this.textTemplatingEngine.Transform(
-                InfrastructureMessages.CodeTemplateCommand_TemplateContent_Description.Substitute(codeTemplate.Id),
+                InfrastructureMessages.CodeTemplateCommand_TemplateContent_Description,
                 contents,
                 target);
 
@@ -279,17 +279,22 @@ namespace Automate.CLI.Infrastructure
                         ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Substitute(cmdId));
                 }
 
-                commands.ForEach(pair => ExecuteCommandSafely(pair.Automation, pair.DraftItem, cmdId));
+                commands.ForEach(pair =>
+                    ExecuteCommandSafely(pair.Automation, result.ExecutableContext.Draft, pair.DraftItem, cmdId));
             });
 
-            void ExecuteCommandSafely(IAutomationSchema command, DraftItem draftItem, string cmdId)
+            void ExecuteCommandSafely(IAutomationSchema command, DraftDefinition draft, DraftItem draftItem,
+                string cmdId)
             {
                 try
                 {
                     var executable = command.GetExecutable(result.ExecutableContext.Draft, draftItem);
                     if (executable.IsLaunchable)
                     {
-                        automationExecutor(result, executable, executable.Type);
+                        var newContext = new CommandExecutableContext(executable, draft, draftItem);
+                        var newResult = new CommandExecutionResult(executable.Name, newContext);
+                        automationExecutor(newResult, executable, executable.Type);
+                        result.Merge(newResult);
                     }
                 }
                 catch (Exception ex)

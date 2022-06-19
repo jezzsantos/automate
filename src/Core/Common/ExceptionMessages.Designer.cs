@@ -855,7 +855,7 @@ namespace Automate.Common {
         
         /// <summary>
         ///   Looks up a localized string similar to Template: &apos;{0}&apos; has errors:
-        ///{1}.
+        ///    {1}.
         /// </summary>
         internal static string TextTemplatingExtensions_HasSyntaxErrors {
             get {
@@ -865,7 +865,7 @@ namespace Automate.Common {
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to transform template: &apos;{0}&apos;, errors were:
-        ///{1}.
+        ///    {1}.
         /// </summary>
         internal static string TextTemplatingExtensions_TransformFailed {
             get {

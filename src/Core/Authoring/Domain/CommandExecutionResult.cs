@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
@@ -8,10 +9,6 @@ namespace Automate.Authoring.Domain
     public class CommandExecutionResult
     {
         private readonly List<string> log;
-
-        public CommandExecutionResult(string commandName) : this(commandName, null as CommandExecutableContext)
-        {
-        }
 
         public CommandExecutionResult(string commandName, CommandExecutableContext executableContext)
         {
@@ -71,6 +68,19 @@ namespace Automate.Authoring.Domain
             messages.GuardAgainstNull(nameof(messages));
 
             this.log.AddRange(messages);
+        }
+
+        public void Merge(CommandExecutionResult source)
+        {
+            Record(source.Log);
+            if (!source.IsSuccess)
+            {
+                Fail();
+            }
+            if (source.ValidationErrors.Any())
+            {
+                ValidationErrors.AddRange(source.ValidationErrors);
+            }
         }
     }
 

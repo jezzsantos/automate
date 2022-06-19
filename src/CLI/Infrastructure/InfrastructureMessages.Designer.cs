@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace Automate.CLI.Infrastructure {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -123,7 +126,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplateCommand ({0}) path expression.
+        ///   Looks up a localized string similar to Target Path ({0}).
         /// </summary>
         internal static string CodeTemplateCommand_FilePathExpression_Description {
             get {
@@ -168,7 +171,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        ///   Looks up a localized string similar to Template Content.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateContent_Description {
             get {
@@ -178,7 +181,7 @@ namespace Automate.CLI.Infrastructure {
         
         /// <summary>
         ///   Looks up a localized string similar to Command: &apos;{0}&apos; failed to execute. Errors were:
-        ///{1}.
+        ///    {1}.
         /// </summary>
         internal static string CommandLaunchPoint_CommandIdFailedExecution {
             get {
