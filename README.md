@@ -7,6 +7,8 @@ __![Presence](https://dcbadge.vercel.app/api/shield/984584859009814608?style=pla
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
       ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
 
+![The Basic Idea](https://github.com/jezzsantos/automate/blob/main/docs/BasicConcept.png)
+
 **Question to a Developer:**
 
 What if I gave you a command-line tool that wrote a lot of your code for you? and it took about ~5 command-line commands (or so) for you to build out an API endpoint or all the scaffolding for a UI page?
@@ -23,13 +25,15 @@ What about, if later, that command-line tool was adapted and updated (by you) as
 
 What if you had a selection of these kinds of tools stored alongside that code, in that codebase?
 
-## What is Automate?
+# What is Automate?
 
-Automate is a tool for Tech Leads, Lead Developers or Tech Consultants to give their fellow codebase contributors dev tools that capture and apply their coding patterns consistently across to their codebases as they evolve and change.
-
-![The Idea](https://github.com/jezzsantos/automate/blob/main/docs/Concept.png)
+1. Why? - Consistency, and Timesaving
+2. Who? - Tech Leads, Lead Developers, Tech Consultants
+3. How? - Give fellow codebase contributors tools that capture and apply their own coding patterns, naming and structure consistently. And evolve as the code changes.
 
 ## How is automate different from other similar tools?
+
+![The Process](https://github.com/jezzsantos/automate/blob/main/docs/Concept.png)
 
 Automate may look like other kinds of templating or scaffolding-type developer tools, but there are some important differences (under the covers) that make a big difference in the long run:
 
@@ -40,7 +44,7 @@ Automate may look like other kinds of templating or scaffolding-type developer t
 5. Your toolkits can chain together ANY developer tooling to help you get your job done better. Not just code generation.
 6. Your toolkits can be used with ANY programming language, on any platform, doing any kind of software development.
 
-## How does it work?
+# How does it work?
 
 It works like this:
 
@@ -56,7 +60,7 @@ It works like this:
 10. They then use the toolkit to construct a usage of the pattern (called a "draft") and configure it for their specific use case in their workflow.
 11. The toolkit renders the code templates into files and folders in the codebase with information contained within the draft, and executes the relevant automation etc.
 
-### Dealing with change
+## Dealing with change
 
 At some point later (inevitably), you will want to update the pattern. Refactor it, modify it, fix a defect in it, or just add new capabilities to it, etc.
 
@@ -66,7 +70,7 @@ At some point later (inevitably), you will want to update the pattern. Refactor 
 2. They run the upgraded toolkit and upgrade the code in their codebase.
 2. The toolkit automatically detects the previous files/folders that were written before and detects the previous draft configuration that was used before. The toolkit re-applies the upgraded pieces. The codebase evolves.
 
-### Does automate apply to you?
+## Does automate apply to you?
 
 If these assumptions about your software team are **all true**, then you might consider taking a look at this tool.
 
@@ -84,7 +88,7 @@ If this sounds like your situation, then maybe we can help you define (and enfor
 
 See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on each of the commands below.
 
-### Making your first toolkit
+## Making your first toolkit
 
 1. Install the **automate** tool:
     * Platform installers are all here: `https://github.com/jezzsantos/automate/releases`
@@ -130,7 +134,7 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
 ---
 
-### Using your first toolkit
+## Using your first toolkit
 
 Now, that person (or you), can:
 
@@ -160,7 +164,7 @@ If you now open that generated file, you will also see the value of `Banana` in 
 
 ---
 
-### Upgrading your first toolkit
+## Upgrading your first toolkit
 
 Now, you want to make a change to the toolkit:
 
@@ -201,6 +205,6 @@ If you now open that generated file, you will also see the value of `Green` in t
 
 # See it all in action
 
-Keen to see a real example?
+Sick of silly examples, and keen to see an example on a real codebase?
 
-Here is a [demo toolkit](https://github.com/jezzsantos/automate/tree/main/discovery/demo) with a walk-through on a real codebase which anyone can follow on a real codebase.
+Here is a [demo toolkit](https://github.com/jezzsantos/automate/tree/main/discovery/demo) with a walk-through on a real codebase which anyone can follow.
