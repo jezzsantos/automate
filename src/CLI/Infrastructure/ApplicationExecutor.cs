@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using Automate.Application;
-using Automate.Extensions;
-using Automate.Infrastructure;
+using Automate.Common.Extensions;
+using Automate.Runtime.Application;
 
 namespace Automate.CLI.Infrastructure
 {

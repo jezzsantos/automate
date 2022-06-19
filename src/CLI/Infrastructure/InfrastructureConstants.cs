@@ -1,5 +1,5 @@
 ﻿using System;
-using Automate.Extensions;
+using Automate.Common.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {

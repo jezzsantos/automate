@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using Automate;
+using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
-using Automate.Domain;
-using Automate.Extensions;
+using Automate.Common;
+using Automate.Common.Domain;
+using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 

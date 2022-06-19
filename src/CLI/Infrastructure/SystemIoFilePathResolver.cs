@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Automate.Application;
-using Automate.Extensions;
+using Automate.Authoring.Application;
+using Automate.Common.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {

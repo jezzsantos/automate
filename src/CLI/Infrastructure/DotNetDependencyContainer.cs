@@ -1,5 +1,6 @@
 ﻿using System;
-using Automate.Extensions;
+using Automate.Common;
+using Automate.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Automate.CLI.Infrastructure

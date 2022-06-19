@@ -1,8 +1,14 @@
 ﻿using System;
-using Automate.Application;
+using Automate.Authoring.Application;
+using Automate.Authoring.Infrastructure;
 using Automate.CLI.Infrastructure;
-using Automate.Domain;
-using Automate.Infrastructure;
+using Automate.Common;
+using Automate.Common.Application;
+using Automate.Common.Domain;
+using Automate.Common.Infrastructure;
+using Automate.Runtime.Application;
+using Automate.Runtime.Domain;
+using Automate.Runtime.Infrastructure;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

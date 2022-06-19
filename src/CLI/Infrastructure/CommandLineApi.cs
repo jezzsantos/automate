@@ -8,11 +8,16 @@ using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Linq;
 using System.Text;
-using Automate.Application;
+using Automate.Authoring.Application;
+using Automate.Authoring.Domain;
 using Automate.CLI.Extensions;
-using Automate.Domain;
-using Automate.Extensions;
-using Automate.Infrastructure;
+using Automate.Common;
+using Automate.Common.Application;
+using Automate.Common.Domain;
+using Automate.Common.Extensions;
+using Automate.Common.Infrastructure;
+using Automate.Runtime.Application;
+using Automate.Runtime.Domain;
 
 namespace Automate.CLI.Infrastructure
 {

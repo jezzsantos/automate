@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Automate.Application;
-using Automate.Domain;
-using Automate.Extensions;
-using Automate.Infrastructure;
+using Automate.Authoring.Application;
+using Automate.Authoring.Domain;
+using Automate.Common;
+using Automate.Common.Application;
+using Automate.Common.Domain;
+using Automate.Common.Extensions;
+using Automate.Runtime.Application;
+using Automate.Runtime.Domain;
 
 namespace Automate.CLI.Infrastructure
 {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using Automate.Authoring.Domain;
 using Automate.CLI.Extensions;
-using Automate.Domain;
-using Automate.Extensions;
+using Automate.Common.Domain;
+using Automate.Common.Extensions;
 using Humanizer;
-using Attribute = Automate.Domain.Attribute;
+using Attribute = Automate.Authoring.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
 {

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using Automate;
-using Automate.Application;
+using Automate.Authoring.Application;
+using Automate.Authoring.Domain;
 using Automate.CLI;
 using Automate.CLI.Infrastructure;
-using Automate.Domain;
-using Automate.Extensions;
-using Automate.Infrastructure;
+using Automate.Common;
+using Automate.Common.Application;
+using Automate.Common.Extensions;
+using Automate.Runtime.Domain;
 using FluentAssertions;
 using Moq;
 using Xunit;

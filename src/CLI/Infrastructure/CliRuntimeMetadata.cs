@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Automate.Domain;
+using Automate.Common.Domain;
 
 namespace Automate.CLI.Infrastructure
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-using Automate.Extensions;
+using Automate.Common.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;

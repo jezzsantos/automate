@@ -1,4 +1,5 @@
-﻿using Automate.Domain;
+﻿using Automate.Authoring.Domain;
+using Automate.Common.Domain;
 
 namespace Automate.CLI.Extensions
 {

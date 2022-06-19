@@ -1,6 +1,7 @@
-﻿using Automate.Application;
+﻿using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
-using Automate.Domain;
+using Automate.Runtime.Application;
+using Automate.Runtime.Domain;
 using FluentAssertions;
 using Moq;
 using Xunit;

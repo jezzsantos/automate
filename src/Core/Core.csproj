@@ -27,59 +27,51 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Update="Domain\DomainMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\MigrationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\ValidationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\VersionChanges.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="Application\ApplicationMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="ExceptionMessages.resx">
+        <EmbeddedResource Update="Patterns\Domain\DomainMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Patterns\Domain\MigrationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Patterns\Domain\ValidationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Patterns\Domain\VersionChanges.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Common\Application\ApplicationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Common\ExceptionMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Common\Domain\DomainMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Runtime\Domain\MigrationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Domain\DomainMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>DomainMessages.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Domain\MigrationMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>MigrationMessages.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Domain\ValidationMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>ValidationMessages.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Domain\VersionChanges.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>VersionChanges.resx</DependentUpon>
-        </Compile>
         <Compile Update="Application\ApplicationMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ApplicationMessages.resx</DependentUpon>
         </Compile>
-        <Compile Update="ExceptionMessages.Designer.cs">
+        <Compile Update="Common\ExceptionMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ExceptionMessages.resx</DependentUpon>

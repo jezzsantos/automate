@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using Automate.CLI.Infrastructure;
-using Automate.Extensions;
-using Automate.Infrastructure;
+using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 
