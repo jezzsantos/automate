@@ -15,5 +15,19 @@ namespace Automate.CLI.Extensions
             command.Handler = handler;
             return command;
         }
+
+        public static Command WithAlias(this Command command, string alias)
+        {
+            command.AddAlias(alias);
+
+            return command;
+        }
+
+        public static Option WithAlias(this Option option, string alias)
+        {
+            option.AddAlias(alias);
+
+            return option;
+        }
     }
 }

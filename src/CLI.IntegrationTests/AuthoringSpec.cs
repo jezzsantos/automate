@@ -816,19 +816,19 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildAndNoCommands_ThenDisplaysError()
+        public void WhenPublishAndNoCommands_ThenDisplaysError()
         {
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName}");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName}");
 
             this.setup.Should().DisplayErrorForMissingCommand();
         }
 
         [Fact]
-        public void WhenBuildToolkitFirstTimeWithNoChanges_ThenBuildsFirstVersionOnDesktop()
+        public void WhenPublishToolkitFirstTimeWithNoChanges_ThenPublishesFirstVersionOnDesktop()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -840,12 +840,12 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitFirstTimeWithAChange_ThenBuildsNextVersionOnDesktop()
+        public void WhenPublishToolkitFirstTimeWithAChange_ThenPublishesNextVersionOnDesktop()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -857,17 +857,17 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitNextTimeWithAPatternChange_ThenBuildsNextVersionOnDesktop()
+        public void WhenPublishToolkitNextTimeWithAPatternChange_ThenPublishesNextVersionOnDesktop()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -879,16 +879,16 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitNextTimeWithACodeTemplateChange_ThenBuildsNextVersionOnDesktop()
+        public void WhenPublishToolkitNextTimeWithACodeTemplateChange_ThenPublishesNextVersionOnDesktop()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
             var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             ModifyCodeTemplateContent(codeTemplate, "anewcontent");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -900,13 +900,13 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitSecondTimeWithNoChanges_ThenBuildsSameVersionOnDesktop()
+        public void WhenPublishToolkitSecondTimeWithNoChanges_ThenPublishesSameVersionOnDesktop()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -918,12 +918,13 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitWithNonBreakingChangesAndSpecifySameVersion_ThenBuildsSameVersionOnDesktopAndWarns()
+        public void
+            WhenPublishToolkitWithNonBreakingChangesAndSpecifySameVersion_ThenPublishesSameVersionOnDesktopAndWarns()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion 0.1.0");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --asversion 0.1.0");
 
             var pattern = this.setup.Pattern;
             var attribute = pattern.Attributes.Single();
@@ -947,7 +948,7 @@ namespace CLI.IntegrationTests
 
         [Fact]
         public void
-            WhenBuildToolkitWithMultipleBreakingAndNonBreakingChangesAndForceSameVersion_ThenBuildsSameVersionOnDesktopAndWarns()
+            WhenPublishToolkitWithMultipleBreakingAndNonBreakingChangesAndForceSameVersion_ThenPublishesSameVersionOnDesktopAndWarns()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -960,7 +961,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} delete-attribute \"AnAttribute\"");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion 0.1.0 --force");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --asversion 0.1.0 --force");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
@@ -985,11 +986,11 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenBuildToolkitAndInstall_ThenBuildsFirstVersionOnDesktopAndInstalls()
+        public void WhenPublishToolkitAndInstall_ThenPublishesFirstVersionOnDesktopAndInstalls()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
 
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --install");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --install");
 
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();

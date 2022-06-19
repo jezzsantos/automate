@@ -124,11 +124,11 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
     ```
     * Save the file
 
-6. Generate the toolkit for this pattern to share with others on your team:
+6. Publish a toolkit for this pattern to share with others on your team:
 
-    * `automate build toolkit`
+    * `automate publish toolkit`
 
-   > This will build, version a self-contained toolkit file. It will export it to the desktop on your machine, and provide you with the command to install it into this codebase.
+   > This will build a versioned self-contained toolkit file, and it will publish it to the desktop on your machine, and also provide you with the command to install it into this codebase.
 
 7. Share the toolkit file (`MyPattern1_0.1.0.toolkit`) over email/slack/etc with someone on your team.
 
@@ -183,7 +183,7 @@ Now, you want to make a change to the toolkit:
 
 3. Rebuild the toolkit:
 
-    * `automate build toolkit`
+    * `automate publish toolkit`
 
 4. Upgrade the toolkit:
 

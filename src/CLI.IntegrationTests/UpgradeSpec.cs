@@ -186,13 +186,13 @@ namespace CLI.IntegrationTests
 
         private void CreateDraftFromBuiltToolkit()
         {
-            ConfigureBuildAndInstallToolkit();
+            ConfigurePublishAndInstallToolkit();
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
             this.setup.Should().DisplayNoError();
         }
 
-        private string ConfigureBuildAndInstallToolkit()
+        private string ConfigurePublishAndInstallToolkit()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
@@ -212,7 +212,7 @@ namespace CLI.IntegrationTests
         private string RebuildReversionAndInstallToolkit(
             string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
-            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;
 
             var location = GetFilePathOfExportedToolkit($"APattern_{latestVersion}.toolkit");

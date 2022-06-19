@@ -440,9 +440,9 @@ That's it for defining the pattern, and code templates.
 
 Now the tech lead can build a toolkit from that pattern, and give it to their dev team.
 
-`automate build toolkit`
+`automate publish toolkit`
 
-> This command creates a standalone (cross-platform) package (`AcmeAPI_0.1.0.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme.
+> This command creates a standalone (cross-platform) installer (`AcmeAPI_0.1.0.toolkit`) that will automatically be versioned and can now be installed by any contributor at Acme on any codebase.
 >
 > This package file will appear on your desktop, for you to install.
 

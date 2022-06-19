@@ -26,6 +26,7 @@ namespace Automate.CLI.Infrastructure
         public const string CreateCommandName = "create";
         public const string EditCommandName = "edit";
         public const string BuildCommandName = "build";
+        public const string PublishCommandName = "publish";
         public const string InstallCommandName = "install";
         public const string RunCommandName = "run";
         public const string TestCommandName = "test";
@@ -339,20 +340,21 @@ namespace Automate.CLI.Infrastructure
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.TestCodeTemplateCommand))
             };
-            var buildCommands = new Command(BuildCommandName, "Building toolkits from patterns")
+            var publishCommands = new Command(PublishCommandName, "Publishing toolkits from patterns")
             {
-                new Command("toolkit", "Builds a pattern into a toolkit")
-                {
-                    new Option("--asversion",
-                        "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
-                        typeof(string), arity: ArgumentArity.ZeroOrOne),
-                    new Option("--force",
-                        "Force the specified version number even it it violates breaking changes checks",
-                        typeof(bool), () => false, ArgumentArity.ZeroOrOne),
-                    new Option("--install", "Install the built toolkit locally",
-                        typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Build))
-            };
+                new Command("toolkit", "Builds a pattern into a toolkit and publishes the toolkit")
+                    {
+                        new Option("--asversion",
+                            "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
+                            typeof(string), arity: ArgumentArity.ZeroOrOne),
+                        new Option("--force",
+                            "Force the specified version number even it it violates breaking changes checks",
+                            typeof(bool), () => false, ArgumentArity.ZeroOrOne),
+                        new Option("--install", "Install the built toolkit locally",
+                            typeof(bool), () => false, ArgumentArity.ZeroOrOne)
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Build))
+                    .WithAlias("pattern")
+            }.WithAlias(BuildCommandName);
             var installCommands = new Command(InstallCommandName, "Installing toolkits")
             {
                 new Command("toolkit", "Installs the pattern from a toolkit")
@@ -473,7 +475,7 @@ namespace Automate.CLI.Infrastructure
                     createCommands,
                     editCommands,
                     testCommands,
-                    buildCommands,
+                    publishCommands,
                     installCommands,
                     runCommands,
                     configureCommands,
@@ -643,7 +645,7 @@ namespace Automate.CLI.Infrastructure
             var isViewPatternCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "pattern";
 
             return args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
-                   || args[0] == TestCommandName || isViewPatternCommand;
+                   || args[0] == PublishCommandName || args[0] == TestCommandName || isViewPatternCommand;
         }
 
 #if TESTINGONLY
