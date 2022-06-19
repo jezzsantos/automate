@@ -10,6 +10,7 @@ namespace Automate.Authoring.Domain
             Name = name;
             Type = type;
         }
+
         public string Id => "testingonly";
 
         public string Name { get; }

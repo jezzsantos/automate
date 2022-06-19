@@ -75,7 +75,7 @@ namespace Core.UnitTests.Runtime.Infrastructure
                 this.store.Create(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")),
                     "aname"));
 
-            this.repository.ListDrafts().Single<DraftDefinition>().Id.Should().Be(result.Id);
+            this.repository.ListDrafts().Single().Id.Should().Be(result.Id);
             this.repository.GetLocalState().CurrentDraft.Should().Be(result.Id);
             result.Name.Should().Be("aname");
         }

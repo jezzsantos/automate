@@ -703,43 +703,6 @@ namespace Core.UnitTests.Runtime.Domain
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftItem_UnknownAutomation.Substitute("acommandname"));
         }
-#if TESTINGONLY
-
-        [Fact]
-        public void WhenExecuteCommandAndAutomationIsNotLaunching_ThenThrows()
-        {
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            this.pattern.AddAutomation(automation);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
-
-            draftItem
-                .Invoking(x =>
-                    x.ExecuteCommand(draft, "acommandname"))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.DraftItem_NotLaunching.Substitute("acommandname"));
-        }
-
-        [Fact]
-        public void WhenExecuteCommand_ThenReturnsResult()
-        {
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunching,
-                    new Dictionary<string, object>());
-            this.pattern.AddAutomation(automation);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
-
-            var result = draftItem.ExecuteCommand(draft, "acommandname");
-
-            result.CommandName.Should().Be("acommandname");
-            result.IsSuccess.Should().BeTrue();
-            result.Log.Should().BeEmpty();
-            result.ValidationErrors.Should().BeEmpty();
-        }
-#endif
 
         [Fact]
         public void WhenSetPropertiesAndAnyPropertyLeftHandSideOfAssigmentInvalid_ThenThrows()
@@ -1672,5 +1635,42 @@ namespace Core.UnitTests.Runtime.Domain
             return originalPattern.ToJson(factory)
                 .FromJson<PatternDefinition>(factory);
         }
+#if TESTINGONLY
+
+        [Fact]
+        public void WhenExecuteCommandAndAutomationIsNotLaunching_ThenThrows()
+        {
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            this.pattern.AddAutomation(automation);
+            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
+
+            draftItem
+                .Invoking(x =>
+                    x.ExecuteCommand(draft, "acommandname"))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.DraftItem_NotLaunching.Substitute("acommandname"));
+        }
+
+        [Fact]
+        public void WhenExecuteCommand_ThenReturnsResult()
+        {
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunching,
+                    new Dictionary<string, object>());
+            this.pattern.AddAutomation(automation);
+            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
+
+            var result = draftItem.ExecuteCommand(draft, "acommandname");
+
+            result.CommandName.Should().Be("acommandname");
+            result.IsSuccess.Should().BeTrue();
+            result.Log.Should().BeEmpty();
+            result.ValidationErrors.Should().BeEmpty();
+        }
+#endif
     }
 }

@@ -458,11 +458,12 @@ namespace Automate.CLI.Infrastructure
                     }
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.UpgradeDraft))
             };
+#if TESTINGONLY
             var testingOnlyCommands = new Command("testingonly", "For testing only!")
             {
                 new Option("--fail", "Throws a general exception", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
             }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Fail));
-
+#endif
             var command =
                 new RootCommand(
                     "Templatize patterns from your own codebase, make them programmable, then share them with your team")
@@ -592,7 +593,7 @@ namespace Automate.CLI.Infrastructure
             return true;
 #else
             var debugOption =
- context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
+                context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
             if (debugOption.Exists())
             {
                 return (bool)context.ParseResult.FindResultFor(debugOption)!.GetValueOrDefault()!;
@@ -645,6 +646,7 @@ namespace Automate.CLI.Infrastructure
                    || args[0] == TestCommandName || isViewPatternCommand;
         }
 
+#if TESTINGONLY
         private class TestingOnlyHandlers
         {
             internal static void Fail(
@@ -658,6 +660,7 @@ namespace Automate.CLI.Infrastructure
                 throw new Exception("testingonly");
             }
         }
+#endif
 
         private class AuthoringHandlers
         {

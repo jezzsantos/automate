@@ -15,9 +15,9 @@ namespace CLI.UnitTests.Infrastructure
     [Trait("Category", "Unit")]
     public class CommandLaunchPointExecutorSpec
     {
+        private readonly CommandLaunchPointExecutor executor;
         private readonly CommandLaunchPoint launchPoint;
         private readonly PatternDefinition pattern;
-        private readonly CommandLaunchPointExecutor executor;
 
         public CommandLaunchPointExecutorSpec()
         {

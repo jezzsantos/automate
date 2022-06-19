@@ -42,10 +42,10 @@ namespace CLI.UnitTests.Infrastructure
         [Trait("Category", "Unit")]
         public class GivenAEverytimeCommand
         {
-            private readonly Mock<IFileSystemReaderWriter> fileSystem;
-            private readonly CodeTemplateCommandExecutor executor;
-            private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
             private readonly CodeTemplateCommand command;
+            private readonly CodeTemplateCommandExecutor executor;
+            private readonly Mock<IFileSystemReaderWriter> fileSystem;
+            private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
             public GivenAEverytimeCommand()
             {
@@ -304,10 +304,10 @@ namespace CLI.UnitTests.Infrastructure
         [Trait("Category", "Unit")]
         public class GivenAOneOffCommand
         {
-            private readonly Mock<IFileSystemReaderWriter> fileSystem;
-            private readonly CodeTemplateCommandExecutor executor;
-            private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
             private readonly CodeTemplateCommand command;
+            private readonly CodeTemplateCommandExecutor executor;
+            private readonly Mock<IFileSystemReaderWriter> fileSystem;
+            private readonly Mock<ITextTemplatingEngine> textTemplateEngine;
 
             public GivenAOneOffCommand()
             {

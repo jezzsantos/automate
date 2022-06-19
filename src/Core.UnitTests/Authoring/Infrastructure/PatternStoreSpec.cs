@@ -116,7 +116,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
         {
             var result = this.store.Create(new PatternDefinition("aname"));
 
-            this.repository.ListPatterns().Single<PatternDefinition>().Name.Should().Be(result.Name);
+            this.repository.ListPatterns().Single().Name.Should().Be(result.Name);
             this.repository.GetLocalState().CurrentPattern.Should().Be(result.Id);
         }
 

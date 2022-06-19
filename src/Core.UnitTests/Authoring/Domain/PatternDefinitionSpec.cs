@@ -138,37 +138,7 @@ namespace Core.UnitTests.Authoring.Domain
 
             result.Should().BeNull();
         }
-#if TESTINGONLY
-        [Fact]
-        public void WhenFindAutomationAndFoundOnPattern_ThenReturnsAutomation()
-        {
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            this.pattern.AddAutomation(automation);
 
-            var result = this.pattern.FindAutomation(automation.Id, _ => true);
-
-            result.Should().Be(automation);
-        }
-
-        [Fact]
-        public void WhenFindAutomationAndFoundOnDescendantElement_ThenReturnsAutomation()
-        {
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            var element1 = new Element("anelementname1");
-            var element2 = new Element("anelementname2");
-            element2.AddAutomation(automation);
-            element1.AddElement(element2);
-            this.pattern.AddElement(element1);
-
-            var result = this.pattern.FindAutomation(automation.Id, _ => true);
-
-            result.Should().Be(automation);
-        }
-#endif
         [Fact]
         public void WhenCreateTestDraftAndOnlyPattern_ThenReturnsTestPattern()
         {
@@ -306,5 +276,36 @@ namespace Core.UnitTests.Authoring.Domain
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[2]
                 .Properties["acollection3"].Items.Count.Should().Be(3);
         }
+#if TESTINGONLY
+        [Fact]
+        public void WhenFindAutomationAndFoundOnPattern_ThenReturnsAutomation()
+        {
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            this.pattern.AddAutomation(automation);
+
+            var result = this.pattern.FindAutomation(automation.Id, _ => true);
+
+            result.Should().Be(automation);
+        }
+
+        [Fact]
+        public void WhenFindAutomationAndFoundOnDescendantElement_ThenReturnsAutomation()
+        {
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            var element1 = new Element("anelementname1");
+            var element2 = new Element("anelementname2");
+            element2.AddAutomation(automation);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
+
+            var result = this.pattern.FindAutomation(automation.Id, _ => true);
+
+            result.Should().Be(automation);
+        }
+#endif
     }
 }

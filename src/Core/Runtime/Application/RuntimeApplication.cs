@@ -13,11 +13,11 @@ namespace Automate.Runtime.Application
     public class RuntimeApplication
     {
         private readonly IAutomationExecutor automationExecutor;
-        private readonly IRuntimeMetadata runtimeMetadata;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
+        private readonly IRuntimeMetadata runtimeMetadata;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,

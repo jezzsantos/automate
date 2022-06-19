@@ -16,10 +16,10 @@ namespace Core.UnitTests.Authoring.Infrastructure
     [Trait("Category", "Unit")]
     public class PatternToolkitPackagerSpec
     {
+        private readonly Mock<IRuntimeMetadata> metadata;
         private readonly PatternToolkitPackager packager;
         private readonly Mock<IPatternStore> patternStore;
         private readonly Mock<IToolkitStore> toolkitStore;
-        private readonly Mock<IRuntimeMetadata> metadata;
 
         public PatternToolkitPackagerSpec()
         {
@@ -34,7 +34,6 @@ namespace Core.UnitTests.Authoring.Infrastructure
             this.metadata = new Mock<IRuntimeMetadata>();
             this.metadata.Setup(rm => rm.ProductName).Returns("aproductname");
             this.metadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
-
         }
 
         [Fact]

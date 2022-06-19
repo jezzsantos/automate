@@ -70,164 +70,6 @@ namespace Core.UnitTests.Runtime.Domain
 
             pairs.Should().BeEmpty();
         }
-#if TESTINGONLY
-
-        [Fact]
-        public void WhenFindByAutomationOnPattern_ThenReturnsAutomation()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            pattern.AddAutomation(automation);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().ContainSingle(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model);
-        }
-
-        [Fact]
-        public void WhenFindByAutomationOnDescendantElement_ThenReturnsAutomation()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3");
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            element3.AddAutomation(automation);
-            var element2 = new Element("anelementname2");
-            element2.AddElement(element3);
-            var element1 = new Element("anelementname1");
-            element1.AddElement(element2);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["anelementname1"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
-                .Materialise();
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().ContainSingle(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
-                    .Properties["anelementname3"]);
-        }
-
-        [Fact]
-        public void WhenFindByAutomationOnDescendantCollectionItem_ThenReturnsAutomation()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var collection1 = new Element("acollectionname1",
-                ElementCardinality.OneOrMany);
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            collection1.AddAutomation(automation);
-            var element2 = new Element("anelementname2");
-            element2.AddElement(collection1);
-            var element1 = new Element("anelementname1");
-            element1.AddElement(element2);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["anelementname1"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"]
-                .MaterialiseCollectionItem();
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().ContainSingle(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
-                    .Properties["acollectionname1"].Items[0]);
-        }
-
-        [Fact]
-        public void WhenFindByAutomationOnDescendantCollectionItemElement_ThenReturnsAutomation()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var collection1 = new Element("acollectionname1",
-                ElementCardinality.OneOrMany);
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            var element1 = new Element("anelementname1");
-            element1.AddAutomation(automation);
-            collection1.AddElement(element1);
-            pattern.AddElement(collection1);
-
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().ContainSingle(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
-        }
-
-        [Fact]
-        public void WhenFindByAutomationOnDescendantCollectionItemElements_ThenReturnsAutomations()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var collection1 = new Element("acollectionname1",
-                ElementCardinality.OneOrMany);
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            var element1 = new Element("anelementname1");
-            element1.AddAutomation(automation);
-            collection1.AddElement(element1);
-            pattern.AddElement(collection1);
-
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
-            draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
-            draft.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"].Materialise();
-            draft.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"].Materialise();
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().Contain(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
-            pairs.Should().Contain(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"]);
-            pairs.Should().Contain(pair =>
-                pair.Automation.Automation == automation
-                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"]);
-        }
-
-        [Fact]
-        public void WhenFindByAutomationOnUnMaterialisedDescendantElement_ThenReturnsNull()
-        {
-            var pattern = new PatternDefinition("apatternname");
-            var element3 = new Element("anelementname3", autoCreate: false);
-            var automation =
-                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
-                    new Dictionary<string, object>());
-            element3.AddAutomation(automation);
-            var element2 = new Element("anelementname2", autoCreate: false);
-            element2.AddElement(element3);
-            var element1 = new Element("anelementname1", autoCreate: false);
-            element1.AddElement(element2);
-            pattern.AddElement(element1);
-            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["anelementname1"].Materialise();
-
-            var pairs = draft.FindByAutomation(automation.Id);
-
-            pairs.Should().BeEmpty();
-        }
-#endif
 
         [Fact]
         public void WhenMaterialiseOnDescendantCollectionItem_ThenPopulatesParent()
@@ -455,5 +297,163 @@ namespace Core.UnitTests.Runtime.Domain
                 .Properties["acollectionname5"].Items[0].Parent.Should()
                 .Be(draft.Model.Properties["acollectionname3"].Items[0].Properties["acollectionname4"].Items[0]);
         }
+#if TESTINGONLY
+
+        [Fact]
+        public void WhenFindByAutomationOnPattern_ThenReturnsAutomation()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            pattern.AddAutomation(automation);
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().ContainSingle(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model);
+        }
+
+        [Fact]
+        public void WhenFindByAutomationOnDescendantElement_ThenReturnsAutomation()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element3 = new Element("anelementname3");
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            element3.AddAutomation(automation);
+            var element2 = new Element("anelementname2");
+            element2.AddElement(element3);
+            var element1 = new Element("anelementname1");
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["anelementname1"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+                .Materialise();
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().ContainSingle(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
+                    .Properties["anelementname3"]);
+        }
+
+        [Fact]
+        public void WhenFindByAutomationOnDescendantCollectionItem_ThenReturnsAutomation()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var collection1 = new Element("acollectionname1",
+                ElementCardinality.OneOrMany);
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            collection1.AddAutomation(automation);
+            var element2 = new Element("anelementname2");
+            element2.AddElement(collection1);
+            var element1 = new Element("anelementname1");
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["anelementname1"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            draft.Model.Properties["anelementname1"].Properties["anelementname2"].Properties["acollectionname1"]
+                .MaterialiseCollectionItem();
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().ContainSingle(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["anelementname1"].Properties["anelementname2"]
+                    .Properties["acollectionname1"].Items[0]);
+        }
+
+        [Fact]
+        public void WhenFindByAutomationOnDescendantCollectionItemElement_ThenReturnsAutomation()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var collection1 = new Element("acollectionname1",
+                ElementCardinality.OneOrMany);
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            var element1 = new Element("anelementname1");
+            element1.AddAutomation(automation);
+            collection1.AddElement(element1);
+            pattern.AddElement(collection1);
+
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().ContainSingle(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
+        }
+
+        [Fact]
+        public void WhenFindByAutomationOnDescendantCollectionItemElements_ThenReturnsAutomations()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var collection1 = new Element("acollectionname1",
+                ElementCardinality.OneOrMany);
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            var element1 = new Element("anelementname1");
+            element1.AddAutomation(automation);
+            collection1.AddElement(element1);
+            pattern.AddElement(collection1);
+
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname1"].MaterialiseCollectionItem();
+            draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"].Materialise();
+            draft.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"].Materialise();
+            draft.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"].Materialise();
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().Contain(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[0].Properties["anelementname1"]);
+            pairs.Should().Contain(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[1].Properties["anelementname1"]);
+            pairs.Should().Contain(pair =>
+                pair.Automation.Automation == automation
+                && pair.DraftItem == draft.Model.Properties["acollectionname1"].Items[2].Properties["anelementname1"]);
+        }
+
+        [Fact]
+        public void WhenFindByAutomationOnUnMaterialisedDescendantElement_ThenReturnsNull()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element3 = new Element("anelementname3", autoCreate: false);
+            var automation =
+                new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
+                    new Dictionary<string, object>());
+            element3.AddAutomation(automation);
+            var element2 = new Element("anelementname2", autoCreate: false);
+            element2.AddElement(element3);
+            var element1 = new Element("anelementname1", autoCreate: false);
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+            draft.Model.Properties["anelementname1"].Materialise();
+
+            var pairs = draft.FindByAutomation(automation.Id);
+
+            pairs.Should().BeEmpty();
+        }
+#endif
     }
 }

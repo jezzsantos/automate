@@ -703,60 +703,6 @@ namespace Core.UnitTests.Runtime.Application
                         ExceptionMessages.DraftDefinition_ItemExpressionNotFound.Substitute("apatternname",
                             "anelementexpression"));
             }
-#if TESTINGONLY
-
-            [Fact]
-            public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
-            {
-                var element = new Element("anelementname", displayName: "adisplayname",
-                    description: "adescription");
-                var automation =
-                    new Automation("acommandname", AutomationType.TestingOnlyLaunching,
-                        new Dictionary<string, object>());
-                element.AddAutomation(automation);
-                this.pattern.AddElement(element);
-                ResetToolkit();
-                var draft = this.application.CreateDraft("apatternname", null);
-                this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draft.Model.Properties["anelementname"].Materialise());
-                this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
-                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
-                
-                var result = this.application.ExecuteLaunchPoint("acommandname", "anelementname");
-
-                result.CommandName.Should().Be("acommandname");
-                result.Log.Should().ContainSingle("alog");
-                this.automationExecutor.Verify(ae => ae.Execute(It.Is<CommandExecutionResult>(cer =>
-                    cer.ExecutableContext.Executable.Name == "acommandname"
-                    && cer.ExecutableContext.Draft == draft
-                    && cer.ExecutableContext.Item == draft.Model.Properties["anelementname"])));
-            }
-
-            [Fact]
-            public void WhenExecuteLaunchPointOnDraft_ThenReturnsResult()
-            {
-                var automation =
-                    new Automation("acommandname", AutomationType.TestingOnlyLaunching,
-                        new Dictionary<string, object>());
-                this.pattern.AddAutomation(automation);
-                ResetToolkit();
-                var draft = this.application.CreateDraft("apatternname", null);
-                this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draft.Model);
-                this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
-                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
-
-                var result = this.application.ExecuteLaunchPoint("acommandname", null);
-
-                result.CommandName.Should().Be("acommandname");
-                result.Log.Should().ContainSingle("alog");
-                this.automationExecutor.Verify(ae => ae.Execute(It.Is<CommandExecutionResult>(cer =>
-                    cer.ExecutableContext.Executable.Name == "acommandname"
-                    && cer.ExecutableContext.Draft == draft
-                    && cer.ExecutableContext.Item == draft.Model)));
-
-            }
-#endif
 
             [Fact]
             public void WhenUpgradeDraftAndDraftNotExist_ThenThrows()
@@ -793,6 +739,59 @@ namespace Core.UnitTests.Runtime.Application
                 this.toolkitStore.DestroyAll();
                 this.toolkitStore.Import(new ToolkitDefinition(this.pattern));
             }
+#if TESTINGONLY
+
+            [Fact]
+            public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
+            {
+                var element = new Element("anelementname", displayName: "adisplayname",
+                    description: "adescription");
+                var automation =
+                    new Automation("acommandname", AutomationType.TestingOnlyLaunching,
+                        new Dictionary<string, object>());
+                element.AddAutomation(automation);
+                this.pattern.AddElement(element);
+                ResetToolkit();
+                var draft = this.application.CreateDraft("apatternname", null);
+                this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                    .Returns(draft.Model.Properties["anelementname"].Materialise());
+                this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
+                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
+
+                var result = this.application.ExecuteLaunchPoint("acommandname", "anelementname");
+
+                result.CommandName.Should().Be("acommandname");
+                result.Log.Should().ContainSingle("alog");
+                this.automationExecutor.Verify(ae => ae.Execute(It.Is<CommandExecutionResult>(cer =>
+                    cer.ExecutableContext.Executable.Name == "acommandname"
+                    && cer.ExecutableContext.Draft == draft
+                    && cer.ExecutableContext.Item == draft.Model.Properties["anelementname"])));
+            }
+
+            [Fact]
+            public void WhenExecuteLaunchPointOnDraft_ThenReturnsResult()
+            {
+                var automation =
+                    new Automation("acommandname", AutomationType.TestingOnlyLaunching,
+                        new Dictionary<string, object>());
+                this.pattern.AddAutomation(automation);
+                ResetToolkit();
+                var draft = this.application.CreateDraft("apatternname", null);
+                this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                    .Returns(draft.Model);
+                this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
+                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
+
+                var result = this.application.ExecuteLaunchPoint("acommandname", null);
+
+                result.CommandName.Should().Be("acommandname");
+                result.Log.Should().ContainSingle("alog");
+                this.automationExecutor.Verify(ae => ae.Execute(It.Is<CommandExecutionResult>(cer =>
+                    cer.ExecutableContext.Executable.Name == "acommandname"
+                    && cer.ExecutableContext.Draft == draft
+                    && cer.ExecutableContext.Item == draft.Model)));
+            }
+#endif
         }
     }
 }
