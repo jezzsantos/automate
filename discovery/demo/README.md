@@ -108,7 +108,7 @@ The next thing I'm gonna do is install this tool called **automate.exe**
 > automate.exe is already on Nuget.org as a tool, so it simple to install on any .Net machine.
 
 ```
-dotnet tool install --global automate --version 0.2.2-preview
+dotnet tool install automate --global --version 0.2.4-preview
 ```
 
 Then, I am going to install this new toolkit Mary gave me this morning to use.

@@ -78,9 +78,9 @@
 
     <!-- Install the dotnet tool locally (but only in Release) -->
     <Target Name="Install locally" AfterTargets="Build" Condition="'$(Configuration)'=='Release' and '$(IS_CI_BUILD)'==''">
-        <Exec Command="dotnet tool uninstall --global $(PackageId)" ContinueOnError="WarnAndContinue"/>
+        <Exec Command="dotnet tool uninstall $(PackageId) --global" ContinueOnError="WarnAndContinue"/>
         <Exec Command="dotnet pack --no-build --configuration $(Configuration) /p:Version=$(PackageVersion)"/>
-        <Exec Command="dotnet tool install --global --add-source .\nupkg $(PackageId) --version $(PackageVersion)"/>
+        <Exec Command="dotnet tool install $(PackageId) --global --add-source $(PackageOutputPath) --version $(PackageVersion)"/>
         <Message Importance="high" Text="'$(PackageId)' installed locally, successfully"/>
     </Target>
 </Project>

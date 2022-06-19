@@ -88,7 +88,7 @@ See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentatio
 
 1. Install the **automate** tool:
     * Platform installers are all here: `https://github.com/jezzsantos/automate/releases`
-    * If .NET is installed, install from the command line: `dotnet tool install --global automate` (note: we are in preview at the moment)
+    * If .NET is installed, install from the command line: `dotnet tool install automate --global` (note: we are in preview at the moment)
 
 2. Navigate to the root of a codebase of yours.
 
@@ -136,7 +136,7 @@ Now, that person (or you), can:
 
 1. Install the **automate** tool:
     * Installers are here: `https://github.com/jezzsantos/automate/releases`
-    * If .NET is installed, install from the command line: `dotnet tool install --global automate`
+    * If .NET is installed, install from the command line: `dotnet tool install automate --global`
 
 2. Install the toolkit, fetched from above (i.e email/slack/etc):
 
