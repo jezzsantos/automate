@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
+using Automate.Extensions;
+using Automate.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -30,7 +31,8 @@ namespace CLI.UnitTests.Infrastructure
             result.IsSuccess.Should().BeFalse();
 
             result.Error.Should()
-                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(unknownApplicationName, null,
+                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Substitute(unknownApplicationName,
+                    null,
                     $"An error occurred trying to start process '{unknownApplicationName}' with working directory '{Environment.CurrentDirectory}'." +
                     " The system cannot find the file specified."));
         }
@@ -43,7 +45,7 @@ namespace CLI.UnitTests.Infrastructure
             result.IsSuccess.Should().BeFalse();
 
             result.Error.Should()
-                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(this.testApplicationName,
+                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Substitute(this.testApplicationName,
                     "--fails",
                     $"Failed{Environment.NewLine}"));
         }
@@ -55,9 +57,10 @@ namespace CLI.UnitTests.Infrastructure
 
             result.IsSuccess.Should().BeFalse();
             result.Error.Should()
-                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(this.testApplicationName,
+                .Contain(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Substitute(this.testApplicationName,
                     "--hangs",
-                    InfrastructureMessages.ApplicationExecutor_Hung.Format(ApplicationExecutor.HangTime.TotalSeconds)));
+                    InfrastructureMessages.ApplicationExecutor_Hung.Substitute(
+                        ApplicationExecutor.HangTime.TotalSeconds)));
         }
 
         [Fact]
@@ -68,7 +71,7 @@ namespace CLI.UnitTests.Infrastructure
             result.IsSuccess.Should().BeTrue();
 
             result.Output.Should()
-                .Contain(InfrastructureMessages.ApplicationExecutor_Succeeded.Format(this.testApplicationName,
+                .Contain(InfrastructureMessages.ApplicationExecutor_Succeeded.Substitute(this.testApplicationName,
                     "--succeeds",
                     $"Success{Environment.NewLine}"));
         }

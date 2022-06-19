@@ -4,34 +4,17 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>Automate.CLI</RootNamespace>
+        <IsPackable>true</IsPackable>
         <Title>automate</Title>
         <AssemblyName>$(Title)</AssemblyName>
         <PackageId>$(Title)</PackageId>
-        <Authors>jezzsantos</Authors>
-        <Description>Templatise patterns from your own codebase, make them programmable, then share them with your team</Description>
-        <PackageProjectUrl>https://github.com/jezzsantos/automate</PackageProjectUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
-        <RepositoryType>GitHub</RepositoryType>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Company>$(Authors)</Company>
         <Product>$(Title)</Product>
-        <Copyright>Copyright 2022</Copyright>
-        <VersionPrefix>0.2.4</VersionPrefix>
-        <VersionSuffix>-preview</VersionSuffix>
-        <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
-        <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
-        <InformationalVersion>$(PackageVersion)</InformationalVersion>
     </PropertyGroup>
 
     <PropertyGroup>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>automate</ToolCommandName>
+        <ToolCommandName>$(Title)</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DefineConstants>TRACE;TESTINGONLY</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -42,6 +25,9 @@
         <PackageReference Include="Semver" Version="2.1.0"/>
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1"/>
         <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta3.22114.1"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Core\Core.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
@@ -55,81 +41,39 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Update="ExceptionMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="Infrastructure\OutputMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>OutputMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Domain\ValidationMessages.resx">
+        <EmbeddedResource Update="ExceptionMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\DomainMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\VersionChanges.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Domain\MigrationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
+            <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Infrastructure\InfrastructureMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>InfrastructureMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Application\ApplicationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <Compile Update="ExceptionMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>ExceptionMessages.resx</DependentUpon>
-        </Compile>
         <Compile Update="Infrastructure\OutputMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>OutputMessages.resx</DependentUpon>
         </Compile>
-        <Compile Update="Domain\ValidationMessages.Designer.cs">
+        <Compile Update="ExceptionMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>ValidationMessages.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Domain\DomainMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>DomainMessages.resx</DependentUpon>
-        </Compile>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
-        <Compile Update="Domain\VersionChanges.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>VersionChanges.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Domain\MigrationMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>MigrationMessages.resx</DependentUpon>
+            <DependentUpon>ExceptionMessages.resx</DependentUpon>
         </Compile>
         <Compile Update="Infrastructure\InfrastructureMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>InfrastructureMessages.resx</DependentUpon>
         </Compile>
-        <Compile Update="Application\ApplicationMessages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>ApplicationMessages.resx</DependentUpon>
-        </Compile>
+        <Compile Remove="ClassLibrary1\Class1.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <!-- Install the dotnet tool locally (but only in Release) -->

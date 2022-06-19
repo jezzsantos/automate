@@ -1,5 +1,5 @@
 ﻿using System;
-using Automate.CLI.Extensions;
+using Automate.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
@@ -37,7 +37,7 @@ namespace CLI.IntegrationTests
 
         public AndConstraint<CliTestSetupAssertions> DisplayError(string errorText, params object[] errorArgs)
         {
-            var errorMessage = errorText.Format(errorArgs);
+            var errorMessage = errorText.Substitute(errorArgs);
             Execute.Assertion
                 .ForCondition(!string.IsNullOrEmpty(errorText))
                 .FailWith("You can't assert an error is displayed without specifying the text of the error")

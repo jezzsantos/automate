@@ -8,9 +8,11 @@ using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Linq;
 using System.Text;
-using Automate.CLI.Application;
-using Automate.CLI.Domain;
+using Automate.Application;
 using Automate.CLI.Extensions;
+using Automate.Domain;
+using Automate.Extensions;
+using Automate.Infrastructure;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -28,11 +30,14 @@ namespace Automate.CLI.Infrastructure
         public const string ExecuteCommandName = "execute";
         public const string ViewCommandName = "view";
         public const string UpgradeCommandName = "upgrade";
-        private static readonly AuthoringApplication Authoring = new(Environment.CurrentDirectory);
-        private static readonly RuntimeApplication Runtime = new(Environment.CurrentDirectory);
+        private static AuthoringApplication authoring;
+        private static RuntimeApplication runtime;
 
-        public static int Execute(string[] args)
+        public static int Execute(IDependencyContainer container, string[] args)
         {
+            authoring = CreateAuthoringApplication(container);
+            runtime = CreateRuntimeApplication(container);
+
             var createCommands = new Command(CreateCommandName, "Creating new patterns")
             {
                 new Command("pattern", "Creates a new pattern")
@@ -482,12 +487,12 @@ namespace Automate.CLI.Infrastructure
 
             if (IsAuthoringCommand(args))
             {
-                if (Authoring.CurrentPatternId.Exists())
+                if (authoring.CurrentPatternId.Exists())
                 {
                     ConsoleExtensions.WriteOutput(
-                        OutputMessages.CommandLine_Output_CurrentPatternInUse.FormatTemplate(
-                            Authoring.CurrentPatternName,
-                            Authoring.CurrentPatternVersion), ConsoleColor.Gray);
+                        OutputMessages.CommandLine_Output_CurrentPatternInUse.SubstituteTemplate(
+                            authoring.CurrentPatternName,
+                            authoring.CurrentPatternVersion), ConsoleColor.Gray);
                 }
                 else
                 {
@@ -498,11 +503,11 @@ namespace Automate.CLI.Infrastructure
             {
                 if (IsRuntimeDraftCommand(args))
                 {
-                    if (Runtime.CurrentDraftId.Exists())
+                    if (runtime.CurrentDraftId.Exists())
                     {
                         ConsoleExtensions.WriteOutput(
-                            OutputMessages.CommandLine_Output_CurrentDraftInUse.FormatTemplate(
-                                Runtime.CurrentDraftName, Runtime.CurrentDraftId), ConsoleColor.Gray);
+                            OutputMessages.CommandLine_Output_CurrentDraftInUse.SubstituteTemplate(
+                                runtime.CurrentDraftName, runtime.CurrentDraftId), ConsoleColor.Gray);
                     }
                     else
                     {
@@ -542,6 +547,22 @@ namespace Automate.CLI.Infrastructure
             Console.WriteLine();
 
             return result;
+        }
+
+        private static AuthoringApplication CreateAuthoringApplication(IDependencyContainer container)
+        {
+            return new AuthoringApplication(container.Resolve<IPatternStore>(),
+                container.Resolve<IFilePathResolver>(), container.Resolve<IPatternPathResolver>(),
+                container.Resolve<IPatternToolkitPackager>(), container.Resolve<ITextTemplatingEngine>(),
+                container.Resolve<IApplicationExecutor>());
+        }
+
+        private static RuntimeApplication CreateRuntimeApplication(IDependencyContainer container)
+        {
+            return new RuntimeApplication(container.Resolve<IToolkitStore>(),
+                container.Resolve<IDraftStore>(),
+                container.Resolve<IFilePathResolver>(), container.Resolve<IPatternToolkitPackager>(),
+                container.Resolve<IDraftPathResolver>(), container.Resolve<IAutomationExecutor>());
         }
 
         private static void WriteBanner()
@@ -639,28 +660,28 @@ namespace Automate.CLI.Infrastructure
             internal static void CreatePattern(string name, string displayedAs,
                 string describedAs, bool outputStructured, IConsole console)
             {
-                Authoring.CreateNewPattern(name, displayedAs, describedAs);
+                authoring.CreateNewPattern(name, displayedAs, describedAs);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternCreated, name, Authoring.CurrentPatternId);
+                    OutputMessages.CommandLine_Output_PatternCreated, name, authoring.CurrentPatternId);
             }
 
             internal static void UpdatePattern(string name, string displayedAs, string describedAs,
                 bool outputStructured, IConsole console)
             {
-                var pattern = Authoring.UpdatePattern(name, displayedAs, describedAs);
+                var pattern = authoring.UpdatePattern(name, displayedAs, describedAs);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
             }
 
             internal static void SwitchPattern(string name, bool outputStructured, IConsole console)
             {
-                Authoring.SwitchCurrentPattern(name);
+                authoring.SwitchCurrentPattern(name);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternSwitched, name, Authoring.CurrentPatternId);
+                    OutputMessages.CommandLine_Output_PatternSwitched, name, authoring.CurrentPatternId);
             }
 
             internal static void ViewPattern(bool all, bool outputStructured, IConsole console)
             {
-                var pattern = Authoring.GetCurrentPattern();
+                var pattern = authoring.GetCurrentPattern();
 
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
@@ -670,7 +691,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ListPatterns(bool outputStructured, IConsole console)
             {
-                var patterns = Authoring.ListPatterns();
+                var patterns = authoring.ListPatterns();
                 if (patterns.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_EditablePatternsListed,
@@ -688,7 +709,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
-                    Authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
+                    authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
                     attribute.Id, parent.Id);
             }
@@ -699,7 +720,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
-                    Authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
+                    authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
                         asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeUpdated,
                     attribute.Name, attribute.Id, parent.Id);
@@ -709,7 +730,7 @@ namespace Automate.CLI.Infrastructure
                 IConsole console)
             {
                 var (parent, attribute) =
-                    Authoring.DeleteAttribute(name, asChildOf);
+                    authoring.DeleteAttribute(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeDeleted, name,
                     attribute.Id, parent.Id);
             }
@@ -718,7 +739,7 @@ namespace Automate.CLI.Infrastructure
                 string asChildOf,
                 bool isRequired, bool outputStructured, IConsole console)
             {
-                var (parent, element) = Authoring.AddElement(name,
+                var (parent, element) = authoring.AddElement(name,
                     isRequired
                         ? ElementCardinality.One
                         : ElementCardinality.ZeroOrOne, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
@@ -730,7 +751,7 @@ namespace Automate.CLI.Infrastructure
                 string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
                 IConsole console)
             {
-                var (parent, element) = Authoring.UpdateElement(elementName, name,
+                var (parent, element) = authoring.UpdateElement(elementName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
                     element.Id, parent.Id);
@@ -740,7 +761,7 @@ namespace Automate.CLI.Infrastructure
                 IConsole console)
             {
                 var (parent, element) =
-                    Authoring.DeleteElement(name, asChildOf);
+                    authoring.DeleteElement(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementDeleted, name,
                     element.Id, parent.Id);
             }
@@ -749,7 +770,7 @@ namespace Automate.CLI.Infrastructure
                 string describedAs,
                 string asChildOf, bool isRequired, bool outputStructured, IConsole console)
             {
-                var (parent, collection) = Authoring.AddElement(name, isRequired
+                var (parent, collection) = authoring.AddElement(name, isRequired
                     ? ElementCardinality.OneOrMany
                     : ElementCardinality.ZeroOrMany, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
@@ -760,7 +781,7 @@ namespace Automate.CLI.Infrastructure
                 string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
                 IConsole console)
             {
-                var (parent, element) = Authoring.UpdateElement(collectionName, name,
+                var (parent, element) = authoring.UpdateElement(collectionName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
                     element.Id, parent.Id);
@@ -770,7 +791,7 @@ namespace Automate.CLI.Infrastructure
                 IConsole console)
             {
                 var (parent, element) =
-                    Authoring.DeleteElement(name, asChildOf);
+                    authoring.DeleteElement(name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionDeleted, name,
                     element.Id, parent.Id);
             }
@@ -779,7 +800,7 @@ namespace Automate.CLI.Infrastructure
                 bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template) = Authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
+                var (parent, template) = authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
                     parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
@@ -789,7 +810,7 @@ namespace Automate.CLI.Infrastructure
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template, command) = Authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
+                var (parent, template, command) = authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
                     name, isOneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
@@ -802,7 +823,7 @@ namespace Automate.CLI.Infrastructure
             internal static void EditCodeTemplate(string templateName, string with, string args, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var (parent, template, location) = Authoring.EditCodeTemplate(templateName, with, args, asChildOf);
+                var (parent, template, location) = authoring.EditCodeTemplate(templateName, with, args, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, template.Id,
                     parent.Id, with, location);
@@ -811,7 +832,7 @@ namespace Automate.CLI.Infrastructure
             internal static void DeleteCodeTemplate(string templateName, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var (parent, template) = Authoring.DeleteCodeTemplate(templateName, asChildOf);
+                var (parent, template) = authoring.DeleteCodeTemplate(templateName, asChildOf);
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, template.Id, parent.Id);
             }
@@ -821,7 +842,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var currentDirectory = Environment.CurrentDirectory;
                 var test =
-                    Authoring.TestCodeTemplate(templateName, asChildOf, currentDirectory, importData, exportData);
+                    authoring.TestCodeTemplate(templateName, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported,
@@ -847,7 +868,7 @@ namespace Automate.CLI.Infrastructure
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
                 var (parent, command) =
-                    Authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
+                    authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
                     command.Name, command.Id, parent.Id);
             }
@@ -856,7 +877,7 @@ namespace Automate.CLI.Infrastructure
                 string targetPath, string asChildOf, bool outputStructured, IConsole console)
             {
                 var (parent, command) =
-                    Authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
+                    authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
                     command.Name, command.Id, parent.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
                     command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
@@ -866,7 +887,7 @@ namespace Automate.CLI.Infrastructure
                 string exportData, bool outputStructured, IConsole console)
             {
                 var currentDirectory = Environment.CurrentDirectory;
-                var test = Authoring.TestCodeTemplateCommand(commandName, asChildOf, currentDirectory, importData,
+                var test = authoring.TestCodeTemplateCommand(commandName, asChildOf, currentDirectory, importData,
                     exportData);
                 if (exportData.HasValue())
                 {
@@ -894,7 +915,7 @@ namespace Automate.CLI.Infrastructure
             internal static void AddCliCommand(string applicationName, string arguments, string name,
                 string asChildOf, bool outputStructured, IConsole console)
             {
-                var (parent, command) = Authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
+                var (parent, command) = authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
                     command.Name, command.Id, parent.Id);
             }
@@ -902,7 +923,7 @@ namespace Automate.CLI.Infrastructure
             internal static void UpdateCliCommand(string commandName, string app, string arguments,
                 string name, string asChildOf, bool outputStructured, IConsole console)
             {
-                var (parent, command) = Authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
+                var (parent, command) = authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandUpdated,
                     command.Name, command.Id, parent.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
                     command.Metadata[nameof(CliCommand.Arguments)]);
@@ -911,7 +932,7 @@ namespace Automate.CLI.Infrastructure
             internal static void DeleteCommand(string commandName, string asChildOf, bool outputStructured,
                 IConsole console)
             {
-                var (parent, command) = Authoring.DeleteCommand(commandName, asChildOf);
+                var (parent, command) = authoring.DeleteCommand(commandName, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandDeleted,
                     command.Name, command.Id, parent.Id);
             }
@@ -922,7 +943,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var (parent, launchPoint) = Authoring.AddCommandLaunchPoint(name, cmdIds, from, asChildOf);
+                var (parent, launchPoint) = authoring.AddCommandLaunchPoint(name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
                     launchPoint.Name, launchPoint.Id, parent.Id,
                     launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
@@ -935,7 +956,7 @@ namespace Automate.CLI.Infrastructure
                 var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var (parent, launchPoint) =
-                    Authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
+                    authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
                     launchPoint.Name, launchPoint.Id, parent.Id,
                     launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
@@ -944,7 +965,7 @@ namespace Automate.CLI.Infrastructure
             internal static void DeleteLaunchPoint(string launchPointName, string asChildOf,
                 bool outputStructured, IConsole console)
             {
-                var (parent, launchPoint) = Authoring.DeleteCommandLaunchPoint(launchPointName, asChildOf);
+                var (parent, launchPoint) = authoring.DeleteCommandLaunchPoint(launchPointName, asChildOf);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointDeleted,
                     launchPoint.Name, launchPoint.Id, parent.Id);
             }
@@ -953,7 +974,7 @@ namespace Automate.CLI.Infrastructure
             internal static void Build(string asversion, bool force, bool install, bool outputStructured,
                 IConsole console)
             {
-                var package = Authoring.BuildAndExportToolkit(asversion, force);
+                var package = authoring.BuildAndExportToolkit(asversion, force);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
                     package.Toolkit.PatternName, package.Toolkit.Version, package.ExportedLocation);
                 if (package.Message.HasValue())
@@ -994,14 +1015,14 @@ namespace Automate.CLI.Infrastructure
         {
             internal static void Install(string location, bool outputStructured, IConsole console)
             {
-                var toolkit = Runtime.InstallToolkit(location);
+                var toolkit = runtime.InstallToolkit(location);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkit,
                     toolkit.PatternName, toolkit.Version);
             }
 
             internal static void ViewToolkit(bool all, bool outputStructured, IConsole console)
             {
-                var pattern = Runtime.ViewCurrentToolkit().Pattern;
+                var pattern = runtime.ViewCurrentToolkit().Pattern;
 
                 console.WriteOutput(outputStructured,
                     OutputMessages.CommandLine_Output_ToolkitConfiguration, pattern.Name, pattern.Id,
@@ -1011,7 +1032,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ListToolkits(bool outputStructured, IConsole console)
             {
-                var toolkits = Runtime.ListInstalledToolkits();
+                var toolkits = runtime.ListInstalledToolkits();
                 if (toolkits.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
@@ -1027,17 +1048,17 @@ namespace Automate.CLI.Infrastructure
             internal static void NewDraft(string patternName, string name, bool outputStructured,
                 IConsole console)
             {
-                var draft = Runtime.CreateDraft(patternName, name);
+                var draft = runtime.CreateDraft(patternName, name);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
                     draft.Name, draft.Id, draft.PatternName);
             }
 
             internal static void ViewDraft(bool todo, bool outputStructured, IConsole console)
             {
-                var (configuration, pattern, validation) = Runtime.GetDraftConfiguration(todo, todo);
+                var (configuration, pattern, validation) = runtime.GetDraftConfiguration(todo, todo);
 
-                var draftId = Runtime.CurrentDraftId;
-                var draftName = Runtime.CurrentDraftName;
+                var draftId = runtime.CurrentDraftId;
+                var draftName = runtime.CurrentDraftName;
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfiguration,
                     draftName, draftId, configuration);
 
@@ -1049,7 +1070,7 @@ namespace Automate.CLI.Infrastructure
                         pattern.ToolkitVersion.Current,
                         AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
                 }
-                
+
                 if (todo)
                 {
                     console.WriteOutputLine();
@@ -1078,7 +1099,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ListDrafts(bool outputStructured, IConsole console)
             {
-                var drafts = Runtime.ListCreatedDrafts();
+                var drafts = runtime.ListCreatedDrafts();
                 if (drafts.Any())
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledDraftsListed,
@@ -1093,10 +1114,10 @@ namespace Automate.CLI.Infrastructure
 
             internal static void SwitchDraft(string draftId, bool outputStructured, IConsole console)
             {
-                Runtime.SwitchCurrentDraft(draftId);
+                runtime.SwitchCurrentDraft(draftId);
                 console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_DraftSwitched, Runtime.CurrentDraftName,
-                    Runtime.CurrentDraftId);
+                    OutputMessages.CommandLine_Output_DraftSwitched, runtime.CurrentDraftName,
+                    runtime.CurrentDraftId);
             }
 
             internal static void ConfigureDraftAddTo(string expression, string[] andSet, bool outputStructured,
@@ -1112,7 +1133,7 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = Runtime.ConfigureDraft(expression, null, null, nameValues);
+                var draftItem = runtime.ConfigureDraft(expression, null, null, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id);
             }
@@ -1129,7 +1150,7 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = Runtime.ConfigureDraft(null, expression, null, nameValues);
+                var draftItem = runtime.ConfigureDraft(null, expression, null, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id);
             }
@@ -1146,7 +1167,7 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = Runtime.ConfigureDraft(null, null, expression, nameValues);
+                var draftItem = runtime.ConfigureDraft(null, null, expression, nameValues);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id);
             }
@@ -1154,7 +1175,7 @@ namespace Automate.CLI.Infrastructure
             internal static void ConfigureDraftResetElement(string expression, bool outputStructured,
                 IConsole console)
             {
-                var draftItem = Runtime.ConfigureDraftAndResetElement(expression);
+                var draftItem = runtime.ConfigureDraftAndResetElement(expression);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftResetElement,
                     draftItem.Name, draftItem.Id);
             }
@@ -1162,7 +1183,7 @@ namespace Automate.CLI.Infrastructure
             internal static void ConfigureDraftClearCollection(string expression, bool outputStructured,
                 IConsole console)
             {
-                var draftItem = Runtime.ConfigureDraftAndClearCollection(expression);
+                var draftItem = runtime.ConfigureDraftAndClearCollection(expression);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftEmptyCollection,
                     draftItem.Name, draftItem.Id);
             }
@@ -1170,17 +1191,17 @@ namespace Automate.CLI.Infrastructure
             internal static void ConfigureDraftDeleteElement(string expression, bool outputStructured,
                 IConsole console)
             {
-                var draftItem = Runtime.ConfigureDraftAndDelete(expression);
+                var draftItem = runtime.ConfigureDraftAndDelete(expression);
                 console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftDelete,
                     draftItem.Name, draftItem.Id);
             }
 
             internal static void ValidateDraft(string on, bool outputStructured, IConsole console)
             {
-                var results = Runtime.Validate(on);
+                var results = runtime.Validate(on);
 
-                var draftId = Runtime.CurrentDraftId;
-                var draftName = Runtime.CurrentDraftName;
+                var draftId = runtime.CurrentDraftId;
+                var draftName = runtime.CurrentDraftName;
                 if (results.HasAny())
                 {
                     console.WriteOutputWarning(outputStructured,
@@ -1196,7 +1217,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void UpgradeDraft(bool force, bool outputStructured, IConsole console)
             {
-                var upgrade = Runtime.UpgradeDraft(force);
+                var upgrade = runtime.UpgradeDraft(force);
                 if (upgrade.IsSuccess)
                 {
                     if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
@@ -1225,7 +1246,7 @@ namespace Automate.CLI.Infrastructure
             internal static void ExecuteLaunchPoint(string name, string on, bool outputStructured,
                 IConsole console)
             {
-                var execution = Runtime.ExecuteLaunchPoint(name, on);
+                var execution = runtime.ExecuteLaunchPoint(name, on);
                 if (execution.IsSuccess)
                 {
                     console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecutionSucceeded,
@@ -1237,7 +1258,7 @@ namespace Automate.CLI.Infrastructure
                     {
                         console.WriteOutputWarning(outputStructured,
                             OutputMessages.CommandLine_Output_DraftValidationFailed,
-                            Runtime.CurrentDraftName, Runtime.CurrentDraftId,
+                            runtime.CurrentDraftName, runtime.CurrentDraftId,
                             FormatValidationErrors(execution.ValidationErrors));
                     }
                     else
@@ -1282,7 +1303,7 @@ namespace Automate.CLI.Infrastructure
                     .ForEach(item =>
                     {
                         builder.AppendLine(
-                            $"* {item.Type}: {item.MessageTemplate.FormatTemplate(item.Arguments.ToArray())}");
+                            $"* {item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
                     });
 
                 return builder.ToString();
@@ -1309,7 +1330,7 @@ namespace Automate.CLI.Infrastructure
             if (name.HasNoValue())
             {
                 throw new AutomateException(ExceptionMessages
-                    .CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Format(expression));
+                    .CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Substitute(expression));
             }
 
             var value = expression.Substring(indexOfDelimiter + 1);
@@ -1329,8 +1350,8 @@ namespace Automate.CLI.Infrastructure
         {
             console.WriteLine(string.Empty);
             console.WriteLine(outputStructured
-                ? messageTemplate.FormatTemplateStructured(args)
-                : messageTemplate.FormatTemplate(args));
+                ? messageTemplate.SubstituteTemplateStructured(args)
+                : messageTemplate.SubstituteTemplate(args));
         }
 
         public static void WriteOutputWarning(this IConsole console, bool outputStructured, string messageTemplate,
@@ -1338,8 +1359,8 @@ namespace Automate.CLI.Infrastructure
         {
             console.WriteLine(string.Empty);
             console.WriteOutput(outputStructured
-                ? messageTemplate.FormatTemplateStructured(args)
-                : messageTemplate.FormatTemplate(args), ConsoleColor.DarkYellow);
+                ? messageTemplate.SubstituteTemplateStructured(args)
+                : messageTemplate.SubstituteTemplate(args), ConsoleColor.DarkYellow);
         }
 
         public static void WriteError(this IConsole console, bool outputStructured, string messageTemplate,
@@ -1347,8 +1368,8 @@ namespace Automate.CLI.Infrastructure
         {
             console.WriteError(string.Empty, ConsoleColor.Red);
             console.WriteError(outputStructured
-                ? messageTemplate.FormatTemplateStructured(args)
-                : messageTemplate.FormatTemplate(args), ConsoleColor.Red);
+                ? messageTemplate.SubstituteTemplateStructured(args)
+                : messageTemplate.SubstituteTemplate(args), ConsoleColor.Red);
         }
 
         public static void WriteError(this IConsole console, string message, ConsoleColor color)

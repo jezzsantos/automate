@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+using Automate.Application;
+using Automate.Extensions;
+using Automate.Infrastructure;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal class ApplicationExecutor : IApplicationExecutor
+    public class ApplicationExecutor : IApplicationExecutor
     {
         internal static readonly TimeSpan HangTime = TimeSpan.FromSeconds(5);
 
@@ -13,7 +14,7 @@ namespace Automate.CLI.Infrastructure
             string arguments)
         {
             applicationName.GuardAgainstNullOrEmpty(nameof(applicationName));
-            
+
             var outcome = new ApplicationExecutionProcessResult();
 
             try
@@ -43,13 +44,13 @@ namespace Automate.CLI.Infrastructure
                     }
 
                     throw new Exception(
-                        InfrastructureMessages.ApplicationExecutor_ProcessExited.Format(process.ExitCode));
+                        InfrastructureMessages.ApplicationExecutor_ProcessExited.Substitute(process.ExitCode));
                 }
 
                 if (!awaitForExit)
                 {
                     outcome.Succeeds(
-                        InfrastructureMessages.ApplicationExecutor_Succeeded_NotAwaited.Format(applicationName,
+                        InfrastructureMessages.ApplicationExecutor_Succeeded_NotAwaited.Substitute(applicationName,
                             arguments));
                 }
                 else
@@ -65,22 +66,23 @@ namespace Automate.CLI.Infrastructure
 
                         var output = process.StandardOutput.ReadToEnd();
                         outcome.Succeeds(
-                            InfrastructureMessages.ApplicationExecutor_Succeeded.Format(applicationName, arguments,
+                            InfrastructureMessages.ApplicationExecutor_Succeeded.Substitute(applicationName, arguments,
                                 output));
                     }
                     else
                     {
                         process.Kill();
-                        outcome.Fails(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(applicationName,
+                        outcome.Fails(InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Substitute(
+                            applicationName,
                             arguments,
-                            InfrastructureMessages.ApplicationExecutor_Hung.Format(HangTime.TotalSeconds)));
+                            InfrastructureMessages.ApplicationExecutor_Hung.Substitute(HangTime.TotalSeconds)));
                     }
                 }
             }
             catch (Exception ex)
             {
                 outcome.Fails(
-                    InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Format(applicationName, arguments,
+                    InfrastructureMessages.ApplicationExecutor_ExecutionFailed.Substitute(applicationName, arguments,
                         ex.Message));
             }
 

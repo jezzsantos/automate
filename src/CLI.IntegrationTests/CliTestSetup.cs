@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Automate.CLI.Domain;
+using Automate;
+using Automate.CLI;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
+using Automate.Domain;
+using Automate.Extensions;
+using Automate.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,12 +24,15 @@ namespace CLI.IntegrationTests
 
     public class CliTestSetup : IDisposable
     {
-        private readonly JsonFileRepository repository;
+        private readonly IDependencyContainer container;
+        private readonly LocalMachineFileRepository repository;
 
         public CliTestSetup()
         {
-            this.repository = new JsonFileRepository(Environment.CurrentDirectory);
-            ResetRepository();
+            var services = new ServiceCollection();
+            Program.PopulateContainerForLocalMachineAndCurrentDirectory(services);
+            this.container = new DotNetDependencyContainer(services);
+            this.repository = this.container.Resolve<LocalMachineFileRepository>();
         }
 
         public StandardOutput Output { get; private set; }
@@ -44,9 +51,7 @@ namespace CLI.IntegrationTests
 
         internal List<DraftDefinition> Drafts => this.repository.ListDrafts();
 
-        internal ToolkitDefinition Toolkit => Toolkits.FirstOrDefault();
-
-        internal List<ToolkitDefinition> Toolkits => this.repository.ListToolkits();
+        internal ToolkitDefinition Toolkit => this.repository.ListToolkits().FirstOrDefault();
 
         internal IPatternRepository PatternStore => this.repository;
 
@@ -61,7 +66,6 @@ namespace CLI.IntegrationTests
                 .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
                 .Build();
             host.Start();
-
             var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
             using (var errorStream = new MemoryStream())
@@ -87,7 +91,7 @@ namespace CLI.IntegrationTests
 
                                 try
                                 {
-                                    CommandLineApi.Execute(arguments.SplitToCommandLineArgs());
+                                    CommandLineApi.Execute(this.container, arguments.SplitToCommandLineArgs());
                                 }
                                 catch (Exception ex)
                                 {

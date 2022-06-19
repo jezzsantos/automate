@@ -1,7 +1,8 @@
 ﻿using System;
+using Automate;
 using Automate.CLI;
-using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
+using Automate.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace CLI.UnitTests.Infrastructure
                 .Invoking(x => x.SplitPropertyAssignment())
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Format(
+                    ExceptionMessages.CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Substitute(
                         "="));
         }
 
@@ -53,7 +54,7 @@ namespace CLI.UnitTests.Infrastructure
                 .Invoking(x => x.SplitPropertyAssignment())
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Format(
+                    ExceptionMessages.CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName.Substitute(
                         "=avalue"));
         }
 

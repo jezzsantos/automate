@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Automate.CLI.Domain;
 using Automate.CLI.Extensions;
+using Automate.Domain;
+using Automate.Extensions;
 using Humanizer;
-using Attribute = Automate.CLI.Domain.Attribute;
+using Attribute = Automate.Domain.Attribute;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -18,13 +19,13 @@ namespace Automate.CLI.Infrastructure
     internal class PatternConfigurationVisitor : IPatternVisitor
     {
         private const int MaxFilePathLength = 100;
+        private readonly VisitorConfigurationOptions options;
         private readonly StringBuilder output;
         private int indentLevel;
         private bool outputAttributesHeading;
         private bool outputAutomationHeading;
         private bool outputCodeTemplatesHeading;
         private bool outputElementsHeading;
-        private readonly VisitorConfigurationOptions options;
 
         public PatternConfigurationVisitor(VisitorConfigurationOptions options)
         {
@@ -113,7 +114,7 @@ namespace Automate.CLI.Infrastructure
             {
                 return true;
             }
-            
+
             if (this.outputAttributesHeading)
             {
                 PrintIndented("- Attributes:");
@@ -187,7 +188,7 @@ namespace Automate.CLI.Infrastructure
             {
                 return true;
             }
-            
+
             if (this.outputCodeTemplatesHeading)
             {
                 PrintIndented("- CodeTemplates:");

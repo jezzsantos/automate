@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Automate.CLI.Infrastructure {
+namespace Automate.Infrastructure {
     using System;
     
     
@@ -104,6 +104,88 @@ namespace Automate.CLI.Infrastructure {
         internal static string ApplicationExecutor_Succeeded_NotAwaited {
             get {
                 return ResourceManager.GetString("ApplicationExecutor_Succeeded_NotAwaited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CliCommand ({0}) application name.
+        /// </summary>
+        internal static string CliCommand_ApplicationName_Description {
+            get {
+                return ResourceManager.GetString("CliCommand_ApplicationName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CliCommand ({0}) arguments.
+        /// </summary>
+        internal static string CliCommand_Arguments_Description {
+            get {
+                return ResourceManager.GetString("CliCommand_Arguments_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplateCommand ({0}) path expression.
+        /// </summary>
+        internal static string CodeTemplateCommand_FilePathExpression_Description {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_FilePathExpression_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generated new file: &apos;{0}&apos; (with template `{1}`) to: &apos;{2}&apos;.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_GeneratedFile {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_GeneratedFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracking generated file: &apos;{0}&apos; at: &apos;{1}&apos;.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_UpdatedLink {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_UpdatedLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previously generated file: &apos;{0}&apos; has changed location or name, and was deleted.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_Warning_Deleted {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_Warning_Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previously generated file: &apos;{0}&apos; was moved to: &apos;{1}&apos;.
+        /// </summary>
+        internal static string CodeTemplateCommand_Log_Warning_Moved {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_Log_Warning_Moved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CodeTemplate ({0}) template.
+        /// </summary>
+        internal static string CodeTemplateCommand_TemplateContent_Description {
+            get {
+                return ResourceManager.GetString("CodeTemplateCommand_TemplateContent_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command: &apos;{0}&apos; failed to execute. Errors were:
+        ///{1}.
+        /// </summary>
+        internal static string CommandLaunchPoint_CommandIdFailedExecution {
+            get {
+                return ResourceManager.GetString("CommandLaunchPoint_CommandIdFailedExecution", resourceCulture);
             }
         }
     }

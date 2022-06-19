@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Automate.CLI;
-using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+using Automate;
 using Automate.CLI.Infrastructure;
+using Automate.Domain;
+using Automate.Extensions;
+using Automate.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should()
                 .DisplayError(
-                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Format(draft.Name, draft.Id,
+                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Substitute(draft.Name, draft.Id,
                         "0.1.0", "0.2.0"));
         }
 
@@ -59,10 +60,10 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
-                    MigrationMessages.DraftItem_AttributeAdded.FormatTemplate("APattern.AProperty5", null)));
+                    MigrationMessages.DraftItem_AttributeAdded.SubstituteTemplate("APattern.AProperty5", null)));
         }
 
         [Fact]
@@ -79,10 +80,10 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             const string newVersion = "1.0.0";
             this.setup.Should()
-                .DisplayError(OutputMessages.CommandLine_Output_DraftUpgradeFailed.FormatTemplate(draft.Name,
+                .DisplayError(OutputMessages.CommandLine_Output_DraftUpgradeFailed.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Abort}: " +
-                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden.FormatTemplate(
+                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden.SubstituteTemplate(
                         draft.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
@@ -102,10 +103,10 @@ namespace CLI.IntegrationTests
             const string newVersion = "1.0.0";
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Breaking}: " +
-                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced.FormatTemplate(
+                    MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced.SubstituteTemplate(
                         draft.PatternName, newVersion) + $"{Environment.NewLine}"));
         }
 
@@ -125,10 +126,10 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.CodeTemplates.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.FormatTemplate(draft.Name,
+                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
-                    MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.FormatTemplate(codeTemplate.Name,
+                    MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.SubstituteTemplate(codeTemplate.Name,
                         codeTemplate.Id) + $"{Environment.NewLine}"));
         }
 
@@ -150,11 +151,13 @@ namespace CLI.IntegrationTests
             var newPath = GetFilePathInOutput(@"code/updated/updatedroundtrip.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.FormatTemplate(
+                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
-                    "* " + DomainMessages.CodeTemplateCommand_Log_Warning_Moved.Format(oldPath, newPath) +
+                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(oldPath, newPath) +
                     $"{Environment.NewLine}" +
-                    "* " + DomainMessages.CodeTemplateCommand_Log_UpdatedLink.Format("updatedroundtrip.cs", newPath) +
+                    "* " +
+                    InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute("updatedroundtrip.cs",
+                        newPath) +
                     $"{Environment.NewLine}"
                 ));
             artifactLink.Should().Be(newPath);

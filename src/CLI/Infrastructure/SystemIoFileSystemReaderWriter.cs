@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+using Automate.Application;
+using Automate.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {

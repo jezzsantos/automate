@@ -41,4 +41,32 @@
     <data name="ApplicationExecutor_ProcessExited" xml:space="preserve">
         <value>The application unexpected completed with exit code: '{0}'</value>
     </data>
+    <data name="CodeTemplateCommand_Log_GeneratedFile" xml:space="preserve">
+        <value>Generated new file: '{0}' (with template `{1}`) to: '{2}'</value>
+    </data>
+    <data name="CodeTemplateCommand_Log_UpdatedLink" xml:space="preserve">
+        <value>Tracking generated file: '{0}' at: '{1}'</value>
+    </data>
+    <data name="CodeTemplateCommand_Log_Warning_Deleted" xml:space="preserve">
+        <value>Previously generated file: '{0}' has changed location or name, and was deleted</value>
+    </data>
+    <data name="CodeTemplateCommand_Log_Warning_Moved" xml:space="preserve">
+        <value>Previously generated file: '{0}' was moved to: '{1}'</value>
+    </data>
+    <data name="CommandLaunchPoint_CommandIdFailedExecution" xml:space="preserve">
+        <value>Command: '{0}' failed to execute. Errors were:
+{1}</value>
+    </data>
+    <data name="CodeTemplateCommand_FilePathExpression_Description" xml:space="preserve">
+        <value>CodeTemplateCommand ({0}) path expression</value>
+    </data>
+    <data name="CodeTemplateCommand_TemplateContent_Description" xml:space="preserve">
+        <value>CodeTemplate ({0}) template</value>
+    </data>
+    <data name="CliCommand_ApplicationName_Description" xml:space="preserve">
+        <value>CliCommand ({0}) application name</value>
+    </data>
+    <data name="CliCommand_Arguments_Description" xml:space="preserve">
+        <value>CliCommand ({0}) arguments</value>
+    </data>
 </root>

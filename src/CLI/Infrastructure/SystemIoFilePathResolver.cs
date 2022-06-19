@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Automate.CLI.Domain;
-using Automate.CLI.Extensions;
+using Automate.Application;
+using Automate.Extensions;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -32,14 +32,14 @@ namespace Automate.CLI.Infrastructure
         public IFile GetFileAtPath(string absolutePath)
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
-            
+
             return new SystemIoFile(ExpandVariables(absolutePath));
         }
 
         public string GetFilename(string absolutePath)
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
-           
+
             return Path.GetFileName(ExpandVariables(absolutePath));
         }
 
@@ -47,7 +47,7 @@ namespace Automate.CLI.Infrastructure
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
             contents.GuardAgainstNull(nameof(contents));
-            
+
             File.WriteAllBytes(ExpandVariables(absolutePath), contents);
         }
 

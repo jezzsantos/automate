@@ -1,0 +1,92 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Automate</RootNamespace>
+        <IsPackable>true</IsPackable>
+        <Title>automate.Core</Title>
+        <AssemblyName>$(Title)</AssemblyName>
+        <PackageId>$(Title)</PackageId>
+        <Product>$(Title)</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Humanizer" Version="2.14.1"/>
+        <PackageReference Include="Scriban" Version="5.4.0"/>
+        <PackageReference Include="Semver" Version="2.1.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Core.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>CLI.IntegrationTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Domain\DomainMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Domain\MigrationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Domain\ValidationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Domain\VersionChanges.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Application\ApplicationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="ExceptionMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Domain\DomainMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>DomainMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Domain\MigrationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>MigrationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Domain\ValidationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ValidationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Domain\VersionChanges.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>VersionChanges.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Application\ApplicationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ApplicationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="ExceptionMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ExceptionMessages.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+</Project>

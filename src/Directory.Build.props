@@ -1,0 +1,59 @@
+<Project>
+
+    <PropertyGroup>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <!-- NuGet package information for all projects -->
+    <PropertyGroup>
+        <Authors>jezzsantos</Authors>
+        <Description>Templatize patterns from your own codebase, make them programmable, then share them with your team</Description>
+        <PackageProjectUrl>https://github.com/jezzsantos/automate</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <Company>$(Authors)</Company>
+        <Copyright>Copyright 2022</Copyright>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <VersionPrefix>0.2.4</VersionPrefix>
+        <VersionSuffix>-preview</VersionSuffix>
+        <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
+        <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+        <InformationalVersion>$(PackageVersion)</InformationalVersion>
+    </PropertyGroup>
+
+    <!-- Compile options for all projects -->
+    <PropertyGroup>
+        <SignAssembly>false</SignAssembly>
+        <DelaySign>false</DelaySign>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+
+    <!-- Build flavors for all projects -->
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <DefineConstants>DEBUG;TRACE;TESTINGONLY</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+
+</Project>
