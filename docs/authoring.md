@@ -19,18 +19,18 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 - The `<PATTERNNAME>` is the name of the new pattern. The name can only contain alphanumerical characters and the `.` character.
 
-- The `--displayedas` is an optional parameter that defines how the pattern might be displayed in a user interface.
+- The `--displayedas` is optional metadata that defines how the pattern might be displayed in a user interface.
 
-- The `--describedas` is an optional parameter that defines how the pattern might be displayed in a user interface.
+- The `--describedas` is an optional metadata that defines how the pattern might be displayed in a user interface.
 
 
-This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
+> This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
 ### Switching patterns
 
 If you have multiple patterns going, you can switch between them using their name:
 
-`automate edit switch pattern "<PATTERNNAME>"`
+`automate edit switch "<PATTERNNAME>"`
 
 You can view all the patterns in your codebase: `automate list patterns` 
 
@@ -48,7 +48,7 @@ You can view the detailed configuration of the pattern: `automate view pattern -
 
 ## Configuring pattern structure
 
-The structure of a pattern describes a conceptual model of your coding pattern.
+The structure of a pattern describes a (conceptual) model of your code and its coding patterns.
 
 * The simplest coding pattern, used for a single use-case, probably does not need much structure (hierarchy) or variance (attributes) to represent it. Since generating the code for it can all be hardcoded into one or more code templates (with no variance). 
 
@@ -57,11 +57,11 @@ The structure of a pattern describes a conceptual model of your coding pattern.
 * Try to define the high-level concepts about your coding pattern (in a hierarchy of elements/collections), not necessarily representing detailed coding concepts like functions and variables, but more at the conceptual/component/module level. Then decorate your hierarchical elements/collections with attributes to describe what varies and to which concepts that variance would naturally be attributed. 
 * Construct elements (ZeroToOne) and collections (ZeroToMany) to help model your pattern and its instancing rules.
 
-* Every pattern already has a single versioned root element, which initially has no attributes defined for it, except a `DisplayName` and an empty `Description`.
+* Every pattern already has a single versioned root element, which initially has no attributes defined for it (except for a `DisplayName` and an empty `Description`).
 
 ### Update pattern
 
-To update the pattern: `automate edit update-pattern`
+To update the name and metadata for a pattern: `automate edit update-pattern`
 
 - The `--name` is an optional parameter and must be alphanumeric and can contain the following additional characters:`._`.
 
