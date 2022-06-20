@@ -7,7 +7,7 @@ __![Presence](https://dcbadge.vercel.app/api/shield/984584859009814608?style=pla
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
       ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
 
-![The Basic Idea](https://github.com/jezzsantos/automate/blob/main/docs/BasicConcept.png)
+![The Basic Idea](https://github.com/jezzsantos/automate/blob/main/docs/Images/BasicConcept.png)
 
 **Question to a Developer:**
 
@@ -17,7 +17,7 @@ What if I gave you a command-line tool that wrote a lot of your code for you? an
 
 **Question to the Tech Lead on that codebase:**
 
-What if I gave you a command-line tool that built that other command-line tool for that developer? and it took about ~15 commands-line commands (or so) for you to build it?
+What if I gave you a command-line tool that built that other command-line tool for that developer? and it took about ~15 command-line commands (or so) for you to build it?
 
 * You would only need to do this _once per codebase_ that you work together on.
 
@@ -33,7 +33,7 @@ What if you had a selection of these kinds of tools stored alongside that code, 
 
 ## How is automate different from other similar tools?
 
-![The Process](https://github.com/jezzsantos/automate/blob/main/docs/Concept.png)
+![The Process](https://github.com/jezzsantos/automate/blob/main/docs/Images/Concept.png)
 
 Automate may look like other kinds of templating or scaffolding-type developer tools, but there are some important differences (under the covers) that make a big difference in the long run:
 
@@ -203,8 +203,12 @@ Now, you want to make a change to the toolkit:
 
 If you now open that generated file, you will also see the value of `Green` in the contents of the file.
 
-# See it all in action
+# More...
 
 Sick of silly examples, and keen to see an example on a real codebase?
 
-Here is a [demo toolkit](https://github.com/jezzsantos/automate/tree/main/discovery/demo) with a walk-through on a real codebase which anyone can follow.
+* Here is a [demo toolkit](https://github.com/jezzsantos/automate/tree/main/discovery/demo) (built from scratch) with a scripted walk-through on a real codebase which anyone can follow on their machine.
+
+Read the [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation)
+
+Join the [Discussion](https://discord.gg/vpc3gDPR) on Discord
