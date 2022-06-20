@@ -1,0 +1,25 @@
+site_name: automate
+site_description: Templatize patterns from your own codebase, make them programmable, then share them with your team
+site_url: https://jezzsantos.github.io/automate/
+repo_url: https://github.com/jezzsantos/automate/
+edit_uri: edit/main/docs/
+theme:
+    name: readthedocs
+    logo: logo.png
+    highlightjs: true
+    hljs_languages:
+        - json
+        - csharp
+    collapse_navigation: false
+nav:
+    - Getting Started: 'about.md'
+    - 'User Guide':
+        - 'Creating Toolkits': 'authoring.md'
+        - 'Using Toolkits': 'runtime.md'
+    - About:
+        - 'GitHub': 'https://github.com/jezzsantos/automate'
+        - 'License': 'https://github.com/jezzsantos/automate/blob/main/LICENSE'
+        - 'Releases': 'https://github.com/jezzsantos/automate/releases'
+markdown_extensions:
+    - toc:
+        permalink: "#"

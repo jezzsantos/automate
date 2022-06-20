@@ -209,6 +209,6 @@ Sick of silly examples, and keen to see an example on a real codebase?
 
 * Here is a [demo toolkit](https://github.com/jezzsantos/automate/tree/main/discovery/demo) (built from scratch) with a scripted walk-through on a real codebase which anyone can follow on their machine.
 
-Read the [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation)
+Read our [Documentation](https://jezzsantos.github.io/automate/)
 
 Join the [Discussion](https://discord.gg/vpc3gDPR) on Discord
