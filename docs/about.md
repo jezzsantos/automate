@@ -7,18 +7,33 @@
 
 ## How It Works
 
-There are two distinct modes of use of `automate`.
+There are two distinct modes of use:
 
-### [Creating Toolkits](authoring.md)
+### [Making Toolkits](authoring.md)
 
-A Tech Lead will use `automate` to capture and configure a coding pattern from an existing codebase.
+A Tech Lead will use `automate` to capture and define a coding pattern based on code in an existing codebase.
 
-They will name the pattern, configure it structure and its attributes and its automation, version it and create toolkit out of it.
+They will:
 
-They will then deploy that toolkit to their team to use.
+1. Name the pattern
+2. Configure it structure and its attributes
+3. Configure any automation 
+4. Publish a toolkit from it
+5. Deploy that toolkit to their team to use
 
 ### [Using Toolkits](runtime.md)
 
-Contributors on a codebase will use `automate` to install a toolkit locally, and then run the toolkit on an existing codebase to create and configure drafts that apply the templates and automation to the codebase.
+Contributors on a codebase will then use `automate` to run a toolkit on their codebase.
 
-![CLI](https://github.com/jezzsantos/automate/blob/main/docs/Images/CLI.jpg?raw=true)
+They will:
+
+1. Install a toolkit locally (unless already installed into the codebase)
+2. Create a "draft" use-case with the toolkit
+3. Configure the draft (according the pattern)
+4. Execute any automation (in the toolkit)
+
+The toolkit applies the templates and automation to their codebase.
+
+## The CLI Interface
+
+<img alt="CLI commands" src="https://github.com/jezzsantos/automate/blob/main/docs/Images/CLI.jpg?raw=true" width="600" />

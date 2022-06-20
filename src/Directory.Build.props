@@ -8,11 +8,12 @@
 
     <!-- NuGet package information for all projects -->
     <PropertyGroup>
-        <Authors>jezzsantos</Authors>
+        <Authors>Jezz Santos</Authors>
         <Description>Templatize patterns from your own codebase, make them programmable, then share them with your team</Description>
-        <PackageProjectUrl>https://github.com/jezzsantos/automate</PackageProjectUrl>
+        <PackageProjectUrl>https://jezzsantos.github.io/automate/</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/jezzsantos/automate</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
         <RepositoryType>GitHub</RepositoryType>
         <Company>$(Authors)</Company>
         <Copyright>Copyright 2022</Copyright>

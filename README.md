@@ -77,16 +77,16 @@ If these assumptions about your software team are **all true**, then you might c
 - [ ] You work on a codebase with others - you are working in a software team.
 
 - [ ] You are the Tech Lead/Lead Dev/Tech Consultant of the team. (or have some other well-respected position of authority in the team).
-- [ ] You contribute code yourself to this codebase, and you often collaborate with others on your team about the code.
-- [ ] You have some working coding patterns or can create some working coding patterns that are worth sharing in this specific codebase.
+- [ ] You contribute code yourself to this codebase, and you often collaborate with others on your team about how the code is structured or written.
+- [ ] You already have some defined coding patterns or can create some coding patterns that are worth repeating in this specific codebase.
 - [ ] Your team values: consistency, clarity, and maintainability.
-- [ ] You accept that you can be wrong sometimes and that your codebase necessarily changes over time.
+- [ ] You accept that code changes over time and keeping things up to date is important.
 
 If this sounds like your situation, then maybe we can help you define (and enforce) some codebase-specific coding patterns for your team to reuse.
 
 # Getting Started
 
-See our [Documentation](https://github.com/jezzsantos/automate/wiki/Documentation) for more details on each of the commands below.
+See our [Documentation](https://jezzsantos.github.io/automate/) for more details on each of the commands below.
 
 ## Making your first toolkit
 

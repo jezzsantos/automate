@@ -1,4 +1,4 @@
-# Creating Toolkits
+# Making Toolkits
 
 ## Patterns
 
