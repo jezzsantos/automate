@@ -10,12 +10,18 @@ theme:
     hljs_languages:
         - json
         - csharp
+        - java
     collapse_navigation: false
 nav:
     - Getting Started: 'about.md'
     - 'User Guide':
-        - 'Making Toolkits': 'authoring.md'
-        - 'Using Toolkits': 'runtime.md'
+        - 'CLI':
+          - 'Making Toolkits': 'authoring.md'
+          - 'Using Toolkits': 'runtime.md'
+          - 'Additional Commands': 'cli.md'
+        - 'IDE Plugin':
+          - 'Extracting Patterns': 'authoring-plugin.md'
+        - 'Reference': 'reference.md'
     - About:
         - 'GitHub': 'https://github.com/jezzsantos/automate'
         - 'License': 'https://github.com/jezzsantos/automate/blob/main/LICENSE'

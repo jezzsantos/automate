@@ -1,17 +1,8 @@
 # Making Toolkits
 
-## Patterns
+[A Pattern](reference.md#pattern) is a major top-level concept in automate, used to describe coding patterns. When published, it is packaged and distributed in [A Toolkit](reference.md#toolkit) that is installed into a codebase.
 
-**Concept**: A "Pattern" is used to describe an existing piece of software in a codebase, in terms of its structure, its variance, and its usage. Think of it as some higher-level model of some software, or software concept, that includes various lower-level components or abstractions.
-
-1. **Language**: Most software concepts can be represented conceptually as just boxes and lines, with some notation for cardinality  (i.e. OneToOne, OneToMany). Every existing coding pattern (in a codebase) is physically manifested as either just code files (or a particular programming language) or in a combination of code and configuration files - depending on the programming languages and the runtimes being used. 
-2. **Structure**: Any "Pattern" can be modeled structurally as a hierarchy of "Element"(s), where each element can have one or more child "Elements" of its own - describing a directed graph of related elements.
-3. **Variance**: The variance in a coding pattern can be described by "Attributes" on one or more of the "Element(s)" within the pattern.
-4. **Automation**: Each "Element" in the pattern can be associated with its own custom "Automation" which can read the structure and variance of the pattern, and can then perform operations with the data in these attributes, to adapt/augment/generate/configure code and configuration assets in a real codebase to realize specific use-cases. 
-5. **Constraints**: "Validation" Rules and constraints can be defined anywhere in the pattern and its structure, and they are enforced so that the configuration of a pattern maintains its intended integrity when applied to real use-cases.
-6. **Draft**: Once a pattern is defined by its structure, automation, and constraints, it can then be used as a "Template" to create one or more individual use-cases. An individual use-case is represented in a "Draft" of the pattern. Each "Draft" can then be configured with data from a specific use-case, which can then be "applied" to another codebase. Multiple drafts of the same pattern are then maintained.
-
-### Capture a new pattern
+## Capture a new pattern
 
 In a terminal, navigate to the root of your source codebase.
 
@@ -26,7 +17,7 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 > This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
-### Switching patterns
+## Switching patterns
 
 If you have multiple patterns going, you can switch between them using their name:
 
@@ -36,7 +27,7 @@ You can view all the patterns in your codebase: `automate list patterns`
 
 > Which will list all the patterns and their respective names and versions.
 
-### Viewing the current pattern
+## Viewing the current pattern
 
 You can view the current pattern: `automate view pattern` 
 
@@ -77,7 +68,7 @@ To add a new attribute to any element/collection in the pattern: `automate edit 
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing  attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the attribute to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the attribute to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
 - The `--isrequired` is an optional parameter that defines that the attribute must have a value when applied.
 
@@ -92,7 +83,7 @@ To add a new attribute to any element/collection in the pattern: `automate edit 
 
 To update an existing attribute on any element/collection in the pattern: `automate edit update-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the attribute on the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the attribute on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
 - The `--isrequired` optionally defines whether the attribute must have a value or not.
 
@@ -108,7 +99,7 @@ To update an existing attribute on any element/collection in the pattern: `autom
 
 To delete an existing attribute: `automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-> The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element in the pattern.
+> The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element in the pattern.
 
 ### Add elements
 
@@ -120,7 +111,7 @@ To add a new element to any element/collection in the pattern: `automate edit ad
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. <ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--displayedas` is an optional parameter that defines how the element might be displayed in a user interface.
 
@@ -135,7 +126,7 @@ To add a new element to any element/collection in the pattern: `automate edit ad
 
 To update an existing element on any element/collection in the pattern: `automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the element on the root element. <ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the element on the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--displayedas` optionally defines a new display name.
 
@@ -151,7 +142,7 @@ To update an existing element on any element/collection in the pattern: `automat
 
 To delete an existing element on any element/collection in the pattern: `automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 ### Add collections
 
@@ -161,7 +152,7 @@ To add a new collection to any element/collection in the pattern: `automate edit
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--displayedas` is an optional parameter that defines how the element might be displayed in a user interface.
 
@@ -176,7 +167,7 @@ To add a new collection to any element/collection in the pattern: `automate edit
 
 To update an existing collection on any element/collection in the pattern: `automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the collection on the root element. <ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the collection on the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--displayedas` optionally defines a new display name.
 
@@ -192,7 +183,7 @@ To update an existing collection on any element/collection in the pattern: `auto
 
 To delete an existing collection on any element/collection in the pattern: `automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 ## Configuring pattern automation
 
@@ -210,14 +201,14 @@ To capture a piece of code: `automate edit add-codetemplate "<FILEPATH>" --aschi
 
 - The `FILEPATH` is a relative path to an existing code file locally.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
 
 ### Editing code templates
 
-**Concept**: Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
+**Concept**: Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
 
 To edit the contents of an existing code template: `automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof {<ANEXPRESSION>}"`
 
@@ -227,7 +218,7 @@ To edit the contents of an existing code template: `automate edit codetemplate "
 
 - The `--args` is an optional set of arguments to pass the application. These arguments will be added to the application before the absolute path to the code template (on disk).
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 
 ### Delete code templates
@@ -236,17 +227,17 @@ To delete an existing code template: `automate edit delete-codetemplate "<TEMPLA
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 ### Test code templates
 
-**Concept**: Code templates contain content that may contain [Templating Expressions](#templating-expressions).  Once the template has been added to a pattern, thecontent can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
+**Concept**: Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions).  Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
 
 To can test the contents of  an existing code template: `automate test codetemplate "<TEMPLATENAME>" --aschildof {<ANEXPRESSION>}"`
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are testing a code template on the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are testing a code template on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--export-data` optionally defines the relative path to a file that will be populated with the data that was used to test the template.
 
@@ -262,9 +253,9 @@ To add a new code template command to any element/collection in the pattern: `au
 
 - The `<CODETEMPLATENAME>` is the name of an existing code template that must exist on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
+- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
 
 - The `--isoneoff` optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed. The default is `false`.
 
@@ -278,9 +269,9 @@ To capture a piece of code and wire it up to a code template command: `automate 
 
 - The `FILEPATH` is a relative path to an existing code file locally.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
+- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
 
 - The `--isoneoff` optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed. The default is `false`.
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
@@ -291,9 +282,9 @@ To update an existing code template command on any element/collection in the pat
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating a command on the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating a command on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-- The `--targetpath` optionally defines a new full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
+- The `--targetpath` optionally defines a new full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
 
 - The `--isoneoff` optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed.
 
@@ -301,13 +292,13 @@ To update an existing code template command on any element/collection in the pat
 
 ### Test code template commands
 
-**Concept**: Code template commands contain a "target path" that may contain [Templating Expressions](#templating-expressions).  Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
+**Concept**: Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions).  Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
 
 To can test the contents of  an existing code template command: `automate test codetemplate-command "<COMMANDNAME>" --aschildof {<ANEXPRESSION>}"`
 
 - The `COMMANDNAME` is the name of an existing command on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are testing a command on the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are testing a command on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--export-data` optionally defines the relative path to a file that will be populated with the data that was used to test the template.
 
@@ -321,9 +312,9 @@ To add a new CLI command to any element/collection in the pattern: `automate edi
 
 - The `<APPLICATIONNAME>` can be a name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-- The `--arguments <ARGUMENTS>` optionally defines the arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
+- The `--arguments <ARGUMENTS>` optionally defines the arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
 
 - The `--name` optionally defines a name for the command. If none is given, a default name will be derived for the command.
 
@@ -334,11 +325,11 @@ To update an existing CLI command on any element/collection in the pattern: `aut
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the command to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+-  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 -  The `--app <APPLICATIONNAME>` optionally defines the new name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.
 
-- The `--arguments <ARGUMENTS>` optionally defines the new arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
+- The `--arguments <ARGUMENTS>` optionally defines the new arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
 
 - The `--name` optionally defines a new name for the command.
 
@@ -349,7 +340,7 @@ To delete any existing command on any element/collection in the pattern: `automa
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the command from the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+-  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the command from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 
 > Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.
@@ -364,7 +355,7 @@ To add a new launch point to any element/collection in the pattern: `automate ed
 
 - The `<COMMANDIDENTIFIERS>` is either a `;` delimited list of command identifiers (on the target element/collection) or it can be `*` to indicate that you want to add all the commands (on the `--from` element/collection). By using `*` you can update the list to add or remove any commands that have changed.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the launch point to the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the launch point to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--from` optionally defines another element/collection in the pattern where the commands are located. If this is omitted, then it is assumed that the commands exist on the `--aschildof` element/collection.
 
@@ -377,7 +368,7 @@ To update an existing launch point on any element/collection in the pattern: `au
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating a launch point on the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating a launch point on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 - The `--add <COMMANDIDENTIFIERS>` optionally defines the new `;` delimited list of command identifiers (on the target element/collection) or it can be `*` to indicate that you want to add all the commands (on the `--from` element/collection). By using `*` you can update the list to add or remove any commands that have changed.
 
@@ -392,7 +383,7 @@ To delete an existing launch point on any element/collection in the pattern: `au
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the launch point from the root element. `<ANEXPRESSION>` is an [Expression](#pattern-expressions) to an existing element/collection in the pattern.
+-  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the launch point from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 ## Publishing and deploying toolkits
 
@@ -422,7 +413,7 @@ Given an upgraded version of the toolkit, it is assumed that there may exist oth
 
 Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runtime.md#upgrading-a-toolkit)), where there are standard Breaking and Non-Breaking changes. 
 
->  WARNING: Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manua, or recreating. Safety in these cases cannot be guaranteed.
+>  WARNING: Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.
 
 ### Publishing a toolkit
 
@@ -441,168 +432,3 @@ When a toolkit is built, it is exported (as a single file) to the user's desktop
 From there it can be deployed via any file sharing mechanism e.g. in an email, Slack, Dropbox, etc.
 
 To install a toolkit, see [installing toolkits](runtime.md#installing-a-toolkit).
-
-## Reference
-
-### Pattern Expressions
-
-A pattern expression is a reference to a specific element/collection (node) in a configured pattern.
-
-* The expression is always wrapped in curly braces. It starts with a `{` and ends with a `}`
-* It can begin with the name of the root element in the pattern, or this name can be omitted.
-* Each part of the expression is separated by a period `.`
-* Each part references the name of the child element
-
-#### Example pattern expressions
-
-Given this pattern (in a toolkit):
-```
-- APatternName (root element)
-    - AnAttributeName1 (attribute)
-    - AnElementName1 (element)
-        - AnElementName2 (element)
-    - ACollectionName1 (collection)
-        - AnAttributeName2 (attribute)
-        - AnElementName3 (element)
-```
-
-Examples pattern references:
-
-* the root element: `{APatternName}`
-* the first child element: `{APatternName.AnElementName1}` or `{AnElementName1}`
-* the first grand-child element: `{APatternName.AnElementName1.AnElementName2}` or `{AnElementName1.AnElementName2}`
-* the first child collection: `{APatternName.ACollectionName1}` or `{ACollectionName1}`
-* the first element of the first child collection: `{APatternName.ACollectionName1.AnElementName3}` or `{ACollectionName1.AnElementName3}`
-
-### Templating Expressions
-
-* A templating expression is a reference to a specific "item" (node) in a configured draft.
-* The expression always references the value of an attribute in the draft. References to elements/collections don't have values.
-* The expression is always wrapped in double curly braces. It starts with a `{{` and ends with a `}}`
-* The expression is always relative to the current "item" (node) on the configured draft. 
-* The expression can include the reference `.Parent` to access its' ancestry, starting from its' self.
-* Each part of the expression is separated by a period `.`
-
-#### Example templating expressions
-
-Given a pattern (cmd: `automate view pattern`):
-```
-- APatternName (root element)
-    - AnAttributeName1 (attribute)
-    - AnElementName1 (element)
-        - AnAttributeName2 (attribute)
-        - AnElementName2 (element)
-            - AnAttributeName3 (attribute)
-    - ACollectionName1 (collection)
-        - AnAttributeName4 (attribute)
-        - AnElementName3 (element)
-            - AnAttributeName5 (attribute)
-```
-And, given that we have configured all instances of all elements and all attributes with some value, AND we have added 3x items to `ACollectionName1`.
-
-If you can imagine that we were to ask for the configuration of a draft built with this toolkit (cmd: `automate view draft`), we would imagine having a draft configured something like this:
-
-```
-{
-    "Id": "1",
-    "AnAttributeName1": "avalue1",
-    "AnElementName1": {
-        "Id": "2",
-        "AnAttributeName2": "avalue2",
-        "AnElementName2": {
-            "Id": "3"
-            "AnAttributeName3": "avalue3",
-        }
-    },
-    "ACollectionName1": {
-        "Id": "4",
-        "AnAttributeName4": null,
-        "Items": [{
-                "Id": "5",
-                "AnAttributeName4": "avalue4",
-                "AnElementName3": {
-                    "Id": "6",
-                    "AnAttributeName5": "avalue5",
-                }
-            }, {
-                "Id": "7",
-                "AnAttributeName4": "avalue4",
-                "AnElementName3": {
-                    "Id": "8",
-                    "AnAttributeName5": "avalue5",
-                }
-            }, {
-                "Id": "9",
-                "AnAttributeName4": "avalue4",
-                "AnElementName3": {
-                    "Id": "10",
-                    "AnAttributeName5": "avalue5",
-                }
-            }
-        ]
-    }
-}
-```
-
-Examples of templating references:
-
-> The casing of elements and collection is as they are defined in the pattern. However, the casing of the built-in properties, such as: `Id`, and `Items` are always PascalCased.
-
-(ignoring the nominal values of the "Id" properties)
-
-Starting from the root element (`APatternName`):
-
-* an attribute (on self): `{{AnAttributeName1}}` (equals `avalue1`)
-* an attribute of the first child element (ID: 2): `{{AnElementName1.AnAttributeName2}}` (equals `avalue2`)
-* an attribute of the first grand-child element (ID: 3): `{{AnElementName1.AnElementName2.AnAttributeName3}}` (equals `avalue3`)
-* an attribute of the first child collection (ID: 4): `{{ACollectionName1.AnAttributeName4}}` (will always equal null, since this collection is ephemeral)
-* an attribute of the first child collection item (ID: 5): `{{ACollectionName1.5.AnAttributeName4}}` (equals `avalue4`)
-* an attribute of the first element of the first child collection item (ID: 6): `{{ACollectionName1.5.AnElementName3.AnAttributeName5}}` (equals `avalue5`)
-* an attribute of the first element of the last child collection item (ID: 9): `{{ACollectionName1.9.AnElementName3.AnAttributeName5}}` (equals `avalue5`)
-
-Starting from the element `AnElementName2`:
-
-* an attribute (on self): `{{AnAttributeName3}}` (equals `avalue3`)
-* an attribute of the first child element (ID: 2): `{{Parent.AnAttributeName2}}` (equals `avalue2`)
-* an attribute of the root element (ID: 1): `{{Parent.Parent.AnAttributeName1}}` (equals `avalue1`)
-* an attribute of the first child collection (ID: 4): `{{Parent.Parent.ACollectionName1.AnAttributeName4}}` (will always equal null, since this collection is ephemeral)
-* an attribute of the first child collection item (ID: 5): `{{Parent.Parent.ACollectionName1.5.AnAttributeName4}}` (equals `avalue4`)
-* an attribute of the first element of the first child collection item (ID: 6): `{{Parent.Parent.ACollectionName1.5.AnElementName3.AnAttributeName5}}` (equals `avalue5`)
-
-Starting from the "collection item"  `AnElementName3`:
-
-* an attribute (on self): `{{AnAttributeName5}}` (equals `avalue5`)
-* an attribute of the first child element (ID: 2): `{{Parent.Parent.AnElementName1.AnAttributeName2}}` (equals `avalue2`)
-* an attribute of the root element (ID: 1): `{{Parent.Parent.AnAttributeName1}}` (equals `avalue1`)
-* an attribute of the first child collection (ID: 4): `{{Parent.Parent.ACollectionName1.AnAttributeName4}}` (will always equal null, since this collection is ephemeral)
-* an attribute of the first child collection item (ID: 5): `{{Parent.Parent.ACollectionName1.5.AnAttributeName4}}` (equals `avalue4`)
-
-> When navigating up from a "collection item", its parent is not the [ephemeral] collection itself, but the parent of that [ephemeral] collection.
-
-### Templating Functions
-
-As part of any expression, you can also use any language feature of Scriban, found in [this reference](https://github.com/scriban/scriban/blob/master/doc/language.md)
-
-For example, conditional `if` statements, `for` statements, and other common operations and functions.
-
-Scriban also supports numerous [built-in functions](https://github.com/scriban/scriban/blob/master/doc/builtins.md) for strings and other common data types.
-
-For example, to convert an expression to lowercase, you would write something like: `{{model.AnAttributeName | string.downcase}}`
-
-Automate adds the following additional custom functions:
-
-* **CamelCase**: `{{model.AnAttributeName | string.camelcase}}` to convert any string value to a camel-cased string, where the first letter of each word in the string is lowercased, and all spaces are removed.
-
-* **PascalCase**: `{{model.AnAttributeName | string.pascalcase}}` to convert any string value to a pascal-cased string, where the first letter of each word in the string is uppercased, and all spaces are removed.
-
-* **Pluralize**: `{{model.AnAttributeName | string.pluralize}}` to convert any string value to its pluralized form.  (e.g. duck -> ducks)
-
-* **Singularize**: `{{model.AnAttributeName | string.singularize}}` to convert any string to its singular form. (e.g. ducks -> duck)
-
-* **CamelPlural**: `{{model.AnAttributeName | string.camelplural}}` to convert any string value to its camel-cased and pluralized form.  (e.g. Duck -> ducks)
-
-* **PascalPlural**: `{{model.AnAttributeName | string.pascalplural}}` to convert any string value to its pascal-cased pluralized form.  (e.g. duck -> Ducks)
-
-* **CamelSingular**: `{{model.AnAttributeName | string.camelsingular}}` to convert any string to its camel-cased singularized form. (e.g. Ducks -> duck)
-
-* **PascalSingular**: `{{model.AnAttributeName | string.pascalsingular}}` to convert any string to its pascal-cased singularized form. (e.g. ducks -> Duck)
