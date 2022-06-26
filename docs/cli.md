@@ -6,40 +6,83 @@ To view the version of automate: `automate --version`
 
 ## Structured Output
 
-By default, all output (Output Channel of a CLI) from the CLI is displayed in a human-readable friendly format. This format often embeds key information (i.e. IDs of created elements). These identifiers might be needed to be passed to subsequent commands, by the end-user.
+### The problem with non-structured output
 
-> The end-user is free to copy and paste these values from the terminal.
+By default, all output from the CLI is displayed in a human-readable and friendly format (in stdout). All exceptions from the CLI are displayed in human-readable and friendly format (in stderr).
 
-By default, all errors that occur (Error Channel of a CLI) are displayed inline with any Output. 
+For a terminal user, all errors that occur (in stderr) are displayed inline with any Output (in stdout) in a terminal window.
 
-Consuming this output (and errors) by other scripts and tools can be difficult. We want to avoid these tools from having to parse the outputs and errors in order to chain tools together. So we offer the Structure Output option to provide that data in machine-readable format.
+This human-readable format often embeds key information (i.e. IDs of created elements).
+
+These identifiers, are sometimes needed to be passed to subsequent commands by the end-user (and by any tools using the
+CLI).
+
+> The end-user is free to copy and paste these values from the terminal, but the machine would have to scrape the values
+> from messages.
+
+Consuming key data from the output (and from the errors) by scripts and tools can be very difficult. We want to enable these tools to be able to reliably parse the outputs and errors in order to chain tools together. So we offer the Structured output option to provide that data in machine-readable format.
+
+### Enabling structured out
 
 To receive structured output from any command, add the `--output-structured` option
 
-> This command will display all output and errors combined into a single JSON document.
+> This command will display all output AND errors into separate JSON responses in both stdout and in stderr.
 
-For example:
+#### Successful responses
+
+In response to a command that succeeds, you will see a JSON response like this (in stdout):
 
 ```json
 {
-  "error": {
-    "message" : "...an error message..."
-  },
-  "output" : {
-    "message" : "a message template with {A}, {B} and {C}",
-    "values" : [
-      "avalueofa",
-      "avalueofb",
-      "avalueofc"
-    ]
-  }
+  "Info" : [
+    "acontextualmessage1",
+    "acontextualmessage2"
+  ],
+  "Output" : [{
+    "Message" : "a message template with some value {AName1} and with some data {AName2}",
+    "Values" : {
+      "AName1": "avalue",
+      "AName2": {
+        "AKey1" : "value1",
+        "AKey2" : "value2"
+      }
+    }
+  }]
 }
 ```
 
+* The `Info` element contains any number of contextual messages about the command being run. For example, on which pattern or draft is the current one.
+* The `Output` element contains one or more structured messages, composed of a `Message` template, and collection
+  of `Values` that are used in that message template. These values may be strings, or maybe JSON documents.
+
+> The `Error` element will not present
+
+#### Failure responses
+
+In response to a command that fails with an exception, you will see a JSON response like this (in stderr):
+
+```json
+{
+ "Info" : [
+    "acontextualmessage1",
+    "acontextualmessage2"
+  ],
+  "Error": {
+    "Message" : "an error message"
+  },
+  "Output" : []
+}
+```
+
+* The `Info` element contains any number of contextual messages about the command being run. For example, on which pattern or draft is the current one.
+* The `Error` element contains the error `Message`
+* The `Output` element may contain one or more structured messages ([as above](#successful-responses)), if there is any
+  output before the error was raised.
+
 ## Debug Output
 
-If you receive an error running any command, you can view the stacktrace of the error in detail, if you wish to understand the root cause. 
+If you receive an error running any command, you can view extra information about the stack-trace of the error in detail to better understand the root cause.
 
-> This feature is only really useful to the developers of the CLI project
+> This feature is only really useful to the developers of the automate project
 
 To view more details about the error, add the: `--debug` option

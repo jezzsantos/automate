@@ -291,24 +291,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is now being configured.
-        /// </summary>
-        internal static string CommandLine_Output_CurrentDraftInUse {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CurrentDraftInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) is now being edited.
-        /// </summary>
-        internal static string CommandLine_Output_CurrentPatternInUse {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CurrentPatternInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is configured as:
         ///{Configuration}.
         /// </summary>
@@ -516,17 +498,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Draft is being configured. You must first run one of these commands:
-        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;` to create a new draft from an existing toolkit, or
-        ///`automate run switch &lt;DraftID&gt;` to switch to this existing draft.
-        /// </summary>
-        internal static string CommandLine_Output_NoDraftSelected {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoDraftSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There are no editable Patterns yet.
         /// </summary>
         internal static string CommandLine_Output_NoEditablePatterns {
@@ -551,17 +522,6 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_NoInstalledToolkits {
             get {
                 return ResourceManager.GetString("CommandLine_Output_NoInstalledToolkits", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Pattern is being edited. You must first run one of these commands:
-        ///`automate create pattern &lt;Name&gt;` to create a new pattern, or
-        ///`automate edit switch &lt;Name&gt;` to switch to an existing pattern.
-        /// </summary>
-        internal static string CommandLine_Output_NoPatternSelected {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoPatternSelected", resourceCulture);
             }
         }
         
@@ -609,6 +569,64 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_PatternUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_PatternUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is now being configured.
+        /// </summary>
+        internal static string CommandLine_Output_Preamble_CurrentDraftInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Preamble_CurrentDraftInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) is now being edited.
+        /// </summary>
+        internal static string CommandLine_Output_Preamble_CurrentPatternInUse {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Preamble_CurrentPatternInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Draft is being configured. You must first run one of these commands:
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;` to create a new draft from an existing toolkit, or
+        ///`automate run switch &lt;DraftID&gt;` to switch to this existing draft.
+        /// </summary>
+        internal static string CommandLine_Output_Preamble_NoDraftSelected {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Preamble_NoDraftSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Pattern is being edited. You must first run one of these commands:
+        ///`automate create pattern &lt;Name&gt;` to create a new pattern, or
+        ///`automate edit switch &lt;Name&gt;` to switch to an existing pattern.
+        /// </summary>
+        internal static string CommandLine_Output_Preamble_NoPatternSelected {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Preamble_NoPatternSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is only for testingonly.
+        /// </summary>
+        internal static string CommandLine_Output_Preamble_TestingOnly {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Preamble_TestingOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to amessagetemplate {aname}.
+        /// </summary>
+        internal static string CommandLine_Output_TestingOnly {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_TestingOnly", resourceCulture);
             }
         }
         

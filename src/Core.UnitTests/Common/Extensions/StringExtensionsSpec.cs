@@ -1,4 +1,7 @@
-﻿using Automate.Common.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Nodes;
+using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -8,7 +11,55 @@ namespace Core.UnitTests.Common.Extensions
     public class StringExtensionsSpec
     {
         [Fact]
-        public void WhenFormatTemplateWithNoReplacements_ThenReturnsMessage()
+        public void WhenSubstituteWithNullMessage_ThenReturnsNull()
+        {
+            var result = ((string)null).Substitute();
+
+            result.Should().BeNull();
+        }
+        
+        [Fact]
+        public void WhenSubstituteWithNoArgs_ThenReturnsMessage()
+        {
+            var result = "amessage".Substitute();
+
+            result.Should().Be("amessage");
+        }
+        
+        [Fact]
+        public void WhenSubstituteWithNoArgsAndPlaceholder_ThenReturnsMessage()
+        {
+            var result = "amessage{0}".Substitute();
+
+            result.Should().Be("amessage{0}");
+        }
+        
+        [Fact]
+        public void WhenSubstituteWithAnArgAndNoPlaceholder_ThenReturnsMessage()
+        {
+            var result = "amessage".Substitute("anarg1");
+
+            result.Should().Be("amessage");
+        }
+        
+        [Fact]
+        public void WhenSubstituteWithMoreArgsThanPlaceholders_ThenReturnsMessage()
+        {
+            var result = "amessage{0}".Substitute("anarg1", "anarg2");
+
+            result.Should().Be("amessageanarg1");
+        }
+        
+        [Fact]
+        public void WhenSubstituteWithLessArgsThanPlaceholders_ThenThrows()
+        {
+            "amessage{0}and{1}"
+                .Invoking(x => x.Substitute("anarg1"))
+                .Should().Throw<FormatException>();
+        }
+        
+        [Fact]
+        public void WhenSubstituteTemplateWithNoReplacements_ThenReturnsMessage()
         {
             var message = "amessage".SubstituteTemplate();
 
@@ -16,7 +67,7 @@ namespace Core.UnitTests.Common.Extensions
         }
 
         [Fact]
-        public void WhenFormatTemplateWithNoArguments_ThenReturnsMessage()
+        public void WhenSubstituteTemplateWithNoArguments_ThenReturnsMessage()
         {
             var message = "amessage{anargument}".SubstituteTemplate();
 
@@ -24,7 +75,7 @@ namespace Core.UnitTests.Common.Extensions
         }
 
         [Fact]
-        public void WhenFormatTemplateWithMoreArgumentsThanTokens_ThenReturnsMessage()
+        public void WhenSubstituteTemplateWithMoreArgumentsThanTokens_ThenReturnsMessage()
         {
             var message = "amessage".SubstituteTemplate("arg1", "anarg2");
 
@@ -32,45 +83,74 @@ namespace Core.UnitTests.Common.Extensions
         }
 
         [Fact]
-        public void WhenFormatTemplateWithMoreTokensThanArguments_ThenReturnsMessage()
+        public void WhenSubstituteTemplateWithMoreTokensThanArguments_ThenReturnsMessage()
         {
             var message = "amessage{atoken1}{atoken2}{atoken3}".SubstituteTemplate("anarg1", "anarg2");
 
             message.Should().Be("amessageanarg1anarg2{atoken3}");
         }
+        
+        [Fact]
+        public void WhenSubstituteTemplateWithJsonObject_ThenReturnsMessage()
+        {
+            var jsonObject = JsonNode.Parse("{\"aproperty\":\"avalue\"}");
+            var message = "amessage{atoken1}{atoken2}".SubstituteTemplate("anarg1", jsonObject);
+
+            message.Should().Be($"amessageanarg1{{{Environment.NewLine}" +
+                                $"  \"aproperty\": \"avalue\"{Environment.NewLine}" +
+                                "}");
+        }
 
         [Fact]
-        public void WhenFormatTemplateStructuredWithNoReplacements_ThenReturnsMessage()
+        public void WhenSubstituteTemplateStructuredWithNoReplacements_ThenReturnsMessage()
         {
             var message = "amessage".SubstituteTemplateStructured();
 
-            message.Should().Be("{\"message\":\"amessage\",\"values\":{}}");
+            message.Should().BeEquivalentTo(new StructuredMessage
+            {
+                Message = "amessage",
+                Values = new Dictionary<string, object>()
+            });
         }
 
         [Fact]
-        public void WhenFormatTemplateStructuredWithNoArguments_ThenReturnsMessage()
+        public void WhenSubstituteTemplateStructuredWithNoArguments_ThenReturnsMessage()
         {
             var message = "amessage{anargument}".SubstituteTemplateStructured();
 
-            message.Should().Be("{\"message\":\"amessage{anargument}\",\"values\":{}}");
+            message.Should().BeEquivalentTo(new StructuredMessage
+            {
+                Message = "amessage{anargument}",
+                Values = new Dictionary<string, object>()
+            });
         }
 
         [Fact]
-        public void WhenFormatTemplateStructuredWithMoreArgumentsThanTokens_ThenReturnsMessage()
+        public void WhenSubstituteTemplateStructuredWithMoreArgumentsThanTokens_ThenReturnsMessage()
         {
             var message = "amessage".SubstituteTemplateStructured("arg1", "anarg2");
 
-            message.Should().Be("{\"message\":\"amessage\",\"values\":{}}");
+            message.Should().BeEquivalentTo(new StructuredMessage
+            {
+                Message = "amessage",
+                Values = new Dictionary<string, object>()
+            });
         }
 
         [Fact]
-        public void WhenFormatTemplateStructuredWithMoreTokensThanArguments_ThenReturnsMessage()
+        public void WhenSubstituteTemplateStructuredWithMoreTokensThanArguments_ThenReturnsMessage()
         {
             var message = "amessage{atoken1}{atoken2}{atoken3}".SubstituteTemplateStructured("anarg1", "anarg2");
 
-            message.Should()
-                .Be(
-                    "{\"message\":\"amessage{atoken1}{atoken2}{atoken3}\",\"values\":{\"atoken1\":\"anarg1\",\"atoken2\":\"anarg2\"}}");
+            message.Should().BeEquivalentTo(new StructuredMessage
+            {
+                Message = "amessage{atoken1}{atoken2}{atoken3}",
+                Values = new Dictionary<string, object>
+                {
+                    { "atoken1", "anarg1" },
+                    { "atoken2", "anarg2" }
+                }
+            });
         }
 
         [Fact]

@@ -7,7 +7,7 @@ namespace Automate.Common.Extensions
 {
     public static class JsonConversions
     {
-        public static string ToJson<T>(this T instance, bool indent = true)
+        public static string ToJson<T>(this T instance, bool indent = true, bool camelCased = true)
         {
             return JsonSerializer.Serialize(instance, new JsonSerializerOptions
             {

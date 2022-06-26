@@ -48,5 +48,7 @@
     <data name="AutomationService_UnknownAutomationType" xml:space="preserve">
         <value>Unknown type of automation: {0}</value>
     </data>
-
+    <data name="CommandLineApi_UnexpectedError" xml:space="preserve">
+        <value>Failed Unexpectedly, with: {0}</value>
+    </data>
 </root>

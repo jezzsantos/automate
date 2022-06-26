@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace Automate.Common.Extensions
 {
+    public class StructuredMessage
+    {
+        public string Message { get; set; }
+
+        public Dictionary<string, object> Values { get; set; }
+    }
+
     public static class StringExtensions
     {
         public static int ToInt(this string text)
@@ -34,6 +43,11 @@ namespace Automate.Common.Extensions
 
         public static string Substitute(this string value, params object[] arguments)
         {
+            if (arguments.HasNone())
+            {
+                return value;
+            }
+            
             return string.Format(value, arguments);
         }
 
@@ -42,7 +56,7 @@ namespace Automate.Common.Extensions
             return FormatMessageTemplate(value, arguments);
         }
 
-        public static string SubstituteTemplateStructured(this string value, params object[] arguments)
+        public static StructuredMessage SubstituteTemplateStructured(this string value, params object[] arguments)
         {
             return FormatStructuredMessage(value, arguments);
         }
@@ -274,17 +288,17 @@ namespace Automate.Common.Extensions
                 : string.Empty;
         }
 
-        private static string FormatStructuredMessage(string messageTemplate, params object[] args)
+        private static StructuredMessage FormatStructuredMessage(string messageTemplate, params object[] args)
         {
             messageTemplate.GuardAgainstNullOrEmpty(nameof(messageTemplate));
 
-            var instance = new
+            var instance = new StructuredMessage
             {
-                message = messageTemplate,
-                values = GetMessageTemplateTokens(messageTemplate, args)
+                Message = messageTemplate,
+                Values = GetMessageTemplateTokens(messageTemplate, args)
             };
 
-            return instance.ToJson(false);
+            return instance;
         }
 
         private static string FormatMessageTemplate(string messageTemplate, params object[] args)
@@ -301,20 +315,44 @@ namespace Automate.Common.Extensions
             foreach (var key in replacements.Keys)
             {
                 var token = $"{{{key}}}";
-                message = message.Replace(token, replacements[key].HasValue()
-                    ? replacements[key]
-                    : token);
+
+                string replacementString;
+                var replacement = replacements[key];
+                if (replacement.NotExists())
+                {
+                    replacementString = token;
+                }
+                else
+                {
+                    if (replacement is JsonNode node)
+                    {
+                        replacementString = node.ToJsonString(new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        });
+                    }
+                    else
+                    {
+                        replacementString = replacement?.ToString();
+                        if (replacementString.HasNoValue())
+                        {
+                            replacementString = token;
+                        }
+                    }
+                }
+
+                message = message.Replace(token, replacementString);
             }
 
             return message;
         }
 
-        private static Dictionary<string, string> GetMessageTemplateTokens(string messageTemplate, params object[] args)
+        private static Dictionary<string, object> GetMessageTemplateTokens(string messageTemplate, params object[] args)
         {
             var tokens = Regex.Matches(messageTemplate, @"\{(.+?)\}");
             if (tokens.Count == 0)
             {
-                return new Dictionary<string, string>();
+                return new Dictionary<string, object>();
             }
 
             var paramIndex = 0;
@@ -324,10 +362,10 @@ namespace Automate.Common.Extensions
                 {
                     paramIndex++;
                     return args.Length >= paramIndex
-                        ? args[paramIndex - 1]?.ToString()
+                        ? args[paramIndex - 1]
                         : null;
                 })
-                .Where(pair => pair.Value.HasValue())
+                .Where(pair => pair.Value.Exists())
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return replacements;

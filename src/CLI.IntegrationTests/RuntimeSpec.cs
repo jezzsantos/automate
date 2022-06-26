@@ -55,7 +55,7 @@ namespace CLI.IntegrationTests
             ConfigureBuildAndInstallToolkit();
 
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkit.SubstituteTemplate("APattern", "0.1.0"));
         }
 
@@ -68,7 +68,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkit.SubstituteTemplate("APattern", "0.1.0"));
         }
 
@@ -85,7 +85,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkit.SubstituteTemplate("APattern", "0.2.0"));
         }
 
@@ -123,7 +123,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} toolkits");
 
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_NoInstalledToolkits);
         }
 
@@ -138,7 +138,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
                         $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
         }
@@ -154,7 +154,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CreateDraftFromToolkit.SubstituteTemplate(draft.Name,
                         draft.Id, draft.PatternName));
         }
@@ -173,7 +173,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftSwitched.SubstituteTemplate(draft1.Name, draft1.Id));
         }
 
@@ -186,7 +186,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_NoInstalledDrafts);
         }
 
@@ -202,7 +202,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledDraftsListed.SubstituteTemplate(
                         $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
         }
@@ -218,7 +218,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern", item.Id));
             item.Properties["AProperty1"].Value.Should().Be("avalue");
         }
@@ -234,7 +234,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("B");
         }
@@ -251,7 +251,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
@@ -266,7 +266,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate(item.Name, item.Id));
             item.Properties["AProperty1"].Value.Should().BeNull();
         }
@@ -284,7 +284,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
             item.Properties["AProperty3"].Value.Should().Be("C");
         }
@@ -300,7 +300,7 @@ namespace CLI.IntegrationTests
             var item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
@@ -319,7 +319,7 @@ namespace CLI.IntegrationTests
             item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2", item.Id));
             item.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
@@ -341,7 +341,7 @@ namespace CLI.IntegrationTests
             var elementItem = this.setup.Draft.Model.Properties["AnElement3"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftResetElement.SubstituteTemplate("AnElement3",
                         elementItem.Id));
             elementItem.Properties["AProperty5"].Value.Should().Be("ADefaultValue1");
@@ -366,7 +366,7 @@ namespace CLI.IntegrationTests
             var collectionItem = this.setup.Draft.Model.Properties["ACollection2"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftEmptyCollection.SubstituteTemplate("ACollection2",
                         collectionItem.Id));
             collectionItem.Items.Count.Should().Be(0);
@@ -383,7 +383,7 @@ namespace CLI.IntegrationTests
             var draftItem = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("AnElement3",
                         elementItem.Id));
             draftItem.Properties.Should().NotContainKey("AnElement3");
@@ -404,7 +404,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
                     draft.Id,
                     new
                     {
@@ -453,7 +453,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
                     draft.Id,
                     new
                     {
@@ -487,7 +487,7 @@ namespace CLI.IntegrationTests
             var codeTemplatePath2 = GetFilePathInOutput("Assets/CodeTemplates/code2.code");
             var element1 = this.setup.Pattern.Elements.First();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
@@ -524,7 +524,7 @@ namespace CLI.IntegrationTests
                         ,
                         this.setup.Pattern.Id));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_PatternLaunchableAutomation.SubstituteTemplate(pattern.Name,
                         pattern.Id,
                         pattern.ToolkitVersion.Current,
@@ -543,7 +543,7 @@ namespace CLI.IntegrationTests
                         ,
                         this.setup.Pattern.Id));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftValidationFailed
                         .SubstituteTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
@@ -560,7 +560,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftValidationFailed
                         .SubstituteTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
@@ -584,7 +584,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftValidationSuccess.SubstituteTemplate(draft.Name,
                         draft.Id));
         }
@@ -598,7 +598,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftValidationFailed
                         .SubstituteTemplate(draft.Name, draft.Id,
                             $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
@@ -624,7 +624,7 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionFailed.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionFailed.SubstituteTemplate(
                     "ALaunchPoint2",
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("Bnamingtest.cs",
                         codeTemplate.Id, path) +
@@ -657,7 +657,7 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("Bnamingtest.cs",
                         codeTemplate.Id,
@@ -684,7 +684,7 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.Elements.First().CodeTemplates.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint3",
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
                         "parentsubstitutiontest.cs",
@@ -721,7 +721,7 @@ namespace CLI.IntegrationTests
             var codeFile3 = GetFilePathInOutput(@"code/avalue1/avalue2/avalue3/templating3.code");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating1.code",
                         codeTemplate1.Id, codeFile1) + $"{Environment.NewLine}" +
@@ -762,7 +762,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning.SubstituteTemplate(
                     draft.Name, draft.Id, draft.PatternName, "0.1.0", "0.1.0",
                     $"* {MigrationChangeType.Abort}: " +
                     MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion.SubstituteTemplate(draft.PatternName,
@@ -787,7 +787,7 @@ namespace CLI.IntegrationTests
             var pattern = this.setup.Pattern;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ToolkitConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
@@ -816,7 +816,7 @@ namespace CLI.IntegrationTests
             var pattern = this.setup.Pattern;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ToolkitConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +

@@ -6,22 +6,20 @@ using System.CommandLine.Help;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Automate.Authoring.Application;
-using Automate.Authoring.Domain;
 using Automate.CLI.Extensions;
 using Automate.Common;
 using Automate.Common.Application;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
-using Automate.Common.Infrastructure;
 using Automate.Runtime.Application;
 using Automate.Runtime.Domain;
 
 namespace Automate.CLI.Infrastructure
 {
-    internal static class CommandLineApi
+    internal static partial class CommandLineApi
     {
         public const string CreateCommandName = "create";
         public const string EditCommandName = "edit";
@@ -36,6 +34,15 @@ namespace Automate.CLI.Infrastructure
         public const string ExecuteCommandName = "execute";
         public const string ViewCommandName = "view";
         public const string UpgradeCommandName = "upgrade";
+        public const string TestingOnlyCommandName = "testingonly";
+        private const string DebugOption = "debug";
+        private const string StructuredOutputOption = "output-structured";
+        private const string PatternSubCommandName = "pattern";
+        private const string DraftSubCommandName = "draft";
+        private const string DraftsSubCommandName = "drafts";
+        private const string ToolkitSubCommandName = "toolkit";
+        private const string ToolkitsSubCommandName = "toolkits";
+        private const string PatternsSubCommandName = "patterns";
         private static AuthoringApplication authoring;
         private static RuntimeApplication runtime;
 
@@ -44,9 +51,15 @@ namespace Automate.CLI.Infrastructure
             authoring = CreateAuthoringApplication(container);
             runtime = CreateRuntimeApplication(container);
 
+            var outputMessages = new List<OutputMessage>();
+            var contextualMessages = new List<ContextualMessage>();
+            HandlerBase.Initialise(outputMessages);
+            HandlerBase.Initialise(outputMessages);
+            HandlerBase.Initialise(outputMessages);
+
             var createCommands = new Command(CreateCommandName, "Creating new patterns")
             {
-                new Command("pattern", "Creates a new pattern")
+                new Command(PatternSubCommandName, "Creates a new pattern")
                 {
                     new Argument("Name", "The name of the pattern to create"),
                     new Option("--displayedas", "A friendly display name for the pattern", typeof(string),
@@ -342,7 +355,7 @@ namespace Automate.CLI.Infrastructure
             };
             var publishCommands = new Command(PublishCommandName, "Publishing toolkits from patterns")
             {
-                new Command("toolkit", "Builds a pattern into a toolkit and publishes the toolkit")
+                new Command(ToolkitSubCommandName, "Builds a pattern into a toolkit and publishes the toolkit")
                     {
                         new Option("--asversion",
                             "A specific version number (1-2 dot number), or 'auto' to auto-increment the current version",
@@ -352,19 +365,19 @@ namespace Automate.CLI.Infrastructure
                             typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                         new Option("--install", "Install the built toolkit locally",
                             typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Build))
-                    .WithAlias("pattern")
+                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Publish))
+                    .WithAlias(PatternSubCommandName)
             }.WithAlias(BuildCommandName);
             var installCommands = new Command(InstallCommandName, "Installing toolkits")
             {
-                new Command("toolkit", "Installs the pattern from a toolkit")
+                new Command(ToolkitSubCommandName, "Installs the pattern from a toolkit")
                 {
                     new Argument("Location", "The location of the *.toolkit file to install into the current directory")
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.Install))
             };
             var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
             {
-                new Command("toolkit", "Creates a new draft from a toolkit")
+                new Command(ToolkitSubCommandName, "Creates a new draft from a toolkit")
                 {
                     new Argument("PatternName", "The name of the pattern in the toolkit that you want to use"),
                     new Option("--name", "A name for the draft", arity: ArgumentArity.ZeroOrOne)
@@ -409,7 +422,7 @@ namespace Automate.CLI.Infrastructure
             };
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
-                new Command("draft", "Validate the current draft")
+                new Command(DraftSubCommandName, "Validate the current draft")
                 {
                     new Option("--on", "The expression of the element/collection to validate",
                         arity: ArgumentArity.ZeroOrOne)
@@ -427,17 +440,17 @@ namespace Automate.CLI.Infrastructure
             };
             var viewCommands = new Command(ViewCommandName, "Viewing patterns and drafts")
             {
-                new Command("pattern", "View the configuration of the current pattern")
+                new Command(PatternSubCommandName, "View the configuration of the current pattern")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ViewPattern)),
-                new Command("toolkit", "View the configuration of the current toolkit")
+                new Command(ToolkitSubCommandName, "View the configuration of the current toolkit")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ViewToolkit)),
-                new Command("draft", "View the configuration of the current draft")
+                new Command(DraftSubCommandName, "View the configuration of the current draft")
                 {
                     new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool),
                         () => false, ArgumentArity.ZeroOrOne)
@@ -445,26 +458,36 @@ namespace Automate.CLI.Infrastructure
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and drafts")
             {
-                new Command("patterns", "Lists all patterns being edited")
+                new Command(PatternsSubCommandName, "Lists all patterns being edited")
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ListPatterns)),
-                new Command("toolkits", "Lists all installed toolkits")
+                new Command(ToolkitsSubCommandName, "Lists all installed toolkits")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ListToolkits)),
-                new Command("drafts", "Lists all drafts being configured")
+                new Command(DraftsSubCommandName, "Lists all drafts being configured")
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ListDrafts))
             };
             var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and drafts")
             {
-                new Command("draft", "Upgrades a draft from a new version of its toolkit")
+                new Command(DraftSubCommandName, "Upgrades a draft from a new version of its toolkit")
                     {
                         new Option("--force", "Force the upgrade despite any compatability errors")
                     }
                     .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.UpgradeDraft))
             };
 #if TESTINGONLY
-            var testingOnlyCommands = new Command("testingonly", "For testing only!")
+            var testingOnlyCommands = new Command(TestingOnlyCommandName, "For testing only!")
             {
-                new Option("--fail", "Throws a general exception", typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-            }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Fail));
+                new Command("fail", "Forces the command to fail with an exception")
+                {
+                    new Option("--nested", "Whether to nest the exception", typeof(bool), () => false,
+                        ArgumentArity.ZeroOrOne),
+                    new Option("--message", "A message for the thrown exception", arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Fail)),
+                new Command("succeed", "Runs a command successfully")
+                {
+                    new Option("--message", "A message to output", arity: ArgumentArity.ZeroOrOne),
+                    new Option("--value", "A value to substitute into the message", arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Succeed))
+            };
 #endif
             var command =
                 new RootCommand(
@@ -486,60 +509,21 @@ namespace Automate.CLI.Infrastructure
                     testingOnlyCommands
 #endif
                 };
-            command.AddGlobalOption(new Option("--output-structured", "Provide output as structured data",
+            command.AddGlobalOption(new Option($"--{StructuredOutputOption}", "Provide output as structured data",
                 typeof(bool), () => false,
                 ArgumentArity.ZeroOrOne));
-            command.AddGlobalOption(new Option("--debug", "Show more error details when there is an exception",
-                typeof(bool), () => false,
+            command.AddGlobalOption(new Option($"--{DebugOption}", "Show more error details when there is an exception",
+                typeof(bool),
+#if TESTINGONLY
+                () => true,
+#else
+                () => false,
+#endif
                 ArgumentArity.ZeroOrOne));
-
-            if (IsAuthoringCommand(args))
-            {
-                if (authoring.CurrentPatternId.Exists())
-                {
-                    ConsoleExtensions.WriteOutput(
-                        OutputMessages.CommandLine_Output_CurrentPatternInUse.SubstituteTemplate(
-                            authoring.CurrentPatternName,
-                            authoring.CurrentPatternVersion), ConsoleColor.Gray);
-                }
-                else
-                {
-                    ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoPatternSelected);
-                }
-            }
-            if (IsRuntimeCommand(args))
-            {
-                if (IsRuntimeDraftCommand(args))
-                {
-                    if (runtime.CurrentDraftId.Exists())
-                    {
-                        ConsoleExtensions.WriteOutput(
-                            OutputMessages.CommandLine_Output_CurrentDraftInUse.SubstituteTemplate(
-                                runtime.CurrentDraftName, runtime.CurrentDraftId), ConsoleColor.Gray);
-                    }
-                    else
-                    {
-                        ConsoleExtensions.WriteErrorWarning(OutputMessages.CommandLine_Output_NoDraftSelected);
-                    }
-                }
-            }
 
             var parser = new CommandLineBuilder(command)
                 .UseDefaults()
-                .UseExceptionHandler((ex, context) =>
-                {
-                    var isDebug = IsDebugging(context, ex);
-
-                    var message = ex.InnerException.Exists()
-                        ? isDebug
-                            ? ex.InnerException.ToString()
-                            : ex.InnerException.Message
-                        : isDebug
-                            ? ex.ToString()
-                            : ex.Message;
-                    Console.Error.WriteLine();
-                    context.Console.WriteError($"Failed Unexpectedly, with: {message}", ConsoleColor.Red);
-                }, 1)
+                .UseExceptionHandler((ex, context) => { HandleException(context, ex); }, 1)
                 .UseHelp(context =>
                 {
                     context.HelpBuilder.CustomizeLayout(_ =>
@@ -550,11 +534,160 @@ namespace Automate.CLI.Infrastructure
                 })
                 .Build();
 
+            var parseResult = parser.Parse(args);
+
+            if (IsAuthoringCommand(parseResult))
+            {
+                if (authoring.CurrentPatternId.Exists())
+                {
+                    contextualMessages.Add(new ContextualMessage(
+                        OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate(
+                            authoring.CurrentPatternName,
+                            authoring.CurrentPatternVersion)));
+                }
+                else
+                {
+                    contextualMessages.Add(new ContextualMessage(
+                        OutputMessages.CommandLine_Output_Preamble_NoPatternSelected, MessageLevel.ErrorWarning));
+                }
+            }
+            if (IsRuntimeCommand(parseResult))
+            {
+                if (IsRuntimeDraftCommand(parseResult))
+                {
+                    if (runtime.CurrentDraftId.Exists())
+                    {
+                        contextualMessages.Add(new ContextualMessage(
+                            OutputMessages.CommandLine_Output_Preamble_CurrentDraftInUse.SubstituteTemplate(
+                                runtime.CurrentDraftName, runtime.CurrentDraftId)));
+                    }
+                    else
+                    {
+                        contextualMessages.Add(new ContextualMessage(
+                            OutputMessages.CommandLine_Output_Preamble_NoDraftSelected, MessageLevel.ErrorWarning));
+                    }
+                }
+            }
+            if (IsTestingOnlyCommand(parseResult))
+            {
+                contextualMessages.Add(new ContextualMessage(OutputMessages.CommandLine_Output_Preamble_TestingOnly));
+            }
+
             var result = parser.Invoke(args);
 
-            Console.WriteLine();
+            if (IsStructuredOutput(parseResult))
+            {
+                WriteStructuredOutput();
+            }
+            else
+            {
+                WriteUnstructuredOutput();
+                Console.WriteLine();
+            }
 
             return result;
+
+            void HandleException(InvocationContext context, Exception ex)
+            {
+                var isDebug = IsDebugging(context.ParseResult);
+
+                var message = ex.InnerException.Exists()
+                    ? isDebug
+                        ? ex.InnerException.ToString()
+                        : ex.InnerException.Message
+                    : isDebug
+                        ? ex.ToString()
+                        : ex.Message;
+                var errorMessage = ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(message);
+                if (IsStructuredOutput(context.ParseResult))
+                {
+                    WriteStructuredError(errorMessage, context);
+                }
+                else
+                {
+                    WriteUnstructuredOutput();
+                    WriteUnstructuredError(context, errorMessage);
+                }
+            }
+
+            StructuredOutput CreateStructuredOutput()
+            {
+                return new StructuredOutput
+                {
+                    Info = contextualMessages.Select(cm => $"{cm.Level}: {cm.Message}").ToList(),
+                    Output = outputMessages
+                        .Select(om => om.MessageTemplate.SubstituteTemplateStructured(om.Arguments)).ToList()
+                };
+            }
+
+            void WriteStructuredOutput()
+            {
+                var structuredOutput = CreateStructuredOutput().ToJson();
+                Console.WriteLine(structuredOutput);
+            }
+
+            void WriteUnstructuredOutput()
+            {
+                contextualMessages.ForEach(cm =>
+                {
+                    switch (cm.Level)
+                    {
+                        case MessageLevel.Information:
+                            ConsoleExtensions.WriteOutput(cm.Message);
+                            ConsoleExtensions.WriteOutputLine();
+                            break;
+
+                        case MessageLevel.ErrorWarning:
+                            ConsoleExtensions.WriteErrorWarning(cm.Message);
+                            ConsoleExtensions.WriteOutputLine();
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                });
+                outputMessages.ForEach(om =>
+                {
+                    var message = om.MessageTemplate.SubstituteTemplate(om.Arguments);
+                    switch (om.Level)
+                    {
+                        case OutputMessageLevel.Information:
+                            ConsoleExtensions.WriteOutput(message);
+                            ConsoleExtensions.WriteOutputLine();
+                            break;
+
+                        case OutputMessageLevel.Warning:
+                            ConsoleExtensions.WriteOutputWarning(message);
+                            ConsoleExtensions.WriteOutputLine();
+                            break;
+
+                        case OutputMessageLevel.Error:
+                            ConsoleExtensions.WriteError(message);
+                            ConsoleExtensions.WriteOutputLine();
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                });
+            }
+
+            void WriteStructuredError(string errorMessage, InvocationContext context)
+            {
+                var structuredError = CreateStructuredOutput();
+                structuredError.Error = new StructuredOutputError
+                {
+                    Message = errorMessage
+                };
+                var error = structuredError.ToJson();
+                context.Console.Error.WriteLine(error);
+            }
+
+            void WriteUnstructuredError(InvocationContext context, string errorMessage)
+            {
+                context.Console.Error.WriteLine();
+                context.Console.WriteError(errorMessage);
+            }
         }
 
         private static AuthoringApplication CreateAuthoringApplication(IDependencyContainer container)
@@ -583,748 +716,204 @@ namespace Automate.CLI.Infrastructure
             Console.ResetColor();
         }
 
-        private static bool IsDebugging(
-
-            // ReSharper disable once UnusedParameter.Local
-            InvocationContext context,
-
-            // ReSharper disable once UnusedParameter.Local
-            Exception ex)
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        private static bool IsDebugging(ParseResult parsedResult)
         {
-#if TESTINGONLY
-            return true;
-#else
-            var debugOption =
-                context.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt => opt.Name == "debug");
-            if (debugOption.Exists())
+            return IsOptionEnabled(parsedResult, DebugOption);
+        }
+
+        private static bool IsStructuredOutput(ParseResult parsedCommandLine)
+        {
+            return IsOptionEnabled(parsedCommandLine, StructuredOutputOption);
+        }
+
+        private static bool IsRuntimeCommand(ParseResult parsedCommandLine)
+        {
+            var matches = new List<CommandLineCommands>
             {
-                return (bool)context.ParseResult.FindResultFor(debugOption)!.GetValueOrDefault()!;
+                new(InstallCommandName),
+                new(RunCommandName),
+                new(ConfigureCommandName),
+                new(ValidateCommandName),
+                new(ExecuteCommandName),
+                new(ViewCommandName, DraftSubCommandName),
+                new(ListCommandName, ToolkitsSubCommandName),
+                new(ListCommandName, DraftsSubCommandName)
+            };
+
+            return IsMatchingCommand(parsedCommandLine, matches);
+        }
+
+        private static bool IsRuntimeDraftCommand(ParseResult parsedCommandLine)
+        {
+            var matches = new List<CommandLineCommands>
+            {
+                new(ExecuteCommandName),
+                new(UpgradeCommandName, DraftSubCommandName),
+                new(ViewCommandName, DraftSubCommandName),
+                new(ValidateCommandName, DraftSubCommandName),
+                new(ConfigureCommandName)
+            };
+
+            return IsMatchingCommand(parsedCommandLine, matches);
+        }
+
+        private static bool IsAuthoringCommand(ParseResult parsedCommandLine)
+        {
+            var matches = new List<CommandLineCommands>
+            {
+                new(CreateCommandName),
+                new(EditCommandName),
+                new(BuildCommandName),
+                new(PublishCommandName),
+                new(TestCommandName),
+                new(ViewCommandName, PatternSubCommandName)
+            };
+
+            return IsMatchingCommand(parsedCommandLine, matches);
+        }
+
+        private static bool IsTestingOnlyCommand(ParseResult parsedCommandLine)
+        {
+            var matches = new List<CommandLineCommands>
+            {
+                new(TestingOnlyCommandName)
+            };
+
+            return IsMatchingCommand(parsedCommandLine, matches);
+        }
+
+        private static bool IsOptionEnabled(ParseResult parsedCommandLine, string optionName)
+        {
+            var option = parsedCommandLine.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt =>
+                opt.Name == optionName);
+            return option.Exists()
+                   && (bool)parsedCommandLine.FindResultFor(option)!.GetValueOrDefault()!;
+        }
+
+        private static bool IsMatchingCommand(ParseResult parsedCommandLine, List<CommandLineCommands> matches)
+        {
+            var allCommands = GetCommandLineCommands(parsedCommandLine);
+            var commandSet = new CommandLineCommands(allCommands.FirstOrDefault(), allCommands.ElementAtOrDefault(1),
+                allCommands.ElementAtOrDefault(2));
+
+            foreach (var match in matches)
+            {
+                if (match.Matches(commandSet))
+                {
+                    return true;
+                }
             }
 
             return false;
-#endif
-        }
 
-        private static bool IsRuntimeCommand(IReadOnlyList<string> args)
-        {
-            if (args.Count < 1)
+            List<string> GetCommandLineCommands(ParseResult result)
             {
-                return false;
-            }
-
-            var isViewDraftCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "draft";
-            var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
-            var isListDraftsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "drafts";
-
-            return args[0] == InstallCommandName || args[0] == RunCommandName || args[0] == ConfigureCommandName
-                   || args[0] == ValidateCommandName || args[0] == ExecuteCommandName
-                   || isViewDraftCommand || isListToolkitsCommand || isListDraftsCommand;
-        }
-
-        private static bool IsRuntimeDraftCommand(IReadOnlyList<string> args)
-        {
-            if (args.Count < 1)
-            {
-                return false;
-            }
-
-            var isListToolkitsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "toolkits";
-            var isListDraftsCommand = args[0] == ListCommandName && args.Count == 2 && args[1] == "drafts";
-
-            return args[0] != InstallCommandName && args[0] != RunCommandName && !isListToolkitsCommand &&
-                   !isListDraftsCommand;
-        }
-
-        private static bool IsAuthoringCommand(IReadOnlyList<string> args)
-        {
-            if (args.Count < 1)
-            {
-                return false;
-            }
-
-            var isViewPatternCommand = args[0] == ViewCommandName && args.Count == 2 && args[1] == "pattern";
-
-            return args[0] == CreateCommandName || args[0] == EditCommandName || args[0] == BuildCommandName
-                   || args[0] == PublishCommandName || args[0] == TestCommandName || isViewPatternCommand;
-        }
-
-#if TESTINGONLY
-        private class TestingOnlyHandlers
-        {
-            internal static void Fail(
-
-                // ReSharper disable once UnusedParameter.Local
-                bool outputStructured,
-
-                // ReSharper disable once UnusedParameter.Local
-                IConsole console)
-            {
-                throw new Exception("testingonly");
-            }
-        }
-#endif
-
-        private class AuthoringHandlers
-        {
-            private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
-
-            internal static void CreatePattern(string name, string displayedAs,
-                string describedAs, bool outputStructured, IConsole console)
-            {
-                authoring.CreateNewPattern(name, displayedAs, describedAs);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternCreated, name, authoring.CurrentPatternId);
-            }
-
-            internal static void UpdatePattern(string name, string displayedAs, string describedAs,
-                bool outputStructured, IConsole console)
-            {
-                var pattern = authoring.UpdatePattern(name, displayedAs, describedAs);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
-            }
-
-            internal static void SwitchPattern(string name, bool outputStructured, IConsole console)
-            {
-                authoring.SwitchCurrentPattern(name);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternSwitched, name, authoring.CurrentPatternId);
-            }
-
-            internal static void ViewPattern(bool all, bool outputStructured, IConsole console)
-            {
-                var pattern = authoring.GetCurrentPattern();
-
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current,
-                    FormatPatternConfiguration(outputStructured, pattern, all));
-            }
-
-            internal static void ListPatterns(bool outputStructured, IConsole console)
-            {
-                var patterns = authoring.ListPatterns();
-                if (patterns.Any())
+                var commandResult = result.CommandResult;
+                var commands = new List<string>
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_EditablePatternsListed,
-                        patterns.ToMultiLineText(pattern =>
-                            $"{{\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\"}}"));
-                }
-                else
+                    commandResult.Symbol.Name
+                };
+
+                var currentCommandResult = commandResult as SymbolResult;
+                while (currentCommandResult.Parent.Exists())
                 {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoEditablePatterns);
-                }
-            }
-
-            internal static void AddAttribute(string name, string isOfType, string defaultValueIs,
-                bool isRequired, string isOneOf, string asChildOf, bool outputStructured, IConsole console)
-            {
-                var choices = isOneOf.SafeSplit(";").ToList();
-                var (parent, attribute) =
-                    authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeAdded, name,
-                    attribute.Id, parent.Id);
-            }
-
-            internal static void UpdateAttribute(string attributeName, string name, string isOfType,
-                string defaultValueIs, bool? isRequired, string isOneOf, string asChildOf, bool outputStructured,
-                IConsole console)
-            {
-                var choices = isOneOf.SafeSplit(";").ToList();
-                var (parent, attribute) =
-                    authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
-                        asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeUpdated,
-                    attribute.Name, attribute.Id, parent.Id);
-            }
-
-            internal static void DeleteAttribute(string name, string asChildOf, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, attribute) =
-                    authoring.DeleteAttribute(name, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_AttributeDeleted, name,
-                    attribute.Id, parent.Id);
-            }
-
-            internal static void AddElement(string name, bool? autoCreate, string displayedAs, string describedAs,
-                string asChildOf,
-                bool isRequired, bool outputStructured, IConsole console)
-            {
-                var (parent, element) = authoring.AddElement(name,
-                    isRequired
-                        ? ElementCardinality.One
-                        : ElementCardinality.ZeroOrOne, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementAdded, name, element.Id,
-                    parent.Id);
-            }
-
-            internal static void UpdateElement(string elementName, string name, bool? autoCreate,
-                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, element) = authoring.UpdateElement(elementName, name,
-                    isRequired, autoCreate, displayedAs, describedAs, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
-                    element.Id, parent.Id);
-            }
-
-            internal static void DeleteElement(string name, string asChildOf, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, element) =
-                    authoring.DeleteElement(name, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_ElementDeleted, name,
-                    element.Id, parent.Id);
-            }
-
-            internal static void AddCollection(string name, bool? autoCreate, string displayedAs,
-                string describedAs,
-                string asChildOf, bool isRequired, bool outputStructured, IConsole console)
-            {
-                var (parent, collection) = authoring.AddElement(name, isRequired
-                    ? ElementCardinality.OneOrMany
-                    : ElementCardinality.ZeroOrMany, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionAdded, name,
-                    collection.Id, parent.Id);
-            }
-
-            internal static void UpdateCollection(string collectionName, string name, bool? autoCreate,
-                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, element) = authoring.UpdateElement(collectionName, name,
-                    isRequired, autoCreate, displayedAs, describedAs, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
-                    element.Id, parent.Id);
-            }
-
-            internal static void DeleteCollection(string name, string asChildOf, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, element) =
-                    authoring.DeleteElement(name, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CollectionDeleted, name,
-                    element.Id, parent.Id);
-            }
-
-            internal static void AddCodeTemplate(string filepath, string name, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template) = authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name, template.Template.Id,
-                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
-            }
-
-            internal static void AddCodeTemplateWithCommand(string filepath, string name, bool isOneOff,
-                string targetPath, string asChildOf, bool outputStructured, IConsole console)
-            {
-                var currentDirectory = Environment.CurrentDirectory;
-                var (parent, template, command) = authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
-                    name, isOneOff, targetPath, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
-                    template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
-                    template.Location);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
-                    command.Name, command.Id, parent.Id);
-            }
-
-            internal static void EditCodeTemplate(string templateName, string with, string args, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var (parent, template, location) = authoring.EditCodeTemplate(templateName, with, args, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, template.Id,
-                    parent.Id, with, location);
-            }
-
-            internal static void DeleteCodeTemplate(string templateName, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var (parent, template) = authoring.DeleteCodeTemplate(templateName, asChildOf);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_CodeTemplateDeleted, template.Name, template.Id, parent.Id);
-            }
-
-            internal static void TestCodeTemplate(string templateName, string asChildOf, string importData,
-                string exportData, bool outputStructured, IConsole console)
-            {
-                var currentDirectory = Environment.CurrentDirectory;
-                var test =
-                    authoring.TestCodeTemplate(templateName, asChildOf, currentDirectory, importData, exportData);
-                if (exportData.HasValue())
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestExported,
-                        templateName, test.Template.Id, test.ExportedFilePath);
-                    console.WriteOutputLine();
+                    var parent = currentCommandResult.Parent;
+                    commands.Add(parent.Symbol.Name);
+                    currentCommandResult = parent;
                 }
 
-                if (importData.HasValue())
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTestImported,
-                        templateName, test.Template.Id, importData);
-                    console.WriteOutputLine();
-                }
+                commands.Reverse();
 
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_TextTemplatingExpressionReference);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateTested,
-                    templateName,
-                    test.Template.Id, test.Output);
-            }
-
-            internal static void AddCodeTemplateCommand(string codeTemplateName, string name, bool isOneOff,
-                string targetPath, string asChildOf, bool outputStructured, IConsole console)
-            {
-                var (parent, command) =
-                    authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
-                    command.Name, command.Id, parent.Id);
-            }
-
-            internal static void UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff,
-                string targetPath, string asChildOf, bool outputStructured, IConsole console)
-            {
-                var (parent, command) =
-                    authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
-                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
-                    command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
-            }
-
-            internal static void TestCodeTemplateCommand(string commandName, string asChildOf, string importData,
-                string exportData, bool outputStructured, IConsole console)
-            {
-                var currentDirectory = Environment.CurrentDirectory;
-                var test = authoring.TestCodeTemplateCommand(commandName, asChildOf, currentDirectory, importData,
-                    exportData);
-                if (exportData.HasValue())
-                {
-                    console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_CodeTemplateCommandTestExported,
-                        commandName, test.Command.Id, test.ExportedFilePath);
-                    console.WriteOutputLine();
-                }
-
-                if (importData.HasValue())
-                {
-                    console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_CodeTemplateCommandTestImported,
-                        commandName, test.Command.Id, importData);
-                    console.WriteOutputLine();
-                }
-
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_TextTemplatingExpressionReference);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CodeTemplateCommandTested,
-                    commandName,
-                    test.Command.Id, test.Output);
-            }
-
-            internal static void AddCliCommand(string applicationName, string arguments, string name,
-                string asChildOf, bool outputStructured, IConsole console)
-            {
-                var (parent, command) = authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandAdded,
-                    command.Name, command.Id, parent.Id);
-            }
-
-            internal static void UpdateCliCommand(string commandName, string app, string arguments,
-                string name, string asChildOf, bool outputStructured, IConsole console)
-            {
-                var (parent, command) = authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CliCommandUpdated,
-                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
-                    command.Metadata[nameof(CliCommand.Arguments)]);
-            }
-
-            internal static void DeleteCommand(string commandName, string asChildOf, bool outputStructured,
-                IConsole console)
-            {
-                var (parent, command) = authoring.DeleteCommand(commandName, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandDeleted,
-                    command.Name, command.Id, parent.Id);
-            }
-
-            internal static void AddCommandLaunchPoint(string commandIdentifiers, string name, string from,
-                string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
-                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var (parent, launchPoint) = authoring.AddCommandLaunchPoint(name, cmdIds, from, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointAdded,
-                    launchPoint.Name, launchPoint.Id, parent.Id,
-                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
-            }
-
-            internal static void UpdateLaunchPoint(string launchPointName, string name, string add,
-                string from, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
-                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
-                var (parent, launchPoint) =
-                    authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointUpdated,
-                    launchPoint.Name, launchPoint.Id, parent.Id,
-                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
-            }
-
-            internal static void DeleteLaunchPoint(string launchPointName, string asChildOf,
-                bool outputStructured, IConsole console)
-            {
-                var (parent, launchPoint) = authoring.DeleteCommandLaunchPoint(launchPointName, asChildOf);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_LaunchPointDeleted,
-                    launchPoint.Name, launchPoint.Id, parent.Id);
-            }
-
-            // ReSharper disable once IdentifierTypo
-            internal static void Build(string asversion, bool force, bool install, bool outputStructured,
-                IConsole console)
-            {
-                var package = authoring.BuildAndExportToolkit(asversion, force);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit,
-                    package.Toolkit.PatternName, package.Toolkit.Version, package.ExportedLocation);
-                if (package.Message.HasValue())
-                {
-                    console.WriteOutputWarning(outputStructured, OutputMessages.CommandLine_Output_BuiltToolkit_Warning,
-                        package.Message);
-                }
-                if (install)
-                {
-                    RuntimeHandlers.Install(package.ExportedLocation, outputStructured, console);
-                }
-            }
-
-            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern,
-                bool isDetailed)
-            {
-                if (outputStructured)
-                {
-                    return pattern.ToJson(PersistenceFactory);
-                }
-
-                var configuration = new PatternConfigurationVisitor(isDetailed
-                    ? VisitorConfigurationOptions.Detailed
-                    : VisitorConfigurationOptions.Simple);
-                pattern.TraverseDescendants(configuration);
-                return configuration.ToString();
-            }
-
-            internal static string FormatPatternLaunchableAutomation(PatternDefinition pattern)
-            {
-                var configuration = new PatternConfigurationVisitor(VisitorConfigurationOptions.OnlyLaunchPoints);
-                pattern.TraverseDescendants(configuration);
-                return configuration.ToString();
+                return commands
+                    .Skip(1)
+                    .ToListSafe();
             }
         }
 
-        private class RuntimeHandlers
+        private enum MessageLevel
         {
-            internal static void Install(string location, bool outputStructured, IConsole console)
+            Information,
+            ErrorWarning
+        }
+
+        internal enum OutputMessageLevel
+        {
+            Information,
+            Error,
+            Warning
+        }
+
+        private class ContextualMessage
+        {
+            public ContextualMessage(string message, MessageLevel level = MessageLevel.Information)
             {
-                var toolkit = runtime.InstallToolkit(location);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkit,
-                    toolkit.PatternName, toolkit.Version);
+                Message = message;
+                Level = level;
             }
 
-            internal static void ViewToolkit(bool all, bool outputStructured, IConsole console)
-            {
-                var pattern = runtime.ViewCurrentToolkit().Pattern;
+            public string Message { get; }
 
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current,
-                    AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
+            public MessageLevel Level { get; }
+        }
+
+        internal class OutputMessage
+        {
+            public OutputMessage(OutputMessageLevel level, string messageTemplate, params object[] args)
+            {
+                MessageTemplate = messageTemplate;
+                Arguments = args;
+                Level = level;
             }
 
-            internal static void ListToolkits(bool outputStructured, IConsole console)
+            public string MessageTemplate { get; }
+
+            public object[] Arguments { get; }
+
+            public OutputMessageLevel Level { get; }
+        }
+
+        private class CommandLineCommands
+        {
+            private readonly string bottomLevel;
+            private readonly string midLevel;
+            private readonly string topLevel;
+
+            public CommandLineCommands(string topLevel, string midLevel = null, string bottomLevel = null)
             {
-                var toolkits = runtime.ListInstalledToolkits();
-                if (toolkits.Any())
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledToolkitsListed,
-                        toolkits.ToMultiLineText(toolkit =>
-                            $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
-                }
-                else
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledToolkits);
-                }
+                this.topLevel = topLevel;
+                this.midLevel = midLevel;
+                this.bottomLevel = bottomLevel;
             }
 
-            internal static void NewDraft(string patternName, string name, bool outputStructured,
-                IConsole console)
+            public bool Matches(CommandLineCommands target)
             {
-                var draft = runtime.CreateDraft(patternName, name);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
-                    draft.Name, draft.Id, draft.PatternName);
-            }
-
-            internal static void ViewDraft(bool todo, bool outputStructured, IConsole console)
-            {
-                var (configuration, pattern, validation) = runtime.GetDraftConfiguration(todo, todo);
-
-                var draftId = runtime.CurrentDraftId;
-                var draftName = runtime.CurrentDraftName;
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfiguration,
-                    draftName, draftId, configuration);
-
-                if (todo)
-                {
-                    console.WriteOutputLine();
-                    console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
-                        pattern.ToolkitVersion.Current,
-                        AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
-                }
-
-                if (todo)
-                {
-                    console.WriteOutputLine();
-                    console.WriteOutput(outputStructured,
-                        OutputMessages.CommandLine_Output_PatternLaunchableAutomation, pattern.Name, pattern.Id,
-                        pattern.ToolkitVersion.Current,
-                        AuthoringHandlers.FormatPatternLaunchableAutomation(pattern));
-                }
-
-                if (todo)
-                {
-                    console.WriteOutputLine();
-                    if (validation.HasAny())
-                    {
-                        console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_DraftValidationFailed,
-                            draftName, draftId, FormatValidationErrors(validation));
-                    }
-                    else
-                    {
-                        console.WriteOutput(outputStructured,
-                            OutputMessages.CommandLine_Output_DraftValidationSuccess, draftName, draftId);
-                    }
-                }
-            }
-
-            internal static void ListDrafts(bool outputStructured, IConsole console)
-            {
-                var drafts = runtime.ListCreatedDrafts();
-                if (drafts.Any())
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_InstalledDraftsListed,
-                        drafts.ToMultiLineText(draft =>
-                            $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
-                }
-                else
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_NoInstalledDrafts);
-                }
-            }
-
-            internal static void SwitchDraft(string draftId, bool outputStructured, IConsole console)
-            {
-                runtime.SwitchCurrentDraft(draftId);
-                console.WriteOutput(outputStructured,
-                    OutputMessages.CommandLine_Output_DraftSwitched, runtime.CurrentDraftName,
-                    runtime.CurrentDraftId);
-            }
-
-            internal static void ConfigureDraftAddTo(string expression, string[] andSet, bool outputStructured,
-                IConsole console)
-            {
-                var sets = new List<string>();
-                if (andSet.HasAny())
-                {
-                    sets.AddRange(andSet);
-                }
-
-                var nameValues = sets
-                    .Select(set => set.SplitPropertyAssignment())
-                    .ToDictionary(pair => pair.Name, pair => pair.Value);
-
-                var draftItem = runtime.ConfigureDraft(expression, null, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ConfigureDraftAddOneTo(string expression, string[] andSet, bool outputStructured,
-                IConsole console)
-            {
-                var sets = new List<string>();
-                if (andSet.HasAny())
-                {
-                    sets.AddRange(andSet);
-                }
-                var nameValues = sets
-                    .Select(set => set.SplitPropertyAssignment())
-                    .ToDictionary(pair => pair.Name, pair => pair.Value);
-
-                var draftItem = runtime.ConfigureDraft(null, expression, null, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ConfigureDraftOn(string expression, string[] andSet, bool outputStructured,
-                IConsole console)
-            {
-                var sets = new List<string>();
-                if (andSet.HasAny())
-                {
-                    sets.AddRange(andSet);
-                }
-                var nameValues = sets
-                    .Select(set => set.SplitPropertyAssignment())
-                    .ToDictionary(pair => pair.Name, pair => pair.Value);
-
-                var draftItem = runtime.ConfigureDraft(null, null, expression, nameValues);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ConfigureDraftResetElement(string expression, bool outputStructured,
-                IConsole console)
-            {
-                var draftItem = runtime.ConfigureDraftAndResetElement(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftResetElement,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ConfigureDraftClearCollection(string expression, bool outputStructured,
-                IConsole console)
-            {
-                var draftItem = runtime.ConfigureDraftAndClearCollection(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftEmptyCollection,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ConfigureDraftDeleteElement(string expression, bool outputStructured,
-                IConsole console)
-            {
-                var draftItem = runtime.ConfigureDraftAndDelete(expression);
-                console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftDelete,
-                    draftItem.Name, draftItem.Id);
-            }
-
-            internal static void ValidateDraft(string on, bool outputStructured, IConsole console)
-            {
-                var results = runtime.Validate(on);
-
-                var draftId = runtime.CurrentDraftId;
-                var draftName = runtime.CurrentDraftName;
-                if (results.HasAny())
-                {
-                    console.WriteOutputWarning(outputStructured,
-                        OutputMessages.CommandLine_Output_DraftValidationFailed,
-                        draftName, draftId, FormatValidationErrors(results));
-                }
-                else
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_DraftValidationSuccess,
-                        draftName, draftId);
-                }
-            }
-
-            internal static void UpgradeDraft(bool force, bool outputStructured, IConsole console)
-            {
-                var upgrade = runtime.UpgradeDraft(force);
-                if (upgrade.IsSuccess)
-                {
-                    if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
-                    {
-                        console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
-                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
-                    }
-                    else
-                    {
-                        console.WriteOutput(outputStructured,
-                            OutputMessages.CommandLine_Output_DraftUpgradeSucceeded,
-                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
-                    }
-                }
-                else
-                {
-                    console.WriteError(outputStructured, OutputMessages.CommandLine_Output_DraftUpgradeFailed,
-                        upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName, upgrade.FromVersion,
-                        upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
-                }
-            }
-
-            internal static void ExecuteLaunchPoint(string name, string on, bool outputStructured,
-                IConsole console)
-            {
-                var execution = runtime.ExecuteLaunchPoint(name, on);
-                if (execution.IsSuccess)
-                {
-                    console.WriteOutput(outputStructured, OutputMessages.CommandLine_Output_CommandExecutionSucceeded,
-                        execution.CommandName, FormatExecutionLog(execution.Log));
-                }
-                else
-                {
-                    if (execution.IsInvalid)
-                    {
-                        console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_DraftValidationFailed,
-                            runtime.CurrentDraftName, runtime.CurrentDraftId,
-                            FormatValidationErrors(execution.ValidationErrors));
-                    }
-                    else
-                    {
-                        console.WriteOutputWarning(outputStructured,
-                            OutputMessages.CommandLine_Output_CommandExecutionFailed,
-                            execution.CommandName, FormatExecutionLog(execution.Log));
-                    }
-                }
-            }
-
-            private static string FormatValidationErrors(ValidationResults results)
-            {
-                var builder = new StringBuilder();
-                var counter = 1;
-                results.Results.ToList()
-                    .ForEach(result => { builder.AppendLine($"{counter++}. {result.Context.Path} {result.Message}"); });
-
-                return builder.ToString();
-            }
-
-            private static string FormatExecutionLog(IReadOnlyList<string> items)
-            {
-                var builder = new StringBuilder();
-                if (items.HasAny())
-                {
-                    items.ToList()
-                        .ForEach(item => { builder.AppendLine($"* {item}"); });
-                }
-                else
-                {
-                    builder.AppendLine($"* {OutputMessages.CommandLine_Output_ExecuteLaunchPointSucceededNoOutput}");
-                }
-
-                return builder.ToString();
-            }
-
-            private static string FormatUpgradeLog(IReadOnlyList<MigrationChange> items)
-            {
-                var builder = new StringBuilder();
-                items.ToList()
-                    .ForEach(item =>
-                    {
-                        builder.AppendLine(
-                            $"* {item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
-                    });
-
-                return builder.ToString();
+                return this.topLevel.EqualsIgnoreCase(target.topLevel)
+                       && (this.midLevel.NotExists() || this.midLevel.EqualsIgnoreCase(target.midLevel))
+                       && (this.bottomLevel.NotExists() || this.bottomLevel.EqualsIgnoreCase(target.bottomLevel));
             }
         }
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    internal class StructuredOutput
+    {
+        public List<string> Info { get; set; }
+
+        public StructuredOutputError Error { get; set; }
+
+        public List<StructuredMessage> Output { get; set; }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    internal class StructuredOutputError
+    {
+        public string Message { get; set; }
+    }
+
     internal static class CommandLineExtensions
     {
-        public const string Delimiter = "=";
+        private const string Delimiter = "=";
 
         public static (string Name, string Value) SplitPropertyAssignment(this string expression)
         {
@@ -1356,38 +945,20 @@ namespace Automate.CLI.Infrastructure
 
     internal static class ConsoleExtensions
     {
-        public static void WriteOutput(this IConsole console, bool outputStructured, string messageTemplate,
-            params object[] args)
-        {
-            console.WriteLine(string.Empty);
-            console.WriteLine(outputStructured
-                ? messageTemplate.SubstituteTemplateStructured(args)
-                : messageTemplate.SubstituteTemplate(args));
-        }
-
-        public static void WriteOutputWarning(this IConsole console, bool outputStructured, string messageTemplate,
-            params object[] args)
-        {
-            console.WriteLine(string.Empty);
-            console.WriteOutput(outputStructured
-                ? messageTemplate.SubstituteTemplateStructured(args)
-                : messageTemplate.SubstituteTemplate(args), ConsoleColor.DarkYellow);
-        }
-
-        public static void WriteError(this IConsole console, bool outputStructured, string messageTemplate,
-            params object[] args)
-        {
-            console.WriteError(string.Empty, ConsoleColor.Red);
-            console.WriteError(outputStructured
-                ? messageTemplate.SubstituteTemplateStructured(args)
-                : messageTemplate.SubstituteTemplate(args), ConsoleColor.Red);
-        }
-
-        public static void WriteError(this IConsole console, string message, ConsoleColor color)
+        public static void WriteError(this IConsole console, string message)
         {
             Console.ResetColor();
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = ConsoleColor.Red;
             console.Error.WriteLine(message);
+            console.Error.WriteLine();
+            Console.ResetColor();
+        }
+
+        public static void WriteError(string message)
+        {
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(message);
             Console.Error.WriteLine();
             Console.ResetColor();
         }
@@ -1400,24 +971,24 @@ namespace Automate.CLI.Infrastructure
             Console.ResetColor();
         }
 
-        public static void WriteOutputLine(this IConsole console)
+        public static void WriteOutputLine()
         {
             Console.ResetColor();
-            console.WriteLine(string.Empty);
+            Console.WriteLine(string.Empty);
         }
 
-        public static void WriteOutput(this IConsole console, string message, ConsoleColor color)
+        public static void WriteOutput(string message)
         {
             Console.ResetColor();
-            Console.ForegroundColor = color;
-            console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(message);
             Console.ResetColor();
         }
 
-        public static void WriteOutput(string message, ConsoleColor color)
+        public static void WriteOutputWarning(string message)
         {
             Console.ResetColor();
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(message);
             Console.ResetColor();
         }

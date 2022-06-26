@@ -88,6 +88,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed Unexpectedly, with: {0}.
+        /// </summary>
+        internal static string CommandLineApi_UnexpectedError {
+            get {
+                return ResourceManager.GetString("CommandLineApi_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The property assignment &apos;{0}&apos; does not have a name.
         /// </summary>
         internal static string CommandLineApiExtensions_SplitPropertyAssignment_ValueWithoutName {

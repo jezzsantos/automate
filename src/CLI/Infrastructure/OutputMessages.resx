@@ -24,12 +24,12 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="CommandLine_Output_NoPatternSelected" xml:space="preserve">
+    <data name="CommandLine_Output_Preamble_NoPatternSelected" xml:space="preserve">
         <value>No Pattern is being edited. You must first run one of these commands:
 `automate create pattern &lt;Name&gt;` to create a new pattern, or
 `automate edit switch &lt;Name&gt;` to switch to an existing pattern</value>
     </data>
-    <data name="CommandLine_Output_CurrentPatternInUse" xml:space="preserve">
+    <data name="CommandLine_Output_Preamble_CurrentPatternInUse" xml:space="preserve">
         <value>The Pattern: '{Name}' (v.{Version}) is now being edited</value>
     </data>
     <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
@@ -168,12 +168,15 @@
         <value>Created Drafts:
 {Drafts}</value>
     </data>
-    <data name="CommandLine_Output_NoDraftSelected" xml:space="preserve">
+    <data name="CommandLine_Output_Preamble_NoDraftSelected" xml:space="preserve">
         <value>No Draft is being configured. You must first run one of these commands:
 `automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;` to create a new draft from an existing toolkit, or
 `automate run switch &lt;DraftID&gt;` to switch to this existing draft</value>
     </data>
-    <data name="CommandLine_Output_CurrentDraftInUse" xml:space="preserve">
+    <data name="CommandLine_Output_Preamble_TestingOnly" xml:space="preserve">
+        <value>This is only for testingonly</value>
+    </data>
+    <data name="CommandLine_Output_Preamble_CurrentDraftInUse" xml:space="preserve">
         <value>The Draft: '{Name}' (ID: '{DraftId}') is now being configured</value>
     </data>
     <data name="CommandLine_Output_DraftSwitched" xml:space="preserve">
@@ -228,5 +231,8 @@
     </data>
     <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">
         <value>Everything is up to date</value>
+    </data>
+    <data name="CommandLine_Output_TestingOnly" xml:space="preserve">
+        <value>amessagetemplate {aname}</value>
     </data>
 </root>

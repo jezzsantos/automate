@@ -72,7 +72,7 @@ namespace CLI.IntegrationTests
             Execute.Assertion
                 .Given(() => Subject.Error.Value)
                 .ForCondition(value => value.Contains(errorMessage))
-                .FailWith("Expected {context:output} to contain {0}{reason}, but found {1}.", errorMessage,
+                .FailWith("Expected {context:error} to contain {0}{reason}, but found {1}.", errorMessage,
                     Subject.Error.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
@@ -84,13 +84,13 @@ namespace CLI.IntegrationTests
                 .BecauseOf(because, becauseArgs)
                 .Given(() => Subject.Error.Value)
                 .ForCondition(value => !value.HasValue())
-                .FailWith("Expected {context:output} to contain no error {reason}, but found {0}.",
+                .FailWith("Expected {context:error} to contain no text{reason}, but found {0}.",
                     Subject.Error.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }
 
-        public AndConstraint<CliTestSetupAssertions> DisplayMessage(string messageText, string because = "",
+        public AndConstraint<CliTestSetupAssertions> DisplayOutput(string messageText, string because = "",
             params object[] becauseArgs)
         {
             Execute.Assertion
@@ -101,6 +101,18 @@ namespace CLI.IntegrationTests
                 .Given(() => Subject.Output.Value)
                 .ForCondition(value => value.Contains(messageText ?? string.Empty))
                 .FailWith("Expected {context:output} to contain {0} {reason}, but found {1}.", messageText,
+                    Subject.Output.Value);
+
+            return new AndConstraint<CliTestSetupAssertions>(this);
+        }
+
+        public AndConstraint<CliTestSetupAssertions> DisplayNoOutput(string because = "", params object[] becauseArgs)
+        {
+            Execute.Assertion
+                .BecauseOf(because, becauseArgs)
+                .Given(() => Subject.Output.Value)
+                .ForCondition(value => value.Equals(Environment.NewLine))
+                .FailWith("Expected {context:output} to contain no text{reason}, but found {0}.",
                     Subject.Output.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);

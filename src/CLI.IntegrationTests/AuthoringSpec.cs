@@ -23,14 +23,6 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenNoCommands_ThenDisplaysError()
-        {
-            this.setup.RunCommand("");
-
-            this.setup.Should().DisplayErrorForMissingCommand();
-        }
-
-        [Fact]
         public void WhenCreateAndNoCommands_ThenDisplaysError()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName}");
@@ -53,7 +45,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.CreateCommandName} pattern APattern --displayedas ADisplayName --describedas ADescription");
 
-            this.setup.Should().DisplayError(OutputMessages.CommandLine_Output_NoPatternSelected);
+            this.setup.Should().DisplayError(OutputMessages.CommandLine_Output_Preamble_NoPatternSelected);
             var pattern = this.setup.Pattern;
             pattern.Name.Should().Be("APattern");
             pattern.DisplayName.Should().Be("ADisplayName");
@@ -140,7 +132,7 @@ namespace CLI.IntegrationTests
             var pattern = this.setup.Pattern;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
@@ -180,7 +172,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
@@ -208,7 +200,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} patterns");
 
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_NoEditablePatterns);
         }
 
@@ -225,7 +217,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
                         $"{{\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\"}}{Environment.NewLine}" +
                         $"{{\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\"}}"));
@@ -240,7 +232,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_PatternUpdated.SubstituteTemplate("APatternName2"));
             var pattern = this.setup.Pattern;
             pattern.Name.Should().Be("APatternName2");
@@ -266,7 +258,7 @@ namespace CLI.IntegrationTests
             var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeAdded.SubstituteTemplate("AProperty",
                         attribute.Id, this.setup.Pattern.Id));
             attribute.IsRequired.Should().BeFalse();
@@ -281,7 +273,7 @@ namespace CLI.IntegrationTests
             var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeAdded.SubstituteTemplate("AProperty",
                         attribute.Id, this.setup.Pattern.Id));
             attribute.IsRequired.Should().BeTrue();
@@ -296,7 +288,7 @@ namespace CLI.IntegrationTests
             var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeAdded.SubstituteTemplate("AProperty",
                         attribute.Id, this.setup.Pattern.Id));
             attribute.IsRequired.Should().BeFalse();
@@ -315,7 +307,7 @@ namespace CLI.IntegrationTests
             var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeAdded.SubstituteTemplate("AProperty",
                         element.Elements.Single().Attributes.Single().Id,
                         element.Elements.Single().Id));
@@ -333,7 +325,7 @@ namespace CLI.IntegrationTests
             var attribute = this.setup.Pattern.Attributes.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeUpdated.SubstituteTemplate(attribute.Name,
                         attribute.Id, this.setup.Pattern.Id));
             attribute.Name.Should().Be("AProperty2");
@@ -353,7 +345,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_AttributeDeleted.SubstituteTemplate(attribute.Name,
                         attribute.Id, this.setup.Pattern.Id));
         }
@@ -375,7 +367,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ElementAdded.SubstituteTemplate("AnElement",
                         this.setup.Pattern.Elements.Single().Id, this.setup.Pattern.Id));
         }
@@ -393,7 +385,7 @@ namespace CLI.IntegrationTests
             var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ElementAdded.SubstituteTemplate("AnElement3",
                         element.Elements.Single().Elements.Single().Id,
                         element.Elements.Single().Id));
@@ -411,7 +403,7 @@ namespace CLI.IntegrationTests
             var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ElementUpdated.SubstituteTemplate(element.Name,
                         element.Id, this.setup.Pattern.Id));
             element.Name.Should().Be("AnElement2");
@@ -432,7 +424,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_ElementDeleted.SubstituteTemplate(element.Name,
                         element.Id, this.setup.Pattern.Id));
         }
@@ -456,7 +448,7 @@ namespace CLI.IntegrationTests
             var element = this.setup.Pattern.Elements.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CollectionAdded.SubstituteTemplate("ACollection",
                         element.Id, this.setup.Pattern.Id));
         }
@@ -472,7 +464,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CollectionDeleted.SubstituteTemplate(collection.Name,
                         collection.Id, this.setup.Pattern.Id));
         }
@@ -532,11 +524,11 @@ namespace CLI.IntegrationTests
                 this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplatedAdded.SubstituteTemplate("ATemplateName",
                         codeTemplate.Id, pattern.Id, codeTemplate.Metadata.OriginalFilePath, codeTemplateLocation));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.SubstituteTemplate(
                         "ATemplateNameCommand1",
                         this.setup.Pattern.Automation.Single().Id, pattern.Id));
@@ -562,7 +554,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplatedEdited.SubstituteTemplate(codeTemplate.Name,
                         codeTemplate.Id, this.setup.Pattern.Id, testApplicationName, codeTemplateLocation));
         }
@@ -581,7 +573,7 @@ namespace CLI.IntegrationTests
                 this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateDeleted.SubstituteTemplate(codeTemplate.Name,
                         codeTemplate.Id, this.setup.Pattern.Id));
             this.setup.Pattern.CodeTemplates.Should().BeEmpty();
@@ -621,7 +613,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.SubstituteTemplate(
                         "CodeTemplateCommand1",
                         this.setup.Pattern.Automation.Single().Id, this.setup.Pattern.Id));
@@ -641,7 +633,7 @@ namespace CLI.IntegrationTests
             var command = this.setup.Pattern.Automation.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated.SubstituteTemplate(command.Name,
                         command.Id, this.setup.Pattern.Id, "anewpath", true));
         }
@@ -663,7 +655,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CommandDeleted.SubstituteTemplate(command.Name,
                         command.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().BeEmpty();
@@ -678,7 +670,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CliCommandAdded.SubstituteTemplate("ACommandName",
                         this.setup.Pattern.Automation.Single().Id, this.setup.Pattern.Id));
         }
@@ -695,7 +687,7 @@ namespace CLI.IntegrationTests
             var command = this.setup.Pattern.Automation.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CliCommandUpdated.SubstituteTemplate(command.Name,
                         command.Id, this.setup.Pattern.Id, "AnApplication2", "Arguments2"));
         }
@@ -715,7 +707,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CommandDeleted.SubstituteTemplate(command.Name,
                         command.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().BeEmpty();
@@ -737,7 +729,7 @@ namespace CLI.IntegrationTests
             var launchPoint = this.setup.Pattern.Automation.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_LaunchPointAdded.SubstituteTemplate(launchPoint.Name,
                         launchPoint.Id,
                         this.setup.Pattern.Id,
@@ -760,7 +752,7 @@ namespace CLI.IntegrationTests
             var launchPoint = this.setup.Pattern.Automation.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_LaunchPointAdded.SubstituteTemplate(launchPoint.Name,
                         launchPoint.Id,
                         this.setup.Pattern.Id,
@@ -787,7 +779,7 @@ namespace CLI.IntegrationTests
             var launchPoint = this.setup.Pattern.Automation[1];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_LaunchPointUpdated.SubstituteTemplate(launchPoint.Name,
                         launchPoint.Id, this.setup.Pattern.Id,
                         new[] { commandId1, commandId2 }.Join(CommandLaunchPoint.CommandIdDelimiter)));
@@ -809,7 +801,7 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_LaunchPointDeleted.SubstituteTemplate(launchPoint.Name,
                         launchPoint.Id, this.setup.Pattern.Id));
             this.setup.Pattern.Automation.Should().ContainSingle(x => x.Id == command.Id);
@@ -833,7 +825,7 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Toolkit.Should().BeNull();
@@ -850,7 +842,7 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Toolkit.Should().BeNull();
@@ -872,7 +864,7 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.2.0",
                         exportedLocation));
             this.setup.Toolkit.Should().BeNull();
@@ -893,7 +885,7 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.2.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.2.0",
                         exportedLocation));
             this.setup.Toolkit.Should().BeNull();
@@ -911,7 +903,7 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Toolkit.Should().BeNull();
@@ -931,11 +923,11 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit_Warning
                         .SubstituteTemplate(DomainMessages.ToolkitVersion_Warning
                             .Substitute("0.1.0", new[]
@@ -966,11 +958,11 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit_Warning
                         .SubstituteTemplate(DomainMessages.ToolkitVersion_Forced
                             .Substitute("0.1.0", new[]
@@ -995,11 +987,11 @@ namespace CLI.IntegrationTests
             var exportedLocation = Path.Combine(InfrastructureConstants.GetExportDirectory(), "APattern_0.1.0.toolkit");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_BuiltToolkit.SubstituteTemplate("APattern", "0.1.0",
                         exportedLocation));
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkit.SubstituteTemplate("APattern", "0.1.0"));
             this.setup.Toolkit.Should().NotBeNull();
         }
@@ -1024,7 +1016,7 @@ namespace CLI.IntegrationTests
             var template = this.setup.Pattern.Elements.Single().CodeTemplates.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.SubstituteTemplate("ATemplateName",
                         template.Id,
                         $"adefaultvalue3{Environment.NewLine}" +
@@ -1051,7 +1043,7 @@ namespace CLI.IntegrationTests
             var template = this.setup.Pattern.Elements.Single().CodeTemplates.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateTested.SubstituteTemplate("ATemplateName",
                         template.Id,
                         $"avalue3{Environment.NewLine}" +
@@ -1080,7 +1072,7 @@ namespace CLI.IntegrationTests
             var exportedFile = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "exported.json"));
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateTestExported.SubstituteTemplate("ATemplateName",
                         template.Id,
                         exportedFile));
@@ -1108,7 +1100,7 @@ namespace CLI.IntegrationTests
             var command = this.setup.Pattern.Elements.Single().Automation.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandTested.SubstituteTemplate("ACommandName",
                         command.Id,
                         "~/adefaultvalue1/adefaultvalue3/afilename.anextension"));
@@ -1136,7 +1128,7 @@ namespace CLI.IntegrationTests
             var command = this.setup.Pattern.Elements.Single().Automation.First();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandTested.SubstituteTemplate("ACommandName",
                         command.Id,
                         "~/avalue1/avalue3/afilename.anextension"));
@@ -1163,7 +1155,7 @@ namespace CLI.IntegrationTests
             var exportedFile = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "exported.json"));
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(
+                .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateTestExported.SubstituteTemplate("ATemplateName",
                         template.Id,
                         exportedFile));

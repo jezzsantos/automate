@@ -60,7 +60,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
                     MigrationMessages.DraftItem_AttributeAdded.SubstituteTemplate("APattern.AProperty5", null)));
@@ -103,7 +103,7 @@ namespace CLI.IntegrationTests
             const string newVersion = "1.0.0";
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Breaking}: " +
                     MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForced.SubstituteTemplate(
@@ -126,7 +126,7 @@ namespace CLI.IntegrationTests
             var codeTemplate = this.setup.Pattern.CodeTemplates.Last();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", "0.2.0",
                     $"* {MigrationChangeType.NonBreaking}: " +
                     MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added.SubstituteTemplate(codeTemplate.Name,
@@ -151,7 +151,7 @@ namespace CLI.IntegrationTests
             var newPath = GetFilePathInOutput(@"code/updated/updatedroundtrip.cs");
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayMessage(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
+                .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
                     "* " + InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(oldPath, newPath) +
                     $"{Environment.NewLine}" +
