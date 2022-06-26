@@ -182,7 +182,7 @@ Scriban also supports numerous [built-in functions](https://github.com/scriban/s
 
 For example, to convert an expression to lowercase, you would write something like: `{{model.AnAttributeName | string.downcase}}`
 
-Automate adds the following additional custom functions:
+automate adds the following additional custom functions:
 
 * **CamelCase**: `{{model.AnAttributeName | string.camelcase}}` to convert any string value to a camel-cased string, where the first letter of each word in the string is lowercased, and all spaces are removed.
 

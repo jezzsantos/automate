@@ -3,17 +3,36 @@ site_description: Templatize patterns from your own codebase, make them programm
 site_url: https://jezzsantos.github.io/automate/
 repo_url: https://github.com/jezzsantos/automate/
 edit_uri: edit/main/docs/
+extra_css:
+  - stylesheets/extra.css
 theme:
-    name: readthedocs
-    logo: logo.png
-    highlightjs: true
-    hljs_languages:
-        - json
-        - csharp
-        - java
-    collapse_navigation: false
+    name: material
+    logo: logo.svg
+    font:
+      # Any of the https://fonts.google.com/
+      text: Nunito
+    palette:
+      # Palette toggle for light mode
+      - media: "(prefers-color-scheme: light)"
+        scheme: default
+        primary: teal
+        accent: amber
+        toggle:
+          icon: material/brightness-7
+          name: Switch to dark mode
+
+      # Palette toggle for dark mode
+      - media: "(prefers-color-scheme: dark)"
+        scheme: slate
+        primary: teal
+        accent: yellow
+        toggle:
+          icon: material/brightness-4
+          name: Switch to light mode
 nav:
     - Getting Started: 'about.md'
+    - 'Understanding automate': 'understanding.md'
+    - 'Your First Toolkit': 'tutorial.md'
     - 'User Guide':
         - 'CLI':
           - 'Making Toolkits': 'authoring.md'
@@ -26,6 +45,13 @@ nav:
         - 'GitHub': 'https://github.com/jezzsantos/automate'
         - 'License': 'https://github.com/jezzsantos/automate/blob/main/LICENSE'
         - 'Releases': 'https://github.com/jezzsantos/automate/releases'
+    - Privacy: 'privacy.md'
 markdown_extensions:
     - toc:
         permalink: "#"
+    - def_list
+    - pymdownx.tasklist:
+        custom_checkbox: true
+        clickable_checkbox: true
+    - pymdownx.highlight:
+        linenums: true

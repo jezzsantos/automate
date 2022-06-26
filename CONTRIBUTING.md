@@ -100,21 +100,26 @@ Your Responsibilities are:
 
 We build that documentation using [MkDocs](https://www.mkdocs.org/) from the source documentation files located in the: `docs` folder. The `mkdocs.yml` file is in the root of the repository.
 
-## Viewing locally
+## Building and viewing the docs locally
 
-In a terminal, in the root directory of the repo, run the command: `mkdocs serve`
+In a terminal, in the root directory of the repo, run the following commands:
+
+* Install [MkDocs](https://www.mkdocs.org/user-guide/installation/)
+* `pip install mkdocs-material`
+
+Now to see the site locally: `mkdocs serve`
 
 > This command will run the docs locally at `http://127.0.0.1:8000/automate/`
 
-## Publishing
+## Publishing the docs
 
 We compile and publish those docs automatically (with a special GitHub action step) that is run when any commit to the `main` branch of the repo is made. That compiles and uploads the compiled documentation to the `gh-pages` branch of the repo.
 
 > This process is the standard process for all GitHub projects using GitHub pages with MkDocs. See [MkDocs](https://www.mkdocs.org/user-guide/deploying-your-docs/) for more details on how that works.
 
-# Building & Testing The Code
+# Building & testing the Code
 
-## Get Started
+## Environment
 
 We recommend using JetBrains Rider to develop this codebase. 
 

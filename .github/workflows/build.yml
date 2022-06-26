@@ -36,4 +36,5 @@ jobs:
       - name: Deploy Docs
         run: |
           pip install mkdocs
+          pip install mkdocs-material
           mkdocs gh-deploy --force --clean --verbose

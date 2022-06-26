@@ -14,7 +14,7 @@ Toolkits can also be already available already installed into a codebase (instal
 
 ### Installing a toolkit
 
-To install a toolkit yourself, you will need to have an `automate` CLI (or plugin) installed ton your machine. (see [Installing Automate](about.md#installing-automate))
+To install a toolkit yourself, you will need to have an `automate` CLI (or plugin) installed ton your machine. (see [Installing automate](about.md#installing-automate))
 
 Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine. For example: `AToolkit_0.1.0.toolkit`, possibly located on your desktop or downloads folder. 
 

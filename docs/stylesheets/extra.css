@@ -1,0 +1,25 @@
+﻿:root > * {
+    --md-code-font: "ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
+    --md-code-bg-color: hsla(98, 4%, 75%, 1);
+    --md-code-fg-color: hsla(200, 18%, 26%, 1);
+}
+
+@font-face {
+    font-family: "ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
+}
+
+blockquote {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: 0.3rem solid;
+    background-color: #abe33880;
+    color: #2e303e !important;
+}
+
+.md-typeset .task-list-indicator:before {
+    background-color: hsla(0, 0%, 83%, 1);
+}
+
+.md-typeset [type=checkbox]:checked+.task-list-indicator:before {
+    background-color: hsla(151, 100%, 45%, 1);
+}
