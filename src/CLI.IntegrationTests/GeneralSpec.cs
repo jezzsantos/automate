@@ -42,16 +42,18 @@ namespace CLI.IntegrationTests
             var throwingMethodSignature = "String message, Boolean nested";
 
             return hasInnerException
-                ? withDebug ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                    $"System.Exception: {message}{Environment.NewLine}" +
-                    $" ---> System.Exception: {message}{Environment.NewLine}" +
-                    $"   --- End of inner exception stack trace ---{Environment.NewLine}" +
-                    $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
-                : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                    $"{message}")
-                :  withDebug ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                    $"System.Exception: {message}{Environment.NewLine}" +
-                    $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
+                ? withDebug
+                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"System.Exception: {message}{Environment.NewLine}" +
+                        $" ---> System.Exception: {message}{Environment.NewLine}" +
+                        $"   --- End of inner exception stack trace ---{Environment.NewLine}" +
+                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
+                    : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"{message}")
+                : withDebug
+                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"System.Exception: {message}{Environment.NewLine}" +
+                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
                     : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
                         $"{message}");
         }
@@ -93,7 +95,8 @@ namespace CLI.IntegrationTests
         [Fact]
         public void WhenThrowsNestedExceptionWithoutDebug_ThenDisplaysDetailedError()
         {
-            this.setup.RunCommand($"{CommandLineApi.TestingOnlyCommandName} fail --message \"amessage\" --nested:true --debug:false");
+            this.setup.RunCommand(
+                $"{CommandLineApi.TestingOnlyCommandName} fail --message \"amessage\" --nested:true --debug:false");
 
             var thrownMessage = GetThrownMessage(false, true, "amessage");
             this.setup.Should().DisplayError(thrownMessage);

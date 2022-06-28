@@ -1,6 +1,6 @@
 name: Build Test and Docs
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   IS_CI_BUILD: 'true'

@@ -27,7 +27,7 @@ They will:
 
 1. Name the pattern
 2. Configure its structure and its attributes, and how they vary
-3. Configure any automation, to apply the pattern to another codebase 
+3. Configure any automation, to apply the pattern to another codebase
 4. Publish a toolkit from it, for distribution to another codebase
 5. Deploy that toolkit to a team to use, or install it into an existing codebase
 

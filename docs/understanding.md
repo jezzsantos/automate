@@ -26,7 +26,6 @@ What about, if later, that command-line tool was adapted and updated (by you) as
 
 What if you had a selection of these kinds of tools stored alongside that code, in that codebase?
 
-
 ## How is automate different from other similar tools?
 
 ![The Process](Images/Concept.png)

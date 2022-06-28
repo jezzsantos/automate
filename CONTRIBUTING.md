@@ -20,16 +20,16 @@ Improving the clarity of the code and of the documentation is very welcome and s
 
 There are many ways to contribute to this project:
 
-* From creating videos or writing tutorials or blog posts, 
-* improving the documentation, 
-* submitting bug reports, and 
+* From creating videos or writing tutorials or blog posts,
+* improving the documentation,
+* submitting bug reports, and
 * creating feature requests or writing code that can be incorporated into the technology itself.
 
 ## Support Questions
 
-If you have questions about the use of this technology, then, please don't use the Issues register on this project site for that purpose. 
+If you have questions about the use of this technology, then, please don't use the Issues register on this project site for that purpose.
 
-The Issues register is a place to address bugs and feature requests in the improvement of the automate product itself. 
+The Issues register is a place to address bugs and feature requests in the improvement of the automate product itself.
 
 > You can certainly ask questions for clarity on how things work, in the design of automate
 
@@ -47,7 +47,7 @@ The goal is to maintain a diverse community that's pleasant for everyone. That's
 
 The Code of Conduct covers our behavior as members of the community, in any forum, mailing list, wiki, website, Internet relay chat (IRC), public meeting, or private correspondence.
 
->  Our Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html) version 2. 
+> Our Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html) version 2.
 
 ### Be considerate
 
@@ -74,24 +74,26 @@ Nobody knows everything, and nobody is expected to be perfect. Asking questions 
 Developers on every project come and go, and automate is no different. When you leave or disengage from the project, in whole or in part, we ask that you do so in a way that minimizes disruption to the project. This means you should tell people you're leaving and take the proper steps to ensure that others can pick up where you left off.
 
 ### Set expectations for behavior (yours, and theirs).
+
 This includes not just how to communicate with others (being respectful, considerate, etc) but also technical responsibilities (importance of testing, project dependencies, etc). Mention and link to your code of conduct, if you have one.
 
 # Ground Rules for Contributing Code
 
 Your Responsibilities are:
+
 * Ensure cross-platform compatibility for every change that's accepted. Windows, Mac, Debian & Ubuntu Linux.
 * Ensure that all functional code that goes into automate meets all these requirements
-  * The change you make compiles, and a final package can still be built from the changed codebase
-  * You have unit tests and integration tests to demonstrate how the change is working correctly. They must all be run and pass.
-  * Your code is formatted using the configured formatting/linting tools.
-  * Your code is self-documenting; the intent of which is easily understandable by other contributors. Comments are not the mechanism to share what the code does, or how.
-  * Dead code should be removed. Do not include unused commented-out sections of code.
-  * Your code does not break the build, and passes all checks enforced by GitHub Actions.
+    * The change you make compiles, and a final package can still be built from the changed codebase
+    * You have unit tests and integration tests to demonstrate how the change is working correctly. They must all be run and pass.
+    * Your code is formatted using the configured formatting/linting tools.
+    * Your code is self-documenting; the intent of which is easily understandable by other contributors. Comments are not the mechanism to share what the code does, or how.
+    * Dead code should be removed. Do not include unused commented-out sections of code.
+    * Your code does not break the build, and passes all checks enforced by GitHub Actions.
 
 * Architectural decisions should be discussed with other contributors.
 * Create issues for any major changes and enhancements that you wish to make. Discuss things transparently and get community feedback.
 * Keep feature versions as small as possible, preferably one new feature per version.
-* There are no specific conventions for formatting commit messages, except to ensure that they are meaningful descriptions of the history of change to the codebase. Describe the overall impact of your change, rather than describing the change you made. Make sure to include a reference to any Issue that the work relates to (e.g. `Closes #12` or `Fixes #56` or reference a discussion or design `#45`) 
+* There are no specific conventions for formatting commit messages, except to ensure that they are meaningful descriptions of the history of change to the codebase. Describe the overall impact of your change, rather than describing the change you made. Make sure to include a reference to any Issue that the work relates to (e.g. `Closes #12` or `Fixes #56` or reference a discussion or design `#45`)
 * Coding style and formatting rules will be included in the source code. The development tools that we are using (e.g. Jetbrains Rider and IntelliJ) can be used to apply and enforce them. If you are using other tools, (which is fine) you will need to find a way to apply these tools before submitting your code.
 
 # Documentation
@@ -121,14 +123,14 @@ We compile and publish those docs automatically (with a special GitHub action st
 
 ## Environment
 
-We recommend using JetBrains Rider to develop this codebase. 
+We recommend using JetBrains Rider to develop this codebase.
 
->  Included in the codebase there are many formatting rules that need to be run before committing your code. These rules may not be supported by other developer tools.  
+> Included in the codebase there are many formatting rules that need to be run before committing your code. These rules may not be supported by other developer tools.
 
 > It is possible to apply for a free license for Rider from Jetbrains, for OSS projects
 
 * Clone the repo locally
-* Ensure that you have `.NET6.0` installed on your system. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) 
+* Ensure that you have `.NET6.0` installed on your system. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 * Open the `src/Automate.sln` solution
 
 ## Building the code
@@ -142,9 +144,9 @@ There are 2 flavors of build configuration: `Debug` and `Release`, these are ver
 
 * `Debug` includes a conditional compilation variable `#if...#endif`called `TESTINGONLY` that is used to include code specifically for testing purposes only - not for publishing. This code is removed by the compiler in the `Release` flavor.
 
-* `Release` includes an additional MSBUILD target that installs the NuGet packages locally on your machine. 
+* `Release` includes an additional MSBUILD target that installs the NuGet packages locally on your machine.
 
-  >  Since the CLI interface is a NuGet tool, you might want it installed (and kept up to date) on your machine for use in other projects or for manual testing.
+  > Since the CLI interface is a NuGet tool, you might want it installed (and kept up to date) on your machine for use in other projects or for manual testing.
 
 > The `Release` build flavor must pass to submit changes to the codebase
 
@@ -159,9 +161,9 @@ There are 2 flavors of build configuration: `Debug` and `Release`, these are ver
 
 When you push your changes (or push your pull requests), they will be built and tested by GitHub Actions automatically.
 
->  The build must pass to submit changes to the codebase
+> The build must pass to submit changes to the codebase
 
-## Publishing 
+## Publishing
 
 > Versioning and Publishing (publicly) are performed by core contributors only.
 
@@ -188,6 +190,7 @@ Wait until the latest build goes green, at which point:
 Either:
 
 1. Build the solution in `Release` build configuration.
+
 > In the 'Release' configuration the dotnet tool is built, packed, and installed.
 
 OR:
@@ -204,7 +207,7 @@ The GitHub Action that has run in response to you pushing the tag, has already b
 
 https://www.nuget.org/packages/automate
 
-MANUALLY: 
+MANUALLY:
 
 1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.x.x-preview CLI/CLI.csproj`
 2. Log into nuget.org, and upload the built package at: `src/CLI/nupkg`
@@ -213,7 +216,7 @@ MANUALLY:
 
 The GitHub Action that has run in response to you pushing the tag, has already created a GitHub release and published all artifacts.
 
-MANUALLY: 
+MANUALLY:
 
 1. Create a new Draft Release: https://github.com/jezzsantos/automate/releases
 1. Set the release title: `vx.x.x-preview`
@@ -225,13 +228,14 @@ MANUALLY:
 
 # Your First Contribution
 
-Unsure about how to start contributing to automate? You can start by tackling any of the Issues in the Issues register marked with either the `help-wanted` or `good-first-issue`. 
+Unsure about how to start contributing to automate? You can start by tackling any of the Issues in the Issues register marked with either the `help-wanted` or `good-first-issue`.
 
 Those kinds of issues should involve a small amount of time and work.
 
-All other contributions are of course also welcome, should you wish to dive in deeper. 
+All other contributions are of course also welcome, should you wish to dive in deeper.
 
 ### First contribution to open source?
+
 Here are a couple of friendly tutorials you can include: http://makeapullrequest.com/ and http://www.firsttimersonly.com/
 
 > Working on your first Pull Request? You can learn how from this *free* series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
@@ -251,9 +255,10 @@ After a core contributor has responded, contributors are expected to:
 
 * Take an action within two weeks to act on any feedback from a core contributor, otherwise, core contributors may close the pull request if it is not showing any activity.
 
-The core contributors [at present] are not working on this project full-time (they have other day jobs and families to raise), and they may live in other time-zones than you, so please allow a day or so to hear back from them. They know what it feels like to be ignored and so pledge to respond in some way as soon as possible.  
+The core contributors [at present] are not working on this project full-time (they have other day jobs and families to raise), and they may live in other time-zones than you, so please allow a day or so to hear back from them. They know what it feels like to be ignored and so pledge to respond in some way as soon as possible.
 
 > If you want to become a core contributor, and you have a good track record on this project, then contact the core contributors directly.
 
 # Community
+
 We have this [discord server](https://discord.gg/vpc3gDPR) to talk or discuss with people directly.

@@ -14,7 +14,6 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 - The `--describedas` is an optional metadata that defines how the pattern might be displayed in a user interface.
 
-
 > This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
 ## Switching patterns
@@ -23,13 +22,13 @@ If you have multiple patterns going, you can switch between them using their nam
 
 `automate edit switch "<PATTERNNAME>"`
 
-You can view all the patterns in your codebase: `automate list patterns` 
+You can view all the patterns in your codebase: `automate list patterns`
 
 > Which will list all the patterns and their respective names and versions.
 
 ## Viewing the current pattern
 
-You can view the current pattern: `automate view pattern` 
+You can view the current pattern: `automate view pattern`
 
 > Which will display the summarized configuration of the current pattern.
 
@@ -41,11 +40,11 @@ You can view the detailed configuration of the pattern: `automate view pattern -
 
 The structure of a pattern describes a (conceptual) model of your code and its coding patterns.
 
-* The simplest coding pattern, used for a single use-case, probably does not need much structure (hierarchy) or variance (attributes) to represent it. Since generating the code for it can all be hardcoded into one or more code templates (with no variance). 
+* The simplest coding pattern, used for a single use-case, probably does not need much structure (hierarchy) or variance (attributes) to represent it. Since generating the code for it can all be hardcoded into one or more code templates (with no variance).
 
 * If a pattern is to be used for multiple use-cases, some variance needs to be captured and configured by the person applying the actual use-case. This is where a hierarchy of elements, attributes, and automation come to play to make a model of the software.
 
-* Try to define the high-level concepts about your coding pattern (in a hierarchy of elements/collections), not necessarily representing detailed coding concepts like functions and variables, but more at the conceptual/component/module level. Then decorate your hierarchical elements/collections with attributes to describe what varies and to which concepts that variance would naturally be attributed. 
+* Try to define the high-level concepts about your coding pattern (in a hierarchy of elements/collections), not necessarily representing detailed coding concepts like functions and variables, but more at the conceptual/component/module level. Then decorate your hierarchical elements/collections with attributes to describe what varies and to which concepts that variance would naturally be attributed.
 * Construct elements (ZeroToOne) and collections (ZeroToMany) to help model your pattern and its instancing rules.
 
 * Every pattern already has a single versioned root element, which initially has no attributes defined for it (except for a `DisplayName` and an empty `Description`).
@@ -66,7 +65,7 @@ To update the name and metadata for a pattern: `automate edit update-pattern`
 
 To add a new attribute to any element/collection in the pattern: `automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing  attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the attribute to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
@@ -77,7 +76,6 @@ To add a new attribute to any element/collection in the pattern: `automate edit 
 - The `--defaultvalueis "<AVALUE>"` is optional. If defined, it must match the `--isoftype`, and must match `--isoneof` (if defined).
 
 - The `--isoneof "<VALUE1>;<VALUE2>;<VALUE3>"` is optional, and is a `;` delimited list of specific values that represent the only values for this attribute, when applied.
-
 
 ### Update attributes
 
@@ -103,9 +101,9 @@ To delete an existing attribute: `automate edit delete-attribute "<NAME>" --asch
 
 ### Add elements
 
-**Concept**: An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of `ZeroOrOne` or `One`, which determines whether it must exist when the pattern is applied. 
+**Concept**: An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of `ZeroOrOne` or `One`, which determines whether it must exist when the pattern is applied.
 
->  Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
+> Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
 
 To add a new element to any element/collection in the pattern: `automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
@@ -121,7 +119,6 @@ To add a new element to any element/collection in the pattern: `automate edit ad
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied. By default, it is `true` if `--isrequired` is `true`, and `false` if `--isrequired` is `false`.
 
-
 ### Update elements
 
 To update an existing element on any element/collection in the pattern: `automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
@@ -136,7 +133,7 @@ To update an existing element on any element/collection in the pattern: `automat
 
 - The `--name` optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
--  The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.
+- The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.
 
 ### Delete elements
 
@@ -161,7 +158,6 @@ To add a new collection to any element/collection in the pattern: `automate edit
 - The `--isrequired` is an optional parameter that defines whether the collection must have at least one item within it (`Cardinality=OneToMany`) or not required (`Cardinality=ZeroToMany`). By default, it is `false` (`Cardinality=ZeroToMany`).
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied. By default, it is `true` if `--isrequired` is `true`, and `false` if `--isrequired` is `false`.
-
 
 ### Update collections
 
@@ -189,7 +185,7 @@ To delete an existing collection on any element/collection in the pattern: `auto
 
 The structure of a pattern provides a convenient context for applying automation to it.
 
-Each element/collection can be configured with one or more automation features, that can be used to realise or manifest the pattern when applied. 
+Each element/collection can be configured with one or more automation features, that can be used to realise or manifest the pattern when applied.
 
 There are several concepts here. The first is "Commands" which can enact things on the pattern, make calculations, manipulations, etc. Then there are "Launch Points" which execute the commands in response to some trigger or stimulus. These launch points can be manually triggered by a human user or can be triggered in response to some event on the pattern, or some environmental event.
 
@@ -205,7 +201,6 @@ To capture a piece of code: `automate edit add-codetemplate "<FILEPATH>" --aschi
 
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
-
 ### Editing code templates
 
 **Concept**: Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
@@ -220,7 +215,6 @@ To edit the contents of an existing code template: `automate edit codetemplate "
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-
 ### Delete code templates
 
 To delete an existing code template: `automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof {<ANEXPRESSION>}"`
@@ -231,9 +225,9 @@ To delete an existing code template: `automate edit delete-codetemplate "<TEMPLA
 
 ### Test code templates
 
-**Concept**: Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions).  Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
+**Concept**: Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions). Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
-To can test the contents of  an existing code template: `automate test codetemplate "<TEMPLATENAME>" --aschildof {<ANEXPRESSION>}"`
+To can test the contents of an existing code template: `automate test codetemplate "<TEMPLATENAME>" --aschildof {<ANEXPRESSION>}"`
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
@@ -241,7 +235,7 @@ To can test the contents of  an existing code template: `automate test codetempl
 
 - The `--export-data` optionally defines the relative path to a file that will be populated with the data that was used to test the template.
 
-- The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.  
+- The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.
 
 ### Add code template commands
 
@@ -263,7 +257,7 @@ To add a new code template command to any element/collection in the pattern: `au
 
 ### Add code template with commands
 
-**Shortcut**: this command makes it possible to add a code template and add a new code template command to render it at the same time. 
+**Shortcut**: this command makes it possible to add a code template and add a new code template command to render it at the same time.
 
 To capture a piece of code and wire it up to a code template command: `automate edit add-codetemplate-with-command "<FILEPATH>" --aschildof {<ANEXPRESSION>}" --targetpath "~/apath/afilename.anextension"`
 
@@ -292,9 +286,9 @@ To update an existing code template command on any element/collection in the pat
 
 ### Test code template commands
 
-**Concept**: Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions).  Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test. 
+**Concept**: Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions). Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
-To can test the contents of  an existing code template command: `automate test codetemplate-command "<COMMANDNAME>" --aschildof {<ANEXPRESSION>}"`
+To can test the contents of an existing code template command: `automate test codetemplate-command "<COMMANDNAME>" --aschildof {<ANEXPRESSION>}"`
 
 - The `COMMANDNAME` is the name of an existing command on the `--aschildof` element/collection.
 
@@ -302,7 +296,7 @@ To can test the contents of  an existing code template command: `automate test c
 
 - The `--export-data` optionally defines the relative path to a file that will be populated with the data that was used to test the template.
 
-- The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.  
+- The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.
 
 ### Add CLI commands
 
@@ -318,21 +312,19 @@ To add a new CLI command to any element/collection in the pattern: `automate edi
 
 - The `--name` optionally defines a name for the command. If none is given, a default name will be derived for the command.
 
-
 ### Update CLI commands
 
 To update an existing CLI command on any element/collection in the pattern: `automate edit update-cli-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"`
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
--  The `--app <APPLICATIONNAME>` optionally defines the new name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.
+- The `--app <APPLICATIONNAME>` optionally defines the new name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.
 
 - The `--arguments <ARGUMENTS>` optionally defines the new arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
 
 - The `--name` optionally defines a new name for the command.
-
 
 ### Delete any commands
 
@@ -340,14 +332,13 @@ To delete any existing command on any element/collection in the pattern: `automa
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the command from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
-
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the command from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 > Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.
 
 ### Add launch points
 
-**Concept**: A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order). 
+**Concept**: A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order).
 
 > Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
 
@@ -361,10 +352,9 @@ To add a new launch point to any element/collection in the pattern: `automate ed
 
 - The `--name` optionally defines a friendly name for the launch point. If none is given, a default name will be derived for the launch point.
 
-
 ### Update launch points
 
-To update an existing launch point on any element/collection in the pattern: `automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}" --add "<COMMANDIDENTIFIERS>"` 
+To update an existing launch point on any element/collection in the pattern: `automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}" --add "<COMMANDIDENTIFIERS>"`
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
@@ -376,30 +366,29 @@ To update an existing launch point on any element/collection in the pattern: `au
 
 - The `--name` optionally defines a new name for the launch point.
 
-
 ### Delete launch points
 
 To delete an existing launch point on any element/collection in the pattern: `automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}"`
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
--  The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the launch point from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the launch point from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 ## Publishing and deploying toolkits
 
-**Concept**: A "Toolkit" is a portable package (single-file) that contains within it a versioned Pattern (with all its assets and its automation). A Toolkit is used to install a pattern into another codebase, and used to upgrade that pattern when changed later. 
+**Concept**: A "Toolkit" is a portable package (single-file) that contains within it a versioned Pattern (with all its assets and its automation). A Toolkit is used to install a pattern into another codebase, and used to upgrade that pattern when changed later.
 
 ### Automatic versioning rules for toolkits
 
-**Concept**: Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change. 
+**Concept**: Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change.
 
 Patterns use a (2-dot) [semantic versioning](https://semver.org/) scheme (i.e. `Major.Minor.Patch`).
 
-- A **Breaking** change to a pattern forces the pattern to auto-increment its **major** version number. e.g. deleting an existing attribute, element, or collection. 
+- A **Breaking** change to a pattern forces the pattern to auto-increment its **major** version number. e.g. deleting an existing attribute, element, or collection.
 - A **Non-Breaking** change force the pattern to auto-increment its **minor** number. e.g. adding a new attribute, element, or collection, or updating the contents of a code template.
 - The **patch** number is not used in the automatic versioning process.
 
-When a toolkit is built, the next version number can be automatically calculated for you (based on the edits to the pattern), or you can force a specific version number of your own (in cases where you want to have a specific release number). 
+When a toolkit is built, the next version number can be automatically calculated for you (based on the edits to the pattern), or you can force a specific version number of your own (in cases where you want to have a specific release number).
 
 You will need to force a version number change if the given version violates the semantic versioning rules, or it is a past version number than the one that is auto-calculated.
 
@@ -411,15 +400,15 @@ When a newly versioned toolkit is installed into any codebase (where a previous 
 
 Given an upgraded version of the toolkit, it is assumed that there may exist other ["Drafts"](runtime.md#drafts) that would have been created from the previous versions of the toolkit. ["Drafts"](runtime.md#drafts) are bound to the version of the toolkit that created them, and a draft cannot be edited or used by future versions of a toolkit. The "Draft" will be required to be migrated to any future version of a toolkit.
 
-Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runtime.md#upgrading-a-toolkit)), where there are standard Breaking and Non-Breaking changes. 
+Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runtime.md#upgrading-a-toolkit)), where there are standard Breaking and Non-Breaking changes.
 
->  WARNING: Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.
+> WARNING: Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.
 
 ### Publishing a toolkit
 
 To build and publish an existing pattern into a toolkit: `automate publish toolkit`
 
-- The `-asversion` optionally defines a custom 2-dot [semver](https://semver.org/) version number to use for this build of the toolkit. Or you can specify the value `auto` to have it automatically versioned, based on the latest changes made to the pattern.  The default is `auto`.
+- The `-asversion` optionally defines a custom 2-dot [semver](https://semver.org/) version number to use for this build of the toolkit. Or you can specify the value `auto` to have it automatically versioned, based on the latest changes made to the pattern. The default is `auto`.
 - The `--force` optionally bypasses any detected violations when using a custom version number that is suspicious or that would break semantic versioning rules on the existing pattern. The default is `false`
 - The `--install` optionally defines whether to install the toolkit into the current directory after it has been built. This is only useful in cases where the creator wants to install the toolkit locally, to avoid the extra installation step.
 

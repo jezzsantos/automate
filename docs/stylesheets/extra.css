@@ -20,6 +20,6 @@ blockquote {
     background-color: hsla(0, 0%, 83%, 1);
 }
 
-.md-typeset [type=checkbox]:checked+.task-list-indicator:before {
+.md-typeset [type=checkbox]:checked + .task-list-indicator:before {
     background-color: hsla(151, 100%, 45%, 1);
 }

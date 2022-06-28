@@ -16,7 +16,7 @@ Toolkits can also be already available already installed into a codebase (instal
 
 To install a toolkit yourself, you will need to have an `automate` CLI (or plugin) installed ton your machine. (see [Installing automate](about.md#installing-automate))
 
-Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine. For example: `AToolkit_0.1.0.toolkit`, possibly located on your desktop or downloads folder. 
+Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine. For example: `AToolkit_0.1.0.toolkit`, possibly located on your desktop or downloads folder.
 
 1. In a terminal, navigate to the root of your source codebase (where you want to use the toolkit). For Example: `cd C:\myprojects\myproject\src`
 2. Install the toolkit: `automate install toolkit C:\mydesktop\AToolkit_0.1.0.toolkit`
@@ -59,7 +59,7 @@ When you try to upgrade an existing draft with a toolkit that contained breaking
 
 > A breaking change is determined from the new semantic version of the upgraded toolkit.
 
-It is possible that the new toolkit may now have structure or automation that might not be compatible with the configuration of the existing draft.  It is impossible to automatically tell with 100% certainty what is compatible between the last toolkit version and the current toolkit version. However, this is not all that common. Most upgrades should occur safely and automatically.
+It is possible that the new toolkit may now have structure or automation that might not be compatible with the configuration of the existing draft. It is impossible to automatically tell with 100% certainty what is compatible between the last toolkit version and the current toolkit version. However, this is not all that common. Most upgrades should occur safely and automatically.
 
 > For example, the existing draft may have some configuration in it that is no longer used by the new toolkit, or the new toolkit may require new configuration in it that the draft does not have yet. Then the upgrade path is not straightforward. There are some cases where these incompatibilities can be automatically resolved correctly in the upgrade process, but there are equally some cases that may not be resolved automatically, and you would need to detect and resolve them yourself or accept the possibility of data loss or misconfiguration. Sometimes, in rare cases, re-creating the draft from scratch is the only reliable option.
 
@@ -71,7 +71,7 @@ It is however possible to "force" the automatic upgrade process (despite the bre
 
 [A Draft](reference.md#draft) is a major top-level concept in automate, used to apply coding patterns to a codebase.
 
-A Draft can only be created when a toolkit containing a pattern is installed. 
+A Draft can only be created when a toolkit containing a pattern is installed.
 
 ### Creating a draft from a toolkit
 
@@ -88,7 +88,7 @@ To create a draft from an installed toolkit: `automate run toolkit "<TOOLKITNAME
 
 Since you can have multiple drafts on the go at the same time (even from different toolkits) you will need a way to track them and which one is in use right now.
 
-To list all the drafts you have right now: `automate list drafts` 
+To list all the drafts you have right now: `automate list drafts`
 
 > This command will produce a list of drafts, and their names and IDs.
 
@@ -98,7 +98,7 @@ To switch to using a specific draft: `automate run switch "<DRAFTID>"`
 
 ### Viewing the current draft
 
-You can view the current draft: `automate view draft` 
+You can view the current draft: `automate view draft`
 
 > This command will display the name of the draft and its current configuration.
 
@@ -125,13 +125,13 @@ Following is are the common kinds of things you can do with any specific draft.
 
 ### View the current configuration of a draft
 
-To view the current configuration of your draft: `automate view draft` 
+To view the current configuration of your draft: `automate view draft`
 
->  This command will only show you the data that you configured for the draft, and any defaulted values.
+> This command will only show you the data that you configured for the draft, and any defaulted values.
 
 You can also ask the draft if it is currently in a "valid" state (i.e. if it requires further configuration), and look at the structure and any launchable automation (launch points) of the toolkit that you can use.
 
-To view any constraint violations (validations):  `automate view draft --todo` 
+To view any constraint violations (validations):  `automate view draft --todo`
 
 > This command will show you the current configuration data, AND the meta-model of the pattern, AND the launchable automation (launch points), AND it will also show you any validation errors with the draft that need fixing right now.
 
@@ -145,28 +145,27 @@ To validate the draft: `automate validate draft`
 
 To validate specific items in the draft: `automate validate draft on "{<ANEXPRESSION>}"`
 
-*  The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing item in the draft.
+* The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing item in the draft.
 
 ### Configuring an attribute
 
-To set an attribute on any element (or any collection item) in the draft: `automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"` 
+To set an attribute on any element (or any collection item) in the draft: `automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
 
 - The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing element (or collection item) in the draft
-- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it. 
+- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
 
 > You can have many `--and-set "NAME=VALUE"` expressions as you like (one after the other) for the same element or collection item
 
-
 ### Adding an element
 
-If an element does not yet exist in the draft, you can add it. 
+If an element does not yet exist in the draft, you can add it.
 
->  By default, all elements will be automatically created when their parent elements are created, but only if they are defined as`AutoCreate=true`.
+> By default, all elements will be automatically created when their parent elements are created, but only if they are defined as`AutoCreate=true`.
 
 To add an element to any other element (or to any collection item) in the draft: `automate configure add "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
 
 - The `ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to the non-existent element in the draft
-- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it. 
+- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
 
 > You can also add as many `--and-set "NAME=VALUE"` expressions as you like (one after the other) on the same element or collection item
 
@@ -181,7 +180,7 @@ To reset all the attributes of any element (or any collection item) in the draft
 To add a new item of a collection to any collection in the draft: `automate configure add-one-to "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
 
 - The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing collection in the draft
-- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it. 
+- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
 
 > You can also add as many `--and-set "NAME=VALUE"` expressions as you like to the collection item to make configuring its attributes easier
 
@@ -203,13 +202,13 @@ To delete an element, a collection, or an item of a collection in the draft: `au
 
 **Concept**: A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.
 
-To view all the launch points configured on the elements/collections within the toolkit: `automate view toolkit --all` 
+To view all the launch points configured on the elements/collections within the toolkit: `automate view toolkit --all`
 
 To view all the launch points available on the draft: `automate view draft --todo`
 
 > All launch points require that the entire draft is in a "valid" state before they are allowed to execute, no matter what element/collection the launch point is configured on.
 
-To execute a launch point on any element (or collection) in the draft: `automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"` 
+To execute a launch point on any element (or collection) in the draft: `automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"`
 
 - The `<LAUNCHPOINTNAME>` is the name of the launch point defined on the respective
 - The  `-on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing parent element/collection in the draft.

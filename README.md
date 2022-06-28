@@ -87,7 +87,7 @@ Sick of silly examples, and keen to see an example on a real codebase?
 
 Read our [Documentation](https://jezzsantos.github.io/automate/)
 
-What to contribute? We sure welcome you! 
+What to contribute? We sure welcome you!
 
 See our [Contributing Guidelines](CONTRIBUTING.md).
 

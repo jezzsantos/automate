@@ -1,4 +1,4 @@
-# Reference 
+# Reference
 
 ## Key Concepts
 
@@ -6,7 +6,7 @@ Here are the key concepts in automate.
 
 ### Pattern
 
-A "Pattern" is used to describe an existing piece of software in a codebase, in terms of its structure, its variance, and its usage. 
+A "Pattern" is used to describe an existing piece of software in a codebase, in terms of its structure, its variance, and its usage.
 
 Think of a pattern as some higher-level model of some software, or software concept(s), that includes various lower-level components or abstractions.
 
@@ -19,11 +19,11 @@ Think of a pattern as some higher-level model of some software, or software conc
 
 ### Toolkit
 
-A "Toolkit" is a versioned, published, packaged Pattern with its assets and automation, that is portable and sharable, installable on any platform. 
+A "Toolkit" is a versioned, published, packaged Pattern with its assets and automation, that is portable and sharable, installable on any platform.
 
 It is in a form that can be easily installed and used by contributors on a codebase to get things done quicker by configuring them and having them execute automation.
 
-Once installed, it can be source controlled, versioned, and upgraded. 
+Once installed, it can be source controlled, versioned, and upgraded.
 
 It is specific to one kind of codebase, or specific to a group of contributors on a set of specific codebase types.
 
@@ -49,6 +49,7 @@ A pattern expression is a reference to a specific element/collection (node) in a
 ### Example pattern expressions
 
 Given this pattern (in a toolkit):
+
 ```
 - APatternName (root element)
     - AnAttributeName1 (attribute)
@@ -72,13 +73,14 @@ Examples pattern references:
 * A templating expression is a reference to a specific "item" (node) in a configured draft.
 * The expression always references the value of an attribute in the draft. References to elements/collections don't have values.
 * The expression is always wrapped in double curly braces. It starts with a `{{` and ends with a `}}`
-* The expression is always relative to the current "item" (node) on the configured draft. 
+* The expression is always relative to the current "item" (node) on the configured draft.
 * The expression can include the reference `.Parent` to access its' ancestry, starting from its' self.
 * Each part of the expression is separated by a period `.`
 
 ### Example templating expressions
 
 Given a pattern (cmd: `automate view pattern`):
+
 ```
 - APatternName (root element)
     - AnAttributeName1 (attribute)
@@ -91,6 +93,7 @@ Given a pattern (cmd: `automate view pattern`):
         - AnElementName3 (element)
             - AnAttributeName5 (attribute)
 ```
+
 And, given that we have configured all instances of all elements and all attributes with some value, AND we have added 3x items to `ACollectionName1`.
 
 If you can imagine that we were to ask for the configuration of a draft built with this toolkit (cmd: `automate view draft`), we would imagine having a draft configured something like this:
@@ -200,7 +203,6 @@ automate adds the following additional custom functions:
 
 * **PascalSingular**: `{{model.AnAttributeName | string.pascalsingular}}` to convert any string to its pascal-cased singularized form. (e.g. ducks -> Duck)
 
-
 ## Draft Expressions
 
 * A draft expression is a reference to a specific "item" (node) in a configured draft.
@@ -212,6 +214,7 @@ automate adds the following additional custom functions:
 ### Example draft expressions
 
 Given this pattern (in a toolkit):
+
 ```
 - APatternName (root element)
     - AnAttributeName1 (attribute)
@@ -221,6 +224,7 @@ Given this pattern (in a toolkit):
         - AnAttributeName2 (attribute)
         - AnElementName3 (element)
 ```
+
 Given that we have configured all instances of all elements and all attributes, AND we have added 3x instances of the `ACollectionName1` collection item.
 
 If we were to ask for the configuration of this draft (`automate view draft`), we would have a draft configured with items looking something like this:
@@ -264,7 +268,7 @@ If we were to ask for the configuration of this draft (`automate view draft`), w
 
 Examples draft references:
 
->  The casing of elements and collection is as they are defined in the pattern. However, the casing of the built-in properties, such as: `Id`, and `Items` are always PascalCased.
+> The casing of elements and collection is as they are defined in the pattern. However, the casing of the built-in properties, such as: `Id`, and `Items` are always PascalCased.
 
 (ignoring the nominal values of the "Id" properties)
 

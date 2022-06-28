@@ -17,7 +17,7 @@ namespace Core.UnitTests.Common.Extensions
 
             result.Should().BeNull();
         }
-        
+
         [Fact]
         public void WhenSubstituteWithNoArgs_ThenReturnsMessage()
         {
@@ -25,7 +25,7 @@ namespace Core.UnitTests.Common.Extensions
 
             result.Should().Be("amessage");
         }
-        
+
         [Fact]
         public void WhenSubstituteWithNoArgsAndPlaceholder_ThenReturnsMessage()
         {
@@ -33,7 +33,7 @@ namespace Core.UnitTests.Common.Extensions
 
             result.Should().Be("amessage{0}");
         }
-        
+
         [Fact]
         public void WhenSubstituteWithAnArgAndNoPlaceholder_ThenReturnsMessage()
         {
@@ -41,7 +41,7 @@ namespace Core.UnitTests.Common.Extensions
 
             result.Should().Be("amessage");
         }
-        
+
         [Fact]
         public void WhenSubstituteWithMoreArgsThanPlaceholders_ThenReturnsMessage()
         {
@@ -49,7 +49,7 @@ namespace Core.UnitTests.Common.Extensions
 
             result.Should().Be("amessageanarg1");
         }
-        
+
         [Fact]
         public void WhenSubstituteWithLessArgsThanPlaceholders_ThenThrows()
         {
@@ -57,7 +57,7 @@ namespace Core.UnitTests.Common.Extensions
                 .Invoking(x => x.Substitute("anarg1"))
                 .Should().Throw<FormatException>();
         }
-        
+
         [Fact]
         public void WhenSubstituteTemplateWithNoReplacements_ThenReturnsMessage()
         {
@@ -89,7 +89,7 @@ namespace Core.UnitTests.Common.Extensions
 
             message.Should().Be("amessageanarg1anarg2{atoken3}");
         }
-        
+
         [Fact]
         public void WhenSubstituteTemplateWithJsonObject_ThenReturnsMessage()
         {

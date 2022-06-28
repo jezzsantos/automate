@@ -5,11 +5,13 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 ## Make your first pattern
 
 > For this example, we are going to assume that you have the following arbitrary files and folders in the current directory (where you are running this tool). You can adjust the commands below to suit the files of your specific codebase (there is nothing specific about the specific files we show you here, they can be anything you want).
+
 ```
     .
     ├ 📂Controllers/
     │ └ 📜BookingController.cs
 ```
+
 ---
 
 1. Install the [automate CLI](about.md#installing-automate)
@@ -41,7 +43,7 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 
     * `automate publish toolkit`
 
-    > This will build a versioned self-contained toolkit file, and it will publish it to the desktop on your machine, and also provide you with the command to install it into this codebase.
+   > This will build a versioned self-contained toolkit file, and it will publish it to the desktop on your machine, and also provide you with the command to install it into this codebase.
 
 7. Share the toolkit file (`MyPattern1_0.1.0.toolkit`) over email/slack/etc with someone on your team.
 
@@ -79,7 +81,7 @@ If you now open that generated file, you will also see the value of `Banana` in 
 
 This is the process if you want to make any changes to the toolkit.
 
-In the location where you created the original toolkit: 
+In the location where you created the original toolkit:
 
 1. Add a new attribute to your toolkit:
 
@@ -94,7 +96,6 @@ In the location where you created the original toolkit:
 3. Rebuild the toolkit:
 
     * `automate publish toolkit`
-
 
 Now back in the target codebase:
 

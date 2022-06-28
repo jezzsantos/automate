@@ -13,7 +13,7 @@ We collect information directly from our software running on your computer, incl
 * Computer or network (Your IP address)
 * A random unique identifier (Created per computer where you install automate)
 
-We don't collect any personal information about you. 
+We don't collect any personal information about you.
 
 ## Why do we collect it?
 

@@ -47,7 +47,7 @@ namespace Automate.Common.Extensions
             {
                 return value;
             }
-            
+
             return string.Format(value, arguments);
         }
 
