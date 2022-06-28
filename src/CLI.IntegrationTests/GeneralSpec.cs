@@ -27,37 +27,6 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayErrorForMissingCommand();
         }
 
-        private static string GetThrownMessage(bool withDebug, bool hasInnerException, string message)
-        {
-            var assemblyLocation = typeof(CommandLineApi).Assembly.Location;
-            var solutionDirectory = GetSolutionDirectory(assemblyLocation, "src");
-            var throwingMethodLineNumber = hasInnerException
-                ? 61
-                : 63;
-            var throwingMethodLocation =
-                Path.GetFullPath(Path.Combine(solutionDirectory,
-                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/CommandLineApiHandlers.cs"));
-            var throwingMethodName =
-                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyHandlers)}.{nameof(CommandLineApi.TestingOnlyHandlers.Fail)}";
-            var throwingMethodSignature = "String message, Boolean nested";
-
-            return hasInnerException
-                ? withDebug
-                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                        $"System.Exception: {message}{Environment.NewLine}" +
-                        $" ---> System.Exception: {message}{Environment.NewLine}" +
-                        $"   --- End of inner exception stack trace ---{Environment.NewLine}" +
-                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
-                    : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                        $"{message}")
-                : withDebug
-                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                        $"System.Exception: {message}{Environment.NewLine}" +
-                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
-                    : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
-                        $"{message}");
-        }
-
         private static string GetSolutionDirectory(string path, string solutionDirectoryName)
         {
             solutionDirectoryName.GuardAgainstNull(nameof(solutionDirectoryName));
@@ -257,7 +226,37 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
         }
+        private static string GetThrownMessage(bool withDebug, bool hasInnerException, string message)
+        {
+            var assemblyLocation = typeof(CommandLineApi).Assembly.Location;
+            var solutionDirectory = GetSolutionDirectory(assemblyLocation, "src");
+            var throwingMethodLineNumber = hasInnerException
+                ? 61
+                : 63;
+            var throwingMethodLocation =
+                Path.GetFullPath(Path.Combine(solutionDirectory,
+                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/CommandLineApiHandlers.cs"));
+            var throwingMethodName =
+                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyHandlers)}.{nameof(CommandLineApi.TestingOnlyHandlers.Fail)}";
+            var throwingMethodSignature = "String message, Boolean nested";
 
+            return hasInnerException
+                ? withDebug
+                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"System.Exception: {message}{Environment.NewLine}" +
+                        $" ---> System.Exception: {message}{Environment.NewLine}" +
+                        $"   --- End of inner exception stack trace ---{Environment.NewLine}" +
+                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
+                    : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"{message}")
+                : withDebug
+                    ? ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"System.Exception: {message}{Environment.NewLine}" +
+                        $"   at {throwingMethodName}({throwingMethodSignature}) in {throwingMethodLocation}:line {throwingMethodLineNumber}")
+                    : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
+                        $"{message}");
+        }
 #endif
+
     }
 }
