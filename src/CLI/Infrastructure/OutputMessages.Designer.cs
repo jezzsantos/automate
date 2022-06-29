@@ -441,7 +441,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created Drafts:
+        ///   Looks up a localized string similar to Drafts:
         ///{Drafts}.
         /// </summary>
         internal static string CommandLine_Output_InstalledDraftsListed {
@@ -646,6 +646,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_ToolkitConfiguration {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ToolkitConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upgraded without any changes.
+        /// </summary>
+        internal static string CommandLine_Output_UpgradedDraftSucceededNoOutput {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_UpgradedDraftSucceededNoOutput", resourceCulture);
             }
         }
     }

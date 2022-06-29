@@ -56,9 +56,9 @@ namespace Automate.Runtime.Domain
             return instance;
         }
 
-        public string GetConfiguration()
+        public LazyDraftItemDictionary GetConfiguration()
         {
-            return Model.GetConfiguration(false).ToJson();
+            return Model.GetConfiguration(false);
         }
 
         public List<DraftItemCommandPair> FindByAutomation(string automationId)

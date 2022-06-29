@@ -543,7 +543,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 result.Pattern.Should().BeNull();
                 result.Validation.Should().BeEquivalentTo(ValidationResults.None);
-                result.Configuration.Should().Be(new
+                result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
                     anattributename1 = "adefaultvalue1",
@@ -585,7 +585,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 result.Pattern.Should().Be(this.pattern);
                 result.Validation.Results.Should().BeEmpty();
-                result.Configuration.Should().Be(new
+                result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
                     anattributename1 = "adefaultvalue1",

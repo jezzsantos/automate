@@ -165,7 +165,7 @@
 `automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`</value>
     </data>
     <data name="CommandLine_Output_InstalledDraftsListed" xml:space="preserve">
-        <value>Created Drafts:
+        <value>Drafts:
 {Drafts}</value>
     </data>
     <data name="CommandLine_Output_Preamble_NoDraftSelected" xml:space="preserve">
@@ -231,6 +231,9 @@
     </data>
     <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">
         <value>Everything is up to date</value>
+    </data>
+    <data name="CommandLine_Output_UpgradedDraftSucceededNoOutput" xml:space="preserve">
+        <value>Upgraded without any changes</value>
     </data>
     <data name="CommandLine_Output_TestingOnly" xml:space="preserve">
         <value>amessagetemplate {aname}</value>

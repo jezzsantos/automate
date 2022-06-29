@@ -55,9 +55,9 @@ namespace Automate.Common.Domain
 
         CodeTemplate DeleteCodeTemplate(string name, bool includeReferencingAutomation);
 
-        Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string filePath);
+        Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string targetPath);
 
-        Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath);
+        Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string targetPath);
 
         public void DeleteCodeTemplateCommand(string id, bool includeReferencingAutomation);
 

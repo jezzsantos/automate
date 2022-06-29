@@ -226,6 +226,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
         }
+
         private static string GetThrownMessage(bool withDebug, bool hasInnerException, string message)
         {
             var assemblyLocation = typeof(CommandLineApi).Assembly.Location;
@@ -257,6 +258,5 @@ namespace CLI.IntegrationTests
                         $"{message}");
         }
 #endif
-
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
 using Automate.CLI.Extensions;
 using Automate.Common.Domain;
@@ -17,21 +20,25 @@ namespace Automate.CLI.Infrastructure
         OnlyLaunchPoints
     }
 
+    public enum OutputFormat
+    {
+        Text = 0,
+        Json = 1
+    }
+
     internal class PatternConfigurationVisitor : IPatternVisitor
     {
         private const int MaxFilePathLength = 100;
+        private readonly OutputFormat format;
         private readonly VisitorConfigurationOptions options;
         private readonly StringBuilder output;
         private int indentLevel;
-        private bool outputAttributesHeading;
-        private bool outputAutomationHeading;
-        private bool outputCodeTemplatesHeading;
-        private bool outputElementsHeading;
 
-        public PatternConfigurationVisitor(VisitorConfigurationOptions options)
+        public PatternConfigurationVisitor(OutputFormat format, VisitorConfigurationOptions options)
         {
             this.output = new StringBuilder();
             this.options = options;
+            this.format = format;
         }
 
         public static string TruncateCodeTemplatePath(string path)
@@ -39,26 +46,44 @@ namespace Automate.CLI.Infrastructure
             return TruncatePath(path);
         }
 
-        public override string ToString()
+        public object ToOutput()
         {
-            return this.output.ToString();
+            var result = this.output.ToString();
+            if (this.format == OutputFormat.Json)
+            {
+                return JsonNode.Parse(result, null, new JsonDocumentOptions
+                {
+                    AllowTrailingCommas = true
+                });
+            }
+
+            return result;
         }
 
         public bool VisitPatternEnter(PatternDefinition pattern)
         {
-            PrintIndented($"- {pattern.Name}", false);
-            if (this.options == VisitorConfigurationOptions.Detailed)
+            if (this.format == OutputFormat.Json)
             {
-                PrintInline($" [{pattern.Id}]");
+                PrintInline("{");
+                PrintInline($"\"{nameof(PatternDefinition.Id)}\":\"{JsonEscape(pattern.Id)}\",");
+                PrintInline($"\"{nameof(PatternDefinition.Name)}\":\"{JsonEscape(pattern.Name)}\",");
             }
-            PrintInline(" (root element)");
-            if (this.options == VisitorConfigurationOptions.Simple && pattern.CodeTemplates.HasAny())
+            else if (this.format == OutputFormat.Text)
             {
-                PrintInline($" (attached with {pattern.CodeTemplates.Count} code templates)", true);
-            }
-            else
-            {
-                PrintEndOfLine();
+                PrintIndented($"- {pattern.Name}", false);
+                if (this.options == VisitorConfigurationOptions.Detailed)
+                {
+                    PrintInline($" [{pattern.Id}]");
+                }
+                PrintInline(" (root element)");
+                if (this.options == VisitorConfigurationOptions.Simple && pattern.CodeTemplates.HasAny())
+                {
+                    PrintInline($" (attached with {pattern.CodeTemplates.Count} code templates)", true);
+                }
+                else
+                {
+                    PrintEndOfLine();
+                }
             }
 
             return VisitPatternElementEnter(pattern);
@@ -69,32 +94,80 @@ namespace Automate.CLI.Infrastructure
             return VisitPatternElementExit(pattern);
         }
 
+        public bool VisitElementsEnter(IReadOnlyList<Element> elements)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if ((this.options == VisitorConfigurationOptions.OnlyLaunchPoints && elements.HasAny())
+                    || this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("\"Elements\":[");
+                }
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                if (this.options is VisitorConfigurationOptions.Detailed
+                        or VisitorConfigurationOptions.OnlyLaunchPoints &&
+                    elements.HasAny())
+                {
+                    PrintIndented("- Elements:");
+                }
+            }
+
+            return true;
+        }
+
+        public bool VisitElementsExit(IReadOnlyList<Element> elements)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if ((this.options == VisitorConfigurationOptions.OnlyLaunchPoints && elements.HasAny())
+                    || this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("],");
+                }
+            }
+            return true;
+        }
+
         public bool VisitElementEnter(Element element)
         {
-            if (this.outputElementsHeading)
+            if (this.format == OutputFormat.Json)
             {
-                PrintIndented("- Elements:");
-                this.outputElementsHeading = false;
+                PrintInline("{");
+                PrintInline($"\"{nameof(Element.Id)}\":\"{JsonEscape(element.Id)}\",");
+                PrintInline($"\"{nameof(Element.Name)}\":\"{JsonEscape(element.Name)}\",");
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline(
+                        $"\"{nameof(Element.AutoCreate)}\":{element.AutoCreate.ToString().ToLowerInvariant()},");
+                    PrintInline(
+                        $"\"{nameof(Element.IsCollection)}\":{element.IsCollection.ToString().ToLowerInvariant()},");
+                    PrintInline($"\"{nameof(Element.Cardinality)}\":\"{element.Cardinality}\",");
+                }
             }
+            else if (this.format == OutputFormat.Text)
+            {
+                if (this.options is VisitorConfigurationOptions.Detailed
+                    or VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    Indent();
+                }
 
-            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
-            {
-                Indent();
-            }
-
-            PrintIndented($"- {element.Name}", false);
-            if (this.options == VisitorConfigurationOptions.Detailed)
-            {
-                PrintInline($" [{element.Id}]");
-            }
-            PrintInline($" ({(element.IsCollection ? "collection" : "element")})");
-            if (this.options == VisitorConfigurationOptions.Simple && element.CodeTemplates.HasAny())
-            {
-                PrintInline($" (attached with {element.CodeTemplates.Count} code templates)", true);
-            }
-            else
-            {
-                PrintEndOfLine();
+                PrintIndented($"- {element.Name}", false);
+                if (this.options == VisitorConfigurationOptions.Detailed)
+                {
+                    PrintInline($" [{element.Id}]");
+                }
+                PrintInline($" ({(element.IsCollection ? "collection" : "element")})");
+                if (this.options == VisitorConfigurationOptions.Simple && element.CodeTemplates.HasAny())
+                {
+                    PrintInline($" (attached with {element.CodeTemplates.Count} code templates)", true);
+                }
+                else
+                {
+                    PrintEndOfLine();
+                }
             }
 
             return VisitPatternElementEnter(element);
@@ -102,11 +175,53 @@ namespace Automate.CLI.Infrastructure
 
         public bool VisitElementExit(Element element)
         {
-            if (this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints)
+            if (this.format == OutputFormat.Text)
             {
-                OutDent();
+                if (this.options is VisitorConfigurationOptions.Detailed
+                    or VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    OutDent();
+                }
             }
-            return VisitPatternElementExit(element);
+            var result = VisitPatternElementExit(element);
+
+            if (this.format == OutputFormat.Json)
+            {
+                PrintInline(",");
+            }
+
+            return result;
+        }
+
+        public bool VisitAttributesEnter(IReadOnlyList<Attribute> attributes)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("\"Attributes\":[");
+                }
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                if (this.options == VisitorConfigurationOptions.Detailed && attributes.HasAny())
+                {
+                    PrintIndented("- Attributes:");
+                }
+            }
+            return true;
+        }
+
+        public bool VisitAttributesExit(IReadOnlyList<Attribute> attributes)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("],");
+                }
+            }
+            return true;
         }
 
         public bool VisitAttribute(Attribute attribute)
@@ -116,70 +231,201 @@ namespace Automate.CLI.Infrastructure
                 return true;
             }
 
-            if (this.outputAttributesHeading)
+            if (this.format == OutputFormat.Json)
             {
-                PrintIndented("- Attributes:");
-                this.outputAttributesHeading = false;
+                var choices = attribute.Choices.Select(choice => $"\"{JsonEscape(choice)}\"").Join(",");
+
+                PrintInline("{");
+                PrintInline($"\"{nameof(Attribute.Id)}\":\"{JsonEscape(attribute.Id)}\",");
+                PrintInline($"\"{nameof(Attribute.Name)}\":\"{JsonEscape(attribute.Name)}\",");
+                PrintInline($"\"{nameof(Attribute.DataType)}\":\"{JsonEscape(attribute.DataType)}\",");
+                PrintInline(
+                    $"\"{nameof(Attribute.IsRequired)}\":{attribute.IsRequired.ToString().ToLowerInvariant()},");
+                PrintInline($"\"{nameof(Attribute.Choices)}\":[{choices}],");
+                PrintInline($"\"{nameof(Attribute.DefaultValue)}\": \"{JsonEscape(attribute.DefaultValue)}\"");
+                PrintInline("},");
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                WithDetailedIndents(() =>
+                {
+                    PrintIndented(
+                        $"- {attribute.Name}{(this.options == VisitorConfigurationOptions.Detailed ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})");
+                });
             }
 
-            WithDetailedIndents(() =>
+            return true;
+        }
+
+        public bool VisitAutomationsEnter(IReadOnlyList<Automation> automation)
+        {
+            if (this.format == OutputFormat.Json)
             {
-                PrintIndented(
-                    $"- {attribute.Name}{(this.options == VisitorConfigurationOptions.Detailed ? "" : " (attribute)")} ({attribute.DataType}{(attribute.IsRequired ? ", required" : "")}{(attribute.Choices.HasAny() ? ", oneof: " + $"{attribute.Choices.ToListSafe().Join(";")}" : "")}{(attribute.DefaultValue.HasValue() ? ", default: " + $"{attribute.DefaultValue}" : "")})");
-            });
+                if ((this.options != VisitorConfigurationOptions.OnlyLaunchPoints && automation.HasAny())
+                    || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
+                        automation.Safe().Any(auto => auto.IsLaunching())))
+                {
+                    if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+                    {
+                        PrintInline("\"LaunchPoints\":[");
+                    }
+                    else
+                    {
+                        PrintInline("\"Automation\":[");
+                    }
+                }
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                if ((this.options == VisitorConfigurationOptions.Detailed && automation.HasAny())
+                    || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
+                        automation.Safe().Any(auto => auto.IsLaunching())))
+                {
+                    if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+                    {
+                        PrintIndented("- LaunchPoints:");
+                    }
+                    if (this.options == VisitorConfigurationOptions.Detailed)
+                    {
+                        PrintIndented("- Automation:");
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public bool VisitAutomationsExit(IReadOnlyList<Automation> automation)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if ((this.options != VisitorConfigurationOptions.OnlyLaunchPoints && automation.HasAny())
+                    || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
+                        automation.Safe().Any(auto => auto.IsLaunching())))
+                {
+                    PrintInline("],");
+                }
+            }
 
             return true;
         }
 
         public bool VisitAutomation(Automation automation)
         {
-            if (this.outputAutomationHeading)
+            if (this.format == OutputFormat.Json)
             {
-                if (this.options == VisitorConfigurationOptions.Detailed)
-                {
-                    PrintIndented("- Automation:");
-                }
-                if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
-                {
-                    PrintIndented("- LaunchPoints:");
-                }
-                this.outputAutomationHeading = false;
-            }
-
-            WithDetailedIndents(() =>
-            {
-                if (this.options == VisitorConfigurationOptions.Detailed)
-                {
-                    PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})", false);
-                    if (automation.Type == AutomationType.CodeTemplateCommand)
-                    {
-                        PrintInline(
-                            $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, {(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToBool() ? "onceonly" : "always")}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
-                            true);
-                    }
-                    else if (automation.Type == AutomationType.CliCommand)
-                    {
-                        PrintInline(
-                            $" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})",
-                            true);
-                    }
-                    else if (automation.Type == AutomationType.CommandLaunchPoint)
-                    {
-                        PrintInline($" (ids: {automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]})", true);
-                    }
-                    else
-                    {
-                        PrintEndOfLine();
-                    }
-                }
                 if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
                 {
                     if (automation.IsLaunching())
                     {
-                        PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})");
+                        PrintInline("{");
+                        PrintInline($"\"{nameof(Automation.Id)}\":\"{JsonEscape(automation.Id)}\",");
+                        PrintInline($"\"{nameof(Automation.Name)}\":\"{JsonEscape(automation.Name)}\",");
+                        PrintInline($"\"{nameof(Automation.Type)}\":\"{JsonEscape(automation.Type.ToString())}\"");
+                        PrintInline("},");
                     }
                 }
-            });
+                else
+                {
+                    PrintInline("{");
+                    PrintInline($"\"{nameof(Automation.Id)}\":\"{JsonEscape(automation.Id)}\",");
+                    PrintInline($"\"{nameof(Automation.Name)}\":\"{JsonEscape(automation.Name)}\",");
+                    PrintInline($"\"{nameof(Automation.Type)}\":\"{JsonEscape(automation.Type.ToString())}\",");
+
+                    if (automation.Type == AutomationType.CodeTemplateCommand)
+                    {
+                        PrintInline(
+                            $"\"TemplateId\":\"{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]?.ToString())}\"," +
+                            $"\"{nameof(CodeTemplateCommand.IsOneOff)}\":{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()?.ToLowerInvariant())}," +
+                            $"\"TargetPath\":\"{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.FilePath)]?.ToString())}\"");
+                    }
+                    else if (automation.Type == AutomationType.CliCommand)
+                    {
+                        PrintInline(
+                            $"\"{nameof(CliCommand.ApplicationName)}\":\"{JsonEscape(automation.Metadata[nameof(CliCommand.ApplicationName)]?.ToString())}\"," +
+                            $"\"{nameof(CliCommand.Arguments)}\":\"{JsonEscape(automation.Metadata[nameof(CliCommand.Arguments)]?.ToString())}\"");
+                    }
+                    else if (automation.Type == AutomationType.CommandLaunchPoint)
+                    {
+                        var cmdIds = automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]
+                            .ToString()
+                            .SafeSplit(CommandLaunchPoint.CommandIdDelimiter)
+                            .Select(id => $"\"{JsonEscape(id)}\"")
+                            .Join(",");
+                        PrintInline($"\"{nameof(CommandLaunchPoint.CommandIds)}\": [{cmdIds}]");
+                    }
+                    PrintInline("},");
+                }
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                WithDetailedIndents(() =>
+                {
+                    if (this.options == VisitorConfigurationOptions.Detailed)
+                    {
+                        PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})", false);
+                        if (automation.Type == AutomationType.CodeTemplateCommand)
+                        {
+                            PrintInline(
+                                $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, {(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToBool() ? "onceonly" : "always")}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
+                                true);
+                        }
+                        else if (automation.Type == AutomationType.CliCommand)
+                        {
+                            PrintInline(
+                                $" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})",
+                                true);
+                        }
+                        else if (automation.Type == AutomationType.CommandLaunchPoint)
+                        {
+                            PrintInline($" (ids: {automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]})", true);
+                        }
+                        else
+                        {
+                            PrintEndOfLine();
+                        }
+                    }
+                    if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
+                    {
+                        if (automation.IsLaunching())
+                        {
+                            PrintIndented($"- {automation.Name} [{automation.Id}] ({automation.Type})");
+                        }
+                    }
+                });
+            }
+            return true;
+        }
+
+        public bool VisitCodeTemplatesEnter(IReadOnlyList<CodeTemplate> codeTemplates)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("\"CodeTemplates\":[");
+                }
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                if (this.options == VisitorConfigurationOptions.Detailed && codeTemplates.HasAny())
+                {
+                    PrintIndented("- CodeTemplates:");
+                }
+            }
+
+            return true;
+        }
+
+        public bool VisitCodeTemplatesExit(IReadOnlyList<CodeTemplate> codeTemplates)
+        {
+            if (this.format == OutputFormat.Json)
+            {
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                {
+                    PrintInline("],");
+                }
+            }
             return true;
         }
 
@@ -190,20 +436,28 @@ namespace Automate.CLI.Infrastructure
                 return true;
             }
 
-            if (this.outputCodeTemplatesHeading)
+            if (this.format == OutputFormat.Json)
             {
-                PrintIndented("- CodeTemplates:");
-                this.outputCodeTemplatesHeading = false;
+                PrintInline("{");
+                PrintInline($"\"{nameof(CodeTemplate.Id)}\":\"{JsonEscape(codeTemplate.Id)}\",");
+                PrintInline($"\"{nameof(CodeTemplate.Name)}\":\"{JsonEscape(codeTemplate.Name)}\",");
+                PrintInline(
+                    $"\"{nameof(CodeTemplateMetadata.OriginalFilePath)}\":\"{JsonEscape(codeTemplate.Metadata.OriginalFilePath)}\",");
+                PrintInline(
+                    $"\"{nameof(CodeTemplateMetadata.OriginalFileExtension)}\":\"{JsonEscape(codeTemplate.Metadata.OriginalFileExtension)}\"");
+                PrintInline("},");
             }
-
-            WithDetailedIndents(() =>
+            else if (this.format == OutputFormat.Text)
             {
-                if (this.options == VisitorConfigurationOptions.Detailed)
+                WithDetailedIndents(() =>
                 {
-                    PrintIndented(
-                        $"- {codeTemplate.Name} [{codeTemplate.Id}] (original: {TruncatePath(codeTemplate.Metadata.OriginalFilePath)})");
-                }
-            });
+                    if (this.options == VisitorConfigurationOptions.Detailed)
+                    {
+                        PrintIndented(
+                            $"- {codeTemplate.Name} [{codeTemplate.Id}] (original: {TruncatePath(codeTemplate.Metadata.OriginalFilePath)})");
+                    }
+                });
+            }
 
             return true;
         }
@@ -213,28 +467,27 @@ namespace Automate.CLI.Infrastructure
             this.output.Append(Environment.NewLine);
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private bool VisitPatternElementEnter(PatternElement element)
         {
-            this.outputCodeTemplatesHeading =
-                this.options == VisitorConfigurationOptions.Detailed && element.CodeTemplates.HasAny();
-            this.outputAutomationHeading =
-                (this.options == VisitorConfigurationOptions.Detailed && element.Automation.HasAny())
-                || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
-                    element.Automation.Safe().Any(auto => auto.IsLaunching()));
-            this.outputAttributesHeading =
-                this.options == VisitorConfigurationOptions.Detailed && element.Attributes.HasAny();
-            this.outputElementsHeading =
-                this.options is VisitorConfigurationOptions.Detailed or VisitorConfigurationOptions.OnlyLaunchPoints &&
-                element.Elements.HasAny();
-
-            Indent();
-
+            if (this.format == OutputFormat.Text)
+            {
+                Indent();
+            }
             return true;
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private bool VisitPatternElementExit(PatternElement element)
         {
-            OutDent();
+            if (this.format == OutputFormat.Json)
+            {
+                PrintInline(" }");
+            }
+            else if (this.format == OutputFormat.Text)
+            {
+                OutDent();
+            }
             return true;
         }
 
@@ -289,6 +542,16 @@ namespace Automate.CLI.Infrastructure
         private static string TruncatePath(string path)
         {
             return path.Truncate(MaxFilePathLength, Truncator.FixedLength, TruncateFrom.Left);
+        }
+
+        private static string JsonEscape(string value)
+        {
+            if (value.HasNoValue())
+            {
+                return null;
+            }
+
+            return JsonEncodedText.Encode(value).ToString();
         }
     }
 }

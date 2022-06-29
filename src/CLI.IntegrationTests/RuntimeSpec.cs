@@ -140,7 +140,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
-                        $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
+                        $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledDraftsListed.SubstituteTemplate(
-                        $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
+                        $"\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\""));
         }
 
         [Fact]

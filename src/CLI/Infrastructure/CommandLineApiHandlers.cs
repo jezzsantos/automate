@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
-using Automate.Common.Infrastructure;
 using Automate.Runtime.Domain;
 using JetBrains.Annotations;
 
@@ -48,14 +48,14 @@ namespace Automate.CLI.Infrastructure
             internal static void Fail(string message, bool nested)
             {
                 Output(OutputMessages.CommandLine_Output_TestingOnly, "avalue");
-                Output(OutputMessages.CommandLine_Output_TestingOnly, new
+                Output(OutputMessages.CommandLine_Output_TestingOnly, JsonNode.Parse(new
                 {
                     AProperty1 = new
                     {
                         AChildProperty1 = "avalue1"
                     },
                     AProperty2 = "avalue2"
-                });
+                }.ToJson()));
                 if (nested)
                 {
                     throw new Exception(message, new Exception(message));
@@ -66,14 +66,14 @@ namespace Automate.CLI.Infrastructure
             internal static void Succeed(string message, string value)
             {
                 Output(message, value);
-                Output(OutputMessages.CommandLine_Output_TestingOnly, new
+                Output(OutputMessages.CommandLine_Output_TestingOnly, JsonNode.Parse(new
                 {
                     AProperty1 = new
                     {
                         AChildProperty1 = "avalue1"
                     },
                     AProperty2 = "avalue2"
-                });
+                }.ToJson()));
             }
         }
 #endif
@@ -81,8 +81,6 @@ namespace Automate.CLI.Infrastructure
         [UsedImplicitly]
         private class AuthoringHandlers : HandlerBase
         {
-            private static readonly IPersistableFactory PersistenceFactory = new AutomatePersistableFactory();
-
             internal static void CreatePattern(string name, string displayedAs,
                 string describedAs)
             {
@@ -107,18 +105,30 @@ namespace Automate.CLI.Infrastructure
                 var pattern = authoring.GetCurrentPattern();
 
                 Output(OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current,
-                    FormatPatternConfiguration(outputStructured, pattern, all));
+                    pattern.ToolkitVersion.Current, FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
-            internal static void ListPatterns()
+            internal static void ListPatterns(bool outputStructured)
             {
                 var patterns = authoring.ListPatterns();
                 if (patterns.Any())
                 {
-                    Output(OutputMessages.CommandLine_Output_EditablePatternsListed,
-                        patterns.ToMultiLineText(pattern =>
-                            $"{{\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\"}}"));
+                    if (outputStructured)
+                    {
+                        Output(OutputMessages.CommandLine_Output_EditablePatternsListed,
+                            JsonNode.Parse(patterns.Select(pattern => new
+                            {
+                                pattern.Name,
+                                Version = pattern.ToolkitVersion.Current,
+                                pattern.Id
+                            }).ToList().ToJson()));
+                    }
+                    else
+                    {
+                        Output(OutputMessages.CommandLine_Output_EditablePatternsListed,
+                            patterns.ToMultiLineText(pattern =>
+                                $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\""));
+                    }
                 }
                 else
                 {
@@ -384,26 +394,28 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static string FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern,
+            internal static object FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern,
                 bool isDetailed)
             {
-                if (outputStructured)
-                {
-                    return pattern.ToJson(PersistenceFactory);
-                }
-
-                var configuration = new PatternConfigurationVisitor(isDetailed
+                var configuration = new PatternConfigurationVisitor(outputStructured
+                    ? OutputFormat.Json
+                    : OutputFormat.Text, isDetailed
                     ? VisitorConfigurationOptions.Detailed
                     : VisitorConfigurationOptions.Simple);
                 pattern.TraverseDescendants(configuration);
-                return configuration.ToString();
+
+                return configuration.ToOutput();
             }
 
-            internal static string FormatPatternLaunchableAutomation(PatternDefinition pattern)
+            internal static object FormatPatternLaunchableAutomation(bool outputStructured, PatternDefinition pattern)
             {
-                var configuration = new PatternConfigurationVisitor(VisitorConfigurationOptions.OnlyLaunchPoints);
+                var configuration =
+                    new PatternConfigurationVisitor(outputStructured
+                        ? OutputFormat.Json
+                        : OutputFormat.Text, VisitorConfigurationOptions.OnlyLaunchPoints);
                 pattern.TraverseDescendants(configuration);
-                return configuration.ToString();
+
+                return configuration.ToOutput();
             }
         }
 
@@ -426,14 +438,27 @@ namespace Automate.CLI.Infrastructure
                     AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
             }
 
-            internal static void ListToolkits()
+            internal static void ListToolkits(bool outputStructured)
             {
                 var toolkits = runtime.ListInstalledToolkits();
                 if (toolkits.Any())
                 {
-                    Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
-                        toolkits.ToMultiLineText(toolkit =>
-                            $"{{\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\"}}"));
+                    if (outputStructured)
+                    {
+                        Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
+                            JsonNode.Parse(toolkits.Select(toolkit => new
+                            {
+                                toolkit.PatternName,
+                                toolkit.Version,
+                                toolkit.Id
+                            }).ToList().ToJson()));
+                    }
+                    else
+                    {
+                        Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
+                            toolkits.ToMultiLineText(toolkit =>
+                                $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
+                    }
                 }
                 else
                 {
@@ -454,29 +479,30 @@ namespace Automate.CLI.Infrastructure
 
                 var draftId = runtime.CurrentDraftId;
                 var draftName = runtime.CurrentDraftName;
-                Output(OutputMessages.CommandLine_Output_DraftConfiguration,
-                    draftName, draftId, configuration);
+
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_DraftConfiguration,
+                        draftName, draftId, JsonNode.Parse(configuration.ToJson()));
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_DraftConfiguration,
+                        draftName, draftId, configuration.ToJson());
+                }
 
                 if (todo)
                 {
                     Output(OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
-                }
-
-                if (todo)
-                {
                     Output(OutputMessages.CommandLine_Output_PatternLaunchableAutomation, pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
-                        AuthoringHandlers.FormatPatternLaunchableAutomation(pattern));
-                }
-
-                if (todo)
-                {
+                        AuthoringHandlers.FormatPatternLaunchableAutomation(outputStructured, pattern));
                     if (validation.HasAny())
                     {
                         OutputWarning(OutputMessages.CommandLine_Output_DraftValidationFailed,
-                            draftName, draftId, FormatValidationErrors(validation));
+                            draftName, draftId, FormatValidationErrors(outputStructured, validation));
                     }
                     else
                     {
@@ -485,14 +511,27 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void ListDrafts()
+            internal static void ListDrafts(bool outputStructured)
             {
                 var drafts = runtime.ListCreatedDrafts();
                 if (drafts.Any())
                 {
-                    Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
-                        drafts.ToMultiLineText(draft =>
-                            $"{{\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\"}}"));
+                    if (outputStructured)
+                    {
+                        Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
+                            JsonNode.Parse(drafts.Select(draft => new
+                            {
+                                draft.Name,
+                                draft.Id,
+                                draft.Toolkit.Version
+                            }).ToList().ToJson()));
+                    }
+                    else
+                    {
+                        Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
+                            drafts.ToMultiLineText(draft =>
+                                $"\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\""));
+                    }
                 }
                 else
                 {
@@ -577,7 +616,7 @@ namespace Automate.CLI.Infrastructure
                     draftItem.Name, draftItem.Id);
             }
 
-            internal static void ValidateDraft(string on)
+            internal static void ValidateDraft(string on, bool outputStructured)
             {
                 var results = runtime.Validate(on);
 
@@ -586,7 +625,7 @@ namespace Automate.CLI.Infrastructure
                 if (results.HasAny())
                 {
                     OutputWarning(OutputMessages.CommandLine_Output_DraftValidationFailed,
-                        draftName, draftId, FormatValidationErrors(results));
+                        draftName, draftId, FormatValidationErrors(outputStructured, results));
                 }
                 else
                 {
@@ -595,7 +634,7 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static void UpgradeDraft(bool force)
+            internal static void UpgradeDraft(bool force, bool outputStructured)
             {
                 var upgrade = runtime.UpgradeDraft(force);
                 if (upgrade.IsSuccess)
@@ -604,30 +643,30 @@ namespace Automate.CLI.Infrastructure
                     {
                         OutputWarning(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
                             upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
                     }
                     else
                     {
                         Output(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded,
                             upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
                     }
                 }
                 else
                 {
                     OutputError(OutputMessages.CommandLine_Output_DraftUpgradeFailed,
                         upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName, upgrade.FromVersion,
-                        upgrade.ToVersion, FormatUpgradeLog(upgrade.Log));
+                        upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
                 }
             }
 
-            internal static void ExecuteLaunchPoint(string name, string on)
+            internal static void ExecuteLaunchPoint(string name, string on, bool outputStructured)
             {
                 var execution = runtime.ExecuteLaunchPoint(name, on);
                 if (execution.IsSuccess)
                 {
                     Output(OutputMessages.CommandLine_Output_CommandExecutionSucceeded,
-                        execution.CommandName, FormatExecutionLog(execution.Log));
+                        execution.CommandName, FormatExecutionLog(outputStructured, execution.Log));
                 }
                 else
                 {
@@ -635,18 +674,23 @@ namespace Automate.CLI.Infrastructure
                     {
                         OutputWarning(OutputMessages.CommandLine_Output_DraftValidationFailed,
                             runtime.CurrentDraftName, runtime.CurrentDraftId,
-                            FormatValidationErrors(execution.ValidationErrors));
+                            FormatValidationErrors(outputStructured, execution.ValidationErrors));
                     }
                     else
                     {
                         OutputWarning(OutputMessages.CommandLine_Output_CommandExecutionFailed,
-                            execution.CommandName, FormatExecutionLog(execution.Log));
+                            execution.CommandName, FormatExecutionLog(outputStructured, execution.Log));
                     }
                 }
             }
 
-            private static string FormatValidationErrors(ValidationResults results)
+            private static object FormatValidationErrors(bool outputStructured, ValidationResults results)
             {
+                if (outputStructured)
+                {
+                    return JsonNode.Parse(results.ToJson());
+                }
+
                 var builder = new StringBuilder();
                 var counter = 1;
                 results.Results.ToList()
@@ -655,11 +699,15 @@ namespace Automate.CLI.Infrastructure
                 return builder.ToString();
             }
 
-            private static string FormatExecutionLog(IReadOnlyList<string> items)
+            private static object FormatExecutionLog(bool outputStructured, IReadOnlyList<string> items)
             {
                 var builder = new StringBuilder();
                 if (items.HasAny())
                 {
+                    if (outputStructured)
+                    {
+                        return JsonNode.Parse(items.ToJson());
+                    }
                     items.ToList()
                         .ForEach(item => { builder.AppendLine($"* {item}"); });
                 }
@@ -671,15 +719,26 @@ namespace Automate.CLI.Infrastructure
                 return builder.ToString();
             }
 
-            private static string FormatUpgradeLog(IReadOnlyList<MigrationChange> items)
+            private static object FormatUpgradeLog(bool outputStructured, IReadOnlyList<MigrationChange> items)
             {
                 var builder = new StringBuilder();
-                items.ToList()
-                    .ForEach(item =>
+                if (items.HasAny())
+                {
+                    if (outputStructured)
                     {
-                        builder.AppendLine(
-                            $"* {item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
-                    });
+                        return JsonNode.Parse(items.ToJson());
+                    }
+                    items.ToList()
+                        .ForEach(item =>
+                        {
+                            builder.AppendLine(
+                                $"* {item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
+                        });
+                }
+                else
+                {
+                    builder.AppendLine($"* {OutputMessages.CommandLine_Output_UpgradedDraftSucceededNoOutput}");
+                }
 
                 return builder.ToString();
             }

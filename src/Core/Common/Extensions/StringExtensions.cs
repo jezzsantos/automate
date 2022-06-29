@@ -324,16 +324,24 @@ namespace Automate.Common.Extensions
                 }
                 else
                 {
-                    if (replacement is JsonNode node)
+                    if (replacement is JsonNode jsonNode)
                     {
-                        replacementString = node.ToJsonString(new JsonSerializerOptions
+                        replacementString = jsonNode.ToJsonString(new JsonSerializerOptions
                         {
                             WriteIndented = true
                         });
                     }
                     else
                     {
-                        replacementString = replacement?.ToString();
+                        if (replacement is string value)
+                        {
+                            replacementString = value;
+                        }
+                        else
+                        {
+                            replacementString = replacement.ToString();
+                        }
+
                         if (replacementString.HasNoValue())
                         {
                             replacementString = token;

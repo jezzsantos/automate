@@ -680,7 +680,7 @@ namespace Automate.CLI.Infrastructure
                     Message = errorMessage
                 };
                 var error = structuredError.ToJson();
-                context.Console.Error.WriteLine(error);
+                context.Console.WriteError(error);
             }
 
             void WriteUnstructuredError(InvocationContext context, string errorMessage)

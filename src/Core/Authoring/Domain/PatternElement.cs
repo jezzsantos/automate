@@ -474,10 +474,10 @@ namespace Automate.Authoring.Domain
             return codeTemplate;
         }
 
-        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string filePath)
+        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string targetPath)
         {
             codeTemplateName.GuardAgainstNull(nameof(codeTemplateName));
-            filePath.GuardAgainstNull(nameof(filePath));
+            targetPath.GuardAgainstNull(nameof(targetPath));
 
             var codeTemplate = CodeTemplates.FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
@@ -493,14 +493,14 @@ namespace Automate.Authoring.Domain
                     ExceptionMessages.PatternElement_AutomationByNameExists.Substitute(commandName));
             }
 
-            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isOneOff, filePath)
+            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isOneOff, targetPath)
                 .AsAutomation();
             AddAutomation(automation);
 
             return automation;
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath)
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string targetPath)
         {
             var automation =
                 FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
@@ -519,9 +519,9 @@ namespace Automate.Authoring.Domain
             {
                 command.ChangeOneOff(isOneOff.Value);
             }
-            if (filePath.HasValue())
+            if (targetPath.HasValue())
             {
-                command.ChangeFilePath(filePath);
+                command.ChangeFilePath(targetPath);
             }
 
             return command.AsAutomation();
@@ -802,6 +802,11 @@ namespace Automate.Authoring.Domain
         public virtual bool Accept(IPatternVisitor visitor)
         {
             var abort = false;
+
+            if (!visitor.VisitCodeTemplatesEnter(CodeTemplates))
+            {
+                return false;
+            }
             foreach (var template in CodeTemplates)
             {
                 if (!template.Accept(visitor))
@@ -810,12 +815,16 @@ namespace Automate.Authoring.Domain
                     break;
                 }
             }
-
+            visitor.VisitCodeTemplatesExit(CodeTemplates);
             if (abort)
             {
                 return false;
             }
 
+            if (!visitor.VisitAutomationsEnter(Automation))
+            {
+                return false;
+            }
             foreach (var automation in Automation)
             {
                 if (!automation.Accept(visitor))
@@ -824,12 +833,16 @@ namespace Automate.Authoring.Domain
                     break;
                 }
             }
-
+            visitor.VisitAutomationsExit(Automation);
             if (abort)
             {
                 return false;
             }
 
+            if (!visitor.VisitAttributesEnter(Attributes))
+            {
+                return false;
+            }
             foreach (var attribute in Attributes)
             {
                 if (!attribute.Accept(visitor))
@@ -838,12 +851,16 @@ namespace Automate.Authoring.Domain
                     break;
                 }
             }
-
+            visitor.VisitAttributesExit(Attributes);
             if (abort)
             {
                 return false;
             }
 
+            if (!visitor.VisitElementsEnter(Elements))
+            {
+                return false;
+            }
             foreach (var element in Elements)
             {
                 if (!element.Accept(visitor))
@@ -852,6 +869,7 @@ namespace Automate.Authoring.Domain
                     break;
                 }
             }
+            visitor.VisitElementsExit(Elements);
 
             return !abort;
         }

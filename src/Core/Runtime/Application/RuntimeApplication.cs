@@ -194,7 +194,7 @@ namespace Automate.Runtime.Application
             return target;
         }
 
-        public (string Configuration, PatternDefinition Pattern, ValidationResults Validation)
+        public (LazyDraftItemDictionary Configuration, PatternDefinition Pattern, ValidationResults Validation)
             GetDraftConfiguration(bool includeSchema, bool includeValidationResults)
         {
             var draft = EnsureCurrentDraftExists();

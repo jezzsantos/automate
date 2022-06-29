@@ -9,17 +9,17 @@ namespace Automate.Authoring.Domain
         private readonly Automation automation;
 
         public CodeTemplateCommand(string name, string codeTemplateId, bool isOneOff,
-            string filePath) : this(new Automation(name, AutomationType.CodeTemplateCommand,
+            string targetPath) : this(new Automation(name, AutomationType.CodeTemplateCommand,
             new Dictionary<string, object>
             {
                 { nameof(CodeTemplateId), codeTemplateId },
                 { nameof(IsOneOff), isOneOff },
-                { nameof(FilePath), filePath }
+                { nameof(FilePath), targetPath }
             }))
         {
             codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
-            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
-            filePath.GuardAgainstInvalid(Validations.IsRuntimeFilePath, nameof(filePath),
+            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
+            targetPath.GuardAgainstInvalid(Validations.IsRuntimeFilePath, nameof(targetPath),
                 ValidationMessages.Automation_InvalidFilePath);
         }
 
