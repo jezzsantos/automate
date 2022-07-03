@@ -19,7 +19,7 @@
         <Copyright>Copyright 2022</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
 
-        <VersionPrefix>0.2.5</VersionPrefix>
+        <VersionPrefix>0.2.6</VersionPrefix>
         <VersionSuffix>-preview</VersionSuffix>
         <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
         <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
