@@ -204,7 +204,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_InstalledDraftsListed.SubstituteTemplate(
-                        $"\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\""));
+                        $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
 
         [Fact]
@@ -535,11 +535,7 @@ namespace CLI.IntegrationTests
                         $"\t- Elements:{Environment.NewLine}" +
                         $"\t\t- AnElement1 (element){Environment.NewLine}" +
                         $"\t\t\t- LaunchPoints:{Environment.NewLine}" +
-                        $"\t\t\t\t- ALaunchPoint3 [{element1.Automation.Last().Id}] (CommandLaunchPoint){Environment.NewLine}" +
-                        $"\t\t\t- Elements:{Environment.NewLine}" +
-                        $"\t\t\t\t- ACollection1 (collection){Environment.NewLine}" +
-                        $"\t\t- ACollection2 (collection){Environment.NewLine}" +
-                        $"\t\t- AnElement3 (element){Environment.NewLine}"
+                        $"\t\t\t\t- ALaunchPoint3 [{element1.Automation.Last().Id}] (CommandLaunchPoint){Environment.NewLine}"
                         ,
                         this.setup.Pattern.Id));
             this.setup.Should()

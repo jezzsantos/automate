@@ -110,6 +110,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ListPatterns(bool outputStructured)
             {
+                var currentPattern = authoring.CurrentPatternId;
                 var patterns = authoring.ListPatterns();
                 if (patterns.Any())
                 {
@@ -120,14 +121,15 @@ namespace Automate.CLI.Infrastructure
                             {
                                 pattern.Name,
                                 Version = pattern.ToolkitVersion.Current,
-                                pattern.Id
+                                pattern.Id,
+                                IsCurrent = pattern.Id == currentPattern
                             }).ToList().ToJson()));
                     }
                     else
                     {
                         Output(OutputMessages.CommandLine_Output_EditablePatternsListed,
                             patterns.ToMultiLineText(pattern =>
-                                $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\""));
+                                $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\", \"IsCurrent\": \"{(pattern.Id == currentPattern).ToString().ToLowerInvariant()}\""));
                     }
                 }
                 else
@@ -513,6 +515,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ListDrafts(bool outputStructured)
             {
+                var currentDraft = runtime.CurrentDraftId;
                 var drafts = runtime.ListCreatedDrafts();
                 if (drafts.Any())
                 {
@@ -522,15 +525,16 @@ namespace Automate.CLI.Infrastructure
                             JsonNode.Parse(drafts.Select(draft => new
                             {
                                 draft.Name,
+                                draft.Toolkit.Version,
                                 draft.Id,
-                                draft.Toolkit.Version
+                                IsCurrent = draft.Id == currentDraft
                             }).ToList().ToJson()));
                     }
                     else
                     {
                         Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
                             drafts.ToMultiLineText(draft =>
-                                $"\"Name\": \"{draft.Name}\", \"ID\": \"{draft.Id}\", \"Version\": \"{draft.Toolkit.Version}\""));
+                                $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"{(draft.Id == currentDraft).ToString().ToLowerInvariant()}\""));
                     }
                 }
                 else

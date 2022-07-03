@@ -98,17 +98,18 @@ namespace Automate.CLI.Infrastructure
         {
             if (this.format == OutputFormat.Json)
             {
-                if ((this.options == VisitorConfigurationOptions.OnlyLaunchPoints && elements.HasAny())
-                    || this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                if ((this.options is VisitorConfigurationOptions.OnlyLaunchPoints &&
+                     elements.HasAnyDescendantLaunchPoints())
+                    || this.options is not VisitorConfigurationOptions.OnlyLaunchPoints)
                 {
                     PrintInline("\"Elements\":[");
                 }
             }
             else if (this.format == OutputFormat.Text)
             {
-                if (this.options is VisitorConfigurationOptions.Detailed
-                        or VisitorConfigurationOptions.OnlyLaunchPoints &&
-                    elements.HasAny())
+                if ((this.options is VisitorConfigurationOptions.Detailed && elements.HasAny())
+                    || (this.options is VisitorConfigurationOptions.OnlyLaunchPoints &&
+                        elements.HasAnyDescendantLaunchPoints()))
                 {
                     PrintIndented("- Elements:");
                 }
@@ -121,8 +122,9 @@ namespace Automate.CLI.Infrastructure
         {
             if (this.format == OutputFormat.Json)
             {
-                if ((this.options == VisitorConfigurationOptions.OnlyLaunchPoints && elements.HasAny())
-                    || this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
+                if ((this.options is VisitorConfigurationOptions.OnlyLaunchPoints &&
+                     elements.HasAnyDescendantLaunchPoints())
+                    || this.options is not VisitorConfigurationOptions.OnlyLaunchPoints)
                 {
                     PrintInline("],");
                 }
@@ -132,6 +134,12 @@ namespace Automate.CLI.Infrastructure
 
         public bool VisitElementEnter(Element element)
         {
+            if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints
+                && !element.HasAnyDescendantLaunchPoints())
+            {
+                return true;
+            }
+            
             if (this.format == OutputFormat.Json)
             {
                 PrintInline("{");
@@ -175,6 +183,12 @@ namespace Automate.CLI.Infrastructure
 
         public bool VisitElementExit(Element element)
         {
+            if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints
+                && !element.HasAnyDescendantLaunchPoints())
+            {
+                return true;
+            }
+            
             if (this.format == OutputFormat.Text)
             {
                 if (this.options is VisitorConfigurationOptions.Detailed
@@ -261,7 +275,7 @@ namespace Automate.CLI.Infrastructure
         {
             if (this.format == OutputFormat.Json)
             {
-                if ((this.options != VisitorConfigurationOptions.OnlyLaunchPoints && automation.HasAny())
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints
                     || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
                         automation.Safe().Any(auto => auto.IsLaunching())))
                 {
@@ -299,7 +313,7 @@ namespace Automate.CLI.Infrastructure
         {
             if (this.format == OutputFormat.Json)
             {
-                if ((this.options != VisitorConfigurationOptions.OnlyLaunchPoints && automation.HasAny())
+                if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints
                     || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
                         automation.Safe().Any(auto => auto.IsLaunching())))
                 {
@@ -552,6 +566,25 @@ namespace Automate.CLI.Infrastructure
             }
 
             return JsonEncodedText.Encode(value).ToString();
+        }
+    }
+
+    internal static class VisitorExtensions
+    {
+        internal static bool HasAnyDescendantLaunchPoints(this IReadOnlyList<Element> elements)
+        {
+            return elements.Any(element => element.HasAnyDescendantLaunchPoints());
+        }
+
+        internal static bool HasAnyDescendantLaunchPoints(this Element element)
+        {
+            var isLaunching = element.Automation.Any(auto => auto.IsLaunching);
+            if (isLaunching)
+            {
+                return true;
+            }
+
+            return element.Elements.HasAnyDescendantLaunchPoints();
         }
     }
 }

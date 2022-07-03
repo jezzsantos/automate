@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
+using Automate.Common.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -22,15 +23,18 @@ namespace CLI.UnitTests.Infrastructure
             pattern.AddAttribute("anattributename1", null, true, "adefaultvalue1");
             pattern.AddAttribute("anattributename2", null, false, "achoice2",
                 new List<string> { "achoice1", "achoice2", "achoice3" });
-            var element = pattern.AddElement("anelementname1", ElementCardinality.One, true, "adisplayname1",
+            var element1 = pattern.AddElement("anelementname1", ElementCardinality.One, true, "adisplayname1",
                 "adescription1");
-            element.AddCodeTemplate("acodetemplate2", "afilepath2", "anextension2");
+            element1.AddCodeTemplate("acodetemplate2", "afilepath2", "anextension2");
             var command3 =
-                element.AddCodeTemplateCommand("acodetemplatecommand2", "acodetemplate2", true, "atargetpath2");
-            element.AddCommandLaunchPoint("acommandlaunchpoint2", new List<string> { command3.Id }, element);
+                element1.AddCodeTemplateCommand("acodetemplatecommand2", "acodetemplate2", true, "atargetpath2");
+            element1.AddCommandLaunchPoint("acommandlaunchpoint2", new List<string> { command3.Id }, element1);
             var collection = pattern.AddElement("acollectionname1", ElementCardinality.ZeroOrMany, true,
                 "adisplayname2", "adescription2");
             collection.AddCodeTemplate("acodetemplate3", "afilepath3", "anextension3");
+            var element2 = element1.AddElement("anelementname2", ElementCardinality.One, true, "adisplayname2",
+                "adescription2");
+            element2.AddAttribute("anattributename3", null, true, "adefaultvalue3");
             var command4 =
                 collection.AddCodeTemplateCommand("acodetemplatecommand3", "acodetemplate3", true, "atargetpath3");
             collection.AddCommandLaunchPoint("acommandlaunchpoint3", new List<string> { command4.Id }, collection);
@@ -59,6 +63,8 @@ namespace CLI.UnitTests.Infrastructure
                     $"\t- anattributename1 (attribute) (string, required, default: adefaultvalue1){Environment.NewLine}" +
                     $"\t- anattributename2 (attribute) (string, oneof: achoice1;achoice2;achoice3, default: achoice2){Environment.NewLine}" +
                     $"\t- anelementname1 (element) (attached with 1 code templates){Environment.NewLine}" +
+                    $"\t\t- anelementname2 (element){Environment.NewLine}" +
+                    $"\t\t\t- anattributename3 (attribute) (string, required, default: adefaultvalue3){Environment.NewLine}" +
                     $"\t- acollectionname1 (collection) (attached with 1 code templates){Environment.NewLine}"
                 );
             }
@@ -94,7 +100,8 @@ namespace CLI.UnitTests.Infrastructure
                 var launchPoint2 = this.pattern.Elements[0].Automation[1];
                 var launchPoint3 = this.pattern.Elements[1].Automation[1];
                 var element1 = this.pattern.Elements[0];
-                var element2 = this.pattern.Elements[1];
+                var collection1 = this.pattern.Elements[1];
+                var element2 = this.pattern.Elements[0].Elements.First();
                 result.Should().Be($"- apatternname [{this.pattern.Id}] (root element){Environment.NewLine}" +
                                    $"\t- CodeTemplates:{Environment.NewLine}" +
                                    $"\t\t- acodetemplate1 [{codeTemplate1.Id}] (original: afilepath1){Environment.NewLine}" +
@@ -112,7 +119,11 @@ namespace CLI.UnitTests.Infrastructure
                                    $"\t\t\t- Automation:{Environment.NewLine}" +
                                    $"\t\t\t\t- acodetemplatecommand2 [{codeTemplateCommand2.Id}] (CodeTemplateCommand) (template: {codeTemplate2.Id}, onceonly, path: atargetpath2){Environment.NewLine}" +
                                    $"\t\t\t\t- acommandlaunchpoint2 [{launchPoint2.Id}] (CommandLaunchPoint) (ids: {codeTemplateCommand2.Id}){Environment.NewLine}" +
-                                   $"\t\t- acollectionname1 [{element2.Id}] (collection){Environment.NewLine}" +
+                                   $"\t\t\t- Elements:{Environment.NewLine}" +
+                                   $"\t\t\t\t- anelementname2 [{element2.Id}] (element){Environment.NewLine}" +
+                                   $"\t\t\t\t\t- Attributes:{Environment.NewLine}" +
+                                   $"\t\t\t\t\t\t- anattributename3 (string, required, default: adefaultvalue3){Environment.NewLine}" +
+                                   $"\t\t- acollectionname1 [{collection1.Id}] (collection){Environment.NewLine}" +
                                    $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
                                    $"\t\t\t\t- acodetemplate3 [{codeTemplate3.Id}] (original: afilepath3){Environment.NewLine}" +
                                    $"\t\t\t- Automation:{Environment.NewLine}" +
@@ -191,8 +202,10 @@ namespace CLI.UnitTests.Infrastructure
                 var launchPoint3 = this.pattern.Elements[1].Automation[1];
                 var attribute1 = this.pattern.Attributes.First();
                 var attribute2 = this.pattern.Attributes[1];
+                var attribute3 = this.pattern.Elements[0].Elements[0].Attributes[0];
                 var element1 = this.pattern.Elements[0];
-                var element2 = this.pattern.Elements[1];
+                var collection1 = this.pattern.Elements[1];
+                var element2 = element1.Elements.Single();
                 result.As<JsonNode>().ToJsonString().Should()
                     .Be("{" +
                         $"\"Id\":\"{this.pattern.Id}\",\"Name\":\"{this.pattern.Name}\"," +
@@ -217,12 +230,19 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{codeTemplateCommand2.Id}\",\"Name\":\"acodetemplatecommand2\",\"Type\":\"CodeTemplateCommand\",\"TemplateId\":\"{codeTemplate2.Id}\",\"IsOneOff\":true,\"TargetPath\":\"atargetpath2\"}}," +
                         $"{{\"Id\":\"{launchPoint2.Id}\",\"Name\":\"acommandlaunchpoint2\",\"Type\":\"CommandLaunchPoint\",\"CommandIds\":[\"{codeTemplateCommand2.Id}\"]}}" +
                         "]," +
-                        "\"Attributes\":[" +
-                        "]," +
+                        "\"Attributes\":[]," +
                         "\"Elements\":[" +
+                        $"{{\"Id\":\"{element2.Id}\",\"Name\":\"{element2.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
+                        "\"CodeTemplates\":[]," +
+                        "\"Automation\":[]," +
+                        "\"Attributes\":[" +
+                        $"{{\"Id\":\"{attribute3.Id}\",\"Name\":\"anattributename3\",\"DataType\":\"string\",\"IsRequired\":true,\"Choices\":[],\"DefaultValue\":\"adefaultvalue3\"}}" +
+                        "]," +
+                        "\"Elements\":[]" +
+                        "}" +
                         "]" +
                         "}," +
-                        $"{{\"Id\":\"{element2.Id}\",\"Name\":\"{element2.Name}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
+                        $"{{\"Id\":\"{collection1.Id}\",\"Name\":\"{collection1.Name}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate3.Id}\",\"Name\":\"acodetemplate3\",\"OriginalFilePath\":\"afilepath3\",\"OriginalFileExtension\":\"anextension3\"}}" +
                         "]," +
@@ -230,10 +250,8 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{codeTemplateCommand3.Id}\",\"Name\":\"acodetemplatecommand3\",\"Type\":\"CodeTemplateCommand\",\"TemplateId\":\"{codeTemplate3.Id}\",\"IsOneOff\":true,\"TargetPath\":\"atargetpath3\"}}," +
                         $"{{\"Id\":\"{launchPoint3.Id}\",\"Name\":\"acommandlaunchpoint3\",\"Type\":\"CommandLaunchPoint\",\"CommandIds\":[\"{codeTemplateCommand3.Id}\"]}}" +
                         "]," +
-                        "\"Attributes\":[" +
-                        "]," +
-                        "\"Elements\":[" +
-                        "]" +
+                        "\"Attributes\":[]," +
+                        "\"Elements\":[]" +
                         "}" +
                         "]" +
                         "}");
@@ -285,6 +303,50 @@ namespace CLI.UnitTests.Infrastructure
                         "]" +
                         "}");
             }
+        }
+
+        [Trait("Category", "Unit")]
+        public class VisitorExtensionsSpec
+        {
+            [Fact]
+            public void WhenHasAnyDescendantLaunchPointsAndNone_ThenReturnsFalse()
+            {
+                var result = new List<Element>()
+                    .HasAnyDescendantLaunchPoints();
+
+                result.Should().BeFalse();
+            }
+#if TESTINGONLY
+            [Fact]
+            public void WhenHasAnyDescendantLaunchPointsAndTopLevel_ThenReturnsTrue()
+            {
+                var element = new Element("anelementname1");
+                element.AddAutomation(new Automation("alaunchpoint1", AutomationType.TestingOnlyLaunching,
+                    new Dictionary<string, object>()));
+
+                var result = new List<Element> { element }
+                    .HasAnyDescendantLaunchPoints();
+
+                result.Should().BeTrue();
+            }
+
+            [Fact]
+            public void WhenHasAnyDescendantLaunchPointsAndNested_ThenReturnsTrue()
+            {
+                var element1 = new Element("anelementname1");
+                var element2 = new Element("anelementname2");
+                var element3 = new Element("anelementname3");
+                element3.AddAutomation(new Automation("alaunchpoint1", AutomationType.TestingOnlyLaunching,
+                    new Dictionary<string, object>()));
+                element1.AddElement(element2);
+                element2.AddElement(element3);
+
+                var result = new List<Element> { element1 }
+                    .HasAnyDescendantLaunchPoints();
+
+                result.Should().BeTrue();
+            }
+#endif
         }
     }
 }

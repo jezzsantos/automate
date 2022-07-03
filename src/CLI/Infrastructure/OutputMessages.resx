@@ -42,7 +42,8 @@
         <value>The Pattern: '{Name}' was updated</value>
     </data>
     <data name="CommandLine_Output_NoEditablePatterns" xml:space="preserve">
-        <value>There are no editable Patterns yet</value>
+        <value>There are no editable Patterns yet. Use this command to create one:
+`automate create pattern &lt;PatternName&gt;`</value>
     </data>
     <data name="CommandLine_Output_EditablePatternsListed" xml:space="preserve">
         <value>Editable patterns:

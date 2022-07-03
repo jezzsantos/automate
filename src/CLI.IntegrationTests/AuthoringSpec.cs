@@ -219,8 +219,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
-                        $"\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\"{Environment.NewLine}" +
-                        $"\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\""));
+                        $"\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\", \"IsCurrent\": \"true\"{Environment.NewLine}" +
+                        $"\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\", \"IsCurrent\": \"false\""));
         }
 
         [Fact]
