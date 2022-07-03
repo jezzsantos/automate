@@ -54,8 +54,6 @@ namespace Automate.CLI.Infrastructure
             var outputMessages = new List<OutputMessage>();
             var contextualMessages = new List<ContextualMessage>();
             HandlerBase.Initialise(outputMessages);
-            HandlerBase.Initialise(outputMessages);
-            HandlerBase.Initialise(outputMessages);
 
             var createCommands = new Command(CreateCommandName, "Creating new patterns")
             {

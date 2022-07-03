@@ -526,7 +526,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is defined as:
+        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_PatternConfiguration {
@@ -545,7 +545,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) has these launch points available:
+        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) has these launch points available:
         ///{LaunchPoints}.
         /// </summary>
         internal static string CommandLine_Output_PatternLaunchableAutomation {
@@ -640,7 +640,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit pattern &apos;{0}&apos; (ID: &apos;{1}, v{2}) is defined as:
+        ///   Looks up a localized string similar to Toolkit pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_ToolkitConfiguration {
