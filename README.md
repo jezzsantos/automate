@@ -7,7 +7,7 @@ __![Presence](https://dcbadge.vercel.app/api/shield/984584859009814608?style=pla
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
       ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
 
-![The Basic Idea](https://github.com/jezzsantos/automate/blob/main/docs/Images/BasicConcept.png)
+![The Basic Idea](https://raw.githubusercontent.com/jezzsantos/automate/main/docs/Images/BasicConcept.png)
 
 **Question to a Developer:**
 
