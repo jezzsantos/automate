@@ -24,13 +24,13 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="JsonFileRepository_PatternNotFound" xml:space="preserve">
+    <data name="LocalMachineFileRepository_PatternNotFound" xml:space="preserve">
         <value>The pattern definition could not be found for: '{0}'</value>
     </data>
-    <data name="JsonFileRepository_ToolkitNotFound" xml:space="preserve">
+    <data name="LocalMachineFileRepository_ToolkitNotFound" xml:space="preserve">
         <value>The toolkit could not be found for: '{0}'</value>
     </data>
-    <data name="JsonFileRepository_DraftNotFound" xml:space="preserve">
+    <data name="LocalMachineFileRepository_DraftNotFound" xml:space="preserve">
         <value>The draft definition could not be found for: '{0}'</value>
     </data>
     <data name="SystemIoFile_SourceFileNotExist" xml:space="preserve">

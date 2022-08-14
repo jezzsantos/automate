@@ -232,8 +232,8 @@ namespace CLI.IntegrationTests
             var assemblyLocation = typeof(CommandLineApi).Assembly.Location;
             var solutionDirectory = GetSolutionDirectory(assemblyLocation, "src");
             var throwingMethodLineNumber = hasInnerException
-                ? 61
-                : 63;
+                ? 60
+                : 62;
             var throwingMethodLocation =
                 Path.GetFullPath(Path.Combine(solutionDirectory,
                     $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/CommandLineApiHandlers.cs"));

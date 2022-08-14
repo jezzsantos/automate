@@ -164,6 +164,10 @@
     <data name="RuntimeApplication_ConfigureDraft_NoChanges" xml:space="preserve">
         <value>Tried to configure draft ID: '{0}' without any changes to any elements or collections</value>
     </data>
+    <data name="RuntimeApplication_UpgradeDraftFailed" xml:space="preserve">
+        <value>Failed to upgrade Draft '{0}' (ID: '{1}') from toolkit '{2}' ({3} -> {4}):
+{5}</value>
+    </data>
     <data name="DraftDefinition_ItemExpressionNotFound" xml:space="preserve">
         <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
     </data>

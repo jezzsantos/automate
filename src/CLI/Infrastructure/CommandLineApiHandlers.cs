@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
 using Automate.Common.Domain;
@@ -641,26 +640,17 @@ namespace Automate.CLI.Infrastructure
             internal static void UpgradeDraft(bool force, bool outputStructured)
             {
                 var upgrade = runtime.UpgradeDraft(force);
-                if (upgrade.IsSuccess)
+                if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
                 {
-                    if (upgrade.Log.Any(entry => entry.Type == MigrationChangeType.Abort))
-                    {
-                        OutputWarning(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
-                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
-                    }
-                    else
-                    {
-                        Output(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded,
-                            upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
-                            upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
-                    }
+                    OutputWarning(OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
+                        upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
+                        upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
                 }
                 else
                 {
-                    OutputError(OutputMessages.CommandLine_Output_DraftUpgradeFailed,
-                        upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName, upgrade.FromVersion,
-                        upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
+                    Output(OutputMessages.CommandLine_Output_DraftUpgradeSucceeded,
+                        upgrade.Draft.Name, upgrade.Draft.Id, upgrade.Draft.PatternName,
+                        upgrade.FromVersion, upgrade.ToVersion, FormatUpgradeLog(outputStructured, upgrade.Log));
                 }
             }
 
@@ -695,56 +685,35 @@ namespace Automate.CLI.Infrastructure
                     return JsonNode.Parse(results.ToJson());
                 }
 
-                var builder = new StringBuilder();
                 var counter = 1;
-                results.Results.ToList()
-                    .ForEach(result => { builder.AppendLine($"{counter++}. {result.Context.Path} {result.Message}"); });
-
-                return builder.ToString();
+                return results.Results.ToMultiLineText(item => $"{counter++}. {item.Context.Path} {item.Message}");
             }
 
             private static object FormatExecutionLog(bool outputStructured, IReadOnlyList<string> items)
             {
-                var builder = new StringBuilder();
                 if (items.HasAny())
                 {
                     if (outputStructured)
                     {
                         return JsonNode.Parse(items.ToJson());
                     }
-                    items.ToList()
-                        .ForEach(item => { builder.AppendLine($"* {item}"); });
+                    return items.ToBulletList(item => item);
                 }
-                else
-                {
-                    builder.AppendLine($"* {OutputMessages.CommandLine_Output_ExecuteLaunchPointSucceededNoOutput}");
-                }
-
-                return builder.ToString();
+                return $"* {OutputMessages.CommandLine_Output_ExecuteLaunchPointSucceededNoOutput}";
             }
 
             private static object FormatUpgradeLog(bool outputStructured, IReadOnlyList<MigrationChange> items)
             {
-                var builder = new StringBuilder();
                 if (items.HasAny())
                 {
                     if (outputStructured)
                     {
                         return JsonNode.Parse(items.ToJson());
                     }
-                    items.ToList()
-                        .ForEach(item =>
-                        {
-                            builder.AppendLine(
-                                $"* {item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
-                        });
+                    return items.ToBulletList(item =>
+                        $"{item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
                 }
-                else
-                {
-                    builder.AppendLine($"* {OutputMessages.CommandLine_Output_UpgradedDraftSucceededNoOutput}");
-                }
-
-                return builder.ToString();
+                return $"* {OutputMessages.CommandLine_Output_UpgradedDraftSucceededNoOutput}";
             }
         }
     }

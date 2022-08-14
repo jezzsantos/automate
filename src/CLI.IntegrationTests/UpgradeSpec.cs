@@ -80,7 +80,7 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             const string newVersion = "1.0.0";
             this.setup.Should()
-                .DisplayError(OutputMessages.CommandLine_Output_DraftUpgradeFailed.SubstituteTemplate(draft.Name,
+                .DisplayError(ExceptionMessages.RuntimeApplication_UpgradeDraftFailed.SubstituteTemplate(draft.Name,
                     draft.Id, draft.PatternName, "0.1.0", newVersion,
                     $"* {MigrationChangeType.Abort}: " +
                     MigrationMessages.DraftDefinition_Upgrade_BreakingChangeForbidden.SubstituteTemplate(

@@ -222,10 +222,6 @@
         <value>Aborted upgrade of Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
-    <data name="CommandLine_Output_DraftUpgradeFailed" xml:space="preserve">
-        <value>Failed to upgrade Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
-{Log}</value>
-    </data>
     <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">
         <value>Toolkit pattern '{0}' (ID: '{1}', v{2}) is defined as:
 {Tree}</value>

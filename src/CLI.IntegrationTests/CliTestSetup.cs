@@ -12,6 +12,7 @@ using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ namespace CLI.IntegrationTests
     {
     }
 
+    [UsedImplicitly]
     public class CliTestSetup : IDisposable
     {
         private readonly IDependencyContainer container;
@@ -56,6 +58,8 @@ namespace CLI.IntegrationTests
         internal ToolkitDefinition Toolkit => this.repository.ListToolkits().FirstOrDefault();
 
         internal IPatternRepository PatternStore => this.repository;
+
+        public int ExitCode { get; private set; }
 
         public void ResetRepository()
         {
@@ -90,16 +94,19 @@ namespace CLI.IntegrationTests
                             {
                                 Output = new StandardOutput(string.Empty);
                                 Error = new StandardOutput(string.Empty);
-
+                                var exitCode = 0;
+                                
                                 try
                                 {
-                                    CommandLineApi.Execute(this.container, arguments.SplitToCommandLineArgs());
+                                    exitCode = CommandLineApi.Execute(this.container,
+                                        arguments.SplitToCommandLineArgs());
                                 }
                                 catch (Exception ex)
                                 {
                                     Console.Error.WriteLine(ex.ToString());
                                 }
 
+                                ExitCode = exitCode;
                                 Output = new StandardOutput(outputStream.ReadToEnd());
                                 Error = new StandardOutput(errorStream.ReadToEnd());
                             }

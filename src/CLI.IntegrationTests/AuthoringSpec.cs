@@ -45,7 +45,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.CreateCommandName} pattern APattern --displayedas ADisplayName --describedas ADescription");
 
-            this.setup.Should().DisplayError(OutputMessages.CommandLine_Output_Preamble_NoPatternSelected);
+            this.setup.Should().DisplayWarning(OutputMessages.CommandLine_Output_Preamble_NoPatternSelected);
             var pattern = this.setup.Pattern;
             pattern.Name.Should().Be("APattern");
             pattern.DisplayName.Should().Be("ADisplayName");
@@ -219,8 +219,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
-                        $"\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\", \"IsCurrent\": \"true\"{Environment.NewLine}" +
-                        $"\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\", \"IsCurrent\": \"false\""));
+                        $"\"Name\": \"{pattern1.Name}\", \"Version\": \"{pattern1.ToolkitVersion.Current}\", \"ID\": \"{pattern1.Id}\", \"IsCurrent\": \"false\"{Environment.NewLine}" +
+                        $"\"Name\": \"{pattern2.Name}\", \"Version\": \"{pattern2.ToolkitVersion.Current}\", \"ID\": \"{pattern2.Id}\", \"IsCurrent\": \"true\""));
         }
 
         [Fact]

@@ -345,16 +345,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to upgrade Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
-        ///{Log}.
-        /// </summary>
-        internal static string CommandLine_Output_DraftUpgradeFailed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_DraftUpgradeFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Successfully upgraded Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit &apos;{ToolkitName}&apos; ({OldVersion} -&gt; {NewVersion}):
         ///{Log}.
         /// </summary>

@@ -521,7 +521,7 @@ namespace Automate.CLI.Infrastructure
 
             var parser = new CommandLineBuilder(command)
                 .UseDefaults()
-                .UseExceptionHandler((ex, context) => { HandleException(context, ex); }, 1)
+                .UseExceptionHandler((ex, context) => { HandleException(context, ex); })
                 .UseHelp(context =>
                 {
                     context.HelpBuilder.CustomizeLayout(_ =>
@@ -587,8 +587,9 @@ namespace Automate.CLI.Infrastructure
 
             void HandleException(InvocationContext context, Exception ex)
             {
-                var isDebug = IsDebugging(context.ParseResult);
+                context.ExitCode = 1;
 
+                var isDebug = IsDebugging(context.ParseResult);
                 var message = ex.InnerException.Exists()
                     ? isDebug
                         ? ex.InnerException.ToString()

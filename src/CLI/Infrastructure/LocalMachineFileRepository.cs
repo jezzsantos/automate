@@ -77,7 +77,7 @@ namespace Automate.CLI.Infrastructure
             var filename = CreateFilenameForDraftById(id);
             if (!this.fileSystem.FileExists(filename))
             {
-                throw new AutomateException(ExceptionMessages.JsonFileRepository_DraftNotFound.Substitute(id));
+                throw new AutomateException(ExceptionMessages.LocalMachineFileRepository_DraftNotFound.Substitute(id));
             }
 
             return this.fileSystem.ReadAllText(filename)
@@ -94,6 +94,7 @@ namespace Automate.CLI.Infrastructure
             return this.fileSystem.GetSubDirectories(DraftLocation)
                 .Select(directory => directory.Name)
                 .Select(GetDraft)
+                .OrderBy(p => p.Name)
                 .ToList();
         }
 
@@ -125,7 +126,8 @@ namespace Automate.CLI.Infrastructure
             var filename = CreateFilenameForPatternById(id);
             if (!this.fileSystem.FileExists(filename))
             {
-                throw new AutomateException(ExceptionMessages.JsonFileRepository_PatternNotFound.Substitute(id));
+                throw new AutomateException(ExceptionMessages.LocalMachineFileRepository_PatternNotFound
+                    .Substitute(id));
             }
 
             return this.fileSystem.ReadAllText(filename)
@@ -142,6 +144,7 @@ namespace Automate.CLI.Infrastructure
             return this.fileSystem.GetSubDirectories(PatternLocation)
                 .Select(directory => directory.Name)
                 .Select(GetPattern)
+                .OrderBy(p => p.Name)
                 .ToList();
         }
 
@@ -236,6 +239,7 @@ namespace Automate.CLI.Infrastructure
             return this.fileSystem.GetSubDirectories(ToolkitLocation)
                 .Select(directory => directory.Name)
                 .Select(GetToolkit)
+                .OrderBy(p => p.PatternName)
                 .ToList();
         }
 
@@ -278,7 +282,8 @@ namespace Automate.CLI.Infrastructure
             var filename = CreateFilenameForImportedToolkitById(id);
             if (!this.fileSystem.FileExists(filename))
             {
-                throw new AutomateException(ExceptionMessages.JsonFileRepository_ToolkitNotFound.Substitute(id));
+                throw new AutomateException(ExceptionMessages.LocalMachineFileRepository_ToolkitNotFound
+                    .Substitute(id));
             }
 
             return this.fileSystem.ReadAllText(filename)

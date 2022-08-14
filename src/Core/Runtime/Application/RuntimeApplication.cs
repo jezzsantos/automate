@@ -248,6 +248,15 @@ namespace Automate.Runtime.Application
             var latestToolkit = this.toolkitStore.FindById(draft.Toolkit.Id);
 
             var result = draft.Upgrade(latestToolkit, force);
+            if (!result.IsSuccess)
+            {
+                throw new AutomateException(ExceptionMessages.RuntimeApplication_UpgradeDraftFailed.Substitute(
+                    result.Draft.Name, result.Draft.Id, result.Draft.PatternName, result.FromVersion,
+                    result.ToVersion,
+                    result.Log.ToBulletList(change =>
+                        $"{change.Type}: {change.MessageTemplate.SubstituteTemplate(change.Arguments.ToArray())}")));
+            }
+
             this.draftStore.Save(draft);
 
             return result;
