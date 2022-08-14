@@ -33,10 +33,10 @@
         <value>The Pattern: '{Name}' (v.{Version}) is now being edited</value>
     </data>
     <data name="CommandLine_Output_PatternSwitched" xml:space="preserve">
-        <value>The Pattern: '{Name}' (ID: '{PatternId}') is now the default</value>
+        <value>The Pattern: '{Name}' (v.{Version}) (ID: '{PatternId}') is now the default</value>
     </data>
     <data name="CommandLine_Output_PatternCreated" xml:space="preserve">
-        <value>The Pattern: '{Name}' was created with ID: {PatternId}</value>
+        <value>The Pattern: '{Name}' (v.{Version}) was created with ID: {PatternId}</value>
     </data>
     <data name="CommandLine_Output_PatternUpdated" xml:space="preserve">
         <value>The Pattern: '{Name}' was updated</value>

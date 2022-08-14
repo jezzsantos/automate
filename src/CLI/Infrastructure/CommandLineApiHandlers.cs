@@ -84,7 +84,8 @@ namespace Automate.CLI.Infrastructure
                 string describedAs)
             {
                 authoring.CreateNewPattern(name, displayedAs, describedAs);
-                Output(OutputMessages.CommandLine_Output_PatternCreated, name, authoring.CurrentPatternId);
+                Output(OutputMessages.CommandLine_Output_PatternCreated, authoring.CurrentPatternName,
+                    authoring.CurrentPatternVersion, authoring.CurrentPatternId);
             }
 
             internal static void UpdatePattern(string name, string displayedAs, string describedAs)
@@ -97,7 +98,7 @@ namespace Automate.CLI.Infrastructure
             {
                 authoring.SwitchCurrentPattern(id);
                 Output(OutputMessages.CommandLine_Output_PatternSwitched, authoring.CurrentPatternName,
-                    authoring.CurrentPatternId);
+                    authoring.CurrentPatternVersion, authoring.CurrentPatternId);
             }
 
             internal static void ViewPattern(bool all, bool outputStructured)

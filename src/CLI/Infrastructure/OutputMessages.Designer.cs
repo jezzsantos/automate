@@ -526,7 +526,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; was created with ID: {PatternId}.
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
             get {
@@ -545,7 +545,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;) is now the default.
+        ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) (ID: &apos;{PatternId}&apos;) is now the default.
         /// </summary>
         internal static string CommandLine_Output_PatternSwitched {
             get {
