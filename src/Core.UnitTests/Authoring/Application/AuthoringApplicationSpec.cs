@@ -102,12 +102,13 @@ namespace Core.UnitTests.Authoring.Application
         [Fact]
         public void WhenSwitchCurrentPattern_ThenCurrentIsChanged()
         {
-            this.application.CreateNewPattern("aname1", null, null);
+            var pattern1 = this.application.CreateNewPattern("aname1", null, null);
             this.application.CreateNewPattern("aname2", null, null);
 
-            this.application.SwitchCurrentPattern("aname1");
+            this.application.SwitchCurrentPattern(pattern1.Id);
 
             this.store.GetCurrent().Should().NotBeNull();
+            this.application.CurrentPatternId.Should().Be(pattern1.Id);
             this.application.CurrentPatternName.Should().Be("aname1");
         }
 

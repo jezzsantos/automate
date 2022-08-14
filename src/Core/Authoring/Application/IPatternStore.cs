@@ -11,7 +11,7 @@ namespace Automate.Authoring.Application
 
         PatternDefinition Create(PatternDefinition pattern);
 
-        PatternDefinition Find(string name);
+        PatternDefinition FindById(string id);
 
         PatternDefinition ChangeCurrent(string id);
 

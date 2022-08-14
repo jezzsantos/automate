@@ -70,7 +70,7 @@ namespace Automate.CLI.Infrastructure
             {
                 new Command("switch", "Switches to configuring another pattern")
                 {
-                    new Argument("Name", "The name of the existing pattern to edit")
+                    new Argument("Id", "The ID of the existing pattern to edit")
                 }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.SwitchPattern)),
                 new Command("update-pattern", "Updates the pattern")
                 {

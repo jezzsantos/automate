@@ -75,18 +75,18 @@ namespace Core.UnitTests.Authoring.Infrastructure
         }
 
         [Fact]
-        public void WhenFindAndNotExists_ThenThrows()
+        public void WhenFindByIdAndNotExists_ThenThrows()
         {
             this.store
-                .Invoking(x => x.Find("aname"))
+                .Invoking(x => x.FindById("anid"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute("aname",
+                    ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute("anid",
                         this.repository.PatternLocation));
         }
 
         [Fact]
-        public void WhenFindAndExists_ThenReturnsPattern()
+        public void WhenFindByIdAndExists_ThenReturnsPattern()
         {
             var pattern1 = new PatternDefinition("aname1");
             var pattern2 = new PatternDefinition("aname2");
@@ -95,9 +95,9 @@ namespace Core.UnitTests.Authoring.Infrastructure
             this.repository.NewPattern(pattern2);
             this.repository.NewPattern(pattern3);
 
-            var result = this.store.Find("aname1");
+            var result = this.store.FindById(pattern2.Id);
 
-            result.Id.Should().Be(pattern1.Id);
+            result.Id.Should().Be(pattern2.Id);
         }
 
         [Fact]

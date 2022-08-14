@@ -137,7 +137,7 @@
 '{2}'</value>
     </data>
     <data name="ToolkitStore_NotFoundAtLocationWithId" xml:space="preserve">
-        <value>A toolkit with id: '{0}' cannot be found in the toolkit store at location: '{1}'</value>
+        <value>A toolkit with ID: '{0}' cannot be found in the toolkit store at location: '{1}'</value>
     </data>
     <data name="RuntimeApplication_NoCurrentToolkit" xml:space="preserve">
         <value>There is no current toolkit yet. Install a new toolkit with `automate install toolkit "&lt;FilePath&gt;"`</value>
@@ -313,13 +313,13 @@ or 2. Obtain a downgraded version of this toolkit (from its author) built agains
         <value>{0} is a not a supported generic Dictionary with a string key</value>
     </data>
     <data name="PatternStore_NotFoundAtLocationWithId" xml:space="preserve">
-        <value>A pattern with id: '{0}' cannot be found in the pattern store at location: '{1}'</value>
+        <value>A pattern with ID: '{0}' cannot be found in the pattern store at location: '{1}'</value>
     </data>
     <data name="PatternStore_FoundNamed" xml:space="preserve">
         <value>A pattern with the same name: '{0}' already exists</value>
     </data>
     <data name="DraftStore_NotFoundAtLocationWithId" xml:space="preserve">
-        <value>A draft with id: '{0}' cannot be found in the draft store at location: '{1}'</value>
+        <value>A draft with ID: '{0}' cannot be found in the draft store at location: '{1}'</value>
     </data>
     <data name="PatternToolkitPackager_InvalidInstallerFile" xml:space="preserve">
         <value>The installer file at: '{0}', contains an invalid toolkit definition</value>

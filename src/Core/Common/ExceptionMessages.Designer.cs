@@ -429,7 +429,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A draft with id: &apos;{0}&apos; cannot be found in the draft store at location: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to A draft with ID: &apos;{0}&apos; cannot be found in the draft store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string DraftStore_NotFoundAtLocationWithId {
             get {
@@ -645,7 +645,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A pattern with id: &apos;{0}&apos; cannot be found in the pattern store at location: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to A pattern with ID: &apos;{0}&apos; cannot be found in the pattern store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string PatternStore_NotFoundAtLocationWithId {
             get {
@@ -937,7 +937,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A toolkit with id: &apos;{0}&apos; cannot be found in the toolkit store at location: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to A toolkit with ID: &apos;{0}&apos; cannot be found in the toolkit store at location: &apos;{1}&apos;.
         /// </summary>
         internal static string ToolkitStore_NotFoundAtLocationWithId {
             get {

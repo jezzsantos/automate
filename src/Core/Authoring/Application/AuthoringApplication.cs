@@ -51,12 +51,14 @@ namespace Automate.Authoring.Application
             return EnsureCurrentPatternExists();
         }
 
-        public void CreateNewPattern(string name, string displayName, string description)
+        public PatternDefinition CreateNewPattern(string name, string displayName, string description)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             var pattern = new PatternDefinition(name, displayName, description);
             this.store.Create(pattern);
+
+            return pattern;
         }
 
         public PatternDefinition UpdatePattern(string name, string displayName, string description)
@@ -72,11 +74,11 @@ namespace Automate.Authoring.Application
             return pattern;
         }
 
-        public void SwitchCurrentPattern(string name)
+        public void SwitchCurrentPattern(string id)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
+            id.GuardAgainstNullOrEmpty(nameof(id));
 
-            var current = this.store.Find(name);
+            var current = this.store.FindById(id);
             this.store.ChangeCurrent(current.Id);
         }
 

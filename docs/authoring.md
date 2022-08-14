@@ -18,9 +18,9 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 ## Switching patterns
 
-If you have multiple patterns going, you can switch between them using their name:
+If you have multiple patterns going, you can switch between them using their ID:
 
-`automate edit switch "<PATTERNNAME>"`
+`automate edit switch "<PATTERNID>"`
 
 You can view all the patterns in your codebase: `automate list patterns`
 

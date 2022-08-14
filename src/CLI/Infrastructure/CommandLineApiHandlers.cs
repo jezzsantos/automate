@@ -93,10 +93,11 @@ namespace Automate.CLI.Infrastructure
                 Output(OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
             }
 
-            internal static void SwitchPattern(string name)
+            internal static void SwitchPattern(string id)
             {
-                authoring.SwitchCurrentPattern(name);
-                Output(OutputMessages.CommandLine_Output_PatternSwitched, name, authoring.CurrentPatternId);
+                authoring.SwitchCurrentPattern(id);
+                Output(OutputMessages.CommandLine_Output_PatternSwitched, authoring.CurrentPatternName,
+                    authoring.CurrentPatternId);
             }
 
             internal static void ViewPattern(bool all, bool outputStructured)

@@ -4,6 +4,7 @@
     <attachedFolders>
       <Path>../../automate</Path>
       <Path>../.github</Path>
+      <Path>../docs</Path>
     </attachedFolders>
     <explicitIncludes />
     <explicitExcludes />

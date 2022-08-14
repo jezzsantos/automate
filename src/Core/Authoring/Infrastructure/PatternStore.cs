@@ -44,14 +44,14 @@ namespace Automate.Authoring.Infrastructure
                 : null;
         }
 
-        public PatternDefinition Find(string name)
+        public PatternDefinition FindById(string id)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-            var pattern = this.patternRepository.FindPatternByName(name);
+            id.GuardAgainstNullOrEmpty(nameof(id));
+            var pattern = this.patternRepository.FindPatternById(id);
             if (pattern.NotExists())
             {
                 throw new AutomateException(
-                    ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute(name,
+                    ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute(id,
                         this.patternRepository.PatternLocation));
             }
 

@@ -98,7 +98,7 @@ namespace CLI.IntegrationTests
         public void WhenSwitchWithNameAndExists_ThenUsesPattern()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} switch APattern");
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} switch {this.setup.Pattern.Id}");
 
             this.setup.Should().DisplayNoError();
             this.setup.LocalState.CurrentPattern.Should().Be(this.setup.Pattern.Id);
