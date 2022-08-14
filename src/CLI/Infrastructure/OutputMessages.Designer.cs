@@ -281,7 +281,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos;.
+        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos; (v.{Version}).
         /// </summary>
         internal static string CommandLine_Output_CreateDraftFromToolkit {
             get {
@@ -336,7 +336,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is now the default.
+        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos; (v.{Version}), is now the default.
         /// </summary>
         internal static string CommandLine_Output_DraftSwitched {
             get {
@@ -507,7 +507,8 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no installed Toolkits yet.
+        ///   Looks up a localized string similar to There are no installed Toolkits yet. Use this command to install one:
+        ///`automate install toolkit &lt;Location&gt;`.
         /// </summary>
         internal static string CommandLine_Output_NoInstalledToolkits {
             get {

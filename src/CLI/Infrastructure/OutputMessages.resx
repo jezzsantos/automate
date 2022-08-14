@@ -152,10 +152,11 @@
 `automate run toolkit &lt;PatternName&gt; --name "DraftName"`</value>
     </data>
     <data name="CommandLine_Output_CreateDraftFromToolkit" xml:space="preserve">
-        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{PatternName}'</value>
+        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{PatternName}' (v.{Version})</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
-        <value>There are no installed Toolkits yet</value>
+        <value>There are no installed Toolkits yet. Use this command to install one:
+`automate install toolkit &lt;Location&gt;`</value>
     </data>
     <data name="CommandLine_Output_InstalledToolkitsListed" xml:space="preserve">
         <value>Installed toolkits:
@@ -181,7 +182,7 @@
         <value>The Draft: '{Name}' (ID: '{DraftId}') is now being configured</value>
     </data>
     <data name="CommandLine_Output_DraftSwitched" xml:space="preserve">
-        <value>The Draft: '{Name}' (ID: '{DraftId}') is now the default</value>
+        <value>The Draft: '{Name}' (ID: '{DraftId}') from toolkit: '{PatternName}' (v.{Version}), is now the default</value>
     </data>
     <data name="CommandLine_Output_DraftConfigured" xml:space="preserve">
         <value>The Draft Item '{raftName}' (ID: '{DraftItemId}') was configured successfully</value>

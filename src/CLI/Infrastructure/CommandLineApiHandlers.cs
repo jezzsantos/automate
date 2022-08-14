@@ -473,7 +473,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var draft = runtime.CreateDraft(patternName, name);
                 Output(OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
-                    draft.Name, draft.Id, draft.PatternName);
+                    draft.Name, draft.Id, draft.PatternName, draft.Toolkit.Version);
             }
 
             internal static void ViewDraft(bool todo, bool outputStructured)
@@ -548,7 +548,8 @@ namespace Automate.CLI.Infrastructure
             {
                 runtime.SwitchCurrentDraft(draftId);
                 Output(OutputMessages.CommandLine_Output_DraftSwitched, runtime.CurrentDraftName,
-                    runtime.CurrentDraftId);
+                    runtime.CurrentDraftId, runtime.CurrentDraftToolkit.PatternName,
+                    runtime.CurrentDraftToolkit.Version);
             }
 
             internal static void ConfigureDraftAddTo(string expression, string[] andSet)

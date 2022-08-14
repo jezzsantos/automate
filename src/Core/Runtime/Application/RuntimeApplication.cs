@@ -47,6 +47,8 @@ namespace Automate.Runtime.Application
 
         public string CurrentDraftName => this.draftStore.GetCurrent()?.Name;
 
+        public ToolkitDefinition CurrentDraftToolkit => this.draftStore.GetCurrent()?.Toolkit;
+
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
             if (!this.fileResolver.ExistsAtPath(installerLocation))
@@ -71,7 +73,7 @@ namespace Automate.Runtime.Application
         public DraftDefinition CreateDraft(string toolkitName, string draftName)
         {
             toolkitName.GuardAgainstNullOrEmpty(nameof(toolkitName));
-            
+
             var toolkit = this.toolkitStore.FindByName(toolkitName);
             if (toolkit.NotExists())
             {
