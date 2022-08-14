@@ -10,10 +10,16 @@ namespace Automate.Authoring.Domain
     internal static class Validations
     {
         private const string NameIdentifierExpression = @"[a-zA-Z0-9_\.\-]+";
+        private const string DescriptiveNameExpression = @"[a-zA-Z0-9_\.\-]+";
 
         public static bool IsNameIdentifier(string value)
         {
             return Regex.IsMatch(value, $@"^{NameIdentifierExpression}$");
+        }
+
+        public static bool IsDescriptiveName(string value)
+        {
+            return Regex.IsMatch(value, $@"^{DescriptiveNameExpression}$");
         }
 
         public static bool IsIdentifiers(List<string> values)

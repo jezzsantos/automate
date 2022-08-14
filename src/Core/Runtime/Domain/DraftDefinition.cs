@@ -13,6 +13,11 @@ namespace Automate.Runtime.Domain
         public DraftDefinition(ToolkitDefinition toolkit, string name = null)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
+            if (name.HasValue())
+            {
+                name.GuardAgainstInvalid(Validations.IsDescriptiveName, nameof(name),
+                    ValidationMessages.InvalidNameIdentifier);
+            }
 
             Id = IdGenerator.Create();
             Name = name.HasValue()

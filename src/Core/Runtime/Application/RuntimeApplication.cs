@@ -70,6 +70,8 @@ namespace Automate.Runtime.Application
 
         public DraftDefinition CreateDraft(string toolkitName, string draftName)
         {
+            toolkitName.GuardAgainstNullOrEmpty(nameof(toolkitName));
+            
             var toolkit = this.toolkitStore.FindByName(toolkitName);
             if (toolkit.NotExists())
             {

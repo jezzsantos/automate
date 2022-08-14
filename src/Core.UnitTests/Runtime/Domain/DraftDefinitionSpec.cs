@@ -1,15 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Automate.Authoring.Domain;
 using Automate.Common.Domain;
+using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
 using FluentAssertions;
 using Xunit;
+using Attribute = Automate.Authoring.Domain.Attribute;
 
 namespace Core.UnitTests.Runtime.Domain
 {
     [Trait("Category", "Unit")]
     public class DraftDefinitionSpec
     {
+        [Fact]
+        public void WhenConstructWithNullName_ThenAssignsRandomName()
+        {
+            var result = new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")));
+
+            result.Name.Should().StartWith("apatternname");
+            result.Name.Should().MatchRegex("apatternname[\\d]{3}");
+        }
+
+        [Fact]
+        public void WhenConstructWithInvalidName_ThenThrows()
+        {
+            FluentActions.Invoking(() =>
+                    new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname")),
+                        "an invalid name"))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage(ValidationMessages.InvalidNameIdentifier.Substitute("an invalid name") + "*");
+        }
+
         [Fact]
         public void WhenConstructed_ThenInitialisesTopLevelElementsAndCollectionsOnly()
         {
