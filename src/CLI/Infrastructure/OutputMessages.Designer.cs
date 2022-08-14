@@ -281,6 +281,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Drafts:
+        ///{Drafts}.
+        /// </summary>
+        internal static string CommandLine_Output_ConfiguredDraftsListed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ConfiguredDraftsListed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos; (v.{Version}).
         /// </summary>
         internal static string CommandLine_Output_CreateDraftFromToolkit {
@@ -430,16 +440,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drafts:
-        ///{Drafts}.
-        /// </summary>
-        internal static string CommandLine_Output_InstalledDraftsListed {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_InstalledDraftsListed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command:
         ///`automate run toolkit &lt;PatternName&gt; --name &quot;DraftName&quot;`.
         /// </summary>
@@ -487,22 +487,22 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There are no configured Drafts yet. Use this command to create one:
+        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`.
+        /// </summary>
+        internal static string CommandLine_Output_NoConfiguredDrafts {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_NoConfiguredDrafts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no editable Patterns yet. Use this command to create one:
         ///`automate create pattern &lt;PatternName&gt;`.
         /// </summary>
         internal static string CommandLine_Output_NoEditablePatterns {
             get {
                 return ResourceManager.GetString("CommandLine_Output_NoEditablePatterns", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are no Drafts yet. Use this command to create one:
-        ///`automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`.
-        /// </summary>
-        internal static string CommandLine_Output_NoInstalledDrafts {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_NoInstalledDrafts", resourceCulture);
             }
         }
         

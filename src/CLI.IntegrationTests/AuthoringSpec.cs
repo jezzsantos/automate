@@ -23,6 +23,50 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenListAllAndNone_ThenDisplaysNone()
+        {
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoEditablePatterns);
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoInstalledToolkits);
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoConfiguredDrafts);
+        }
+
+        [Fact]
+        public void WhenListAllAndSome_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
+                        $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\", \"IsCurrent\": \"true\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
+                        $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
+                        $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
+        }
+        
+        [Fact]
         public void WhenCreateAndNoCommands_ThenDisplaysError()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName}");

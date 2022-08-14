@@ -456,6 +456,9 @@ namespace Automate.CLI.Infrastructure
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and drafts")
             {
+                new Command("all", "Lists all patterns, toolkits and drafts")
+                    .WithAlias("everything")
+                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ListEverything)),
                 new Command(PatternsSubCommandName, "Lists all patterns being edited")
                     .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ListPatterns)),
                 new Command(ToolkitsSubCommandName, "Lists all installed toolkits")

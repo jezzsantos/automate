@@ -80,6 +80,13 @@ namespace Automate.CLI.Infrastructure
         [UsedImplicitly]
         private class AuthoringHandlers : HandlerBase
         {
+            internal static void ListEverything(bool outputStructured)
+            {
+                ListPatterns(outputStructured);
+                RuntimeHandlers.ListToolkits(outputStructured);
+                RuntimeHandlers.ListDrafts(outputStructured);
+            }
+
             internal static void CreatePattern(string name, string displayedAs,
                 string describedAs)
             {
@@ -522,7 +529,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     if (outputStructured)
                     {
-                        Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
+                        Output(OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
                             JsonNode.Parse(drafts.Select(draft => new
                             {
                                 draft.Name,
@@ -533,14 +540,14 @@ namespace Automate.CLI.Infrastructure
                     }
                     else
                     {
-                        Output(OutputMessages.CommandLine_Output_InstalledDraftsListed,
+                        Output(OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
                             drafts.ToMultiLineText(draft =>
                                 $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"{(draft.Id == currentDraft).ToString().ToLowerInvariant()}\""));
                     }
                 }
                 else
                 {
-                    Output(OutputMessages.CommandLine_Output_NoInstalledDrafts);
+                    Output(OutputMessages.CommandLine_Output_NoConfiguredDrafts);
                 }
             }
 

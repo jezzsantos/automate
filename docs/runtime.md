@@ -27,7 +27,7 @@ The toolkit will be installed, and it will become the 'active' toolkit in use.
 
 ### Listing installed toolkits
 
-You can view all the installed toolkits in your codebase: `automate list toolkits`
+You can view all the installed toolkits in your codebase: `automate list toolkits` (or `automate list all`)
 
 > This command will list all the installed toolkits and their respective names and versions.
 
@@ -88,7 +88,7 @@ To create a draft from an installed toolkit: `automate run toolkit "<TOOLKITNAME
 
 Since you can have multiple drafts on the go at the same time (even from different toolkits) you will need a way to track them and which one is in use right now.
 
-To list all the drafts you have right now: `automate list drafts`
+To list all the drafts you have right now: `automate list drafts` (or `automate list all`)
 
 > This command will produce a list of drafts, and their names and IDs.
 

@@ -162,11 +162,11 @@
         <value>Installed toolkits:
 {Toolkits}</value>
     </data>
-    <data name="CommandLine_Output_NoInstalledDrafts" xml:space="preserve">
-        <value>There are no Drafts yet. Use this command to create one:
+    <data name="CommandLine_Output_NoConfiguredDrafts" xml:space="preserve">
+        <value>There are no configured Drafts yet. Use this command to create one:
 `automate run toolkit &lt;PatternName&gt; --name &lt;DraftName&gt;`</value>
     </data>
-    <data name="CommandLine_Output_InstalledDraftsListed" xml:space="preserve">
+    <data name="CommandLine_Output_ConfiguredDraftsListed" xml:space="preserve">
         <value>Drafts:
 {Drafts}</value>
     </data>

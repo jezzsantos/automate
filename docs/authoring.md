@@ -22,7 +22,7 @@ If you have multiple patterns going, you can switch between them using their ID:
 
 `automate edit switch "<PATTERNID>"`
 
-You can view all the patterns in your codebase: `automate list patterns`
+You can view all the patterns in your codebase: `automate list patterns` (or `automate list all`)
 
 > Which will list all the patterns and their respective names and versions.
 

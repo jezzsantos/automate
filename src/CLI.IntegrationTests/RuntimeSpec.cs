@@ -188,7 +188,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_NoInstalledDrafts);
+                    OutputMessages.CommandLine_Output_NoConfiguredDrafts);
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_InstalledDraftsListed.SubstituteTemplate(
+                    OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
                         $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
 
