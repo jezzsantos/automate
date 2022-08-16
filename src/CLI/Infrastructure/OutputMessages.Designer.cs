@@ -291,7 +291,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos; (v.{Version}).
+        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{ToolkitName}&apos; (ID: &apos;{ToolkitId}&apos;, v.{Version}).
         /// </summary>
         internal static string CommandLine_Output_CreateDraftFromToolkit {
             get {
@@ -310,7 +310,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{raftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
         /// </summary>
         internal static string CommandLine_Output_DraftConfigured {
             get {
@@ -346,7 +346,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{PatternName}&apos; (v.{Version}), is now the default.
+        ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{ToolkitName}&apos; (ID: &apos;{ToolkitId}&apos;, v.{Version}), is now the default.
         /// </summary>
         internal static string CommandLine_Output_DraftSwitched {
             get {

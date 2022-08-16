@@ -156,7 +156,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_CreateDraftFromToolkit.SubstituteTemplate(draft.Name,
-                        draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Version));
+                        draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version));
         }
 
         [Fact]
@@ -175,7 +175,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftSwitched.SubstituteTemplate(draft1.Name, draft1.Id,
-                        draft1.Toolkit.PatternName, draft1.Toolkit.Version));
+                        draft1.Toolkit.PatternName, draft1.Toolkit.Id, draft1.Toolkit.Version));
         }
 
         [Fact]

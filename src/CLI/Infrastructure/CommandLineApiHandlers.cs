@@ -127,9 +127,9 @@ namespace Automate.CLI.Infrastructure
                         Output(OutputMessages.CommandLine_Output_EditablePatternsListed,
                             JsonNode.Parse(patterns.Select(pattern => new
                             {
+                                pattern.Id,
                                 pattern.Name,
                                 Version = pattern.ToolkitVersion.Current,
-                                pattern.Id,
                                 IsCurrent = pattern.Id == currentPattern
                             }).ToList().ToJson()));
                     }
@@ -458,9 +458,9 @@ namespace Automate.CLI.Infrastructure
                         Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
                             JsonNode.Parse(toolkits.Select(toolkit => new
                             {
+                                toolkit.Id,
                                 toolkit.PatternName,
                                 toolkit.Version,
-                                toolkit.Id
                             }).ToList().ToJson()));
                     }
                     else
@@ -480,7 +480,7 @@ namespace Automate.CLI.Infrastructure
             {
                 var draft = runtime.CreateDraft(patternName, name);
                 Output(OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
-                    draft.Name, draft.Id, draft.PatternName, draft.Toolkit.Version);
+                    draft.Name, draft.Id, draft.PatternName, draft.Toolkit.Id, draft.Toolkit.Version);
             }
 
             internal static void ViewDraft(bool todo, bool outputStructured)
@@ -532,9 +532,10 @@ namespace Automate.CLI.Infrastructure
                         Output(OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
                             JsonNode.Parse(drafts.Select(draft => new
                             {
-                                draft.Name,
-                                draft.Toolkit.Version,
                                 draft.Id,
+                                draft.Name,
+                                ToolkitId = draft.Toolkit.Id,
+                                draft.Toolkit.Version,
                                 IsCurrent = draft.Id == currentDraft
                             }).ToList().ToJson()));
                     }
@@ -556,7 +557,7 @@ namespace Automate.CLI.Infrastructure
                 runtime.SwitchCurrentDraft(draftId);
                 Output(OutputMessages.CommandLine_Output_DraftSwitched, runtime.CurrentDraftName,
                     runtime.CurrentDraftId, runtime.CurrentDraftToolkit.PatternName,
-                    runtime.CurrentDraftToolkit.Version);
+                    runtime.CurrentDraftToolkit.Id, runtime.CurrentDraftToolkit.Version);
             }
 
             internal static void ConfigureDraftAddTo(string expression, string[] andSet)
