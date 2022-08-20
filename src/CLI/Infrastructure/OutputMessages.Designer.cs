@@ -133,7 +133,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) target path resolves to:
+        ///   Looks up a localized string similar to Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) target path resolves to:
         ///{Output}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandTested {
@@ -143,7 +143,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data from testing Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) has been exported to: &apos;{Exported}&apos;.
+        ///   Looks up a localized string similar to Data from testing Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) has been exported to: &apos;{Exported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandTestExported {
             get {
@@ -152,7 +152,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data for testing Code Template Command &apos;{Name}&apos; (ID: &apos;{Id}&apos;) was imported from: &apos;{Imported}&apos;.
+        ///   Looks up a localized string similar to Data for testing Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) was imported from: &apos;{Imported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandTestImported {
             get {
@@ -207,7 +207,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data from testing Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) has been exported to: &apos;{Exported}&apos;.
+        ///   Looks up a localized string similar to Data from testing Code Template &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) has been exported to: &apos;{Exported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestExported {
             get {
@@ -216,7 +216,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data for testing Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) was imported from: &apos;{Imported}&apos;.
+        ///   Looks up a localized string similar to Data for testing Code Template &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) was imported from: &apos;{Imported}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTestImported {
             get {
@@ -517,7 +517,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) is defined as:
+        ///   Looks up a localized string similar to Pattern &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;, v{Version}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_PatternConfiguration {
@@ -536,7 +536,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) has these launch points available:
+        ///   Looks up a localized string similar to Pattern &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;, v{Version}) has these launch points available:
         ///{LaunchPoints}.
         /// </summary>
         internal static string CommandLine_Output_PatternLaunchableAutomation {
@@ -631,7 +631,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toolkit pattern &apos;{0}&apos; (ID: &apos;{1}&apos;, v{2}) is defined as:
+        ///   Looks up a localized string similar to Toolkit pattern &apos;{Name}&apos; (ID: &apos;{ToolkitId}&apos;, v{Version}) is defined as:
         ///{Tree}.
         /// </summary>
         internal static string CommandLine_Output_ToolkitConfiguration {

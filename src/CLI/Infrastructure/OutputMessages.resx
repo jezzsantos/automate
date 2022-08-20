@@ -63,30 +63,30 @@
 {Output}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestImported" xml:space="preserve">
-        <value>Data for testing Code Template '{Name}' (ID: '{Id}') was imported from: '{Imported}'</value>
+        <value>Data for testing Code Template '{Name}' (ID: '{TemplateId}') was imported from: '{Imported}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestExported" xml:space="preserve">
-        <value>Data from testing Code Template '{Name}' (ID: '{Id}') has been exported to: '{Exported}'</value>
+        <value>Data from testing Code Template '{Name}' (ID: '{TemplateId}') has been exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandTested" xml:space="preserve">
-        <value>Code Template Command '{Name}' (ID: '{Id}') target path resolves to:
+        <value>Code Template Command '{Name}' (ID: '{CommandId}') target path resolves to:
 {Output}</value>
     </data>
     <data name="CommandLine_Output_TextTemplatingExpressionReference" xml:space="preserve">
         <value>Templating Expression Language Reference: https://github.com/scriban/scriban/tree/master/doc</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandTestImported" xml:space="preserve">
-        <value>Data for testing Code Template Command '{Name}' (ID: '{Id}') was imported from: '{Imported}'</value>
+        <value>Data for testing Code Template Command '{Name}' (ID: '{CommandId}') was imported from: '{Imported}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandTestExported" xml:space="preserve">
-        <value>Data from testing Code Template Command '{Name}' (ID: '{Id}') has been exported to: '{Exported}'</value>
+        <value>Data from testing Code Template Command '{Name}' (ID: '{CommandId}') has been exported to: '{Exported}'</value>
     </data>
     <data name="CommandLine_Output_PatternConfiguration" xml:space="preserve">
-        <value>Pattern '{0}' (ID: '{1}', v{2}) is defined as:
+        <value>Pattern '{Name}' (ID: '{PatternId}', v{Version}) is defined as:
 {Tree}</value>
     </data>
     <data name="CommandLine_Output_PatternLaunchableAutomation" xml:space="preserve">
-        <value>Pattern '{0}' (ID: '{1}', v{2}) has these launch points available:
+        <value>Pattern '{Name}' (ID: '{PatternId}', v{Version}) has these launch points available:
 {LaunchPoints}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
@@ -224,7 +224,7 @@
 {Log}</value>
     </data>
     <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">
-        <value>Toolkit pattern '{0}' (ID: '{1}', v{2}) is defined as:
+        <value>Toolkit pattern '{Name}' (ID: '{ToolkitId}', v{Version}) is defined as:
 {Tree}</value>
     </data>
     <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">
