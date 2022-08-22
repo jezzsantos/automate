@@ -61,9 +61,11 @@ At some point later (inevitably), you will want to update the pattern. Refactor 
 
 1. You simply edit the original pattern. You edit or add more code templates, optionally add or change the automation and update the constraints.
 2. An upgraded toolkit version is then built for you automatically containing these upgrades.
-2. You ship this upgraded toolkit to your team (or codebase) to use.
-2. They run the upgraded toolkit and upgrade the code in their codebase.
-2. The toolkit automatically detects the previous files/folders that were written before and detects the previous draft configuration that was used before. The toolkit re-applies the upgraded pieces. The codebase evolves.
+3. You ship this upgraded toolkit to your team (or codebase) to use.
+4. They run the upgraded toolkit and upgrade the code in their codebase.
+5. The toolkit automatically detects the previous files/folders that were written before and detects the previous draft configuration that was used before. The toolkit re-applies the upgraded pieces. The codebase evolves.
+
+![User Journeys](Images/UserJourneys.png)
 
 ## Does automate apply to you?
 

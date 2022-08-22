@@ -71,7 +71,7 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenConstructedWithAttributeWithDateTimeDefaultValue_ThenAttributeAssignedUtcDateTime()
         {
             var date = DateTime.UtcNow;
-            var attribute = new Attribute("aname", "DateTime", false, date.ToIso8601());
+            var attribute = new Attribute("aname", "datetime", false, date.ToIso8601());
             this.pattern.AddAttribute(attribute);
 
             var result = new DraftItem(this.toolkit, this.pattern);

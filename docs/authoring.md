@@ -71,7 +71,7 @@ To add a new attribute to any element/collection in the pattern: `automate edit 
 
 - The `--isrequired` is an optional parameter that defines that the attribute must have a value when applied.
 
-- The `--isoftype "string"` optional parameter defines the data type of the attribute. Valid values are: `string`, `bool`, `int`, `decimal`, `DateTime`. The default is `string` when `--isoftype` is not defined.
+- The `--isoftype "string"` optional parameter defines the data type of the attribute. Valid values are: `string`, `bool`, `int`, `float`, `datetime`. The default is `string` when `--isoftype` is not defined.
 
 - The `--defaultvalueis "<AVALUE>"` is optional. If defined, it must match the `--isoftype`, and must match `--isoneof` (if defined).
 
@@ -85,7 +85,7 @@ To update an existing attribute on any element/collection in the pattern: `autom
 
 - The `--isrequired` optionally defines whether the attribute must have a value or not.
 
-- The `--isoftype "string"` optionally defines the new data type of the attribute. Valid values are: `string`, `bool`, `int`, `decimal`, `DateTime`. The default is `string` when `--isoftype` is not defined.
+- The `--isoftype "string"` optionally defines the new data type of the attribute. Valid values are: `string`, `bool`, `int`, `float`, `datetime`. The default is `string` when `--isoftype` is not defined.
 
 - The `--defaultvalueis "<AVALUE>"` optionally defines the new default value. If defined, it must match the `--isoftype`, and must match `--isoneof` (if defined).
 

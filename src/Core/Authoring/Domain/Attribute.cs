@@ -11,7 +11,7 @@ namespace Automate.Authoring.Domain
         public const string DefaultType = "string";
         public static readonly string[] SupportedDataTypes =
         {
-            DefaultType, "bool", "int", "decimal", "DateTime"
+            DefaultType, "bool", "int", "float", "datetime"
         };
         public static readonly string[] ReservedAttributeNames =
             { nameof(INamedEntity.Id), nameof(Element.DisplayName), nameof(Element.Description) };
@@ -120,10 +120,10 @@ namespace Automate.Authoring.Domain
                 case "int":
                     return int.TryParse(value, out var _);
 
-                case "decimal":
-                    return decimal.TryParse(value, out var _);
+                case "float":
+                    return double.TryParse(value, out var _);
 
-                case "DateTime":
+                case "datetime":
                     return DateTime.TryParse(value, out var _);
 
                 default:
@@ -151,10 +151,10 @@ namespace Automate.Authoring.Domain
                 case "int":
                     return Convert.ToInt32(value);
 
-                case "decimal":
-                    return Convert.ToDecimal(value);
+                case "float":
+                    return Convert.ToDouble(value);
 
-                case "DateTime":
+                case "datetime":
                     return Convert.ToDateTime(value).ToUniversalTime();
 
                 default:
@@ -297,10 +297,10 @@ namespace Automate.Authoring.Domain
                 case "int":
                     return value is int or long;
 
-                case "decimal":
-                    return value is decimal;
+                case "float":
+                    return value is double;
 
-                case "DateTime":
+                case "datetime":
                     return value is DateTime;
 
                 default:

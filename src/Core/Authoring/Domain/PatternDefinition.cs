@@ -136,8 +136,8 @@ namespace Automate.Authoring.Domain
                             Attribute.DefaultType => $"{schema.Name.ToLower()}{instanceCountAtThisLevel}",
                             "bool" => instanceCountAtThisLevel % 2 != 0,
                             "int" => instanceCountAtThisLevel,
-                            "decimal" => Convert.ToDecimal($"{instanceCountAtThisLevel}.{instanceCountAtThisLevel}"),
-                            "DateTime" => DateTime.Today.AddHours(instanceCountAtThisLevel).ToUniversalTime(),
+                            "float" => Convert.ToDouble($"{instanceCountAtThisLevel}.{instanceCountAtThisLevel}"),
+                            "datetime" => DateTime.Today.AddHours(instanceCountAtThisLevel).ToUniversalTime(),
                             _ => null
                         };
                     }

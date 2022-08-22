@@ -61,10 +61,10 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenConstructedAndDefaultValueIsInvalidDataType_ThenThrows()
         {
-            FluentActions.Invoking(() => new Attribute("aname", "DateTime", true, "notadatetime"))
+            FluentActions.Invoking(() => new Attribute("aname", "datetime", true, "notadatetime"))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ValidationMessages.Attribute_InvalidDefaultValue.Substitute("notadatetime", "DateTime") +
+                    ValidationMessages.Attribute_InvalidDefaultValue.Substitute("notadatetime", "datetime") +
                     "*");
         }
 
@@ -84,10 +84,10 @@ namespace Core.UnitTests.Authoring.Domain
         public void WhenConstructedAndChoiceIsInvalidDataType_ThenThrows()
         {
             FluentActions.Invoking(() =>
-                    new Attribute("aname", "DateTime", choices: new List<string> { "achoice1", "achoice2" }))
+                    new Attribute("aname", "datetime", choices: new List<string> { "achoice1", "achoice2" }))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
-                    ValidationMessages.Attribute_WrongDataTypeChoice.Substitute("achoice1", "DateTime") +
+                    ValidationMessages.Attribute_WrongDataTypeChoice.Substitute("achoice1", "datetime") +
                     "*");
         }
 

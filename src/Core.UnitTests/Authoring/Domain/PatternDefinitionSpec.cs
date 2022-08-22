@@ -162,8 +162,8 @@ namespace Core.UnitTests.Authoring.Domain
             var attribute1 = new Attribute("anattribute1", "string", false, "adefaultvalue");
             var attribute2 = new Attribute("anattribute2", "int", false, "9");
             var attribute3 = new Attribute("anattribute3", "bool", false, "true");
-            var attribute4 = new Attribute("anattribute4", "decimal", false, "9.9");
-            var attribute5 = new Attribute("anattribute5", "DateTime", false, date.ToIso8601());
+            var attribute4 = new Attribute("anattribute4", "float", false, "9.9");
+            var attribute5 = new Attribute("anattribute5", "datetime", false, date.ToIso8601());
             var attribute6 = new Attribute("anattribute6", "string", false, "B", new List<string> { "A", "B" });
             element3.AddAttributes(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
             element2.AddElement(element3);
@@ -202,8 +202,8 @@ namespace Core.UnitTests.Authoring.Domain
             var attribute1 = new Attribute("anattribute1");
             var attribute2 = new Attribute("anattribute2", "int");
             var attribute3 = new Attribute("anattribute3", "bool");
-            var attribute4 = new Attribute("anattribute4", "decimal");
-            var attribute5 = new Attribute("anattribute5", "DateTime");
+            var attribute4 = new Attribute("anattribute4", "float");
+            var attribute5 = new Attribute("anattribute5", "datetime");
             var attribute6 = new Attribute("anattribute6", "string", false, null, new List<string> { "A", "B" });
             collection3.AddAttributes(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
             collection2.AddElement(collection3);

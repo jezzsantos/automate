@@ -81,9 +81,9 @@
                     "Choices": [
                       "string",
                       "int",
-                      "decimal",
+                      "float",
                       "bool",
-                      "DateTime"
+                      "datetime"
                     ]
                   },
                   {
