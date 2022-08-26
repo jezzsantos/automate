@@ -108,6 +108,7 @@ In a terminal, in the root directory of the repo, run the following commands:
 
 * Install [MkDocs](https://www.mkdocs.org/user-guide/installation/)
 * `pip install mkdocs-material`
+* `pip install mkdocs-glightbox`
 
 Now to see the site locally: `mkdocs serve`
 

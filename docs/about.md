@@ -42,4 +42,5 @@ They will:
 3. Configure the draft (according the pattern)
 4. Execute any automation (in the toolkit) to apply the changes to their codebase
 
-> The toolkit then applies the structure, templates and automation to their codebase.
+!!! info
+    The toolkit then applies the structure, templates and automation to their codebase.

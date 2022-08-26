@@ -37,4 +37,5 @@ jobs:
         run: |
           pip install mkdocs
           pip install mkdocs-material
+          pip install mkdocs-glightbox
           mkdocs gh-deploy --force --clean --verbose

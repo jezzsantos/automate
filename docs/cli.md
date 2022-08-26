@@ -17,8 +17,8 @@ This human-readable format often embeds key information (i.e. IDs of created ele
 These identifiers, are sometimes needed to be passed to subsequent commands by the end-user (and by any tools using the
 CLI).
 
-> The end-user is free to copy and paste these values from the terminal, but the machine would have to scrape the values
-> from messages.
+!!! tip
+    The end-user is free to copy and paste these values from the terminal, but the machine would have to scrape the values from messages.
 
 Consuming key data from the output (and from the errors) by scripts and tools can be very difficult. We want to enable these tools to be able to reliably parse the outputs and errors in order to chain tools together. So we offer the Structured output option to provide that data in machine-readable format.
 
@@ -26,7 +26,8 @@ Consuming key data from the output (and from the errors) by scripts and tools ca
 
 To receive structured output from any command, add the `--output-structured` option
 
-> This command will display all output AND errors into separate JSON responses in both stdout and in stderr.
+!!! info
+    This command will display all output AND errors into separate JSON responses in both stdout and in stderr.
 
 #### Successful responses
 
@@ -55,7 +56,8 @@ In response to a command that succeeds, you will see a JSON response like this (
 * The `Output` element contains one or more structured messages, composed of a `Message` template, and collection
   of `Values` that are used in that message template. These values may be strings, or maybe JSON documents.
 
-> The `Error` element will not present
+!!! info
+    The `Error` element will not present
 
 #### Failure responses
 
@@ -83,6 +85,7 @@ In response to a command that fails with an exception, you will see a JSON respo
 
 If you receive an error running any command, you can view extra information about the stack-trace of the error in detail to better understand the root cause.
 
-> This feature is only really useful to the developers of the automate project
+!!! info
+    This feature is only really useful to the developers of the automate project
 
 To view more details about the error, add the: `--debug` option

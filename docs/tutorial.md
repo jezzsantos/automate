@@ -4,7 +4,8 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 
 ## Make your first pattern
 
-> For this example, we are going to assume that you have the following arbitrary files and folders in the current directory (where you are running this tool). You can adjust the commands below to suit the files of your specific codebase (there is nothing specific about the specific files we show you here, they can be anything you want).
+!!! info
+    For this example, we are going to assume that you have the following arbitrary files and folders in the current directory (where you are running this tool). You can adjust the commands below to suit the files of your specific codebase (there is nothing specific about the specific files we show you here, they can be anything you want).
 
 ```
     .
@@ -31,19 +32,15 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 
 5. Edit the contents of the code template:
 
-    * `automate edit code-template "CodeTemplate1" --with "notepad.exe"`
-      > Or use another editor like VS Code [on Windows]: `%localappdata%\Programs\Microsoft VS Code\code.exe`
-    * Add the following snippet somewhere in this file:
-    ```
-    Here is the {{Name}}Contoller.
-    ```
-    * Save the file
+   * `automate edit code-template "CodeTemplate1" --with "notepad.exe"`
+     > Or use another editor like VS Code [on Windows]: `%localappdata%\Programs\Microsoft VS Code\code.exe`
+   * Add this snippet in this file: `Here is the {{Name}}Contoller`
+   * Save the file
 
 6. Publish a toolkit for this pattern to share with others on your team:
 
     * `automate publish toolkit`
-
-   > This will build a versioned self-contained toolkit file, and it will publish it to the desktop on your machine, and also provide you with the command to install it into this codebase.
+      > This will build a versioned self-contained toolkit file, and it will publish it to the desktop on your machine, and also provide you with the command to install it into this codebase.
 
 7. Share the toolkit file (`MyPattern1_0.1.0.toolkit`) over email/slack/etc with someone on your team.
 

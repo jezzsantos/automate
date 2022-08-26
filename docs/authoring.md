@@ -14,7 +14,8 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 - The `--describedas` is an optional metadata that defines how the pattern might be displayed in a user interface.
 
-> This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
+!!! info
+    This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
 ## Switching patterns
 
@@ -24,17 +25,20 @@ If you have multiple patterns going, you can switch between them using their ID:
 
 You can view all the patterns in your codebase: `automate list patterns` (or `automate list all`)
 
-> Which will list all the patterns and their respective names and versions.
+!!! info
+    Which will list all the patterns and their respective names and versions.
 
 ## Viewing the current pattern
 
 You can view the current pattern: `automate view pattern`
 
-> Which will display the summarized configuration of the current pattern.
+!!! info
+    Which will display the summarized configuration of the current pattern.
 
 You can view the detailed configuration of the pattern: `automate view pattern --all`
 
-> Which will display detailed information about the pattern structure, configuration and its automation.
+!!! info
+    Which will display detailed information about the pattern structure, configuration and its automation.
 
 ## Configuring pattern structure
 
@@ -97,13 +101,15 @@ To update an existing attribute on any element/collection in the pattern: `autom
 
 To delete an existing attribute: `automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-> The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element in the pattern.
+!!! tip
+    The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element in the pattern.
 
 ### Add elements
 
 **Concept**: An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of `ZeroOrOne` or `One`, which determines whether it must exist when the pattern is applied.
 
-> Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
+!!! tip
+    Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
 
 To add a new element to any element/collection in the pattern: `automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
@@ -334,13 +340,15 @@ To delete any existing command on any element/collection in the pattern: `automa
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the command from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-> Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.
+!!! tip
+    Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.
 
 ### Add launch points
 
 **Concept**: A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order).
 
-> Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
+!!! info
+    Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
 
 To add a new launch point to any element/collection in the pattern: `automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"`
 
@@ -392,7 +400,8 @@ When a toolkit is built, the next version number can be automatically calculated
 
 You will need to force a version number change if the given version violates the semantic versioning rules, or it is a past version number than the one that is auto-calculated.
 
-> WARNING: Forcing a version number that violates these rules, may result in existing drafts being migrated into an invalid state.
+!!! warning
+    Forcing a version number that violates these rules, may result in existing drafts being migrated into an invalid state.
 
 ### Installing new versions of toolkits
 
@@ -402,7 +411,8 @@ Given an upgraded version of the toolkit, it is assumed that there may exist oth
 
 Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runtime.md#upgrading-a-toolkit)), where there are standard Breaking and Non-Breaking changes.
 
-> WARNING: Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.
+!!! warning
+    Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.
 
 ### Publishing a toolkit
 
@@ -412,7 +422,8 @@ To build and publish an existing pattern into a toolkit: `automate publish toolk
 - The `--force` optionally bypasses any detected violations when using a custom version number that is suspicious or that would break semantic versioning rules on the existing pattern. The default is `false`
 - The `--install` optionally defines whether to install the toolkit into the current directory after it has been built. This is only useful in cases where the creator wants to install the toolkit locally, to avoid the extra installation step.
 
-> This command will version and publish the toolkit to a file on the current user's desktop, for distribution.
+!!! info
+    This command will version and publish the toolkit to a file on the current user's desktop, for distribution.
 
 ### Deploying a toolkit
 

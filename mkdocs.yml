@@ -3,6 +3,20 @@ site_description: Templatize patterns from your own codebase, make them programm
 site_url: https://jezzsantos.github.io/automate/
 repo_url: https://github.com/jezzsantos/automate/
 edit_uri: edit/main/docs/
+markdown_extensions:
+  - toc:
+      permalink: "#"
+  - def_list
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.tasklist:
+      custom_checkbox: true
+      clickable_checkbox: true
+  - pymdownx.highlight:
+      linenums: true
+plugins:
+  - glightbox
 extra_css:
   - stylesheets/extra.css
 theme:
@@ -31,27 +45,19 @@ theme:
         name: Switch to light mode
 nav:
   - Getting Started: 'about.md'
-  - 'Understanding automate': 'understanding.md'
+  - 'Evaluating automate': 'evaluating.md'
   - 'Your First Toolkit': 'tutorial.md'
-  - 'User Guide':
-      - 'CLI':
+  - 'Developers Guide':
+      - 'Command Line':
           - 'Making Toolkits': 'authoring.md'
           - 'Using Toolkits': 'runtime.md'
           - 'Additional Commands': 'cli.md'
-      - 'IDE Plugin':
-          - 'Extracting Patterns': 'authoring-plugin.md'
+      - 'Jetbrains Rider Plugin':
+          - 'Making Toolkits': 'authoring-plugin.md'
+          - 'Using Toolkits': 'runtime-plugin.md'
       - 'Reference': 'reference.md'
   - About:
       - 'GitHub': 'https://github.com/jezzsantos/automate'
       - 'License': 'https://github.com/jezzsantos/automate/blob/main/LICENSE'
       - 'Releases': 'https://github.com/jezzsantos/automate/releases'
   - Privacy: 'privacy.md'
-markdown_extensions:
-  - toc:
-      permalink: "#"
-  - def_list
-  - pymdownx.tasklist:
-      custom_checkbox: true
-      clickable_checkbox: true
-  - pymdownx.highlight:
-      linenums: true

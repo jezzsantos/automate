@@ -142,7 +142,8 @@ If you can imagine that we were to ask for the configuration of a draft built wi
 
 Examples of templating references:
 
-> The casing of elements and collection is as they are defined in the pattern. However, the casing of the built-in properties, such as: `Id`, and `Items` are always PascalCased.
+!!! info
+    The casing of the names of properties, elements and collections are as defined in the pattern. However, the casing of the built-in properties: `Id`, and `Items` are always pascal-cased.
 
 (ignoring the nominal values of the "Id" properties)
 
@@ -173,7 +174,8 @@ Starting from the "collection item"  `AnElementName3`:
 * an attribute of the first child collection (ID: 4): `{{Parent.Parent.ACollectionName1.AnAttributeName4}}` (will always equal null, since this collection is ephemeral)
 * an attribute of the first child collection item (ID: 5): `{{Parent.Parent.ACollectionName1.5.AnAttributeName4}}` (equals `avalue4`)
 
-> When navigating up from a "collection item", its parent is not the [ephemeral] collection itself, but the parent of that [ephemeral] collection.
+!!! tip
+    When navigating up from a "collection item", its parent is not the [ephemeral] collection itself, but the parent of that [ephemeral] collection.
 
 ## Templating Functions
 
@@ -239,7 +241,7 @@ If we were to ask for the configuration of this draft (`automate view draft`), w
             "Id": "3"
         }
     },
-    "aCollectionName1": {
+    "ACollectionName1": {
         "Id": "4",
         "AnAttributeName2": null,
         "Items": [{
@@ -268,7 +270,8 @@ If we were to ask for the configuration of this draft (`automate view draft`), w
 
 Examples draft references:
 
-> The casing of elements and collection is as they are defined in the pattern. However, the casing of the built-in properties, such as: `Id`, and `Items` are always PascalCased.
+!!! info
+    The casing of the names of properties, elements and collections are as defined in the pattern. However, the casing of the built-in properties: `Id`, and `Items` are always pascal-cased.
 
 (ignoring the nominal values of the "Id" properties)
 
