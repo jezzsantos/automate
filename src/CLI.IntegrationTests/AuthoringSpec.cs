@@ -12,7 +12,7 @@ using Xunit;
 namespace CLI.IntegrationTests
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
-    public class AuthoringSpec
+    public class AuthoringSpec : IDisposable
     {
         private readonly CliTestSetup setup;
 
@@ -22,6 +22,11 @@ namespace CLI.IntegrationTests
             this.setup.ResetRepository();
         }
 
+        public void Dispose()
+        {
+            this.setup.Reset();
+        }
+        
         [Fact]
         public void WhenListAllAndNone_ThenDisplaysNone()
         {
@@ -1211,5 +1216,6 @@ namespace CLI.IntegrationTests
                 this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             File.WriteAllText(codeTemplateLocation, content);
         }
+
     }
 }

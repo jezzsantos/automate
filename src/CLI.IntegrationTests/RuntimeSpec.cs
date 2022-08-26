@@ -12,7 +12,7 @@ using Xunit;
 namespace CLI.IntegrationTests
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
-    public class RuntimeSpec
+    public class RuntimeSpec : IDisposable
     {
         private readonly CliTestSetup setup;
         private readonly string testApplicationName;
@@ -25,6 +25,11 @@ namespace CLI.IntegrationTests
             DeleteOutputFolders();
         }
 
+        public void Dispose()
+        {
+            this.setup.Reset();
+        }
+        
         [Fact]
         public void WhenInstallNoCommands_ThenDisplaysError()
         {
@@ -307,6 +312,21 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenConfigureDraftAndSetPropertyOnNewNestedCollectionItem_ThenDisplaysSuccess()
+        {
+            CreateDraftFromBuiltToolkit();
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{AnElement1.ACollection1}} --and-set \"AProperty8=anewvalue\"");
+
+            var item = this.setup.Draft.Model.Properties["AnElement1"].Properties["ACollection1"].Items.Single();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection1", item.Id));
+            item.Properties["AProperty8"].Value.Should().Be("anewvalue");
+        }
+
+        [Fact]
         public void WhenConfigureDraftAndSetPropertyOnExistingCollectionItem_ThenDisplaysSuccess()
         {
             CreateDraftFromBuiltToolkit();
@@ -331,11 +351,11 @@ namespace CLI.IntegrationTests
             CreateDraftFromBuiltToolkit();
 
             this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty5=avalue1\"");
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern.AnElement3}} --and-set \"AProperty5=avalue1\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty6=99\"");
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern.AnElement3}} --and-set \"AProperty6=99\"");
             this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{APatternName.AnElement3}} --and-set \"AProperty7=avalue2\"");
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern.AnElement3}} --and-set \"AProperty7=avalue2\"");
 
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} reset {{AnElement3}}");
 
@@ -387,7 +407,7 @@ namespace CLI.IntegrationTests
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("AnElement3",
                         elementItem.Id));
-            draftItem.Properties.Should().NotContainKey("AnElement3");
+            draftItem.Properties["AnElement3"].IsMaterialised.Should().BeFalse();
         }
 
         [Fact]
@@ -514,6 +534,8 @@ namespace CLI.IntegrationTests
                         $"\t\t\t\t- AProperty3 (string, oneof: A;B;C){Environment.NewLine}" +
                         $"\t\t\t- Elements:{Environment.NewLine}" +
                         $"\t\t\t\t- ACollection1 [{element1.Elements.First().Id}] (collection){Environment.NewLine}" +
+                        $"\t\t\t\t\t- Attributes:{Environment.NewLine}" +
+                        $"\t\t\t\t\t\t- AProperty8 (string, default: ADefaultValue8){Environment.NewLine}" +
                         $"\t\t- ACollection2 [{pattern.Elements[1].Id}] (collection){Environment.NewLine}" +
                         $"\t\t\t- Attributes:{Environment.NewLine}" +
                         $"\t\t\t\t- AProperty4 (string, default: ADefaultValue4){Environment.NewLine}" +
@@ -707,8 +729,8 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
             var codeTemplate1 = this.setup.Pattern.CodeTemplates.Single();
-            var codeTemplate2 = this.setup.Pattern.Elements.Single().CodeTemplates.Single();
-            var codeTemplate3 = this.setup.Pattern.Elements.Single().Elements.Single().CodeTemplates.Single();
+            var codeTemplate2 = this.setup.Pattern.Elements.First().CodeTemplates.Single();
+            var codeTemplate3 = this.setup.Pattern.Elements.First().Elements.Single().CodeTemplates.Single();
             var artifactLink1 = this.setup.Draft.Model.ArtifactLinks.First().Path;
             var artifactLink2 = this.setup.Draft.Model.Properties["AnElement1"].ArtifactLinks.First().Path;
             var artifactLink3 = this.setup.Draft.Model.Properties["AnElement1"].Properties["AnElement2"].ArtifactLinks
@@ -793,6 +815,7 @@ namespace CLI.IntegrationTests
                         $"\t- AnElement1 (element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t\t- AProperty3 (attribute) (string, oneof: A;B;C){Environment.NewLine}" +
                         $"\t\t- ACollection1 (collection){Environment.NewLine}" +
+                        $"\t\t\t- AProperty8 (attribute) (string, default: ADefaultValue8){Environment.NewLine}" +
                         $"\t- ACollection2 (collection){Environment.NewLine}" +
                         $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}" +
                         $"\t- AnElement3 (element){Environment.NewLine}" +
@@ -822,6 +845,7 @@ namespace CLI.IntegrationTests
                         $"\t- AnElement1 (element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t\t- AProperty3 (attribute) (string, oneof: A;B;C){Environment.NewLine}" +
                         $"\t\t- ACollection1 (collection){Environment.NewLine}" +
+                        $"\t\t\t- AProperty8 (attribute) (string, default: ADefaultValue8){Environment.NewLine}" +
                         $"\t- ACollection2 (collection){Environment.NewLine}" +
                         $"\t\t- AProperty4 (attribute) (string, default: ADefaultValue4){Environment.NewLine}" +
                         $"\t- AnElement3 (element){Environment.NewLine}" +
@@ -855,8 +879,6 @@ namespace CLI.IntegrationTests
         {
             ConfigureBuildAndInstallToolkit(testCase);
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
-
-            this.setup.Should().DisplayNoError();
         }
 
         private string ConfigureBuildAndInstallToolkit(TestCaseSetup testCase = TestCaseSetup.Normal)
@@ -895,6 +917,8 @@ namespace CLI.IntegrationTests
 
                 this.setup.RunCommand(
                     $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty8 --aschildof {{APattern.AnElement1.ACollection1}} --defaultvalueis ADefaultValue8");
                 this.setup.RunCommand(
                     $"{CommandLineApi.EditCommandName} add-collection ACollection2 --aschildof {{APattern}} --isrequired");
                 this.setup.RunCommand(
@@ -939,9 +963,12 @@ namespace CLI.IntegrationTests
 
                 this.setup.RunCommand(
                     $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2};{commandId3} --name ALaunchPoint1");
-            }
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-element AnElement4 --isrequired false --autocreate false");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty9 --aschildof {{APattern.AnElement4}} --defaultvalueis ADefaultValue9");
 
-            this.setup.Should().DisplayNoError();
+            }
 
             return BuildAndInstallToolkit();
         }
@@ -954,8 +981,6 @@ namespace CLI.IntegrationTests
 
             var location = GetFilePathOfExportedToolkit($"APattern_{latestVersion}.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
-
-            this.setup.Should().DisplayNoError();
 
             return location;
         }

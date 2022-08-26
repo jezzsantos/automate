@@ -12,7 +12,7 @@ using Xunit;
 namespace CLI.IntegrationTests
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
-    public class UpgradeSpec
+    public class UpgradeSpec : IDisposable
     {
         private readonly CliTestSetup setup;
 
@@ -49,9 +49,6 @@ namespace CLI.IntegrationTests
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
-            this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
-            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty5");
             RebuildReversionAndInstallToolkit();
 
@@ -163,6 +160,11 @@ namespace CLI.IntegrationTests
             artifactLink.Should().Be(newPath);
             var contents = File.ReadAllText(newPath);
             contents.Should().Be("some code");
+        }
+
+        public void Dispose()
+        {
+            this.setup.Reset();
         }
 
         private static void DeleteOutputFolders()

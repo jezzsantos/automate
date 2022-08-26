@@ -169,7 +169,7 @@
 {5}</value>
     </data>
     <data name="DraftDefinition_ItemExpressionNotFound" xml:space="preserve">
-        <value>The: '{0}' pattern does not have an element referenced by: '{1}'</value>
+        <value>The: '{0}' draft does not yet have an element or collection item referenced by: '{1}'. You may have to create it first</value>
     </data>
     <data name="RuntimeApplication_ConfigureDraft_AddElementExists" xml:space="preserve">
         <value>The element (referenced by: '{0}') already exists, and cannot be added again</value>
@@ -178,7 +178,7 @@
         <value>The element (referenced by: '{0}') has not been created yet, and cannot be configured</value>
     </data>
     <data name="RuntimeApplication_ConfigureDraft_DeletePattern" xml:space="preserve">
-        <value>Tried to delete the pattern, which cannot be deleted</value>
+        <value>Tried to delete the draft, which cannot be deleted</value>
     </data>
     <data name="DraftItem_Configure_PropertyAssignmentInvalid" xml:space="preserve">
         <value>Tried to configure property: '{1}' (on element: '{2}') but contains invalid assignment: '{0}'</value>
@@ -193,13 +193,13 @@
         <value>The property: '{1}' (on element: '{0}') is of type: '{2}', and cannot accept value: '{3}'</value>
     </data>
     <data name="DraftItem_PatternAlreadyMaterialised" xml:space="preserve">
-        <value>The Pattern: '{0}' has already been materialized</value>
+        <value>The draft: '{0}' has already been materialized</value>
     </data>
     <data name="DraftItem_ValueAlreadyMaterialised" xml:space="preserve">
-        <value>The Value has already been materialized</value>
+        <value>The value has already been materialized</value>
     </data>
     <data name="DraftItem_UnMaterialisationOnPatternForbidden" xml:space="preserve">
-        <value>Cannot un-materialize the pattern</value>
+        <value>Cannot un-materialize the draft</value>
     </data>
     <data name="DraftItem_UnMaterialisationOnValueForbidden" xml:space="preserve">
         <value>Cannot un-materialize a value</value>
@@ -208,7 +208,7 @@
         <value>Cannot materialise item in an non-collection element</value>
     </data>
     <data name="DraftItem_NotMaterialised" xml:space="preserve">
-        <value>This draft item is not yet materialised</value>
+        <value>This element is not yet materialised</value>
     </data>
     <data name="DraftItem_NotAProperty" xml:space="preserve">
         <value>The property: '{0}' cannot be found on this element</value>

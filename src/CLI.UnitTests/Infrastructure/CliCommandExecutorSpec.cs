@@ -33,10 +33,11 @@ namespace CLI.UnitTests.Infrastructure
             [Fact]
             public void WhenExecuteAndApplicationFails_ThenReturnsFailure()
             {
-                var toolkit =
-                    new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new DraftItem(toolkit,
-                    new Element("anelementname"), null);
+                var pattern = new PatternDefinition("apatternname");
+                var toolkit = new ToolkitDefinition(pattern);
+                var element = new Element("anelementname");
+                pattern.AddElement(element);
+                var target = new DraftItem(toolkit, element);
                 var draft = new DraftDefinition(toolkit);
                 this.applicationExecutor.Setup(ae =>
                         ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -55,10 +56,11 @@ namespace CLI.UnitTests.Infrastructure
             [Fact]
             public void WhenExecuteAndApplicationSucceeds_ThenReturnsSuccess()
             {
-                var toolkit =
-                    new ToolkitDefinition(new PatternDefinition("apatternname"));
-                var target = new DraftItem(toolkit,
-                    new Element("anelementname"), null);
+                var pattern = new PatternDefinition("apatternname");
+                var toolkit = new ToolkitDefinition(pattern);
+                var element = new Element("anelementname");
+                pattern.AddElement(element);
+                var target = new DraftItem(toolkit, element);
                 var draft = new DraftDefinition(toolkit);
                 this.applicationExecutor.Setup(ae =>
                         ae.RunApplicationProcess(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>()))

@@ -21,6 +21,8 @@ namespace Automate.Authoring.Domain
         IReadOnlyList<IElementSchema> Elements { get; }
 
         ICodeTemplateSchema FindCodeTemplateById(string codeTemplateId);
+
+        bool ShouldAutoCreate();
     }
 
     public interface IPatternSchema : IPatternElementSchema
@@ -39,8 +41,6 @@ namespace Automate.Authoring.Domain
         bool HasCardinalityOfAtMostOne();
 
         bool HasCardinalityOfMany();
-
-        bool ShouldAutoCreate();
     }
 
     public interface IAttributeSchema : ISchema

@@ -16,9 +16,14 @@ namespace Automate.Authoring.Domain
         {
             return Automation.Safe().FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(id));
         }
+
+        public override bool ShouldAutoCreate()
+        {
+            return true;
+        }
     }
 
-    internal class PatternElementSchema : IPatternElementSchema
+    internal abstract class PatternElementSchema : IPatternElementSchema
     {
         private readonly PatternElement patternElement;
 
@@ -42,6 +47,8 @@ namespace Automate.Authoring.Domain
             return this.patternElement.CodeTemplates.Safe().FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(id))
                 ?.ToSchema();
         }
+
+        public abstract bool ShouldAutoCreate();
     }
 
     internal class ElementSchema : PatternElementSchema, IElementSchema
@@ -71,7 +78,7 @@ namespace Automate.Authoring.Domain
             return Element.HasCardinalityOfMany();
         }
 
-        public bool ShouldAutoCreate()
+        public override bool ShouldAutoCreate()
         {
             if (IsCollection)
             {
@@ -102,6 +109,11 @@ namespace Automate.Authoring.Domain
         public override bool HasCardinalityOfMany()
         {
             return false;
+        }
+
+        public override bool ShouldAutoCreate()
+        {
+            return true;
         }
     }
 

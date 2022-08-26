@@ -177,7 +177,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The: &apos;{0}&apos; pattern does not have an element referenced by: &apos;{1}&apos;.
+        ///   Looks up a localized string similar to The: &apos;{0}&apos; draft does not yet have an element or collection item referenced by: &apos;{1}&apos;. You may have to create it first.
         /// </summary>
         internal static string DraftDefinition_ItemExpressionNotFound {
             get {
@@ -339,7 +339,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This draft item is not yet materialised.
+        ///   Looks up a localized string similar to This element is not yet materialised.
         /// </summary>
         internal static string DraftItem_NotMaterialised {
             get {
@@ -348,7 +348,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Pattern: &apos;{0}&apos; has already been materialized.
+        ///   Looks up a localized string similar to The draft: &apos;{0}&apos; has already been materialized.
         /// </summary>
         internal static string DraftItem_PatternAlreadyMaterialised {
             get {
@@ -393,7 +393,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot un-materialize the pattern.
+        ///   Looks up a localized string similar to Cannot un-materialize the draft.
         /// </summary>
         internal static string DraftItem_UnMaterialisationOnPatternForbidden {
             get {
@@ -411,7 +411,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Value has already been materialized.
+        ///   Looks up a localized string similar to The value has already been materialized.
         /// </summary>
         internal static string DraftItem_ValueAlreadyMaterialised {
             get {
@@ -753,7 +753,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tried to delete the pattern, which cannot be deleted.
+        ///   Looks up a localized string similar to Tried to delete the draft, which cannot be deleted.
         /// </summary>
         internal static string RuntimeApplication_ConfigureDraft_DeletePattern {
             get {

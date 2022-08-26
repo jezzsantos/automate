@@ -288,11 +288,14 @@ namespace Automate.Runtime.Domain
 
             public bool VisitPatternEnter(DraftItem item)
             {
-                var codeTemplate = item.PatternSchema.FindCodeTemplateById(this.codeTemplateId);
-                if (codeTemplate.Exists())
+                if (item.IsMaterialised)
                 {
-                    DraftItem = item;
-                    return false;
+                    var codeTemplate = item.PatternSchema.FindCodeTemplateById(this.codeTemplateId);
+                    if (codeTemplate.Exists())
+                    {
+                        DraftItem = item;
+                        return false;
+                    }
                 }
 
                 return true;
@@ -305,11 +308,14 @@ namespace Automate.Runtime.Domain
 
             public bool VisitElementEnter(DraftItem item)
             {
-                var codeTemplate = item.ElementSchema.FindCodeTemplateById(this.codeTemplateId);
-                if (codeTemplate.Exists())
+                if (item.IsMaterialised)
                 {
-                    DraftItem = item;
-                    return false;
+                    var codeTemplate = item.ElementSchema.FindCodeTemplateById(this.codeTemplateId);
+                    if (codeTemplate.Exists())
+                    {
+                        DraftItem = item;
+                        return false;
+                    }
                 }
 
                 return true;
@@ -337,10 +343,13 @@ namespace Automate.Runtime.Domain
 
             public bool VisitPatternEnter(DraftItem item)
             {
-                var automation = item.PatternSchema.FindAutomationById(this.automationId);
-                if (automation.Exists())
+                if (item.IsMaterialised)
                 {
-                    Automation.Add(new DraftItemCommandPair(automation, item));
+                    var automation = item.PatternSchema.FindAutomationById(this.automationId);
+                    if (automation.Exists())
+                    {
+                        Automation.Add(new DraftItemCommandPair(automation, item));
+                    }
                 }
 
                 return true;
@@ -353,11 +362,14 @@ namespace Automate.Runtime.Domain
 
             public bool VisitElementEnter(DraftItem item)
             {
-                var automation = item.ElementSchema.Automation.Safe()
-                    .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(this.automationId));
-                if (automation.Exists())
+                if (item.IsMaterialised)
                 {
-                    Automation.Add(new DraftItemCommandPair(automation, item));
+                    var automation = item.ElementSchema.Automation.Safe()
+                        .FirstOrDefault(auto => auto.Id.EqualsIgnoreCase(this.automationId));
+                    if (automation.Exists())
+                    {
+                        Automation.Add(new DraftItemCommandPair(automation, item));
+                    }
                 }
 
                 return true;
@@ -368,10 +380,6 @@ namespace Automate.Runtime.Domain
                 return true;
             }
         }
-    }
-
-    public class CommandsExecuted
-    {
     }
 
     public class DraftItemCommandPair

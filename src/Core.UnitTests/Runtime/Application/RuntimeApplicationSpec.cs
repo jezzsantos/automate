@@ -366,10 +366,12 @@ namespace Core.UnitTests.Runtime.Application
             [Fact]
             public void WhenConfigureDraftAndOnElementAndNotMaterialised_ThenThrows()
             {
+                var element = new Element("anelementname", autoCreate: false);
+                this.pattern.AddElement(element);
+
                 this.application.CreateDraft("apatternname", null);
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(new DraftItem(this.toolkit,
-                        new Element("anelementname"), null));
+                    .Returns(new DraftItem(this.toolkit, element, null));
 
                 this.application
                     .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null))

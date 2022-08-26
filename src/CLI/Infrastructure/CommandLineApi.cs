@@ -511,8 +511,9 @@ namespace Automate.CLI.Infrastructure
 #endif
                 };
             command.AddGlobalOption(new Option($"--{StructuredOutputOption}", "Provide output as structured data",
-                typeof(bool), () => false,
-                ArgumentArity.ZeroOrOne));
+                    typeof(bool), () => false,
+                    ArgumentArity.ZeroOrOne)
+                .WithAlias("--os"));
             command.AddGlobalOption(new Option($"--{DebugOption}", "Show more error details when there is an exception",
                 typeof(bool),
 #if TESTINGONLY
@@ -969,7 +970,7 @@ namespace Automate.CLI.Infrastructure
         {
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Error.WriteLine(message);
+            Console.WriteLine(message);
             Console.ResetColor();
         }
 

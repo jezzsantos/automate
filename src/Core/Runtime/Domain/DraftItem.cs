@@ -6,6 +6,7 @@ using Automate.Authoring.Domain;
 using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
+using JetBrains.Annotations;
 using Attribute = Automate.Authoring.Domain.Attribute;
 
 namespace Automate.Runtime.Domain
@@ -19,7 +20,7 @@ namespace Automate.Runtime.Domain
         private List<DraftItem> items;
         private Dictionary<string, DraftItem> properties;
 
-        public DraftItem(ToolkitDefinition toolkit, PatternDefinition pattern) : this(toolkit, pattern.ToSchema())
+        internal DraftItem(ToolkitDefinition toolkit, PatternDefinition pattern) : this(toolkit, pattern.ToSchema())
         {
         }
 
@@ -30,10 +31,14 @@ namespace Automate.Runtime.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             pattern.GuardAgainstNull(nameof(pattern));
 
-            MaterialisePatternElement(toolkit, pattern, false);
+            Init(toolkit);
         }
 
-        public DraftItem(ToolkitDefinition toolkit, Element element, DraftItem parent,
+        public DraftItem(ToolkitDefinition toolkit, Element element) : this(toolkit, element, null)
+        {
+        }
+
+        internal DraftItem(ToolkitDefinition toolkit, Element element, DraftItem parent,
             bool isCollectionItem = false) : this(toolkit, element.ToSchema(), parent,
             isCollectionItem)
         {
@@ -51,10 +56,10 @@ namespace Automate.Runtime.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             element.GuardAgainstNull(nameof(element));
 
-            UnMaterialise();
+            Init(toolkit);
         }
 
-        public DraftItem(ToolkitDefinition toolkit, Attribute attribute,
+        internal DraftItem(ToolkitDefinition toolkit, Attribute attribute,
             DraftItem parent) : this(toolkit,
             attribute.ToSchema(), parent)
         {
@@ -68,7 +73,7 @@ namespace Automate.Runtime.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             attribute.GuardAgainstNull(nameof(attribute));
 
-            MaterialiseAttribute(attribute);
+            Init(toolkit);
         }
 
         private DraftItem(string name, ToolkitDefinition toolkit, DraftItem parent,
@@ -167,18 +172,7 @@ namespace Automate.Runtime.Domain
                     ExceptionMessages.DraftItem_PatternAlreadyMaterialised.Substitute(PatternSchema.Name));
             }
 
-            if (IsElement || IsEphemeralCollection)
-            {
-                MaterialisePatternElement(Toolkit, ElementSchema, IsEphemeralCollection);
-            }
-            else if (IsAttribute)
-            {
-                MaterialiseAttribute(AttributeSchema, value);
-            }
-            else
-            {
-                throw new AutomateException(ExceptionMessages.DraftItem_ValueAlreadyMaterialised);
-            }
+            SetMaterialised(true, value);
 
             return this;
         }
@@ -399,7 +393,11 @@ namespace Automate.Runtime.Domain
                     throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
                 }
 
-                this.properties.Remove(childItem.Name);
+                if (this.properties.Any(prop => prop.Key.EqualsIgnoreCase(childItem.Name)))
+                {
+                    var item = this.properties[childItem.Name];
+                    item.UnMaterialiseProperty();
+                }
             }
 
             if (IsEphemeralCollection)
@@ -491,6 +489,73 @@ namespace Automate.Runtime.Domain
 
         public string Id { get; }
 
+        private void Init(ToolkitDefinition toolkit)
+        {
+            InitDescendantStructure();
+            InitMaterialisationState();
+
+            void InitDescendantStructure()
+            {
+                if (IsPattern || IsElement || IsEphemeralCollection)
+                {
+                    if (IsEphemeralCollection)
+                    {
+                        this.properties = new Dictionary<string, DraftItem>();
+                        this.items = new List<DraftItem>();
+                    }
+                    else
+                    {
+                        this.properties = new Dictionary<string, DraftItem>();
+                        IPatternElementSchema patternElementSchema = IsPattern
+                            ? PatternSchema
+                            : ElementSchema;
+                        patternElementSchema.Attributes.ToListSafe()
+                            .ForEach(attr => { this.properties.Add(attr.Name, new DraftItem(toolkit, attr, this)); });
+                        patternElementSchema.Elements.ToListSafe()
+                            .ForEach(ele =>
+                            {
+                                this.properties.Add(ele.Name, new DraftItem(toolkit, ele, this, false));
+                            });
+                        this.items = null;
+                    }
+                    Value = null;
+                }
+                else if (IsAttribute)
+                {
+                    this.properties = null;
+                    this.items = null;
+                    Value = null;
+                }
+                else
+                {
+                    throw new AutomateException(ExceptionMessages.DraftItem_UnknownSchema);
+                }
+            }
+
+            void InitMaterialisationState()
+            {
+                if (IsPattern || IsElement || IsEphemeralCollection)
+                {
+                    IPatternElementSchema patternElementSchema = IsPattern
+                        ? PatternSchema
+                        : ElementSchema;
+                    var shouldMaterialise = patternElementSchema.ShouldAutoCreate();
+                    SetMaterialised(shouldMaterialise);
+                }
+                else if (IsAttribute)
+                {
+                    var shouldMaterialise = Parent.IsPattern
+                        ? Parent.PatternSchema.ShouldAutoCreate()
+                        : Parent.ElementSchema.ShouldAutoCreate();
+                    SetMaterialised(shouldMaterialise);
+                }
+                else
+                {
+                    throw new AutomateException(ExceptionMessages.DraftItem_UnknownSchema);
+                }
+            }
+        }
+
         /// <summary>
         ///     This [hierarchical] traversal requires that we enter and exit composite nodes (i.e. the <see cref="DraftItem" />
         ///     that themselves are composed of other nodes or composite nodes.
@@ -555,94 +620,89 @@ namespace Automate.Runtime.Domain
             }
         }
 
-        private void RemoveProperty(string propertyName)
+        private void DestroyProperty(string propertyName)
         {
-            if (Properties.HasAny())
+            if (this.properties.HasAny())
             {
-                if (Properties.Any(prop => prop.Key.EqualsIgnoreCase(propertyName)))
+                if (this.properties.Any(prop => prop.Key.EqualsIgnoreCase(propertyName)))
                 {
                     this.properties.Remove(propertyName);
                 }
             }
         }
 
-        private void MaterialisePatternElement(ToolkitDefinition toolkit, IPatternElementSchema schema,
-            bool isCollection)
+        private void SetMaterialised(bool isMaterialised, object value = null, bool force = false)
         {
-            this.properties = new Dictionary<string, DraftItem>();
-            if (isCollection)
+            if (IsPattern || IsElement || IsEphemeralCollection)
             {
-                this.items = new List<DraftItem>();
-            }
-            else
-            {
-                schema.Attributes.ToListSafe()
-                    .ForEach(attr => { this.properties.Add(attr.Name, new DraftItem(toolkit, attr, this)); });
-                schema.Elements.ToListSafe()
-                    .ForEach(ele =>
-                    {
-                        var element = new DraftItem(toolkit, ele, this, false);
-                        if (ele.ShouldAutoCreate())
+                if (IsEphemeralCollection)
+                {
+                    this.items = new List<DraftItem>();
+                }
+                else
+                {
+                    this.properties
+                        .Select(prop => prop.Value)
+                        .ToList().ForEach(prop =>
                         {
-                            element.Materialise();
-                        }
-                        this.properties.Add(ele.Name, element);
-                    });
-                this.items = null;
-            }
-            IsMaterialised = true;
-            Value = null;
-        }
-
-        private void MaterialiseAttribute(IAttributeSchema schema, object value = null)
-        {
-            this.properties = null;
-            this.items = null;
-            IsMaterialised = value.Exists()
-                ? true
-                : schema.DefaultValue.HasValue();
-            SetValue(value.Exists()
-                    ? schema.IsValidDataType(value.ToString())
-                        ? value
-                        : null
-                    : schema.IsValidDataType(schema.DefaultValue)
-                        ? schema.DefaultValue
-                        : null,
-                schema.DataType);
-        }
-
-        private void UnMaterialise()
-        {
-            if (IsPattern)
-            {
-                throw new AutomateException(
-                    ExceptionMessages.DraftItem_UnMaterialisationOnPatternForbidden.Substitute(PatternSchema.Name));
-            }
-
-            if (IsElement || IsEphemeralCollection)
-            {
+                            if (force)
+                            {
+                                prop.SetMaterialised(isMaterialised, force: true);
+                            }
+                            else
+                            {
+                                if (prop.IsElement || prop.IsEphemeralCollection)
+                                {
+                                    prop.SetMaterialised(prop.ElementSchema.ShouldAutoCreate());
+                                }
+                                if (prop.IsAttribute)
+                                {
+                                    prop.SetMaterialised(isMaterialised);
+                                }
+                            }
+                        });
+                    this.items = null;
+                }
                 Value = null;
+                IsMaterialised = isMaterialised;
             }
             else if (IsAttribute)
             {
-                SetValue(null, AttributeSchema.DataType);
+                this.properties = null;
+                this.items = null;
+                if (isMaterialised)
+                {
+                    var schema = AttributeSchema;
+                    SetValue(value.Exists()
+                            ? schema.IsValidDataType(value.ToString())
+                                ? value
+                                : null
+                            : schema.IsValidDataType(schema.DefaultValue)
+                                ? schema.DefaultValue
+                                : null,
+                        schema.DataType);
+                    IsMaterialised = true;
+                }
+                else
+                {
+                    SetValue(null, AttributeSchema.DataType);
+                    IsMaterialised = false;
+                }
             }
             else
             {
-                throw new AutomateException(ExceptionMessages.DraftItem_UnMaterialisationOnValueForbidden);
+                throw new AutomateException(ExceptionMessages.DraftItem_UnknownSchema);
             }
+        }
 
-            this.properties = null;
-            this.items = null;
-            IsMaterialised = false;
+        private void UnMaterialiseProperty()
+        {
+            SetMaterialised(false, force: true);
         }
 
         private DraftItem CreateEphemeralCollectionItem()
         {
-            var childElementItem = new DraftItem(Toolkit, ElementSchema, Parent, true);
-            childElementItem.Materialise();
-
-            return childElementItem;
+            return new DraftItem(Toolkit, ElementSchema, Parent, true);
         }
 
         private IAutomationSchema GetAutomationByName(string name)
@@ -908,13 +968,13 @@ namespace Automate.Runtime.Domain
             private static void DeleteElements(DraftItem item, IEnumerable<string> elementNames)
             {
                 elementNames.ToListSafe()
-                    .ForEach(item.RemoveProperty);
+                    .ForEach(item.DestroyProperty);
             }
 
             private static void DeleteAttributes(DraftItem item, IEnumerable<string> attributeNames)
             {
                 attributeNames.ToListSafe()
-                    .ForEach(item.RemoveProperty);
+                    .ForEach(item.DestroyProperty);
             }
 
             private void AddNewAttributes<TSchema>(DraftItem item, TSchema existingSchema)
@@ -1016,8 +1076,10 @@ namespace Automate.Runtime.Domain
 
             public bool VisitAttributeEnter(DraftItem item)
             {
-                Validations.AddRange(item.AttributeSchema.Validate(item, item.Value));
-
+                if (item.IsMaterialised)
+                {
+                    Validations.AddRange(item.AttributeSchema.Validate(item, item.Value));
+                }
                 return true;
             }
         }
@@ -1188,6 +1250,7 @@ namespace Automate.Runtime.Domain
         /// <summary>
         ///     For serialization
         /// </summary>
+        [UsedImplicitly]
         public LazyDraftItemDictionary()
         {
         }
@@ -1288,40 +1351,49 @@ namespace Automate.Runtime.Domain
             }
             if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
             {
-                if (this.draftItem.Properties.HasAny())
+                if (this.draftItem.IsMaterialised)
                 {
-                    foreach (var prop in this.draftItem.Properties.Safe())
+                    if (this.draftItem.Properties.HasAny())
                     {
-                        var (name, item) = prop;
-                        if (item.IsAttribute)
+                        foreach (var prop in this.draftItem.Properties.Safe())
                         {
-                            if (item.Value.Exists())
+                            var (name, item) = prop;
+                            if (item.IsAttribute)
                             {
-                                yield return new DictionaryEntry(AsIsMemberName(name), item.Value);
+                                if (item.Value.Exists())
+                                {
+                                    yield return new DictionaryEntry(AsIsMemberName(name), item.Value);
+                                }
                             }
-                        }
-                        if (item.IsElement || item.IsEphemeralCollection)
-                        {
-                            yield return new DictionaryEntry(AsIsMemberName(name),
-                                new LazyDraftItemDictionary(item, this.includeAncestry));
+                            if (item.IsElement || item.IsEphemeralCollection)
+                            {
+                                yield return new DictionaryEntry(AsIsMemberName(name),
+                                    new LazyDraftItemDictionary(item, this.includeAncestry));
+                            }
                         }
                     }
                 }
             }
             if (this.draftItem.IsEphemeralCollection)
             {
-                if (this.draftItem.Items.HasAny())
+                if (this.draftItem.IsMaterialised)
                 {
-                    var items = this.draftItem.Items.Select(item =>
-                        new LazyDraftItemDictionary(item, this.includeAncestry));
-                    yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
+                    if (this.draftItem.Items.HasAny())
+                    {
+                        var items = this.draftItem.Items.Select(item =>
+                            new LazyDraftItemDictionary(item, this.includeAncestry));
+                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
+                    }
                 }
             }
             if (this.draftItem.IsAttribute)
             {
-                if (this.draftItem.Value.Exists())
+                if (this.draftItem.IsMaterialised)
                 {
-                    yield return new DictionaryEntry(AsIsMemberName(this.draftItem.Name), this.draftItem.Value);
+                    if (this.draftItem.Value.Exists())
+                    {
+                        yield return new DictionaryEntry(AsIsMemberName(this.draftItem.Name), this.draftItem.Value);
+                    }
                 }
             }
         }

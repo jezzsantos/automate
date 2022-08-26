@@ -40,51 +40,51 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenConstructedWithAttributeWithoutDefaultValue_ThenAttributeAssigned()
         {
-            var attribute = new Attribute("aname");
+            var attribute = new Attribute("anattributename");
             this.pattern.AddAttribute(attribute);
 
             var result = new DraftItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
-            result.Properties["aname"].Value.Should().BeNull();
-            result.Properties["aname"].IsMaterialised.Should().BeFalse();
+            result.Properties["anattributename"].AttributeSchema.Attribute.Should().Be(attribute);
+            result.Properties["anattributename"].Value.Should().BeNull();
+            result.Properties["anattributename"].IsMaterialised.Should().BeTrue();
         }
 
         [Fact]
         public void WhenConstructedWithAttributeWithDefaultValue_ThenAttributeAssigned()
         {
-            var attribute = new Attribute("aname", "string", false, "adefaultvalue");
+            var attribute = new Attribute("anattributename", "string", false, "adefaultvalue");
             this.pattern.AddAttribute(attribute);
 
             var result = new DraftItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
-            result.Properties["aname"].Value.Should().Be(attribute.DefaultValue);
-            result.Properties["aname"].IsMaterialised.Should().BeTrue();
+            result.Properties["anattributename"].AttributeSchema.Attribute.Should().Be(attribute);
+            result.Properties["anattributename"].Value.Should().Be(attribute.DefaultValue);
+            result.Properties["anattributename"].IsMaterialised.Should().BeTrue();
         }
 
         [Fact]
         public void WhenConstructedWithAttributeWithDateTimeDefaultValue_ThenAttributeAssignedUtcDateTime()
         {
             var date = DateTime.UtcNow;
-            var attribute = new Attribute("aname", "datetime", false, date.ToIso8601());
+            var attribute = new Attribute("anattributename", "datetime", false, date.ToIso8601());
             this.pattern.AddAttribute(attribute);
 
             var result = new DraftItem(this.toolkit, this.pattern);
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            result.Properties["aname"].AttributeSchema.Attribute.Should().Be(attribute);
-            result.Properties["aname"].Value.Should().Be(date);
-            result.Properties["aname"].IsMaterialised.Should().BeTrue();
+            result.Properties["anattributename"].AttributeSchema.Attribute.Should().Be(attribute);
+            result.Properties["anattributename"].Value.Should().Be(date);
+            result.Properties["anattributename"].IsMaterialised.Should().BeTrue();
         }
 
         [Fact]
-        public void WhenConstructedWithElement_ThenElementAssigned()
+        public void WhenConstructedWithElementAndNotAutoCreate_ThenElementAssigned()
         {
             var element = new Element("anelementname", autoCreate: false,
                 displayName: "adisplayname",
@@ -100,14 +100,37 @@ namespace Core.UnitTests.Runtime.Domain
             result.Properties["anelementname"].Value.Should().BeNull();
             result.Properties["anelementname"].IsMaterialised.Should().BeFalse();
             result.Properties["anelementname"].Items.Should().BeNull();
+            result.Properties["anelementname"].Properties["anattributename"].IsMaterialised.Should().BeFalse();
+            result.Properties["anelementname"].Properties["anattributename"].Value.Should().BeNull();
         }
 
         [Fact]
-        public void WhenConstructedWithCollection_ThenCollectionAssigned()
+        public void WhenConstructedWithElementAndAutoCreate_ThenElementAssigned()
+        {
+            var element = new Element("anelementname", autoCreate: true,
+                displayName: "adisplayname",
+                description: "adescription");
+            element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
+            this.pattern.AddElement(element);
+
+            var result = new DraftItem(this.toolkit, this.pattern);
+
+            result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
+            result.Properties["anelementname"].ElementSchema.Element.Should().Be(element);
+            result.Properties["anelementname"].Value.Should().BeNull();
+            result.Properties["anelementname"].IsMaterialised.Should().BeTrue();
+            result.Properties["anelementname"].Items.Should().BeNull();
+            result.Properties["anelementname"].Properties["anattributename"].IsMaterialised.Should().BeTrue();
+            result.Properties["anelementname"].Properties["anattributename"].Value.Should().Be("adefaultvalue");
+        }
+
+        [Fact]
+        public void WhenConstructedWithCollectionAndNotAutoCreate_ThenCollectionAssigned()
         {
             var element = new Element("acollectionname", autoCreate: false,
                 displayName: "adisplayname",
-                description: "adescription");
+                description: "adescription", cardinality: ElementCardinality.OneOrMany);
             element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
             this.pattern.AddElement(element);
 
@@ -118,11 +141,32 @@ namespace Core.UnitTests.Runtime.Domain
             result.Properties["acollectionname"].ElementSchema.Element.Should().Be(element);
             result.Properties["acollectionname"].Value.Should().BeNull();
             result.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
-            result.Properties["acollectionname"].Items.Should().BeNull();
+            result.Properties["acollectionname"].Items.Should().BeEmpty();
+            result.Properties["acollectionname"].Properties.ContainsKey("anattributename").Should().BeFalse();
         }
 
         [Fact]
-        public void WhenConstructedWithDescendantSchema_ThenDescendantElementsAssigned()
+        public void WhenConstructedWithCollectionAndAutoCreate_ThenCollectionAssigned()
+        {
+            var element = new Element("acollectionname", autoCreate: true,
+                displayName: "adisplayname",
+                description: "adescription", cardinality: ElementCardinality.OneOrMany);
+            element.AddAttribute(new Attribute("anattributename", "string", false, "adefaultvalue"));
+            this.pattern.AddElement(element);
+
+            var result = new DraftItem(this.toolkit, this.pattern);
+
+            result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
+            result.Properties["acollectionname"].ElementSchema.Element.Should().Be(element);
+            result.Properties["acollectionname"].Value.Should().BeNull();
+            result.Properties["acollectionname"].IsMaterialised.Should().BeTrue();
+            result.Properties["acollectionname"].Items.Should().BeEmpty();
+            result.Properties["acollectionname"].Properties.ContainsKey("anattributename").Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenConstructedWithDescendantSchemaAndNotAutoCreated_ThenDescendantElementsAllAssigned()
         {
             var element3 = new Element("anelementname3", autoCreate: false,
                 displayName: "adisplayname3",
@@ -144,12 +188,61 @@ namespace Core.UnitTests.Runtime.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            var draftElement1 = result.Properties["anelementname1"];
-            draftElement1.ElementSchema.Element.Should().Be(element1);
-            draftElement1.Value.Should().BeNull();
-            draftElement1.IsMaterialised.Should().BeFalse();
-            draftElement1.Items.Should().BeNull();
-            draftElement1.Properties.Should().BeNull();
+            var draftItem1 = result.Properties["anelementname1"];
+            draftItem1.ElementSchema.Element.Should().Be(element1);
+            draftItem1.IsMaterialised.Should().BeFalse();
+            draftItem1.Properties["anattributename1"].IsMaterialised.Should().BeFalse();
+            draftItem1.Properties["anattributename1"].Value.Should().BeNull();
+            var draftItem2 = draftItem1.Properties["anelementname2"];
+            draftItem2.ElementSchema.Element.Should().Be(element2);
+            draftItem2.IsMaterialised.Should().BeFalse();
+            draftItem2.Properties["anattributename2"].IsMaterialised.Should().BeFalse();
+            draftItem2.Properties["anattributename2"].Value.Should().BeNull();
+            var draftItem3 = draftItem2.Properties["anelementname3"];
+            draftItem3.ElementSchema.Element.Should().Be(element3);
+            draftItem3.IsMaterialised.Should().BeFalse();
+            draftItem3.Properties["anattributename3"].IsMaterialised.Should().BeFalse();
+            draftItem3.Properties["anattributename3"].Value.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenConstructedWithDescendantSchemaAndAutoCreated_ThenDescendantElementsAllAssigned()
+        {
+            var element3 = new Element("anelementname3", autoCreate: true,
+                displayName: "adisplayname3",
+                description: "adescription3");
+            element3.AddAttribute(new Attribute("anattributename3", "string", false, "adefaultvalue3"));
+            var element2 = new Element("anelementname2", autoCreate: true,
+                displayName: "adisplayname2",
+                description: "adescription2");
+            element2.AddAttribute(new Attribute("anattributename2", "string", false, "adefaultvalue2"));
+            var element1 = new Element("anelementname1", autoCreate: true,
+                displayName: "adisplayname1",
+                description: "adescription1");
+            element1.AddAttribute(new Attribute("anattributename1", "string", false, "adefaultvalue1"));
+            element2.AddElement(element3);
+            element1.AddElement(element2);
+            this.pattern.AddElement(element1);
+
+            var result = new DraftItem(this.toolkit, this.pattern);
+
+            result.Should().NotBeNull();
+            result.Id.Should().NotBeNull();
+            var draftItem1 = result.Properties["anelementname1"];
+            draftItem1.ElementSchema.Element.Should().Be(element1);
+            draftItem1.IsMaterialised.Should().BeTrue();
+            draftItem1.Properties["anattributename1"].IsMaterialised.Should().BeTrue();
+            draftItem1.Properties["anattributename1"].Value.Should().Be("adefaultvalue1");
+            var draftItem2 = draftItem1.Properties["anelementname2"];
+            draftItem2.ElementSchema.Element.Should().Be(element2);
+            draftItem2.IsMaterialised.Should().BeTrue();
+            draftItem2.Properties["anattributename2"].IsMaterialised.Should().BeTrue();
+            draftItem2.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            var draftItem3 = draftItem2.Properties["anelementname3"];
+            draftItem3.ElementSchema.Element.Should().Be(element3);
+            draftItem3.IsMaterialised.Should().BeTrue();
+            draftItem3.Properties["anattributename3"].IsMaterialised.Should().BeTrue();
+            draftItem3.Properties["anattributename3"].Value.Should().Be("adefaultvalue3");
         }
 
         [Fact]
@@ -162,7 +255,7 @@ namespace Core.UnitTests.Runtime.Domain
         }
 
         [Fact]
-        public void WhenMaterialiseAndElement_ThenMaterialises()
+        public void WhenMaterialiseAndElementAlreadyMaterialised_ThenMaterialises()
         {
             var element = new Element("anelementname", displayName: "adisplayname",
                 description: "adescription");
@@ -171,6 +264,25 @@ namespace Core.UnitTests.Runtime.Domain
             this.pattern.AddElement(element);
 
             var result = new DraftItem(this.toolkit, element, null)
+                .Materialise();
+
+            result.Id.Should().NotBeNull();
+            result.IsMaterialised.Should().BeTrue();
+            result.Value.Should().BeNull();
+            result.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            result.Items.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenMaterialiseAndElementNotMaterialised_ThenMaterialises()
+        {
+            var element = new Element("anelementname", displayName: "adisplayname",
+                description: "adescription", autoCreate: false);
+            var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
+            element.AddAttribute(attribute);
+            this.pattern.AddElement(element);
+
+            var result = new DraftItem(this.toolkit, element, new DraftItem(this.toolkit, this.pattern))
                 .Materialise();
 
             result.Id.Should().NotBeNull();
@@ -231,8 +343,7 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenMaterialiseAndCollection_ThenMaterialises()
         {
-            var collection = new Element("acollectionname",
-                ElementCardinality.OneOrMany);
+            var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             var element = new Element("anelementname");
             collection.AddAttribute(attribute);
@@ -255,7 +366,7 @@ namespace Core.UnitTests.Runtime.Domain
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             this.pattern.AddAttribute(attribute);
 
-            var result = new DraftItem(this.toolkit, attribute, null)
+            var result = new DraftItem(this.toolkit, attribute, new DraftItem(this.toolkit, this.pattern))
                 .Materialise("avalue");
 
             result.Id.Should().NotBeNull();
@@ -268,6 +379,7 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var element = new Element("anelementname", displayName: "adisplayname",
                 description: "adescription");
+            this.pattern.AddElement(element);
 
             new DraftItem(this.toolkit, element, null)
                 .Invoking(x => x.MaterialiseCollectionItem())
@@ -393,7 +505,7 @@ namespace Core.UnitTests.Runtime.Domain
             var attribute = new Attribute("anattributename", null);
             this.pattern.AddAttribute(attribute);
 
-            var result = new DraftItem(this.toolkit, attribute, null)
+            var result = new DraftItem(this.toolkit, attribute, new DraftItem(this.toolkit, this.pattern))
                 .HasAttribute("anattributename");
 
             result.Should().BeFalse();
@@ -414,9 +526,10 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenGetPropertyAndNotMaterialised_ThenThrows()
         {
-            var element = new Element("anelementname");
+            var element = new Element("anelementname", autoCreate: false);
             var attribute = new Attribute("anattributename", null, false, "adefaultvalue");
             element.AddAttribute(attribute);
+            this.pattern.AddElement(element);
 
             new DraftItem(this.toolkit, element, null)
                 .Invoking(x => x.GetProperty("anattributename"))
@@ -564,7 +677,7 @@ namespace Core.UnitTests.Runtime.Domain
         }
 
         [Fact]
-        public void WhenValidateAndIsDescendantCollectionWithMissingRequiredAttribute_ThenReturnsErrors()
+        public void WhenValidateAndIsDescendantCollectionItemWithMissingRequiredAttribute_ThenReturnsErrors()
         {
             var collection = new Element("acollectionname",
                 ElementCardinality.OneOrMany, false);
@@ -592,8 +705,7 @@ namespace Core.UnitTests.Runtime.Domain
             var attribute = new Attribute("anattributename", isRequired: true);
             this.pattern.AddAttribute(attribute);
 
-            var result = new DraftItem(this.toolkit, attribute,
-                    new DraftItem(this.toolkit, this.pattern))
+            var result = new DraftItem(this.toolkit, attribute, new DraftItem(this.toolkit, this.pattern))
                 .Validate();
 
             result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
@@ -1569,28 +1681,45 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenDeleteAndDeleteChildElement_ThenDeletes()
         {
-            var element = new Element("anelementname");
-            this.pattern.AddElement(element);
+            var element1 = new Element("anelementname1", autoCreate: true);
+            var element2 = new Element("anelementname2", autoCreate: true);
+            element1.AddElement(element2);
+            var element3 = new Element("anelementname3", autoCreate: true);
+            element2.AddElement(element3);
+            this.pattern.AddElement(element1);
             var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var elementItem = patternItem.Properties["anelementname"];
+            var elementItem = patternItem.Properties["anelementname1"];
+
+            patternItem.Properties["anelementname1"].IsMaterialised.Should().BeTrue();
+            patternItem.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeTrue();
+            patternItem.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+                .IsMaterialised.Should().BeTrue();
 
             patternItem.Delete(elementItem);
 
-            patternItem.Properties.Should().NotContainKey("anelementname");
+            patternItem.Properties["anelementname1"].IsMaterialised.Should().BeFalse();
+            patternItem.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeFalse();
+            patternItem.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+                .IsMaterialised.Should().BeFalse();
         }
 
         [Fact]
-        public void WhenDeleteAndDeleteChildCollection_ThenDeletes()
+        public void WhenDeleteAndDeleteChildCollection_ThenDeletesAllCollectionItems()
         {
+            var element = new Element("anelementname", autoCreate: true);
             var collection = new Element("acollectionname",
                 ElementCardinality.ZeroOrMany);
+            collection.AddElement(element);
             this.pattern.AddElement(collection);
             var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var collectionItem = patternItem.Properties["acollectionname"];
+            var draftCollection = patternItem.Properties["acollectionname"];
+            draftCollection.MaterialiseCollectionItem();
+            draftCollection.MaterialiseCollectionItem();
 
-            patternItem.Delete(collectionItem);
+            patternItem.Delete(draftCollection);
 
-            patternItem.Properties.Should().NotContainKey("acollectionname");
+            patternItem.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
+            patternItem.Properties["acollectionname"].Items.Should().BeEmpty();
         }
 
         [Fact]

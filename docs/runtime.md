@@ -221,7 +221,8 @@ To delete an element, a collection, or an item of a collection in the draft: `au
 
 ### Executing automation
 
-**Concept**: A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.
+!!! abstract "Concept"
+A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.
 
 To view all the launch points configured on the elements/collections within the toolkit: `automate view toolkit --all`
 

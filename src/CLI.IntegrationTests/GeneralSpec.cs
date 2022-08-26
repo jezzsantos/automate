@@ -9,7 +9,7 @@ using Xunit;
 namespace CLI.IntegrationTests
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
-    public class GeneralSpec
+    public class GeneralSpec : IDisposable
     {
         private readonly CliTestSetup setup;
 
@@ -17,6 +17,11 @@ namespace CLI.IntegrationTests
         {
             this.setup = setup;
             this.setup.ResetRepository();
+        }
+
+        public void Dispose()
+        {
+            this.setup.Reset();
         }
 
         [Fact]

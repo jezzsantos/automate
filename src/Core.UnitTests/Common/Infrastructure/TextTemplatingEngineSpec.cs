@@ -23,11 +23,13 @@ namespace Core.UnitTests.Common.Infrastructure
         [Fact]
         public void WhenTransformAndEmptyTemplate_ThenReturnsEmptyString()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             var result = this.engine.Transform("adescription", string.Empty,
-                new DraftItem(toolkit,
-                    new Element("anelementname"), null));
+                new DraftItem(toolkit, element, new DraftItem(toolkit, pattern)));
 
             result.Should().BeEmpty();
         }
@@ -35,11 +37,13 @@ namespace Core.UnitTests.Common.Infrastructure
         [Fact]
         public void WhenTransformAndTemplate_ThenReturnsTransformedTemplate()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             var result = this.engine.Transform("adescription", "atemplate",
-                new DraftItem(toolkit,
-                    new Element("anelementname"), null));
+                new DraftItem(toolkit, element, new DraftItem(toolkit, pattern)));
 
             result.Should().Be("atemplate");
         }
@@ -53,7 +57,7 @@ namespace Core.UnitTests.Common.Infrastructure
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
             pattern.AddElement(element);
-            var draft = new DraftItem(toolkit, element, null);
+            var draft = new DraftItem(toolkit, element, new DraftItem(toolkit, pattern));
             draft.Materialise();
 
             var result = this.engine.Transform("adescription", "{{anattributename}}", draft);
@@ -64,12 +68,14 @@ namespace Core.UnitTests.Common.Infrastructure
         [Fact]
         public void WhenTransformAndHasSyntaxErrors_ThenThrows()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             this.engine
                 .Invoking(x => x.Transform("adescription", "{{anything.}}",
-                    new DraftItem(toolkit,
-                        new Element("anelementname"), null)))
+                    new DraftItem(toolkit, element, new DraftItem(toolkit, pattern))))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Substitute("adescription",
                     "((11:0,11),(12:0,12)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier" +
@@ -80,12 +86,14 @@ namespace Core.UnitTests.Common.Infrastructure
         [Fact]
         public void WhenTransformAndHasTransformationErrors_ThenThrows()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             this.engine
                 .Invoking(x => x.Transform("adescription", "{{parent.notexists}}",
-                    new DraftItem(toolkit,
-                        new Element("anelementname"), null)))
+                    new DraftItem(toolkit, element, new DraftItem(toolkit, pattern))))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.TextTemplatingExtensions_TransformFailed.Substitute("adescription",
                     "<input>(1,10) : error : Cannot get the member parent.notexists for a null object." +

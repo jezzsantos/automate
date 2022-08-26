@@ -50,11 +50,11 @@ namespace CLI.IntegrationTests
                 .ForCondition(!string.IsNullOrEmpty(errorText))
                 .FailWith("You can't assert an error is displayed without specifying the text of the error")
                 .Then
-                .Given(() => Subject.Error.Value)
+                .Given(() => Subject.Output.Value)
                 .ForCondition(value =>
                     value.Trim(Environment.NewLine.ToCharArray()) == errorMessage || value.Contains(errorMessage))
-                .FailWith("Expected {context:StdError} to contain {0}{reason}, but found {1}.", errorText,
-                    Subject.Error.Value);
+                .FailWith("Expected {context:StdOutput} to contain {0}{reason}, but found {1}.", errorText,
+                    Subject.Output.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }

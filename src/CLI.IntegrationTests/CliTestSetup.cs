@@ -68,6 +68,12 @@ namespace CLI.IntegrationTests
 
         public void RunCommand(string arguments)
         {
+            var error = Error?.Value?.Trim();
+            if (error.HasValue())
+            {
+                throw new Exception($"Previous call to {nameof(RunCommand)}() failed with error: {error}");
+            }
+
             var host = Host.CreateDefaultBuilder()
                 .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
                 .Build();
@@ -127,6 +133,13 @@ namespace CLI.IntegrationTests
 
         public void Dispose()
         {
+        }
+
+        public void Reset()
+        {
+            Error = null;
+            Output = null;
+            ExitCode = 0;
         }
     }
 

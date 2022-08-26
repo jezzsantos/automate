@@ -145,6 +145,21 @@ namespace Core.UnitTests.Runtime.Infrastructure
         }
 
         [Fact]
+        public void WhenResolveAndDescendantElementExpressionNotExists_ThenReturnsNull()
+        {
+            var pattern = new PatternDefinition("apatternname");
+            var element2 = new Element("anelementname2", autoCreate: false);
+            var element1 = new Element("anelementname1");
+            element1.AddElement(element2);
+            pattern.AddElement(element1);
+            var draft = new DraftDefinition(new ToolkitDefinition(pattern));
+
+            var result = this.resolver.ResolveItem(draft, "{anelementname1.anelementname2.anelementname3}");
+
+            result.Should().BeNull();
+        }
+        
+        [Fact]
         public void WhenResolveAndDescendantElementExpressionNotMaterialised_ThenReturnsNull()
         {
             var pattern = new PatternDefinition("apatternname");
@@ -155,15 +170,14 @@ namespace Core.UnitTests.Runtime.Infrastructure
             element1.AddElement(element2);
             pattern.AddElement(element1);
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
-            draft.Model.Properties["anelementname1"].Materialise();
 
             var result = this.resolver.ResolveItem(draft, "{anelementname1.anelementname2.anelementname3}");
 
-            result.Should().BeNull();
+            result.ElementSchema.Element.Should().Be(element3);
         }
 
         [Fact]
-        public void WhenResolveAndDescendantElementExpressionExists_ThenReturnsElement()
+        public void WhenResolveAndDescendantElementExpressionIsMaterialised_ThenReturnsElement()
         {
             var pattern = new PatternDefinition("apatternname");
             var element3 = new Element("anelementname3");
@@ -184,11 +198,13 @@ namespace Core.UnitTests.Runtime.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionIsNull_ThenReturnsNull()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             var result = this.resolver.ResolveExpression("adescription", null,
-                new DraftItem(toolkit,
-                    new Element("anelementname"), null));
+                new DraftItem(toolkit, element, null));
 
             result.Should().BeNull();
         }
@@ -196,11 +212,13 @@ namespace Core.UnitTests.Runtime.Infrastructure
         [Fact]
         public void WhenResolveExpressionAndExpressionContainsNoSyntax_ThenReturnsExpression()
         {
-            var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"));
+            var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
+            var element = new Element("anelementname");
+            pattern.AddElement(element);
 
             var result = this.resolver.ResolveExpression("adescription", "anexpression",
-                new DraftItem(toolkit,
-                    new Element("anelementname"), null));
+                new DraftItem(toolkit, element, null));
 
             result.Should().Be("anexpression");
         }
