@@ -12,7 +12,7 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
 
 - The `--displayedas` is optional metadata that defines how the pattern might be displayed in a user interface.
 
-- The `--describedas` is an optional metadata that defines how the pattern might be displayed in a user interface.
+- The `--describedas` is optional metadata that defines how the pattern might be displayed in a user interface.
 
 !!! info
     This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
@@ -46,7 +46,7 @@ The structure of a pattern describes a (conceptual) model of your code and its c
 
 * The simplest coding pattern, used for a single use-case, probably does not need much structure (hierarchy) or variance (attributes) to represent it. Since generating the code for it can all be hardcoded into one or more code templates (with no variance).
 
-* If a pattern is to be used for multiple use-cases, some variance needs to be captured and configured by the person applying the actual use-case. This is where a hierarchy of elements, attributes, and automation come to play to make a model of the software.
+* If a pattern is to be used for multiple use-cases, some variance needs to be captured and configured by the person applying the actual use-case. This is where a hierarchy of elements, attributes, and automation comes to play to make a model of the software.
 
 * Try to define the high-level concepts about your coding pattern (in a hierarchy of elements/collections), not necessarily representing detailed coding concepts like functions and variables, but more at the conceptual/component/module level. Then decorate your hierarchical elements/collections with attributes to describe what varies and to which concepts that variance would naturally be attributed.
 * Construct elements (ZeroToOne) and collections (ZeroToMany) to help model your pattern and its instancing rules.
@@ -66,11 +66,11 @@ To update the name and metadata for a pattern: `automate edit update-pattern`
 ### Add attributes
 
 !!! abstract "Concept"
-An "Attribute" is a means to represent the variability of a pattern (or the variance within a set of use-cases). When applied, they are essentially a name-value pair.
+    An "Attribute" is a means to represent the variability of a pattern (or the variance within a set of use-cases). When applied, they are essentially a name-value pair.
 
 To add a new attribute to any element/collection in the pattern: `automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the attribute to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
@@ -103,19 +103,19 @@ To update an existing attribute on any element/collection in the pattern: `autom
 To delete an existing attribute: `automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
 !!! tip
-    The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element in the pattern.
+    The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element in the pattern.
 
 ### Add elements
 
 !!! abstract "Concept"
-An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of `ZeroOrOne` or `One`, which determines whether it must exist when the pattern is applied.
+    An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of `ZeroOrOne` or `One`, which determines whether it must exist when the pattern is applied.
 
 !!! tip
-Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
+    Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
 
 To add a new element to any element/collection in the pattern: `automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
@@ -139,7 +139,7 @@ To update an existing element on any element/collection in the pattern: `automat
 
 - The `--isrequired` optionally defines whether the element is required (`One`) or not required (`ZeroToOne`).
 
-- The `--name` optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `--name` optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.
 
@@ -147,18 +147,18 @@ To update an existing element on any element/collection in the pattern: `automat
 
 To delete an existing element on any element/collection in the pattern: `automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 ### Add collections
 
 !!! abstract "Concept"
-A "Collection" is a special case of an "Element" that represents a collection of concepts. A collection is essentially an element with a choice of cardinality (`ZeroOrMany`, `OneOrMany`). When it is applied to a specific use-case, multiple instances of the element (described by the collection) are instantiated as (required `One`) elements.
+    A "Collection" is a special case of an "Element" that represents a collection of concepts. A collection is essentially an element with a choice of cardinality (`ZeroOrMany`, `OneOrMany`). When it is applied to a specific use-case, multiple instances of the element (described by the collection) are instantiated as (required `One`) elements.
 
 To add a new collection to any element/collection in the pattern: `automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 - The `--displayedas` is an optional parameter that defines how the element might be displayed in a user interface.
 
@@ -180,7 +180,7 @@ To update an existing collection on any element/collection in the pattern: `auto
 
 - The `--isrequired`optionally defines whether the collection must have at least one item within it (`OneToMany`) or not required (`ZeroToMany`).
 
-- The `--name` optionally defines a new name for the collection. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
+- The `--name` optionally defines a new name for the collection. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied.
 
@@ -188,33 +188,33 @@ To update an existing collection on any element/collection in the pattern: `auto
 
 To delete an existing collection on any element/collection in the pattern: `automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 ## Configuring pattern automation
 
 The structure of a pattern provides a convenient context for applying automation to it.
 
-Each element/collection can be configured with one or more automation features, that can be used to realise or manifest the pattern when applied.
+Each element/collection can be configured with one or more automation features, that can be used to realize or manifest the pattern when applied.
 
 There are several concepts here. The first is "Commands" which can enact things on the pattern, make calculations, manipulations, etc. Then there are "Launch Points" which execute the commands in response to some trigger or stimulus. These launch points can be manually triggered by a human user or can be triggered in response to some event on the pattern, or some environmental event.
 
 ### Add code templates
 
 !!! abstract "Concept"
-A "Code Template" is a way to capture any kind of code (or configuration viz: JSON, XML, etc) of a pattern so that when a use-case is realised, code artifacts can be injected/modified/augmented/inserted/generated into codebases in specific locations of the codebase. Once a piece of code has been captured by the pattern, it can be templatized by the author and marked up so that variance in a specific use-case can parameterize the actual code injected into a codebase.
+    A "Code Template" is a way to capture any kind of code (or configuration viz: JSON, XML, etc) of a pattern so that when a use-case is realized, code artifacts can be injected/modified/augmented/inserted/generated into codebases in specific locations of the codebase. Once a piece of code has been captured by the pattern, it can be templatized by the author and marked up so that variance in a specific use-case can parameterize the actual code injected into a codebase.
 
 To capture a piece of code: `automate edit add-codetemplate "<FILEPATH>" --aschildof {<ANEXPRESSION>}"`
 
 - The `FILEPATH` is a relative path to an existing code file locally.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the code template to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
 ### Editing code templates
 
 !!! abstract "Concept"
-Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
+    Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
 
 To edit the contents of an existing code template: `automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof {<ANEXPRESSION>}"`
 
@@ -237,7 +237,7 @@ To delete an existing code template: `automate edit delete-codetemplate "<TEMPLA
 ### Test code templates
 
 !!! abstract "Concept"
-Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions). Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
+    Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions). Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
 To can test the contents of an existing code template: `automate test codetemplate "<TEMPLATENAME>" --aschildof {<ANEXPRESSION>}"`
 
@@ -252,16 +252,16 @@ To can test the contents of an existing code template: `automate test codetempla
 ### Add code template commands
 
 !!! abstract "Concept"
-* A "Code Template Command" is simply a type of automation that executes a "Code Template". This automation must be wired up to a "Code Template", and a "Code Template" must have a "Code Template Command" wired to it, to be applied in any use-case. This kind of command is responsible for deciding how to render the "Code Template" into the target codebase (where in the codebase, and how its named).
-* After a code template is rendered into a codebase, an "Artifact Link" is defined for the location of the rendered code. This link is then tracked and maintained on subsequent executions of this command. This is useful if rendered files are later renamed, or the `--targetpath` property of this command changes.
+    A "Code Template Command" is simply a type of automation that executes a "Code Template". This automation must be wired up to a "Code Template", and a "Code Template" must have a "Code Template Command" wired to it, to be applied in any use-case. This kind of command is responsible for deciding how to render the "Code Template" into the target codebase (where in the codebase, and how its named).
+    After a code template is rendered into a codebase, an "Artifact Link" is defined for the location of the rendered code. This link is then tracked and maintained on subsequent executions of this command. This is useful if rendered files are later renamed, or the `--targetpath` property of this command changes.
 
 To add a new code template command to any element/collection in the pattern: `automate edit add-codetemplate-command "<CODETEMPLATENAME>" --aschildof "{<ANEXPRESSION>}" --targetpath "~/apath/afilename.anextension"`
 
 - The `<CODETEMPLATENAME>` is the name of an existing code template that must exist on the `--aschildof` element/collection.
 
-- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the command to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
-- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
+- The `--targetpath` value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a `~` character to indicate that the path will be relative to the codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), that will be resolved when the command is applied.
 
 - The `--isoneoff` optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed. The default is `false`.
 
@@ -269,7 +269,8 @@ To add a new code template command to any element/collection in the pattern: `au
 
 ### Add code template with commands
 
-**Shortcut**: this command makes it possible to add a code template and add a new code template command to render it at the same time.
+!!! tip
+    This command makes it possible to add a code template and add a new code template command to render it at the same time.
 
 To capture a piece of code and wire it up to a code template command: `automate edit add-codetemplate-with-command "<FILEPATH>" --aschildof {<ANEXPRESSION>}" --targetpath "~/apath/afilename.anextension"`
 
@@ -299,7 +300,7 @@ To update an existing code template command on any element/collection in the pat
 ### Test code template commands
 
 !!! abstract "Concept"
-Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions). Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
+    Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions). Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
 To can test the contents of an existing code template command: `automate test codetemplate-command "<COMMANDNAME>" --aschildof {<ANEXPRESSION>}"`
 
@@ -314,7 +315,7 @@ To can test the contents of an existing code template command: `automate test co
 ### Add CLI commands
 
 !!! abstract "Concept"
-A "CLI Command" is simply a type of automation that executes another command-line program (with arguments).
+    A "CLI Command" is simply a type of automation that executes another command-line program (with arguments).
 
 To add a new CLI command to any element/collection in the pattern: `automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"`
 
@@ -354,10 +355,10 @@ To delete any existing command on any element/collection in the pattern: `automa
 ### Add launch points
 
 !!! abstract "Concept"
-A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order).
+    A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order).
 
 !!! info
-Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
+    Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
 
 To add a new launch point to any element/collection in the pattern: `automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"`
 
@@ -394,12 +395,12 @@ To delete an existing launch point on any element/collection in the pattern: `au
 ## Publishing and deploying toolkits
 
 !!! abstract "Concept"
-A "Toolkit" is a portable package (single-file) that contains within it a versioned Pattern (with all its assets and its automation). A Toolkit is used to install a pattern into another codebase, and used to upgrade that pattern when changed later.
+    A "Toolkit" is a portable package (single-file) that contains within it a versioned Pattern (with all its assets and its automation). A Toolkit is used to install a pattern into another codebase, and used to upgrade that pattern when changed later.
 
 ### Automatic versioning rules for toolkits
 
 !!! abstract "Concept"
-Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change.
+    Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change.
 
 Patterns use a (2-dot) [semantic versioning](https://semver.org/) scheme (i.e. `Major.Minor.Patch`).
 
