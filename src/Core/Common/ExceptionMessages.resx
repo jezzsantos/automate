@@ -238,13 +238,13 @@
         <value>Cannot clear items for a non-collection</value>
     </data>
     <data name="DraftItem_DeleteForNonElement" xml:space="preserve">
-        <value>Cannot delete on a non-element</value>
+        <value>Cannot delete from a non-element</value>
     </data>
     <data name="DraftItem_DeleteForNonElementChild" xml:space="preserve">
-        <value>Can only delete an element or collection</value>
+        <value>Can only delete an element or collection or collection item</value>
     </data>
     <data name="DraftItem_DeleteWithUnknownChild" xml:space="preserve">
-        <value>Can only delete a child of the element or collection</value>
+        <value>Can only delete a child of the element or of its collection</value>
     </data>
     <data name="ToolkitDefinition_CodeTemplateFileNotExist" xml:space="preserve">
         <value>The Code Template: '{0}' does not exist in the toolkit</value>

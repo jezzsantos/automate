@@ -98,7 +98,19 @@ Your Responsibilities are:
 
 # Documentation
 
-[This is where](https://jezzsantos.github.io/automate/) we have all of our product documentation. This includes documentation for the core product of automate, our CLI interfaces and our plugins.
+## Product Documentation
+
+[This is where](https://jezzsantos.github.io/automate/) we have all of our product documentation, aimed at the users of our product, which in this case are primarily developers themselves.
+
+This includes documentation for the core product of automate, our CLI interfaces and our plugins.
+
+We build that documentation using [MkDocs](https://www.mkdocs.org/) from the source documentation files located in the: `docs` folder. The `mkdocs.yml` file is in the root of the repository.
+
+## Contributors Documentation
+
+[This is where](https://jezzsantos.github.io/automate/contributors) we have all of our contributor documentation, aimed at the developers of our product. Our users are not likely to care about this documentation.
+
+This includes documentation for the design of all components of automate.
 
 We build that documentation using [MkDocs](https://www.mkdocs.org/) from the source documentation files located in the: `docs` folder. The `mkdocs.yml` file is in the root of the repository.
 

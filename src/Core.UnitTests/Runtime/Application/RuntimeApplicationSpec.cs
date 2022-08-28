@@ -313,7 +313,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns(new DraftItem(this.toolkit,
                         this.pattern.Elements.Single(), null));
 
-                var result = this.application.ConfigureDraft("apatternname.anelement", null, null, null);
+                var result = this.application.ConfigureDraft("apatternname.anelementname", null, null, null);
 
                 result.Id.Should().NotBeNull();
             }
@@ -337,15 +337,15 @@ namespace Core.UnitTests.Runtime.Application
             public void WhenConfigureDraftWithNewCollectionElement_ThenReturnsDraft()
             {
                 this.application.CreateDraft("apatternname", null);
-                this.pattern.AddElement("anelementname", ElementCardinality.OneOrMany);
-                var draftItem = new DraftItem(this.toolkit,
+                this.pattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
+                var draftCollection = new DraftItem(this.toolkit,
                     this.pattern.Elements.Single(), null);
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftCollection);
 
                 var result = this.application.ConfigureDraft(null, "apatternname.acollectionname", null, null);
 
-                result.Id.Should().Be(draftItem.Items.Single().Id);
+                result.Id.Should().Be(draftCollection.Items.Single().Id);
             }
 
             [Fact]
@@ -390,15 +390,15 @@ namespace Core.UnitTests.Runtime.Application
                 this.pattern.AddElement(element);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var draftItem = draft.Model.Properties["anelementname"];
+                var draftElement = draft.Model.Properties["anelementname"];
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftElement);
 
                 var result = this.application.ConfigureDraft("anelementexpression", null, null,
                     new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-                result.Id.Should().Be(draftItem.Id);
-                draftItem.Properties["anattributename"].Value.Should().Be("avalue");
+                result.Id.Should().Be(draftElement.Id);
+                draftElement.Properties["anattributename"].Value.Should().Be("avalue");
             }
 
             [Fact]
@@ -410,15 +410,15 @@ namespace Core.UnitTests.Runtime.Application
                 this.pattern.AddElement(element);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var draftItem = draft.Model.Properties["anelementname"].Materialise();
+                var draftElement = draft.Model.Properties["anelementname"].Materialise();
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftElement);
 
                 var result = this.application.ConfigureDraft(null, null, "anelementexpression",
                     new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-                result.Id.Should().Be(draftItem.Id);
-                draftItem.Properties["anattributename"].Value.Should().Be("avalue");
+                result.Id.Should().Be(draftElement.Id);
+                draftElement.Properties["anattributename"].Value.Should().Be("avalue");
             }
 
             [Fact]
@@ -432,9 +432,9 @@ namespace Core.UnitTests.Runtime.Application
                 this.pattern.AddElement(element);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var draftItem = draft.Model.Properties["anelementname"].Materialise();
+                var draftElement = draft.Model.Properties["anelementname"].Materialise();
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftElement);
 
                 var result = this.application.ConfigureDraftAndResetElement("anelementexpression");
 
@@ -450,12 +450,12 @@ namespace Core.UnitTests.Runtime.Application
                 this.pattern.AddElement(collection);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var collectionItem = draft.Model.Properties["acollectioname"].Materialise();
-                collectionItem.MaterialiseCollectionItem();
-                collectionItem.MaterialiseCollectionItem();
-                collectionItem.MaterialiseCollectionItem();
+                var draftCollectionItem = draft.Model.Properties["acollectioname"].Materialise();
+                draftCollectionItem.MaterialiseCollectionItem();
+                draftCollectionItem.MaterialiseCollectionItem();
+                draftCollectionItem.MaterialiseCollectionItem();
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(collectionItem);
+                    .Returns(draftCollectionItem);
 
                 var result = this.application.ConfigureDraftAndClearCollection("acollectionexpression");
 
@@ -469,9 +469,9 @@ namespace Core.UnitTests.Runtime.Application
                 this.pattern.AddElement(element);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var draftItem = draft.Model;
+                var draftElement = draft.Model;
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftElement);
 
                 this.application
                     .Invoking(x => x.ConfigureDraftAndDelete("anelementexpression"))
@@ -480,21 +480,40 @@ namespace Core.UnitTests.Runtime.Application
             }
 
             [Fact]
-            public void WhenConfigureDraftAndDelete_ThenDeletesElement()
+            public void WhenConfigureDraftAndDeleteElement_ThenUnMaterialisesElement()
             {
                 var element = new Element("anelementname");
                 this.pattern.AddElement(element);
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                var draftItem = draft.Model.Properties["anelementname"].Materialise();
+                var draftElement = draft.Model.Properties["anelementname"].Materialise();
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
-                    .Returns(draftItem);
+                    .Returns(draftElement);
 
                 var result = this.application.ConfigureDraftAndDelete("anelementexpression");
 
-                result.Properties.Should().NotContainKey("anelementname");
+                result.Should().Be(draftElement);
+                result.IsMaterialised.Should().BeFalse();
             }
 
+            [Fact]
+            public void WhenConfigureDraftAndDeleteCollectionItem_ThenDeletesCollectionItem()
+            {
+                var collection = new Element("acollectionname", ElementCardinality.OneOrMany);
+                this.pattern.AddElement(collection);
+                ResetToolkit();
+                var draft = this.application.CreateDraft("apatternname", null);
+                var draftCollection = draft.Model.Properties["acollectionname"];
+                var draftCollectionItem = draftCollection.MaterialiseCollectionItem();
+                this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
+                    .Returns(draftCollectionItem);
+
+                var result = this.application.ConfigureDraftAndDelete("anelementexpression");
+
+                result.Should().Be(draftCollectionItem);
+                draftCollection.Items.Should().BeEmpty();
+            }
+            
             [Fact]
             public void WhenGetDraftConfigurationAndCurrentDraftNotExists_ThenThrows()
             {

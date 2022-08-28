@@ -188,21 +188,21 @@ namespace Core.UnitTests.Runtime.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            var draftItem1 = result.Properties["anelementname1"];
-            draftItem1.ElementSchema.Element.Should().Be(element1);
-            draftItem1.IsMaterialised.Should().BeFalse();
-            draftItem1.Properties["anattributename1"].IsMaterialised.Should().BeFalse();
-            draftItem1.Properties["anattributename1"].Value.Should().BeNull();
-            var draftItem2 = draftItem1.Properties["anelementname2"];
-            draftItem2.ElementSchema.Element.Should().Be(element2);
-            draftItem2.IsMaterialised.Should().BeFalse();
-            draftItem2.Properties["anattributename2"].IsMaterialised.Should().BeFalse();
-            draftItem2.Properties["anattributename2"].Value.Should().BeNull();
-            var draftItem3 = draftItem2.Properties["anelementname3"];
-            draftItem3.ElementSchema.Element.Should().Be(element3);
-            draftItem3.IsMaterialised.Should().BeFalse();
-            draftItem3.Properties["anattributename3"].IsMaterialised.Should().BeFalse();
-            draftItem3.Properties["anattributename3"].Value.Should().BeNull();
+            var draftElement1 = result.Properties["anelementname1"];
+            draftElement1.ElementSchema.Element.Should().Be(element1);
+            draftElement1.IsMaterialised.Should().BeFalse();
+            draftElement1.Properties["anattributename1"].IsMaterialised.Should().BeFalse();
+            draftElement1.Properties["anattributename1"].Value.Should().BeNull();
+            var draftElement2 = draftElement1.Properties["anelementname2"];
+            draftElement2.ElementSchema.Element.Should().Be(element2);
+            draftElement2.IsMaterialised.Should().BeFalse();
+            draftElement2.Properties["anattributename2"].IsMaterialised.Should().BeFalse();
+            draftElement2.Properties["anattributename2"].Value.Should().BeNull();
+            var draftElement3 = draftElement2.Properties["anelementname3"];
+            draftElement3.ElementSchema.Element.Should().Be(element3);
+            draftElement3.IsMaterialised.Should().BeFalse();
+            draftElement3.Properties["anattributename3"].IsMaterialised.Should().BeFalse();
+            draftElement3.Properties["anattributename3"].Value.Should().BeNull();
         }
 
         [Fact]
@@ -228,21 +228,21 @@ namespace Core.UnitTests.Runtime.Domain
 
             result.Should().NotBeNull();
             result.Id.Should().NotBeNull();
-            var draftItem1 = result.Properties["anelementname1"];
-            draftItem1.ElementSchema.Element.Should().Be(element1);
-            draftItem1.IsMaterialised.Should().BeTrue();
-            draftItem1.Properties["anattributename1"].IsMaterialised.Should().BeTrue();
-            draftItem1.Properties["anattributename1"].Value.Should().Be("adefaultvalue1");
-            var draftItem2 = draftItem1.Properties["anelementname2"];
-            draftItem2.ElementSchema.Element.Should().Be(element2);
-            draftItem2.IsMaterialised.Should().BeTrue();
-            draftItem2.Properties["anattributename2"].IsMaterialised.Should().BeTrue();
-            draftItem2.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
-            var draftItem3 = draftItem2.Properties["anelementname3"];
-            draftItem3.ElementSchema.Element.Should().Be(element3);
-            draftItem3.IsMaterialised.Should().BeTrue();
-            draftItem3.Properties["anattributename3"].IsMaterialised.Should().BeTrue();
-            draftItem3.Properties["anattributename3"].Value.Should().Be("adefaultvalue3");
+            var draftElement1 = result.Properties["anelementname1"];
+            draftElement1.ElementSchema.Element.Should().Be(element1);
+            draftElement1.IsMaterialised.Should().BeTrue();
+            draftElement1.Properties["anattributename1"].IsMaterialised.Should().BeTrue();
+            draftElement1.Properties["anattributename1"].Value.Should().Be("adefaultvalue1");
+            var draftElement2 = draftElement1.Properties["anelementname2"];
+            draftElement2.ElementSchema.Element.Should().Be(element2);
+            draftElement2.IsMaterialised.Should().BeTrue();
+            draftElement2.Properties["anattributename2"].IsMaterialised.Should().BeTrue();
+            draftElement2.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            var draftElement3 = draftElement2.Properties["anelementname3"];
+            draftElement3.ElementSchema.Element.Should().Be(element3);
+            draftElement3.IsMaterialised.Should().BeTrue();
+            draftElement3.Properties["anattributename3"].IsMaterialised.Should().BeTrue();
+            draftElement3.Properties["anattributename3"].Value.Should().Be("adefaultvalue3");
         }
 
         [Fact]
@@ -396,9 +396,9 @@ namespace Core.UnitTests.Runtime.Domain
             collection.AddAttribute(attribute);
             this.pattern.AddElement(collection);
 
-            var draftItem = new DraftItem(this.toolkit, collection, null);
+            var draftCollection = new DraftItem(this.toolkit, collection, null);
 
-            var result = draftItem.MaterialiseCollectionItem();
+            var result = draftCollection.MaterialiseCollectionItem();
 
             result.Id.Should().NotBeNull();
             result.IsMaterialised.Should().BeTrue();
@@ -411,8 +411,8 @@ namespace Core.UnitTests.Runtime.Domain
             result.Properties.Should().ContainSingle(prop =>
                 prop.Key == "anattributename" && (string)prop.Value.Value == "adefaultvalue");
 
-            draftItem.IsMaterialised.Should().BeTrue();
-            draftItem.Items.Should().Contain(result);
+            draftCollection.IsMaterialised.Should().BeTrue();
+            draftCollection.Items.Should().Contain(result);
         }
 
         [Fact]
@@ -427,9 +427,9 @@ namespace Core.UnitTests.Runtime.Domain
             collection1.AddElement(collection2);
             this.pattern.AddElement(collection1);
 
-            var draftItem = new DraftItem(this.toolkit, collection1, null);
+            var draftCollection = new DraftItem(this.toolkit, collection1, null);
 
-            var result1 = draftItem.MaterialiseCollectionItem();
+            var result1 = draftCollection.MaterialiseCollectionItem();
 
             result1.Id.Should().NotBeNull();
             result1.IsMaterialised.Should().BeTrue();
@@ -454,9 +454,9 @@ namespace Core.UnitTests.Runtime.Domain
             result2.Items.Should().BeNull();
             result2.Properties.Should().BeEmpty();
 
-            draftItem.IsMaterialised.Should().BeTrue();
-            draftItem.Items.Single().Should().Be(result1);
-            draftItem.Items.Single().Properties["acollectionname2"].Items.Single().Should().Be(result2);
+            draftCollection.IsMaterialised.Should().BeTrue();
+            draftCollection.Items.Single().Should().Be(result1);
+            draftCollection.Items.Single().Properties["acollectionname2"].Items.Single().Should().Be(result2);
         }
 
         [Fact]
@@ -687,14 +687,14 @@ namespace Core.UnitTests.Runtime.Domain
             collection.AddElement(element);
             this.pattern.AddElement(collection);
 
-            var draftItem = new DraftItem(this.toolkit, collection,
+            var draftCollection = new DraftItem(this.toolkit, collection,
                 new DraftItem(this.toolkit, this.pattern));
-            draftItem.MaterialiseCollectionItem();
+            draftCollection.MaterialiseCollectionItem();
 
-            var result = draftItem.Validate();
+            var result = draftCollection.Validate();
 
             result.Results.Single().Context.Path.Should()
-                .Be($"{{apatternname.acollectionname.{draftItem.Items.Single().Id}.anelementname}}");
+                .Be($"{{apatternname.acollectionname.{draftCollection.Items.Single().Id}.anelementname}}");
             result.Results.Single().Message.Should()
                 .Be(ValidationMessages.DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance);
         }
@@ -718,14 +718,14 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var attribute = new Attribute("anattributename");
             this.pattern.AddAttribute(attribute);
-            var draftItem = new DraftItem(this.toolkit, attribute,
+            var draftAttribute = new DraftItem(this.toolkit, attribute,
                 new DraftItem(this.toolkit, this.pattern))
             {
                 Value = "awrongvalue"
             };
             attribute.ResetDataType("int");
 
-            var result = draftItem
+            var result = draftAttribute
                 .Validate();
 
             result.Results.Single().Context.Path.Should().Be("{apatternname.anattributename}");
@@ -755,27 +755,27 @@ namespace Core.UnitTests.Runtime.Domain
             this.pattern.AddElement(elementLevel1);
             this.pattern.AddElement(collectionLevel1);
 
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anelementname1"].Materialise();
-            draftItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
-            draftItem.Properties["acollectionname2"].MaterialiseCollectionItem();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anelementname1"].Materialise();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            draftPattern.Properties["acollectionname2"].MaterialiseCollectionItem();
 
-            var result = draftItem.GetConfiguration(false).ToJson();
+            var result = draftPattern.GetConfiguration(false).ToJson();
 
             result.Should().Be(new Dictionary<string, object>
             {
-                { nameof(DraftItem.Id), draftItem.Id },
+                { nameof(DraftItem.Id), draftPattern.Id },
                 { "anattributename1", "adefaultvalue1" },
                 {
                     "anelementname1", new Dictionary<string, object>
                     {
-                        { nameof(DraftItem.Id), draftItem.Properties["anelementname1"].Id },
+                        { nameof(DraftItem.Id), draftPattern.Properties["anelementname1"].Id },
                         {
                             "anelementname2", new Dictionary<string, object>
                             {
                                 {
                                     nameof(DraftItem.Id),
-                                    draftItem.Properties["anelementname1"].Properties["anelementname2"].Id
+                                    draftPattern.Properties["anelementname1"].Properties["anelementname2"].Id
                                 },
                                 { "anattributename2", "adefaultvalue2" }
                             }
@@ -785,14 +785,14 @@ namespace Core.UnitTests.Runtime.Domain
                 {
                     "acollectionname2", new Dictionary<string, object>
                     {
-                        { nameof(DraftItem.Id), draftItem.Properties["acollectionname2"].Id },
+                        { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Id },
                         {
                             nameof(DraftItem.Items), new List<object>
                             {
                                 new Dictionary<string, object>
                                 {
                                     {
-                                        nameof(DraftItem.Id), draftItem.Properties["acollectionname2"].Items[0].Id
+                                        nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Items[0].Id
                                     },
                                     { "anattributename3", 25 }
                                 }
@@ -806,10 +806,10 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenExecuteCommandAndAutomationNotExists_ThenThrows()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
             var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
 
-            draftItem
+            draftPattern
                 .Invoking(x =>
                     x.ExecuteCommand(draft, "acommandname"))
                 .Should().Throw<AutomateException>()
@@ -819,41 +819,41 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenSetPropertiesAndAnyPropertyLeftHandSideOfAssigmentInvalid_ThenThrows()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem
+            draftPattern
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
-                    { "notavalidpropertyassignment", "^" }
+                    { "aninvalidpropertyassignment", "^" }
                 }))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ExceptionMessages.DraftItem_Configure_PropertyAssignmentInvalid.Substitute(
-                        "notavalidpropertyassignment=^", "notavalidpropertyassignment", draftItem.Id) + "*");
+                        "aninvalidpropertyassignment=^", "aninvalidpropertyassignment", draftPattern.Id) + "*");
         }
 
         [Fact]
         public void WhenSetPropertiesAndAnyPropertyRightHandSideOfAssigmentInvalid_ThenThrows()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem
+            draftPattern
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
-                    { "", "notavalidpropertyassignment" }
+                    { "", "aninvalidpropertyassignment" }
                 }))
                 .Should().Throw<ArgumentOutOfRangeException>()
                 .WithMessage(
                     ExceptionMessages.DraftItem_Configure_PropertyAssignmentInvalid.Substitute(
-                        "=notavalidpropertyassignment", "", draftItem.Id) + "*");
+                        "=aninvalidpropertyassignment", "", draftPattern.Id) + "*");
         }
 
         [Fact]
         public void WhenSetPropertiesWithUnknownProperty_ThenThrows()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem
+            draftPattern
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
                     { "anunknownattribute", "avalue" }
@@ -868,9 +868,9 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenSetPropertiesWithWithPropertyOfWrongChoice_ThenThrows()
         {
             this.pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem
+            draftPattern
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
                     { "anattributename", "awrongvalue" }
@@ -884,9 +884,9 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenSetPropertiesWithPropertyOfWrongDataType_ThenThrows()
         {
             this.pattern.AddAttribute(new Attribute("anattributename", "int"));
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem
+            draftPattern
                 .Invoking(x => x.SetProperties(new Dictionary<string, string>
                 {
                     { "anattributename", "astring" }
@@ -901,14 +901,14 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenSetPropertiesAndPropertyChoice_ThenUpdatesProperties()
         {
             this.pattern.AddAttribute(new Attribute("anattributename", choices: new List<string> { "avalue" }));
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem.SetProperties(new Dictionary<string, string>
+            draftPattern.SetProperties(new Dictionary<string, string>
             {
                 { "anattributename", "avalue" }
             });
 
-            draftItem.Properties["anattributename"].Value.Should().Be("avalue");
+            draftPattern.Properties["anattributename"].Value.Should().Be("avalue");
         }
 
         [Fact]
@@ -917,24 +917,24 @@ namespace Core.UnitTests.Runtime.Domain
             this.pattern.AddAttribute(new Attribute("anattributename1"));
             this.pattern.AddAttribute(new Attribute("anattributename2"));
             this.pattern.AddAttribute(new Attribute("anattributename3"));
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            draftItem.SetProperties(new Dictionary<string, string>
+            draftPattern.SetProperties(new Dictionary<string, string>
             {
                 { "anattributename1", "avalue1" },
                 { "anattributename2", "avalue2" },
                 { "anattributename3", "avalue3" }
             });
 
-            draftItem.Properties["anattributename1"].Value.Should().Be("avalue1");
-            draftItem.Properties["anattributename2"].Value.Should().Be("avalue2");
-            draftItem.Properties["anattributename3"].Value.Should().Be("avalue3");
+            draftPattern.Properties["anattributename1"].Value.Should().Be("avalue1");
+            draftPattern.Properties["anattributename2"].Value.Should().Be("avalue2");
+            draftPattern.Properties["anattributename3"].Value.Should().Be("avalue3");
         }
 
         [Fact]
         public void WhenMigrateAndAddElementToPattern_ThenNothing()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.AddElement("anelementname");
@@ -942,9 +942,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("anelementname").Should().BeFalse();
+            draftPattern.Properties.ContainsKey("anelementname").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -952,7 +952,7 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenMigrateAndAddCollectionToPattern_ThenNothing()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
@@ -960,9 +960,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("acollectionname").Should().BeFalse();
+            draftPattern.Properties.ContainsKey("acollectionname").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -970,7 +970,7 @@ namespace Core.UnitTests.Runtime.Domain
         [Fact]
         public void WhenMigrateAndAddAttributeToPattern_ThenAddsElement()
         {
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.AddAttribute("anattributename", defaultValue: "adefaultvalue");
@@ -978,10 +978,10 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("anattributename").Should().BeTrue();
-            draftItem.Properties["anattributename"].IsMaterialised.Should().BeTrue();
+            draftPattern.Properties.ContainsKey("anattributename").Should().BeTrue();
+            draftPattern.Properties["anattributename"].IsMaterialised.Should().BeTrue();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -994,8 +994,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateElementOfPatternAndHasBeenDeleted_ThenRemovesElement()
         {
             this.pattern.AddElement("anelementname");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anelementname"].Materialise();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anelementname"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.DeleteElement("anelementname");
@@ -1003,9 +1003,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("anelementname").Should().BeFalse();
+            draftPattern.Properties.ContainsKey("anelementname").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1017,9 +1017,9 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateCollectionOfPatternWithItemsAndHasBeenDeleted_ThenRemovesCollectionAndAllItems()
         {
             this.pattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["acollectionname"].MaterialiseCollectionItem();
-            draftItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["acollectionname"].MaterialiseCollectionItem();
+            draftPattern.Properties["acollectionname"].MaterialiseCollectionItem();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.DeleteElement("acollectionname");
@@ -1027,9 +1027,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("acollectionname").Should().BeFalse();
+            draftPattern.Properties.ContainsKey("acollectionname").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1042,12 +1042,12 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var collection = this.pattern.AddElement("acollectionname", ElementCardinality.OneOrMany);
             collection.AddElement("anelementname");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            var item1 = draftItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            var item1 = draftPattern.Properties["acollectionname"].MaterialiseCollectionItem();
             item1.Properties["anelementname"].Materialise();
-            var item2 = draftItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            var item2 = draftPattern.Properties["acollectionname"].MaterialiseCollectionItem();
             item2.Properties["anelementname"].Materialise();
-            var item3 = draftItem.Properties["acollectionname"].MaterialiseCollectionItem();
+            var item3 = draftPattern.Properties["acollectionname"].MaterialiseCollectionItem();
             item3.Properties["anelementname"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
@@ -1056,15 +1056,15 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("acollectionname").Should().BeTrue();
-            draftItem.Properties["acollectionname"].Items.Count.Should().Be(3);
-            draftItem.Properties["acollectionname"].Items[0].Properties.ContainsKey("anelementname").Should()
+            draftPattern.Properties.ContainsKey("acollectionname").Should().BeTrue();
+            draftPattern.Properties["acollectionname"].Items.Count.Should().Be(3);
+            draftPattern.Properties["acollectionname"].Items[0].Properties.ContainsKey("anelementname").Should()
                 .BeFalse();
-            draftItem.Properties["acollectionname"].Items[1].Properties.ContainsKey("anelementname").Should()
+            draftPattern.Properties["acollectionname"].Items[1].Properties.ContainsKey("anelementname").Should()
                 .BeFalse();
-            draftItem.Properties["acollectionname"].Items[2].Properties.ContainsKey("anelementname").Should()
+            draftPattern.Properties["acollectionname"].Items[2].Properties.ContainsKey("anelementname").Should()
                 .BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
@@ -1085,7 +1085,7 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeOfPatternAndHasBeenDeleted_ThenRemovesAttribute()
         {
             this.pattern.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.DeleteAttribute("anattributename");
@@ -1093,9 +1093,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("anattributename").Should().BeFalse();
+            draftPattern.Properties.ContainsKey("anattributename").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1108,9 +1108,9 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var element = this.pattern.AddElement("anelementname1");
             element.AddElement("anelementname2");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anelementname1"].Materialise();
-            draftItem.Properties["anelementname1"].Properties["anelementname2"].Materialise();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anelementname1"].Materialise();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.Elements.Single().DeleteElement("anelementname2");
@@ -1118,9 +1118,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anelementname1"].Properties.ContainsKey("anelementname2").Should().BeFalse();
+            draftPattern.Properties["anelementname1"].Properties.ContainsKey("anelementname2").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1133,9 +1133,9 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var element = this.pattern.AddElement("anelementname");
             element.AddElement("acollectionname", ElementCardinality.OneOrMany);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anelementname"].Materialise();
-            draftItem.Properties["anelementname"].Properties["acollectionname"].Materialise();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anelementname"].Materialise();
+            draftPattern.Properties["anelementname"].Properties["acollectionname"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.Elements.Single().DeleteElement("acollectionname");
@@ -1143,9 +1143,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anelementname"].Properties.ContainsKey("acollectionname").Should().BeFalse();
+            draftPattern.Properties["anelementname"].Properties.ContainsKey("acollectionname").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1158,8 +1158,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var element = this.pattern.AddElement("anelementname");
             element.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anelementname"].Materialise();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anelementname"].Materialise();
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.Elements.Single().DeleteAttribute("anattributename");
@@ -1167,9 +1167,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anelementname"].Properties.ContainsKey("anattributename").Should().BeFalse();
+            draftPattern.Properties["anelementname"].Properties.ContainsKey("anattributename").Should().BeFalse();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1181,8 +1181,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndNameChanged_ThenRenamesAttribute()
         {
             this.pattern.AddAttribute("anattributename1");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename1"].Value = "avalue";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename1"].Value = "avalue";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename1", "anattributename2");
@@ -1190,10 +1190,10 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties.ContainsKey("anattributename1").Should().BeFalse();
-            draftItem.Properties["anattributename2"].Value.Should().Be("avalue");
+            draftPattern.Properties.ContainsKey("anattributename1").Should().BeFalse();
+            draftPattern.Properties["anattributename2"].Value.Should().Be("avalue");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1207,8 +1207,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndDataTypeChangedAndHasNoValue_ThenLeavesValue()
         {
             this.pattern.AddAttribute("anattributename", "int");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = null;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = null;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", type: "bool");
@@ -1216,9 +1216,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1232,8 +1232,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndNoDefaultValue_ThenResetsValue()
         {
             this.pattern.AddAttribute("anattributename", "int");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = 25;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = 25;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", type: "bool");
@@ -1241,9 +1241,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1258,8 +1258,8 @@ namespace Core.UnitTests.Runtime.Domain
             WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasDefaultValue_ThenSetsValueToDefault()
         {
             this.pattern.AddAttribute("anattributename", "int");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = 25;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = 25;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", type: "bool", defaultValue: "True");
@@ -1267,9 +1267,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be(true);
+            draftPattern.Properties["anattributename"].Value.Should().Be(true);
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1284,8 +1284,8 @@ namespace Core.UnitTests.Runtime.Domain
             WhenMigrateAttributeAndDataTypeChangedAndHasIncorrectValueAndHasIncorrectDefaultValue_ThenResetsValue()
         {
             this.pattern.AddAttribute("anattributename", "int");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = 25;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = 25;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", type: "int", defaultValue: "25");
@@ -1294,9 +1294,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1310,8 +1310,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndChoicesAddedAndOldValueIsAChoice_ThenLeavesValue()
         {
             this.pattern.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "achoice2";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "achoice2";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename",
@@ -1320,9 +1320,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("achoice2");
+            draftPattern.Properties["anattributename"].Value.Should().Be("achoice2");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -1335,8 +1335,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndChoicesAddedAndOldValueIsNotAChoice_ThenResetsValue()
         {
             this.pattern.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "notachoice";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "notachoice";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename",
@@ -1345,9 +1345,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -1361,8 +1361,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             this.pattern.AddAttribute("anattributename",
                 choices: new List<string> { "achoice1", "achoice2", "achoice3" });
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "achoice2";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "achoice2";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", choices: new List<string>());
@@ -1370,9 +1370,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("achoice2");
+            draftPattern.Properties["anattributename"].Value.Should().Be("achoice2");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1385,8 +1385,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             this.pattern.AddAttribute("anattributename", "string", false, null,
                 new List<string> { "achoice1", "achoice1", "achoice1" });
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = null;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = null;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename",
@@ -1395,9 +1395,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -1407,8 +1407,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             this.pattern.AddAttribute("anattributename", "string", false, null,
                 new List<string> { "achoice1", "achoice2", "achoice3" });
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "achoice1";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "achoice1";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename",
@@ -1417,9 +1417,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename"].Value.Should().BeNull();
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1432,8 +1432,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             this.pattern.AddAttribute("anattributename", "string", false, null,
                 new List<string> { "achoice1", "achoice2", "achoice3" });
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "achoice1";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "achoice1";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", defaultValue: "achoice9",
@@ -1442,9 +1442,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("achoice9");
+            draftPattern.Properties["anattributename"].Value.Should().Be("achoice9");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.Breaking
@@ -1457,8 +1457,8 @@ namespace Core.UnitTests.Runtime.Domain
         {
             this.pattern.AddAttribute("anattributename", "string", false, null,
                 new List<string> { "achoice1", "achoice2", "achoice3" });
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "achoice3";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "achoice3";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename",
@@ -1467,9 +1467,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("achoice3");
+            draftPattern.Properties["anattributename"].Value.Should().Be("achoice3");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -1478,8 +1478,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndDefaultValueChangedAndHasNoValue_ThenSetsNewDefaultValue()
         {
             this.pattern.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = null;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = null;
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", defaultValue: "adefaultvalue");
@@ -1487,9 +1487,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("adefaultvalue");
+            draftPattern.Properties["anattributename"].Value.Should().Be("adefaultvalue");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -1503,8 +1503,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndDefaultValueChangedAndHasNonDefaultValue_ThenLeavesValue()
         {
             this.pattern.AddAttribute("anattributename");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "avalue";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "avalue";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", defaultValue: "adefaultvalue");
@@ -1512,9 +1512,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("avalue");
+            draftPattern.Properties["anattributename"].Value.Should().Be("avalue");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().BeEmpty();
         }
@@ -1523,8 +1523,8 @@ namespace Core.UnitTests.Runtime.Domain
         public void WhenMigrateAttributeAndDefaultValueChangedAndHasOldDefaultValue_ThenSetsNewDefaultValue()
         {
             this.pattern.AddAttribute("anattributename", null, false, "adefaultvalue");
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
-            draftItem.Properties["anattributename"].Value = "adefaultvalue";
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename"].Value = "adefaultvalue";
 
             var latestPattern = ClonePattern(this.pattern);
             latestPattern.UpdateAttribute("anattributename", defaultValue: "anewdefaultvalue");
@@ -1532,9 +1532,9 @@ namespace Core.UnitTests.Runtime.Domain
             var result = new DraftUpgradeResult(new DraftDefinition(latestToolkit),
                 "0", "1");
 
-            draftItem.Migrate(latestToolkit, result);
+            draftPattern.Migrate(latestToolkit, result);
 
-            draftItem.Properties["anattributename"].Value.Should().Be("anewdefaultvalue");
+            draftPattern.Properties["anattributename"].Value.Should().Be("anewdefaultvalue");
             result.IsSuccess.Should().BeTrue();
             result.Log.Should().Contain(x =>
                 x.Type == MigrationChangeType.NonBreaking
@@ -1550,10 +1550,10 @@ namespace Core.UnitTests.Runtime.Domain
             var collection = new Element("acollectionname",
                 ElementCardinality.OneOrMany);
             this.pattern.AddElement(collection);
-            var collectionItem = new DraftItem(this.toolkit, this.pattern)
+            var draftCollection = new DraftItem(this.toolkit, this.pattern)
                 .Properties["acollectionname"].Materialise();
 
-            collectionItem
+            draftCollection
                 .Invoking(x => x.ResetAllProperties())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftItem_ResetPropertiesForNonElement);
@@ -1564,10 +1564,10 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var attribute = new Attribute("anattributename");
             this.pattern.AddAttribute(attribute);
-            var attributeItem = new DraftItem(this.toolkit, this.pattern)
+            var draftAttribute = new DraftItem(this.toolkit, this.pattern)
                 .Properties["anattributename"];
 
-            attributeItem
+            draftAttribute
                 .Invoking(x => x.ResetAllProperties())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftItem_ResetPropertiesForNonElement);
@@ -1583,16 +1583,16 @@ namespace Core.UnitTests.Runtime.Domain
             this.pattern.AddAttribute(attribute2);
             this.pattern.AddAttribute(attribute3);
 
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            patternItem.Properties["anattributename1"].Value = "avalue1";
-            patternItem.Properties["anattributename2"].Value = "avalue2";
-            patternItem.Properties["anattributename3"].Value = 25;
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            draftPattern.Properties["anattributename1"].Value = "avalue1";
+            draftPattern.Properties["anattributename2"].Value = "avalue2";
+            draftPattern.Properties["anattributename3"].Value = 25;
 
-            patternItem.ResetAllProperties();
+            draftPattern.ResetAllProperties();
 
-            patternItem.Properties["anattributename1"].Value.Should().BeNull();
-            patternItem.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
-            patternItem.Properties["anattributename3"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename1"].Value.Should().BeNull();
+            draftPattern.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            draftPattern.Properties["anattributename3"].Value.Should().BeNull();
         }
 
         [Fact]
@@ -1607,17 +1607,17 @@ namespace Core.UnitTests.Runtime.Domain
             element.AddAttribute(attribute3);
             this.pattern.AddElement(element);
 
-            var elementName = new DraftItem(this.toolkit, this.pattern)
+            var draftElement = new DraftItem(this.toolkit, this.pattern)
                 .Properties["anelementname"].Materialise();
-            elementName.Properties["anattributename1"].Value = "avalue1";
-            elementName.Properties["anattributename2"].Value = "avalue2";
-            elementName.Properties["anattributename3"].Value = 25;
+            draftElement.Properties["anattributename1"].Value = "avalue1";
+            draftElement.Properties["anattributename2"].Value = "avalue2";
+            draftElement.Properties["anattributename3"].Value = 25;
 
-            elementName.ResetAllProperties();
+            draftElement.ResetAllProperties();
 
-            elementName.Properties["anattributename1"].Value.Should().BeNull();
-            elementName.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
-            elementName.Properties["anattributename3"].Value.Should().BeNull();
+            draftElement.Properties["anattributename1"].Value.Should().BeNull();
+            draftElement.Properties["anattributename2"].Value.Should().Be("adefaultvalue2");
+            draftElement.Properties["anattributename3"].Value.Should().BeNull();
         }
 
         [Fact]
@@ -1625,10 +1625,10 @@ namespace Core.UnitTests.Runtime.Domain
         {
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
-            var elementItem = new DraftItem(this.toolkit, this.pattern)
+            var draftElement = new DraftItem(this.toolkit, this.pattern)
                 .Properties["anelementname"].Materialise();
 
-            elementItem
+            draftElement
                 .Invoking(x => x.ClearCollectionItems())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftItem_ClearCollectionForNonCollection);
@@ -1640,46 +1640,46 @@ namespace Core.UnitTests.Runtime.Domain
             var collection = new Element("acollectionname",
                 ElementCardinality.OneOrMany);
             this.pattern.AddElement(collection);
-            var collectionItem = new DraftItem(this.toolkit, this.pattern)
+            var draftCollection = new DraftItem(this.toolkit, this.pattern)
                 .Properties["acollectionname"].Materialise();
-            collectionItem.MaterialiseCollectionItem();
-            collectionItem.MaterialiseCollectionItem();
-            collectionItem.MaterialiseCollectionItem();
+            draftCollection.MaterialiseCollectionItem();
+            draftCollection.MaterialiseCollectionItem();
+            draftCollection.MaterialiseCollectionItem();
 
-            collectionItem.ClearCollectionItems();
+            draftCollection.ClearCollectionItems();
 
-            collectionItem.Items.Count.Should().Be(0);
+            draftCollection.Items.Count.Should().Be(0);
         }
 
         [Fact]
-        public void WhenDeleteAndDeletePattern_ThenThrows()
+        public void WhenUnMaterialiseWithPattern_ThenThrows()
         {
             var element = new Element("anelementname");
             this.pattern.AddElement(element);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
 
-            patternItem
-                .Invoking(x => x.Delete(patternItem))
+            draftPattern
+                .Invoking(_ => draftPattern.UnMaterialise())
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.DraftItem_DeleteForNonElementChild);
         }
 
         [Fact]
-        public void WhenDeleteAndDeleteChildAttribute_ThenThrows()
+        public void WhenUnMaterialiseWithAttribute_ThenThrows()
         {
             var attribute = new Attribute("anattributename");
             this.pattern.AddAttribute(attribute);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var attributeItem = patternItem.Properties["anattributename"];
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            var draftAttribute = draftPattern.Properties["anattributename"];
 
-            attributeItem
-                .Invoking(x => x.Delete(attributeItem))
+            draftAttribute
+                .Invoking(_ => draftAttribute.UnMaterialise())
                 .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.DraftItem_DeleteForNonElement);
+                .WithMessage(ExceptionMessages.DraftItem_DeleteForNonElementChild);
         }
 
         [Fact]
-        public void WhenDeleteAndDeleteChildElement_ThenDeletes()
+        public void WhenUnMaterialiseWithElement_ThenUnMaterialisesDescendants()
         {
             var element1 = new Element("anelementname1", autoCreate: true);
             var element2 = new Element("anelementname2", autoCreate: true);
@@ -1687,75 +1687,58 @@ namespace Core.UnitTests.Runtime.Domain
             var element3 = new Element("anelementname3", autoCreate: true);
             element2.AddElement(element3);
             this.pattern.AddElement(element1);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var elementItem = patternItem.Properties["anelementname1"];
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            var draftElement = draftPattern.Properties["anelementname1"];
 
-            patternItem.Properties["anelementname1"].IsMaterialised.Should().BeTrue();
-            patternItem.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeTrue();
-            patternItem.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+            draftPattern.Properties["anelementname1"].IsMaterialised.Should().BeTrue();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeTrue();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
                 .IsMaterialised.Should().BeTrue();
 
-            patternItem.Delete(elementItem);
+            draftElement.UnMaterialise();
 
-            patternItem.Properties["anelementname1"].IsMaterialised.Should().BeFalse();
-            patternItem.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeFalse();
-            patternItem.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
+            draftPattern.Properties["anelementname1"].IsMaterialised.Should().BeFalse();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].IsMaterialised.Should().BeFalse();
+            draftPattern.Properties["anelementname1"].Properties["anelementname2"].Properties["anelementname3"]
                 .IsMaterialised.Should().BeFalse();
         }
 
         [Fact]
-        public void WhenDeleteAndDeleteChildCollection_ThenDeletesAllCollectionItems()
+        public void WhenUnMaterialiseWithCollection_ThenDeletesAllCollectionItems()
         {
             var element = new Element("anelementname", autoCreate: true);
             var collection = new Element("acollectionname",
                 ElementCardinality.ZeroOrMany);
             collection.AddElement(element);
             this.pattern.AddElement(collection);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var draftCollection = patternItem.Properties["acollectionname"];
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            var draftCollection = draftPattern.Properties["acollectionname"];
             draftCollection.MaterialiseCollectionItem();
             draftCollection.MaterialiseCollectionItem();
 
-            patternItem.Delete(draftCollection);
+            draftCollection.UnMaterialise();
 
-            patternItem.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
-            patternItem.Properties["acollectionname"].Items.Should().BeEmpty();
+            draftPattern.Properties["acollectionname"].IsMaterialised.Should().BeFalse();
+            draftPattern.Properties["acollectionname"].Items.Should().BeEmpty();
         }
 
         [Fact]
-        public void WhenDeleteAndNotAChild_ThenThrows()
-        {
-            var element1 = new Element("anelementname1");
-            var element2 = new Element("anelementname2");
-            this.pattern.AddElement(element1);
-            this.pattern.AddElement(element2);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var elementItem1 = patternItem.Properties["anelementname1"];
-            var elementItem2 = patternItem.Properties["anelementname2"];
-
-            elementItem1
-                .Invoking(x => x.Delete(elementItem2))
-                .Should().Throw<AutomateException>()
-                .WithMessage(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
-        }
-
-        [Fact]
-        public void WhenDeleteAndDeleteCollectionItem_ThenDeletes()
+        public void WhenUnMaterialiseWithCollectionItem_ThenDeletesCollectionItem()
         {
             var collection = new Element("acollectionname",
                 ElementCardinality.ZeroOrMany);
             this.pattern.AddElement(collection);
-            var patternItem = new DraftItem(this.toolkit, this.pattern);
-            var collectionItem = patternItem.Properties["acollectionname"];
-            var itemItem1 = collectionItem.MaterialiseCollectionItem();
-            var itemItem2 = collectionItem.MaterialiseCollectionItem();
-            var itemItem3 = collectionItem.MaterialiseCollectionItem();
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
+            var draftCollection = draftPattern.Properties["acollectionname"];
+            var draftCollectionItem1 = draftCollection.MaterialiseCollectionItem();
+            var draftCollectionItem2 = draftCollection.MaterialiseCollectionItem();
+            var draftCollectionItem3 = draftCollection.MaterialiseCollectionItem();
 
-            collectionItem.Delete(itemItem2);
+            draftCollectionItem2.UnMaterialise();
 
-            collectionItem.Items.Count.Should().Be(2);
-            collectionItem.Items[0].Should().Be(itemItem1);
-            collectionItem.Items[1].Should().Be(itemItem3);
+            draftCollection.Items.Count.Should().Be(2);
+            draftCollection.Items[0].Should().Be(draftCollectionItem1);
+            draftCollection.Items[1].Should().Be(draftCollectionItem3);
         }
 
         private static PatternDefinition ClonePattern(PatternDefinition originalPattern)
@@ -1773,10 +1756,10 @@ namespace Core.UnitTests.Runtime.Domain
                 new Automation("acommandname", AutomationType.TestingOnlyLaunchable,
                     new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
             var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
 
-            draftItem
+            draftPattern
                 .Invoking(x =>
                     x.ExecuteCommand(draft, "acommandname"))
                 .Should().Throw<AutomateException>()
@@ -1790,10 +1773,10 @@ namespace Core.UnitTests.Runtime.Domain
                 new Automation("acommandname", AutomationType.TestingOnlyLaunching,
                     new Dictionary<string, object>());
             this.pattern.AddAutomation(automation);
-            var draftItem = new DraftItem(this.toolkit, this.pattern);
+            var draftPattern = new DraftItem(this.toolkit, this.pattern);
             var draft = new DraftDefinition(new ToolkitDefinition(this.pattern));
 
-            var result = draftItem.ExecuteCommand(draft, "acommandname");
+            var result = draftPattern.ExecuteCommand(draft, "acommandname");
 
             result.CommandName.Should().Be("acommandname");
             result.IsSuccess.Should().BeTrue();

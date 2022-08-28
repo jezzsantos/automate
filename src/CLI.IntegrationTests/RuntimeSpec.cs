@@ -172,15 +172,15 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
 
-            var draft1 = this.setup.Drafts.First();
+            var draft = this.setup.Drafts.First();
 
-            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{draft1.Id}\"");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{draft.Id}\"");
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftSwitched.SubstituteTemplate(draft1.Name, draft1.Id,
-                        draft1.Toolkit.PatternName, draft1.Toolkit.Id, draft1.Toolkit.Version));
+                    OutputMessages.CommandLine_Output_DraftSwitched.SubstituteTemplate(draft.Name, draft.Id,
+                        draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version));
         }
 
         [Fact]
@@ -221,12 +221,12 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue\"");
 
-            var item = this.setup.Draft.Model;
+            var draftPattern = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern", item.Id));
-            item.Properties["AProperty1"].Value.Should().Be("avalue");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern", draftPattern.Id));
+            draftPattern.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
         [Fact]
@@ -237,12 +237,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=B\"");
 
-            var item = this.setup.Draft.Model.Properties["AnElement1"];
+            var draftPattern = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
-            item.Properties["AProperty3"].Value.Should().Be("B");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
+                        draftPattern.Id));
+            draftPattern.Properties["AProperty3"].Value.Should().Be("B");
         }
 
         [Fact]
@@ -254,12 +255,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
-            var item = this.setup.Draft.Model.Properties["AnElement1"];
+            var draftPattern = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
-            item.Properties["AProperty3"].Value.Should().Be("C");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
+                        draftPattern.Id));
+            draftPattern.Properties["AProperty3"].Value.Should().Be("C");
         }
 
         [Fact]
@@ -269,12 +271,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on \"\" --and-set \"AProperty1=\"");
 
-            var item = this.setup.Draft.Model;
+            var draftPattern = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate(item.Name, item.Id));
-            item.Properties["AProperty1"].Value.Should().BeNull();
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate(draftPattern.Name,
+                        draftPattern.Id));
+            draftPattern.Properties["AProperty1"].Value.Should().BeNull();
         }
 
         [Fact]
@@ -287,12 +290,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} on {{AnElement1}} --and-set \"AProperty3=C\"");
 
-            var item = this.setup.Draft.Model.Properties["AnElement1"];
+            var draftElement = this.setup.Draft.Model.Properties["AnElement1"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1", item.Id));
-            item.Properties["AProperty3"].Value.Should().Be("C");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
+                        draftElement.Id));
+            draftElement.Properties["AProperty3"].Value.Should().Be("C");
         }
 
         [Fact]
@@ -303,12 +307,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue\"");
 
-            var item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
+            var draftCollectionItem = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2", item.Id));
-            item.Properties["AProperty4"].Value.Should().Be("anewvalue");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
+                        draftCollectionItem.Id));
+            draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
@@ -318,12 +323,14 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{AnElement1.ACollection1}} --and-set \"AProperty8=anewvalue\"");
 
-            var item = this.setup.Draft.Model.Properties["AnElement1"].Properties["ACollection1"].Items.Single();
+            var draftCollectionItem = this.setup.Draft.Model.Properties["AnElement1"].Properties["ACollection1"].Items
+                .Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection1", item.Id));
-            item.Properties["AProperty8"].Value.Should().Be("anewvalue");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection1",
+                        draftCollectionItem.Id));
+            draftCollectionItem.Properties["AProperty8"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
@@ -332,17 +339,18 @@ namespace CLI.IntegrationTests
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
                 $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=avalue\"");
-            var item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
+            var draftCollectionItem = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
 
             this.setup.RunCommand(
-                $"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{item.Id}}} --and-set \"AProperty4=anewvalue\"");
+                $"{CommandLineApi.ConfigureCommandName} on {{ACollection2.{draftCollectionItem.Id}}} --and-set \"AProperty4=anewvalue\"");
 
-            item = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
+            draftCollectionItem = this.setup.Draft.Model.Properties["ACollection2"].Items.Single();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2", item.Id));
-            item.Properties["AProperty4"].Value.Should().Be("anewvalue");
+                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
+                        draftCollectionItem.Id));
+            draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
@@ -359,15 +367,15 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} reset {{AnElement3}}");
 
-            var elementItem = this.setup.Draft.Model.Properties["AnElement3"];
+            var draftElement = this.setup.Draft.Model.Properties["AnElement3"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftResetElement.SubstituteTemplate("AnElement3",
-                        elementItem.Id));
-            elementItem.Properties["AProperty5"].Value.Should().Be("ADefaultValue1");
-            elementItem.Properties["AProperty6"].Value.Should().Be(25);
-            elementItem.Properties["AProperty7"].Value.Should().BeNull();
+                        draftElement.Id));
+            draftElement.Properties["AProperty5"].Value.Should().Be("ADefaultValue1");
+            draftElement.Properties["AProperty6"].Value.Should().Be(25);
+            draftElement.Properties["AProperty7"].Value.Should().BeNull();
         }
 
         [Fact]
@@ -384,13 +392,13 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} clear {{ACollection2}}");
 
-            var collectionItem = this.setup.Draft.Model.Properties["ACollection2"];
+            var draftCollection = this.setup.Draft.Model.Properties["ACollection2"];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftEmptyCollection.SubstituteTemplate("ACollection2",
-                        collectionItem.Id));
-            collectionItem.Items.Count.Should().Be(0);
+                        draftCollection.Id));
+            draftCollection.Items.Count.Should().Be(0);
         }
 
         [Fact]
@@ -398,16 +406,36 @@ namespace CLI.IntegrationTests
         {
             CreateDraftFromBuiltToolkit();
 
-            var elementItem = this.setup.Draft.Model.Properties["AnElement3"];
+            var draftElement = this.setup.Draft.Model.Properties["AnElement3"];
             this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} delete {{AnElement3}}");
 
-            var draftItem = this.setup.Draft.Model;
+            var draftPattern = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("AnElement3",
-                        elementItem.Id));
-            draftItem.Properties["AnElement3"].IsMaterialised.Should().BeFalse();
+                        draftElement.Id));
+            draftPattern.Properties["AnElement3"].IsMaterialised.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenConfigureDraftAndDeleteCollectionItem_ThenDisplaysSuccess()
+        {
+            CreateDraftFromBuiltToolkit();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}} --and-set \"AProperty4=anewvalue1\"");
+            var draftCollectionItem = this.setup.Draft.Model.Properties["ACollection2"].Items[0];
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} delete {{ACollection2.{draftCollectionItem.Id}}}");
+
+            var draftCollection = this.setup.Draft.Model.Properties["ACollection2"];
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("ACollection2",
+                        draftCollectionItem.Id));
+            draftCollection.Items.Should().BeEmpty();
         }
 
         [Fact]

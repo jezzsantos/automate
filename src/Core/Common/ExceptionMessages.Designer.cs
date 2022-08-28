@@ -249,7 +249,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot delete on a non-element.
+        ///   Looks up a localized string similar to Cannot delete from a non-element.
         /// </summary>
         internal static string DraftItem_DeleteForNonElement {
             get {
@@ -258,7 +258,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can only delete an element or collection.
+        ///   Looks up a localized string similar to Can only delete an element or collection or collection item.
         /// </summary>
         internal static string DraftItem_DeleteForNonElementChild {
             get {
@@ -267,7 +267,7 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can only delete a child of the element or collection.
+        ///   Looks up a localized string similar to Can only delete a child of the element or of its collection.
         /// </summary>
         internal static string DraftItem_DeleteWithUnknownChild {
             get {

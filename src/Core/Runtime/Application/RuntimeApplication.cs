@@ -185,13 +185,12 @@ namespace Automate.Runtime.Application
             var draft = EnsureCurrentDraftExists();
 
             var target = ResolveTargetItem(draft, null, null, expression);
-
             if (target.IsPattern)
             {
                 throw new AutomateException(ExceptionMessages.RuntimeApplication_ConfigureDraft_DeletePattern);
             }
 
-            target.Parent.Delete(target);
+            target.UnMaterialise();
 
             this.draftStore.Save(draft);
 

@@ -194,7 +194,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
         }
 
-        private string ConfigurePublishAndInstallToolkit()
+        private void ConfigurePublishAndInstallToolkit()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-attribute AProperty1");
@@ -208,10 +208,10 @@ namespace CLI.IntegrationTests
 
             this.setup.Should().DisplayNoError();
 
-            return RebuildReversionAndInstallToolkit();
+            RebuildReversionAndInstallToolkit();
         }
 
-        private string RebuildReversionAndInstallToolkit(
+        private void RebuildReversionAndInstallToolkit(
             string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --asversion {versionInstruction}");
@@ -221,8 +221,6 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
             this.setup.Should().DisplayNoError();
-
-            return location;
         }
     }
 }

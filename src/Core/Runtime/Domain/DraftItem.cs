@@ -83,7 +83,7 @@ namespace Automate.Runtime.Domain
             Name = name;
             Toolkit = toolkit;
             Schema = schema;
-            Parent = parent;
+            this.ImmediateParent = parent;
             this.artifactLinks = new List<ArtifactLink>();
         }
 
@@ -100,7 +100,12 @@ namespace Automate.Runtime.Domain
             this.artifactLinks = properties.Rehydrate<List<ArtifactLink>>(factory, nameof(ArtifactLinks));
         }
 
-        public DraftItem Parent { get; private set; }
+        public DraftItem Parent =>
+            IsCollectionItemElement
+                ? this.ImmediateParent?.Parent
+                : this.ImmediateParent;
+
+        internal DraftItem ImmediateParent { get; private set; }
 
         private ToolkitDefinition Toolkit { get; set; }
 
@@ -131,15 +136,16 @@ namespace Automate.Runtime.Domain
         public bool IsPattern => Schema.SchemaType == DraftItemSchemaType.Pattern;
 
         public bool IsElement =>
-            Schema.SchemaType is DraftItemSchemaType.Element or DraftItemSchemaType.CollectionItem;
+            Schema.SchemaType is DraftItemSchemaType.Element || IsCollectionItemElement;
 
         public bool IsEphemeralCollection => Schema.SchemaType == DraftItemSchemaType.EphemeralCollection;
 
+        private bool IsCollectionItemElement => Schema.SchemaType == DraftItemSchemaType.CollectionItem;
         public bool IsAttribute => Schema.SchemaType == DraftItemSchemaType.Attribute;
 
         public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
 
-        public string FullyQualifiedPath => GetPath(false);
+        private string FullyQualifiedPath => GetPath(false);
 
         public string PathReference => GetPath(true);
 
@@ -198,6 +204,38 @@ namespace Automate.Runtime.Domain
             this.items.Add(childElementItem);
 
             return childElementItem;
+        }
+
+        public void UnMaterialise()
+        {
+            if (!IsElement && !IsEphemeralCollection)
+            {
+                throw new AutomateException(ExceptionMessages.DraftItem_DeleteForNonElementChild);
+            }
+
+            var parent = ImmediateParent;
+            if (IsCollectionItemElement)
+            {
+                if (parent.items.All(item => item != this))
+                {
+                    throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
+                }
+
+                parent.items.Remove(this);
+            }
+            else
+            {
+                if (IsPattern || IsElement)
+                {
+                    SetMaterialised(false, force: true);
+                }
+
+                if (IsEphemeralCollection)
+                {
+                    this.items.Clear();
+                    SetMaterialised(false, force: true);
+                }
+            }
         }
 
         public bool HasAttribute(string name)
@@ -289,9 +327,7 @@ namespace Automate.Runtime.Domain
         public void SetAncestry(ToolkitDefinition toolkit, DraftItem parent)
         {
             Toolkit = toolkit;
-            Parent = Schema.SchemaType == DraftItemSchemaType.CollectionItem
-                ? parent?.Parent
-                : parent;
+            ImmediateParent = parent;
         }
 
         public void SetProperties(Dictionary<string, string> propertyAssignments)
@@ -372,43 +408,6 @@ namespace Automate.Runtime.Domain
             }
 
             this.items.Clear();
-        }
-
-        public void Delete(DraftItem childItem)
-        {
-            if (!IsPattern && !IsElement && !IsEphemeralCollection)
-            {
-                throw new AutomateException(ExceptionMessages.DraftItem_DeleteForNonElement);
-            }
-
-            if (!childItem.IsElement && !childItem.IsEphemeralCollection)
-            {
-                throw new AutomateException(ExceptionMessages.DraftItem_DeleteForNonElementChild);
-            }
-
-            if (IsPattern || IsElement)
-            {
-                if (Properties.All(prop => prop.Value != childItem))
-                {
-                    throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
-                }
-
-                if (this.properties.Any(prop => prop.Key.EqualsIgnoreCase(childItem.Name)))
-                {
-                    var item = this.properties[childItem.Name];
-                    item.UnMaterialiseProperty();
-                }
-            }
-
-            if (IsEphemeralCollection)
-            {
-                if (Items.All(item => item != childItem))
-                {
-                    throw new AutomateException(ExceptionMessages.DraftItem_DeleteWithUnknownChild);
-                }
-
-                this.items.Remove(childItem);
-            }
         }
 
         public bool Accept(IDraftItemVisitor visitor)
@@ -572,12 +571,23 @@ namespace Automate.Runtime.Domain
             Accept(visitor);
         }
 
-        private DraftItem AddProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
+        private DraftItem CreateProperty(ToolkitDefinition toolkit, IAttributeSchema schema)
         {
             var property = new DraftItem(toolkit, schema, this);
             this.properties.Add(schema.Name, property);
 
             return property;
+        }
+
+        private void DestroyProperty(string propertyName)
+        {
+            if (this.properties.HasAny())
+            {
+                if (this.properties.Any(prop => prop.Key.EqualsIgnoreCase(propertyName)))
+                {
+                    this.properties.Remove(propertyName);
+                }
+            }
         }
 
         /// <summary>
@@ -602,7 +612,7 @@ namespace Automate.Runtime.Domain
                 {
                     if (draftItem.Parent.Exists())
                     {
-                        return draftItem.Schema.SchemaType == DraftItemSchemaType.CollectionItem
+                        return draftItem.IsCollectionItemElement
                             ? $"{GetAncestorPath(draftItem.Parent)}.{draftItem.ElementSchema.Name}.{draftItem.Id}"
                             : $"{GetAncestorPath(draftItem.Parent)}.{draftItem.Name}";
                     }
@@ -617,17 +627,6 @@ namespace Automate.Runtime.Domain
                     throw new AutomateException(ExceptionMessages.DraftItem_UnknownPath);
                 }
                 throw new AutomateException(ExceptionMessages.DraftItem_UnknownPath);
-            }
-        }
-
-        private void DestroyProperty(string propertyName)
-        {
-            if (this.properties.HasAny())
-            {
-                if (this.properties.Any(prop => prop.Key.EqualsIgnoreCase(propertyName)))
-                {
-                    this.properties.Remove(propertyName);
-                }
             }
         }
 
@@ -695,14 +694,9 @@ namespace Automate.Runtime.Domain
             }
         }
 
-        private void UnMaterialiseProperty()
-        {
-            SetMaterialised(false, force: true);
-        }
-
         private DraftItem CreateEphemeralCollectionItem()
         {
-            return new DraftItem(Toolkit, ElementSchema, Parent, true);
+            return new DraftItem(Toolkit, ElementSchema, this, true);
         }
 
         private IAutomationSchema GetAutomationByName(string name)
@@ -855,7 +849,7 @@ namespace Automate.Runtime.Domain
                     if (oldName.NotEqualsOrdinal(newName))
                     {
                         attributeToDelete = item.AttributeSchema.Name;
-                        var property = item.Parent.AddProperty(this.latestToolkit, latestSchema);
+                        var property = item.Parent.CreateProperty(this.latestToolkit, latestSchema);
                         property.SetValue(value, newDataType);
                         this.result.Add(MigrationChangeType.Breaking,
                             MigrationMessages.DraftItem_AttributeNameChanged, item.FullyQualifiedPath, oldName,
@@ -870,14 +864,9 @@ namespace Automate.Runtime.Domain
                             {
                                 if (newDefaultValue.HasValue())
                                 {
-                                    if (latestSchema.IsValidDataType(newDefaultValue))
-                                    {
-                                        item.SetValue(newDefaultValue, newDataType);
-                                    }
-                                    else
-                                    {
-                                        item.SetValue(null, newDataType);
-                                    }
+                                    item.SetValue(latestSchema.IsValidDataType(newDefaultValue)
+                                        ? newDefaultValue
+                                        : null, newDataType);
                                 }
                                 else
                                 {
@@ -987,7 +976,7 @@ namespace Automate.Runtime.Domain
                         .Remainder(existingSchema.Attributes, schema => schema.Id).ToList()
                         .ForEach(attr =>
                         {
-                            var property = item.AddProperty(this.latestToolkit, attr);
+                            var property = item.CreateProperty(this.latestToolkit, attr);
                             this.result.Add(MigrationChangeType.NonBreaking,
                                 MigrationMessages.DraftItem_AttributeAdded, property.FullyQualifiedPath,
                                 property.Value);
@@ -1126,14 +1115,9 @@ namespace Automate.Runtime.Domain
 
         public void ResetValue()
         {
-            if (HasDefaultValue)
-            {
-                SetValue(this.item.AttributeSchema.DefaultValue);
-            }
-            else
-            {
-                SetValue(null);
-            }
+            SetValue(HasDefaultValue
+                ? this.item.AttributeSchema.DefaultValue
+                : null);
         }
     }
 

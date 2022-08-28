@@ -60,4 +60,5 @@ nav:
       - 'GitHub': 'https://github.com/jezzsantos/automate'
       - 'License': 'https://github.com/jezzsantos/automate/blob/main/LICENSE'
       - 'Releases': 'https://github.com/jezzsantos/automate/releases'
+      - 'Contributors': 'Contributors/contributors.md'
   - Privacy: 'privacy.md'
