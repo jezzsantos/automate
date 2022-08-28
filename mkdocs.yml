@@ -15,6 +15,10 @@ markdown_extensions:
       clickable_checkbox: true
   - pymdownx.highlight:
       linenums: true
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 plugins:
   - glightbox
 extra_css:

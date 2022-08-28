@@ -6,7 +6,10 @@
 
 In a terminal, navigate to the root of your source codebase.
 
-Create a new pattern: `automate create pattern "<PATTERNNAME>"`
+Create a new pattern:
+```console
+automate create pattern "<PATTERNNAME>"
+```
 
 - The `<PATTERNNAME>` is the name of the new pattern. The name can only contain alphanumerical characters and the `.` character.
 
@@ -18,30 +21,53 @@ Create a new pattern: `automate create pattern "<PATTERNNAME>"`
     This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
 !!! example
-    `automate create pattern "APatternName" --displayedas "A Pattern Name" --describedas "an example pattern"`
+    ```console
+    automate create pattern "APatternName" --displayedas "A Pattern Name" --describedas "an example pattern"
+    ```
 
-## Switching patterns
+## Listing patterns
 
-If you have multiple patterns going, you can switch between them using their ID:
-
-`automate edit switch "<PATTERNID>"`
-
-You can view all the patterns in your codebase: `automate list patterns` (or `automate list all`)
+You can view all the patterns in your codebase:
+```console
+automate list patterns
+```
+or
+```console
+automate list all
+```
 
 !!! info
     Which will list all the patterns and their respective names and versions.
 
+## Switching patterns
+
+If you have multiple patterns going, you can switch between them using their ID:
+```console
+automate edit switch "<PATTERNID>"
+```
+
+!!! info
+    Which makes this pattern the 'active' pattern for subsequent commands.
+
 !!! example
-    `automate edit switch 12345678`
+    ```console
+    automate edit switch 12345678
+    ```
 
 ## Viewing the current pattern
 
-You can view the current pattern: `automate view pattern`
+You can view the current pattern:
+```console
+automate view pattern
+```
 
 !!! info
     Which will display the summarized configuration of the current pattern.
 
-You can view the detailed configuration of the pattern: `automate view pattern --all`
+You can view the detailed configuration of the pattern:
+```console
+automate view pattern --all
+```
 
 !!! info
     Which will display detailed information about the pattern structure, configuration and its automation.
@@ -61,7 +87,10 @@ The structure of a pattern describes a (conceptual) model of your code and its c
 
 ### Update pattern
 
-To update the name and metadata for a pattern: `automate edit update-pattern`
+To update the name and metadata for a pattern:
+```console
+automate edit update-pattern
+```
 
 - The `--name` is an optional parameter and must be alphanumeric and can contain the following additional characters:`._`.
 
@@ -70,14 +99,19 @@ To update the name and metadata for a pattern: `automate edit update-pattern`
 - The `--describedas` is an optional parameter that defines how the pattern might be displayed in a user interface.
 
 !!! example
-    `automate edit update-pattern --name "ANewName"`
+    ```console
+    automate edit update-pattern --name "ANewName"
+    ```
 
 ### Add attributes
 
 !!! abstract "Concept"
     An "Attribute" is a means to represent the variability of a pattern (or the variance within a set of use-cases). When applied, they are essentially a name-value pair.
 
-To add a new attribute to any element/collection in the pattern: `automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To add a new attribute to any element/collection in the pattern:
+```console
+automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
@@ -92,13 +126,21 @@ To add a new attribute to any element/collection in the pattern: `automate edit 
 - The `--isoneof "<VALUE1>;<VALUE2>;<VALUE3>"` is optional, and is a `;` delimited list of specific values that represent the only values for this attribute, when applied.
 
 !!! example
-    To the pattern: `automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3"`
-
-    To an element: `automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3" --aschildof "{AnElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3"
+    ```
+    To an element:
+    ```console
+    automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3" --aschildof "{AnElementName}"
+    ```
 
 ### Update attributes
 
-To update an existing attribute on any element/collection in the pattern: `automate edit update-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing attribute on any element/collection in the pattern:
+```console
+automate edit update-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the attribute on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
@@ -113,21 +155,34 @@ To update an existing attribute on any element/collection in the pattern: `autom
 - The `--name` optionally defines a new name for the attribute. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, or `DisplayName` or `Description`.
 
 !!! example
-    Of the pattern: `automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false`
-
-    Of an element: `automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false
+    ```
+    Of an element:
+    ```console
+    automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false --aschildof "{AnElementName}"
+    ```
 
 ### Delete attributes
 
-To delete an existing attribute: `automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete an existing attribute:
+```console
+automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 !!! tip
     The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting an attribute from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element in the pattern.
 
 !!! example
-    Of the pattern: `automate edit delete-attribute "AnAttributeName"`
-
-    Of an element: `automate edit delete-attribute "AnAttributeName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit delete-attribute "AnAttributeName"
+    ```
+    Of an element:
+    ```console
+    automate edit delete-attribute "AnAttributeName" --aschildof "{AnElementName}"
+    ```
 
 ### Add elements
 
@@ -137,7 +192,10 @@ To delete an existing attribute: `automate edit delete-attribute "<NAME>" --asch
 !!! tip
     Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
 
-To add a new element to any element/collection in the pattern: `automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To add a new element to any element/collection in the pattern:
+```console
+automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
@@ -152,13 +210,21 @@ To add a new element to any element/collection in the pattern: `automate edit ad
 - The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied. By default, it is `true` if `--isrequired` is `true`, and `false` if `--isrequired` is `false`.
 
 !!! example
-    To the pattern: `automate edit add-element "AnElementName"`
-
-    To an element: `automate edit add-element "AnElementName" --aschildof "{AnotherElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-element "AnElementName"
+    ```
+    To an element:
+    ```console
+    automate edit add-element "AnElementName" --aschildof "{AnotherElementName}"
+    ```
 
 ### Update elements
 
-To update an existing element on any element/collection in the pattern: `automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing element on any element/collection in the pattern:
+```console
+automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the element on the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
@@ -173,23 +239,35 @@ To update an existing element on any element/collection in the pattern: `automat
 - The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.
 
 !!! example
-    Of an element: `automate edit update-element "AnElementName" --name "ANewName" --isrequired false --aschildof "{AnotherElementName}"`
+    Of an element:
+    ```console
+    automate edit update-element "AnElementName" --name "ANewName" --isrequired false --aschildof "{AnotherElementName}"
+    ```
 
 ### Delete elements
 
-To delete an existing element on any element/collection in the pattern: `automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete an existing element on any element/collection in the pattern:
+```console
+automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 !!! example
-    Of an element: `automate edit delete-element "AnElementName" --aschildof "{AnotherElementName}"`
+    Of an element:
+    ```console
+    automate edit delete-element "AnElementName" --aschildof "{AnotherElementName}"
+    ```
 
 ### Add collections
 
 !!! abstract "Concept"
     A "Collection" is a special case of an "Element" that represents a collection of concepts. A collection is essentially an element with a choice of cardinality (`ZeroOrMany`, `OneOrMany`). When it is applied to a specific use-case, multiple instances of the element (described by the collection) are instantiated as (required `One`) elements.
 
-To add a new collection to any element/collection in the pattern: `automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To add a new collection to any element/collection in the pattern:
+```console
+automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
 
@@ -204,13 +282,21 @@ To add a new collection to any element/collection in the pattern: `automate edit
 - The `--autocreate` is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied. By default, it is `true` if `--isrequired` is `true`, and `false` if `--isrequired` is `false`.
 
 !!! example
-    To the pattern: `automate edit add-collection "ACollectionName"`
-
-    To an element: `automate edit add-collection "ACollectionName" --aschildof "{AnElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-collection "ACollectionName"
+    ```
+    To an element: 
+    ```console
+    automate edit add-collection "ACollectionName" --aschildof "{AnElementName}"
+    ```
 
 ### Update collections
 
-To update an existing collection on any element/collection in the pattern: `automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing collection on any element/collection in the pattern:
+```console
+automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating the collection on the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
@@ -225,16 +311,25 @@ To update an existing collection on any element/collection in the pattern: `auto
 - The `--autocreate` is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied.
 
 !!! example
-    Of an element: `automate edit update-collection "ACollectionName" --name "ANewName" --isrequired false --aschildof "{AnElementName}"`
+    Of an element:
+    ```console
+    automate edit update-collection "ACollectionName" --name "ANewName" --isrequired false --aschildof "{AnElementName}"
+    ```
 
 ### Delete collections
 
-To delete an existing collection on any element/collection in the pattern: `automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete an existing collection on any element/collection in the pattern:
+```console
+automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
 !!! example
-    Of an element: `automate edit delete-collection "ACollectionName" --aschildof "{AnElementName}"`
+    Of an element:
+    ```console
+    automate edit delete-collection "ACollectionName" --aschildof "{AnElementName}"
+    ```
 
 ## Configuring pattern automation
 
@@ -249,7 +344,10 @@ There are several concepts here. The first is "Commands" which can enact things 
 !!! abstract "Concept"
     A "Code Template" is a way to capture any kind of code (or configuration viz: JSON, XML, etc) of a pattern so that when a use-case is realized, code artifacts can be injected/modified/augmented/inserted/generated into codebases in specific locations of the codebase. Once a piece of code has been captured by the pattern, it can be templatized by the author and marked up so that variance in a specific use-case can parameterize the actual code injected into a codebase.
 
-To capture a piece of code: `automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"`
+To capture a piece of code:
+```console
+automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `FILEPATH` is a relative path to an existing code file locally.
 
@@ -258,16 +356,24 @@ To capture a piece of code: `automate edit add-codetemplate "<FILEPATH>" --aschi
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
 !!! example
-    To the pattern: `automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName"`
-
-    To an element: `automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName" --aschildof "{AnElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName"
+    ```
+    To an element: 
+    ```console
+    automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName" --aschildof "{AnElementName}"
+    ```
 
 ### Editing code templates
 
 !!! abstract "Concept"
     Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
 
-To edit the contents of an existing code template: `automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"`
+To edit the contents of an existing code template:
+```console
+automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
@@ -278,31 +384,49 @@ To edit the contents of an existing code template: `automate edit codetemplate "
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 !!! example
-    Of the pattern (On Windows): `automate edit codetemplate "ATemplateName" --with "notepad"`
-
-    Of an element (On Windows): `automate edit codetemplate "ATemplateName" --with "notepad" --aschildof "{AnElementName}"`
-
-    Of an element, with VS Code (On Windows): `automate edit codetemplate "ATemplateName" --with "%localappdata%\Programs\Microsoft VS Code\code.exe" --aschildof "{AnElementName}"`
+    Of the pattern (On Windows):
+    ```console
+    automate edit codetemplate "ATemplateName" --with "notepad"
+    ```
+    Of an element (On Windows): 
+    ```console
+    automate edit codetemplate "ATemplateName" --with "notepad" --aschildof "{AnElementName}"
+    ```
+    Of an element, with VS Code (On Windows): 
+    ```console
+    automate edit codetemplate "ATemplateName" --with "%localappdata%\Programs\Microsoft VS Code\code.exe" --aschildof "{AnElementName}"
+    ```
 
 ### Delete code templates
 
-To delete an existing code template: `automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete an existing code template:
+```console
+automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 !!! example
-    Of the pattern: `automate edit delete-codetemplate "ATemplateName"`
-
-    Of an element: `automate edit delete-codetemplate "ATemplateName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit delete-codetemplate "ATemplateName"
+    ```
+    Of an element: 
+    ```console
+    automate edit delete-codetemplate "ATemplateName" --aschildof "{AnElementName}"
+    ```
 
 ### Test code templates
 
 !!! abstract "Concept"
     Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions). Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
-To can test the contents of an existing code template: `automate test codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"`
+To can test the contents of an existing code template:
+```console
+automate test codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
@@ -313,9 +437,14 @@ To can test the contents of an existing code template: `automate test codetempla
 - The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.
 
 !!! example
-    Of the pattern: `automate test codetemplate "ATemplateName"`
-
-    Of an element: `automate test codetemplate "ATemplateName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate test codetemplate "ATemplateName"
+    ```
+    Of an element: 
+    ```console
+    automate test codetemplate "ATemplateName" --aschildof "{AnElementName}"
+    ```
 
 ### Add code template commands
 
@@ -323,7 +452,10 @@ To can test the contents of an existing code template: `automate test codetempla
     A "Code Template Command" is simply a type of automation that executes a "Code Template". This automation must be wired up to a "Code Template", and a "Code Template" must have a "Code Template Command" wired to it, to be applied in any use-case. This kind of command is responsible for deciding how to render the "Code Template" into the target codebase (where in the codebase, and how its named).
     After a code template is rendered into a codebase, an "Artifact Link" is defined for the location of the rendered code. This link is then tracked and maintained on subsequent executions of this command. This is useful if rendered files are later renamed, or the `--targetpath` property of this command changes.
 
-To add a new code template command to any element/collection in the pattern: `automate edit add-codetemplate-command "<CODETEMPLATENAME>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"`
+To add a new code template command to any element/collection in the pattern:
+```console
+automate edit add-codetemplate-command "<CODETEMPLATENAME>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<CODETEMPLATENAME>` is the name of an existing code template that must exist on the `--aschildof` element/collection.
 
@@ -336,16 +468,24 @@ To add a new code template command to any element/collection in the pattern: `au
 - The `--name` optionally defines a name for the command. If none is given, a default name will be derived for the command.
 
 !!! example
-    To the pattern: `automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff`
+    To the pattern:
+    ```console
+    automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff
+    ```
+    To an element: 
+    ```console
+    automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
+    ```
 
-    To an element: `automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"`
-
-### Add code template with commands
+### Add code template with command
 
 !!! tip
-    This command makes it possible to add a code template and add a new code template command (to render it) at the same time.
+    This command makes it possible to add a code template and add a new code template command (to render it) in one command.
 
-To capture a piece of code and wire it up to a code template command: `automate edit add-codetemplate-with-command "<FILEPATH>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"`
+To capture a piece of code and wire it up to a code template command:
+```console
+automate edit add-codetemplate-with-command "<FILEPATH>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `FILEPATH` is a relative path to an existing code file locally.
 
@@ -358,13 +498,21 @@ To capture a piece of code and wire it up to a code template command: `automate 
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
 !!! example
-    To the pattern: `automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff`
-
-    To an element: `automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff
+    ```
+    To an element: 
+    ```console
+    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
+    ```
 
 ### Update code template commands
 
-To update an existing code template command on any element/collection in the pattern: `automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing code template command on any element/collection in the pattern:
+```console
+automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
@@ -377,16 +525,24 @@ To update an existing code template command on any element/collection in the pat
 - The `--name` optionally defines a new name for the command.
 
 !!! example
-    Of the pattern: `automate edit update-codetemplate-command "ACommandName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false`
-
-    Of an element: `automate edit update-codetemplate-command "ATemplateName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit update-codetemplate-command "ACommandName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false
+    ```
+    Of an element: 
+    ```console
+    automate edit update-codetemplate-command "ATemplateName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false --aschildof "{AnElementName}"
+    ```
 
 ### Test code template commands
 
 !!! abstract "Concept"
     Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions). Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
-To can test the contents of an existing code template command: `automate test codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"`
+To can test the contents of an existing code template command:
+```console
+automate test codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `COMMANDNAME` is the name of an existing command on the `--aschildof` element/collection.
 
@@ -397,18 +553,28 @@ To can test the contents of an existing code template command: `automate test co
 - The `--import-data` optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the `--export-data` option to get a starting point to work from.
 
 !!! example
-    Testing with default data: `automate test codetemplate-command "ACommandName"`
-
-    Testing with default data, and export that data: `automate test codetemplate-command "ACommandName" --export-data "C:/projects/data/exportedtestdata.json"`
-
-    Testing with imported data: `automate test codetemplate-command "ACommandName" --import-data "C:/projects/data/exportedtestdata.json"`
+    Testing with default data:
+    ```console
+    automate test codetemplate-command "ACommandName"
+    ```
+    Testing with default data, and export that data: 
+    ```console
+    automate test codetemplate-command "ACommandName" --export-data "C:/projects/data/exportedtestdata.json"
+    ```
+    Testing with imported data: 
+    ```console
+    automate test codetemplate-command "ACommandName" --import-data "C:/projects/data/exportedtestdata.json"
+    ```
 
 ### Add CLI commands
 
 !!! abstract "Concept"
     A "CLI Command" is simply a type of automation that executes another command-line program (with arguments).
 
-To add a new CLI command to any element/collection in the pattern: `automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"`
+To add a new CLI command to any element/collection in the pattern:
+```console
+automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<APPLICATIONNAME>` can be a name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.
 
@@ -419,13 +585,21 @@ To add a new CLI command to any element/collection in the pattern: `automate edi
 - The `--name` optionally defines a name for the command. If none is given, a default name will be derived for the command.
 
 !!! example
-    To the pattern: `automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName"`  
-
-    To an element: `automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName" --aschildof "{AnElementName}"`
+    To the pattern:
+    ```console
+    automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName"
+    ```
+    To an element: 
+    ```console
+    automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName" --aschildof "{AnElementName}"
+    ```
 
 ### Update CLI commands
 
-To update an existing CLI command on any element/collection in the pattern: `automate edit update-cli-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing CLI command on any element/collection in the pattern:
+```console
+automate edit update-cli-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
@@ -438,13 +612,21 @@ To update an existing CLI command on any element/collection in the pattern: `aut
 - The `--name` optionally defines a new name for the command.
 
 !!! example
-    Of the pattern: `automate edit update-cli-command --app "C:/tools/anothertool.exe" --arguments "anewnargument1 anewargument2" --name "ANewCommandName"`
-
-    Of an element: `automate edit update-cli-command -app "C:/tools/anothertool.exe" --arguments "anewargument1 anewargument2" --name "ANewCommandName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit update-cli-command --app "C:/tools/anothertool.exe" --arguments "anewnargument1 anewargument2" --name "ANewCommandName"
+    ```
+    Of an element: 
+    ```console
+    automate edit update-cli-command -app "C:/tools/anothertool.exe" --arguments "anewargument1 anewargument2" --name "ANewCommandName" --aschildof "{AnElementName}"
+    ```
 
 ### Delete any commands
 
-To delete any existing command on any element/collection in the pattern: `automate edit delete-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete any existing command on any element/collection in the pattern:
+```console
+automate edit delete-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<COMMANDNAME>` is the name of an existing command on the `--aschildof` element/collection.
 
@@ -454,9 +636,14 @@ To delete any existing command on any element/collection in the pattern: `automa
     Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.
 
 !!! example
-    Of the pattern: `automate edit delete-command "ACommandName"`
-
-    Of an element: `automate edit delete-command "ACommandName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit delete-command "ACommandName"
+    ```
+    Of an element: 
+    ```console
+    automate edit delete-command "ACommandName" --aschildof "{AnElementName}"
+    ```
 
 ### Add launch points
 
@@ -466,7 +653,10 @@ To delete any existing command on any element/collection in the pattern: `automa
 !!! info
     Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
 
-To add a new launch point to any element/collection in the pattern: `automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"`
+To add a new launch point to any element/collection in the pattern:
+```console
+automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<COMMANDIDENTIFIERS>` is either a `;` delimited list of command identifiers (on the target element/collection) or it can be `*` to indicate that you want to add all the commands (on the `--from` element/collection). By using `*` you can update the list to add or remove any commands that have changed.
 
@@ -477,17 +667,29 @@ To add a new launch point to any element/collection in the pattern: `automate ed
 - The `--name` optionally defines a friendly name for the launch point. If none is given, a default name will be derived for the launch point.
 
 !!! example
-    To the pattern, for all commands on the pattern: `automate edit add-command-launchpoint "*" --name "ALaunchPointName"`
-
-    To the pattern, for specific commands on the pattern: `automate edit add-command-launchpoint "ACOMDID1;ACMDID2" --name "ALaunchPointName"`
-
-    To the pattern, for all commands on another element: `automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName"`
-
-    To an element, for all commands on another element: `automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName" --aschildof "{AnElementName}"`
+    To the pattern, for all commands on the pattern:
+    ```console
+    automate edit add-command-launchpoint "*" --name "ALaunchPointName"
+    ```
+    To the pattern, for specific commands on the pattern: 
+    ```console
+    automate edit add-command-launchpoint "ACOMDID1;ACMDID2" --name "ALaunchPointName"
+    ```
+    To the pattern, for all commands on another element:
+    ```console
+    automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName"
+    ```
+    To an element, for all commands on another element: 
+    ```console
+    automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName" --aschildof "{AnElementName}"
+    ```
 
 ### Update launch points
 
-To update an existing launch point on any element/collection in the pattern: `automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --add "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"`
+To update an existing launch point on any element/collection in the pattern:
+```console
+automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --add "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
@@ -500,22 +702,35 @@ To update an existing launch point on any element/collection in the pattern: `au
 - The `--name` optionally defines a new name for the launch point.
 
 !!! example
-    Of the pattern, to re-add all commands on the pattern: `automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName"`
-
-    Of an element, to re-add all commands from another element: `automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName" --from "{AnotherElementName}" --aschildof "{AnElementName}"`
+    Of the pattern, to re-add all commands on the pattern:
+    ```console
+    automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName"
+    ```
+    Of an element, to re-add all commands from another element: 
+    ```console
+    automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName" --from "{AnotherElementName}" --aschildof "{AnElementName}"
+    ```
 
 ### Delete launch points
 
-To delete an existing launch point on any element/collection in the pattern: `automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}"`
+To delete an existing launch point on any element/collection in the pattern:
+```console
+automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}"
+```
 
 - The `<LAUNCHPOINTNAME>` is the name of an existing launch point on the `--aschildof` element/collection.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the launch point from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
 !!! example
-    Of the pattern: `automate edit delete-command-launchpoint "ALaunchPointName"`
-
-    Of an element: `automate edit delete-command-launchpoint "ALaunchPointName" --aschildof "{AnElementName}"`
+    Of the pattern:
+    ```console
+    automate edit delete-command-launchpoint "ALaunchPointName"
+    ```
+    Of an element: 
+    ```console
+    automate edit delete-command-launchpoint "ALaunchPointName" --aschildof "{AnElementName}"
+    ```
 
 ## Publishing and deploying toolkits
 
@@ -553,7 +768,10 @@ Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runti
 
 ### Publishing a toolkit
 
-To build and publish an existing pattern into a toolkit: `automate publish toolkit`
+To build and publish an existing pattern into a toolkit:
+```console
+automate publish toolkit
+```
 
 - The `--asversion` optionally defines a custom 2-dot [semver](https://semver.org/) version number to use for this build of the toolkit. Or you can specify the value `auto` to have it automatically versioned, based on the latest changes made to the pattern. The default is `auto`.
 - The `--force` optionally bypasses any detected violations when using a custom version number that is suspicious or that would break semantic versioning rules on the existing pattern. The default is `false`
@@ -563,9 +781,14 @@ To build and publish an existing pattern into a toolkit: `automate publish toolk
     This command will version and publish the toolkit to a file on the current user's desktop, for distribution.
 
 !!! example
-    To create a toolkit file that can be shared: `automate publish toolkit --asversion "2.0.0"`
-
-    To create a toolkit file, for next appropriate version, that is installed into the same codebase: `automate publish toolkit --install`
+    To create a toolkit file that can be shared: 
+    ```console
+    automate publish toolkit --asversion "2.0.0"
+    ```
+    To create a toolkit file, for next appropriate version, that is installed into the same codebase: 
+    ```console
+    automate publish toolkit --install
+    ```
 
 ### Deploying a toolkit
 

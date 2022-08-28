@@ -34,7 +34,14 @@ To install a toolkit yourself:
 
 ### Listing installed toolkits
 
-You can view all the installed toolkits in your codebase: `automate list toolkits` (or `automate list all`)
+You can view all the installed toolkits in your codebase: 
+```console
+automate list toolkits
+```
+or
+```console
+automate list all
+```
 
 !!! info
     This command will list all the installed toolkits and their respective names and versions.
@@ -45,12 +52,17 @@ If a toolkit is changed and upgraded by its creator, and then it can be upgraded
 
 You first need to install the upgraded toolkit. This will automatically upgrade the older version of the toolkit
 
-To upgrade a toolkit to a new version: `automate install toolkit <INSTALLLOCATION>`
+To upgrade a toolkit to a new version:
+```console
+automate install toolkit <INSTALLLOCATION>
+```
 
 * The `<INSTALLLOCATION>` is the full path to the upgraded toolkit file. e.g. `C:\desktop\AToolkit_0.2.0.toolkit`
 
 !!! example
-    `automate install toolkit "C:\desktop\AToolkit_0.2.0.toolkit"`
+    ```console
+    automate install toolkit "C:\desktop\AToolkit_0.2.0.toolkit"
+    ```
 
 Next, you will need to upgrade any drafts that you may have created from the previous version of the toolkit
 
@@ -59,7 +71,10 @@ Next, you will need to upgrade any drafts that you may have created from the pre
 
 #### Upgrading drafts
 
-To upgrade an existing draft to a newly upgraded toolkit: `automate upgrade draft`
+To upgrade an existing draft to a newly upgraded toolkit:
+```console
+automate upgrade draft
+```
 
 * The `--force` optionally bypasses any errors that prevent automatic upgrading due to breaking changes. The default is `false`
 
@@ -91,7 +106,10 @@ A Draft can only be created when a toolkit containing a pattern is installed.
 
 ### Creating a draft from a toolkit
 
-To create a draft from an installed toolkit: `automate run toolkit "<TOOLKITNAME>" --name "<DRAFTNAME>"`
+To create a draft from an installed toolkit:
+```console
+automate run toolkit "<TOOLKITNAME>" --name "<DRAFTNAME>"
+```
 
 * The `TOOLKITNAME` is the name of the toolkit you want to use
 * The `--name <DRAFTNAME>` optionally defines a friendly name for this instance of the draft.
@@ -103,27 +121,44 @@ To create a draft from an installed toolkit: `automate run toolkit "<TOOLKITNAME
     Each Draft should be named for easy future reference. If you don't define a name (`--name`), one will be fabricated for you automatically. The name is useful for keeping track of which draft you are using right now, and which have been used in the past. Since they may have a long life in your codebase, and you may have several.
 
 !!! example
-    `automate run toolkit "AToolkitName" --name MyFirstUsage`
+    ```console
+    automate run toolkit "AToolkitName" --name MyFirstUsage
+    ```
 
 ### Switching drafts
 
 Since you can have multiple drafts on the go at the same time (even from different toolkits) you will need a way to track them and which one is in use right now.
 
-To list all the drafts you have right now: `automate list drafts` (or `automate list all`)
+To list all the drafts you have right now:
+```console
+automate list drafts
+```
+or
+```console
+automate list all
+```
 
 !!! info
     This command will produce a list of drafts, and their names and IDs.
 
-To switch to using a specific draft: `automate run switch "<DRAFTID>"`
+To switch to using a specific draft:
+```console
+automate run switch "<DRAFTID>"
+```
 
 * The `<DRAFTID>` is the ID of the draft you want to use.
 
 !!! example
-    `automate run switch 12345678`
+    ```console
+    automate run switch 12345678
+    ```
 
 ### Viewing the current draft
 
-You can view the current draft: `automate view draft`
+You can view the current draft:
+```console
+automate view draft
+```
 
 !!! info
     This command will display the name of the draft and its current configuration.
@@ -152,14 +187,20 @@ Following is are the common kinds of things you can do with any specific draft.
 
 ### View the current configuration of a draft
 
-To view the current configuration of your draft: `automate view draft`
+To view the current configuration of your draft:
+```console
+automate view draft
+```
 
 !!! info
     This command will only show you the data that you configured for the draft, and any defaulted values.
 
 You can also ask the draft if it is currently in a "valid" state (i.e. if it requires further configuration), and look at the structure and any launchable automation (launch points) of the toolkit that you can use.
 
-To view any constraint violations (validations):  `automate view draft --todo`
+To view any constraint violations (validations):
+```console
+automate view draft --todo
+```
 
 !!! info
     This command will show you the current configuration data, AND the meta-model of the pattern, AND the launchable automation (launch points), AND it will also show you any validation errors with the draft that need fixing right now.
@@ -169,25 +210,41 @@ To view any constraint violations (validations):  `automate view draft --todo`
 
 ### Validating a draft
 
-To validate the draft: `automate validate draft`
+To validate the draft:
+```console
+automate validate draft
+```
 
 !!! info
     Any validation rule violations are reported. These will need to be addressed before any launch points can be executed on it.
 
-To validate specific items in the draft: `automate validate draft on "{<ANEXPRESSION>}"`
+To validate specific items in the draft:
+```console
+automate validate draft on "{<ANEXPRESSION>}"
+```
 
 * The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing item in the draft.
 
 !!! example
-    On the draft: `automate validate draft`
-
-    On an element: `automate validate draft on "{APatternName.AnElementName}"`
-
-    On a collection item: `automate validate draft on "{APatternName.ACollectionName.12345678}"`
+    On the draft:
+    ```console
+    automate validate draft
+    ```
+    On an element:
+    ```console
+    automate validate draft on "{APatternName.AnElementName}"
+    ```
+    On a collection item:
+    ```console
+    automate validate draft on "{APatternName.ACollectionName.12345678}"
+    ```
 
 ### Configuring an attribute
 
-To set an attribute on any element (or any collection item) in the draft: `automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
+To set an attribute on any element (or any collection item) in the draft:
+```console
+automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
+```
 
 - The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing element (or collection item) in the draft
 - The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
@@ -196,9 +253,14 @@ To set an attribute on any element (or any collection item) in the draft: `autom
     You can have many `--and-set "NAME=VALUE"` expressions as you like (one after the other) for the same element or collection item
 
 !!! example
-    On an element: `automate configure on "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
-
-    On a collection item: `automate configure on "{APatternName.ACollectionName.12345678}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
+    On an element:
+    ```console
+    automate configure on "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
+    On a collection item:
+    ```console
+    automate configure on "{APatternName.ACollectionName.12345678}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
 
 ### Adding an element or collection
 
@@ -207,7 +269,10 @@ If an element or collection does not yet exist in the draft, you can add it.
 !!! tip
     By default, all elements and collections will be automatically created when their parent elements are created, but only if they are defined as`AutoCreate=true` in the toolkit.
 
-To add an element or collection to any other element (or to any collection item) in the draft: `automate configure add "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
+To add an element or collection to any other element (or to any collection item) in the draft:
+```console
+automate configure add "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
+```
 
 - The `ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to the non-existent element in the draft
 - The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
@@ -216,26 +281,44 @@ To add an element or collection to any other element (or to any collection item)
     You can also add as many `--and-set "NAME=VALUE"` expressions as you like (one after the other) on the same element or collection item
 
 !!! example
-    An element: `automate configure add "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
-
-    A collection: `automate configure add "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
-
-    An element of a collection item: `automate configure add "{APatternName.ACollectionName.12345678.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
+    An element:
+    ```console
+    automate configure add "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
+    A collection:
+    ```console
+    automate configure add "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
+    An element of a collection item:
+    ```console
+    automate configure add "{APatternName.ACollectionName.12345678.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
 
 ### Resetting an element
 
-To reset all the attributes of any element (or any collection item) in the draft:  `automate configure reset "{<ANEXPRESSION>}"`
+To reset all the attributes of any element (or any collection item) in the draft:
+```console
+automate configure reset "{<ANEXPRESSION>}"
+```
 
 * The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing element (or collection item) in the draft
 
 !!! example
-    On an element: `automate configure reset "{APatternName.AnElementName}"`
-
-    On a collection item: `automate configure reset "{APatternName.ACollectionName.12345678}"`
+    On an element:
+    ```console
+    automate configure reset "{APatternName.AnElementName}"
+    ```
+    On a collection item:
+    ```console
+    automate configure reset "{APatternName.ACollectionName.12345678}"
+    ```
 
 ### Adding collection items
 
-To add a new item of a collection to any collection in the draft: `automate configure add-one-to "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"`
+To add a new item of a collection to any collection in the draft:
+```console
+automate configure add-one-to "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
+```
 
 - The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing collection in the draft
 - The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
@@ -247,47 +330,79 @@ To add a new item of a collection to any collection in the draft: `automate conf
     When a collection item is added, if it has any child elements/collections, those child elements/collections are created by default if they are defined as `AutoCreate=true`. Otherwise, you need to add them separately.
 
 !!! example
-    To a collection: `automate configure add-one-to "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
-
-    To a collection of a collection item: `automate configure add-one-to "{APatternName.ACollectionName.12345678.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"`
+    To a collection:
+    ```console
+    automate configure add-one-to "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
+    To a collection of a collection item:
+    ```console
+    automate configure add-one-to "{APatternName.ACollectionName.12345678.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
+    ```
 
 ### Clearing collection items
 
-To clear all items of a collection in the draft: `automate configure clear "{<ANEXPRESSION>}"`
+To clear all items of a collection in the draft:
+```console
+automate configure clear "{<ANEXPRESSION>}"
+```
 
 - The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing collection in the draft
 
 !!! example
-    Of a collection: `automate configure clear "{APatternName.ACollectionName}"`
-
-    Of a collection of a collection item: `automate configure clear "{APatternName.ACollectionName.12345678.AnAlementName}"`
+    Of a collection:
+    ```console
+    automate configure clear "{APatternName.ACollectionName}"
+    ```
+    Of a collection of a collection item:
+    ```console
+    automate configure clear "{APatternName.ACollectionName.12345678.AnAlementName}"
+    ```
 
 ### Deleting elements, collections or collection items
 
-To delete an element, a collection, or an item of a collection in the draft: `automate configure delete "{<ANEXPRESSION>}"`
+To delete an element, a collection, or an item of a collection in the draft:
+```console
+automate configure delete "{<ANEXPRESSION>}"
+```
 
 - The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing element, collection or collection item in the draft
 
 !!! example
-    An element: `automate configure delete "{APatternName.AnElementName}"`
-    
-    A collection: `automate configure delete "{APatternName.ACollectionName}"`
-    
-    A collection item: `automate configure delete "{APatternName.ACollectionName.12345678}"`
+    An element:
+    ```console
+    automate configure delete "{APatternName.AnElementName}"
+    ```
+    A collection:
+    ```console
+    automate configure delete "{APatternName.ACollectionName}"
+    ```
+    A collection item:
+    ```console
+    automate configure delete "{APatternName.ACollectionName.12345678}"
+    ```
 
 ### Executing automation
 
 !!! abstract "Concept"
     A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.
 
-To view all the launch points configured on the elements/collections within the toolkit: `automate view toolkit --all`
+To view all the launch points configured on the elements/collections within the toolkit:
+```console
+automate view toolkit --all
+```
 
-To view all the launch points available on the draft: `automate view draft --todo`
+To view all the launch points available on the draft:
+```console
+automate view draft --todo
+```
 
 !!! info
     All launch points require that the entire draft is in a "valid" state before they are allowed to execute, no matter what element/collection the launch point is configured on.
 
-To execute a launch point on any element (or collection) in the draft: `automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"`
+To execute a launch point on any element (or collection) in the draft:
+```console
+automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
+```
 
 - The `<LAUNCHPOINTNAME>` is the name of the launch point defined on the respective
 - The  `-on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing parent element/collection in the draft.
@@ -296,6 +411,11 @@ To execute a launch point on any element (or collection) in the draft: `automate
     You can omit the `--on "{<ANEXPRESSION>}"` if the command is defined on the root element.
 
 !!! example
-    On the pattern: `automate execute command "ACommandName"`
-
-    On a nested collection item: `automate execute command "ACommandName" on "{APatternName.ACollectionName.12345678}"`
+    On the pattern:
+    ```console
+    automate execute command "ACommandName"
+    ```
+    On a nested collection item:
+    ```console
+    automate execute command "ACommandName" on "{APatternName.ACollectionName.12345678}"
+    ```
