@@ -765,17 +765,27 @@ namespace Core.UnitTests.Runtime.Domain
             result.Should().Be(new Dictionary<string, object>
             {
                 { nameof(DraftItem.Id), draftPattern.Id },
+                { nameof(DraftItem.ConfigurationPath), draftPattern.ConfigurationPath },
                 { "anattributename1", "adefaultvalue1" },
                 {
                     "anelementname1", new Dictionary<string, object>
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["anelementname1"].Id },
                         {
+                            nameof(DraftItem.ConfigurationPath),
+                            draftPattern.Properties["anelementname1"].ConfigurationPath
+                        },
+                        {
                             "anelementname2", new Dictionary<string, object>
                             {
                                 {
                                     nameof(DraftItem.Id),
                                     draftPattern.Properties["anelementname1"].Properties["anelementname2"].Id
+                                },
+                                {
+                                    nameof(DraftItem.ConfigurationPath),
+                                    draftPattern.Properties["anelementname1"].Properties["anelementname2"]
+                                        .ConfigurationPath
                                 },
                                 { "anattributename2", "adefaultvalue2" }
                             }
@@ -787,12 +797,18 @@ namespace Core.UnitTests.Runtime.Domain
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Id },
                         {
+                            nameof(DraftItem.ConfigurationPath),
+                            draftPattern.Properties["acollectionname2"].ConfigurationPath
+                        },
+                        {
                             nameof(DraftItem.Items), new List<object>
                             {
                                 new Dictionary<string, object>
                                 {
+                                    { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Items[0].Id },
                                     {
-                                        nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Items[0].Id
+                                        nameof(DraftItem.ConfigurationPath),
+                                        draftPattern.Properties["acollectionname2"].Items[0].ConfigurationPath
                                     },
                                     { "anattributename3", 25 }
                                 }

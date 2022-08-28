@@ -48,7 +48,7 @@ nav:
   - 'Evaluating automate': 'evaluating.md'
   - 'Your First Toolkit': 'tutorial.md'
   - 'Developers Guide':
-      - 'Command Line':
+      - 'Command Line (CLI)':
           - 'Making Toolkits': 'authoring.md'
           - 'Using Toolkits': 'runtime.md'
           - 'Additional Commands': 'cli.md'

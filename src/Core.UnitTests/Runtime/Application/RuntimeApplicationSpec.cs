@@ -567,13 +567,16 @@ namespace Core.UnitTests.Runtime.Application
                 result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
+                    draft.Model.ConfigurationPath,
                     anattributename1 = "adefaultvalue1",
                     anelementname1 = new
                     {
                         draft.Model.Properties["anelementname1"].Id,
+                        draft.Model.Properties["anelementname1"].ConfigurationPath,
                         anelementname2 = new
                         {
                             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurationPath,
                             anattributename2 = "adefaultvalue2"
                         }
                     }
@@ -609,13 +612,16 @@ namespace Core.UnitTests.Runtime.Application
                 result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
+                    draft.Model.ConfigurationPath,
                     anattributename1 = "adefaultvalue1",
                     anelementname1 = new
                     {
                         draft.Model.Properties["anelementname1"].Id,
+                        draft.Model.Properties["anelementname1"].ConfigurationPath,
                         anelementname2 = new
                         {
                             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
+                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurationPath,
                             anattributename2 = "adefaultvalue2"
                         }
                     }

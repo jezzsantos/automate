@@ -23,13 +23,13 @@ namespace Automate.Runtime.Domain
 
         public static void Add(this ValidationResults results, DraftItem draftItem, string message)
         {
-            results.Add(new ValidationResult(new ValidationContext(draftItem.PathReference), message));
+            results.Add(new ValidationResult(new ValidationContext(draftItem.ConfigurationPath), message));
         }
 
         public static IReadOnlyList<ValidationResult> Validate(this IAttributeSchema attribute, DraftItem draftItem,
             object value)
         {
-            return attribute.Validate(new ValidationContext(draftItem.PathReference), value);
+            return attribute.Validate(new ValidationContext(draftItem.ConfigurationPath), value);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace Automate.Runtime.Domain
             Name = name;
             Toolkit = toolkit;
             Schema = schema;
-            this.ImmediateParent = parent;
+            ImmediateParent = parent;
             this.artifactLinks = new List<ArtifactLink>();
         }
 
@@ -102,8 +102,8 @@ namespace Automate.Runtime.Domain
 
         public DraftItem Parent =>
             IsCollectionItemElement
-                ? this.ImmediateParent?.Parent
-                : this.ImmediateParent;
+                ? ImmediateParent?.Parent
+                : ImmediateParent;
 
         internal DraftItem ImmediateParent { get; private set; }
 
@@ -141,13 +141,14 @@ namespace Automate.Runtime.Domain
         public bool IsEphemeralCollection => Schema.SchemaType == DraftItemSchemaType.EphemeralCollection;
 
         private bool IsCollectionItemElement => Schema.SchemaType == DraftItemSchemaType.CollectionItem;
+
         public bool IsAttribute => Schema.SchemaType == DraftItemSchemaType.Attribute;
 
         public IReadOnlyList<ArtifactLink> ArtifactLinks => this.artifactLinks;
 
         private string FullyQualifiedPath => GetPath(false);
 
-        public string PathReference => GetPath(true);
+        public string ConfigurationPath => GetPath(true);
 
         public PersistableProperties Dehydrate()
         {
@@ -594,10 +595,10 @@ namespace Automate.Runtime.Domain
         ///     Cannot use the <see cref="IDraftItemVisitor" /> to traverse up the hierarchy,
         ///     so we have to traverse up using a custom iterator
         /// </summary>
-        private string GetPath(bool asReference)
+        private string GetPath(bool asConfigurationPath)
         {
             var path = GetAncestorPath(this);
-            return asReference
+            return asConfigurationPath
                 ? $"{{{path}}}"
                 : path;
 
@@ -1317,50 +1318,56 @@ namespace Automate.Runtime.Domain
 
         private IEnumerable<DictionaryEntry> GetPairs()
         {
-            if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
+            if (this.draftItem.IsMaterialised)
             {
-                yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Id)), this.draftItem.Id);
-            }
-            if (this.includeAncestry)
-            {
-                if (this.draftItem.IsPattern || this.draftItem.IsElement ||
-                    this.draftItem.IsEphemeralCollection || this.draftItem.IsAttribute)
+                if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
                 {
-                    if (this.draftItem.Parent.Exists())
+                    yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Id)), this.draftItem.Id);
+
+                    if (this.draftItem.ConfigurationPath.HasValue())
                     {
-                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Parent)),
-                            new LazyDraftItemDictionary(this.draftItem.Parent, true));
+                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.ConfigurationPath)),
+                            this.draftItem.ConfigurationPath);
                     }
                 }
-            }
-            if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
-            {
-                if (this.draftItem.IsMaterialised)
+                if (this.includeAncestry)
+                {
+                    if (this.draftItem.IsPattern || this.draftItem.IsElement ||
+                        this.draftItem.IsEphemeralCollection || this.draftItem.IsAttribute)
+                    {
+                        if (this.draftItem.Parent.Exists())
+                        {
+                            yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Parent)),
+                                new LazyDraftItemDictionary(this.draftItem.Parent, true));
+                        }
+                    }
+                }
+                if (this.draftItem.IsPattern || this.draftItem.IsElement || this.draftItem.IsEphemeralCollection)
                 {
                     if (this.draftItem.Properties.HasAny())
                     {
                         foreach (var prop in this.draftItem.Properties.Safe())
                         {
-                            var (name, item) = prop;
-                            if (item.IsAttribute)
+                            var (name, value) = prop;
+                            if (value.IsMaterialised)
                             {
-                                if (item.Value.Exists())
+                                if (value.IsAttribute)
                                 {
-                                    yield return new DictionaryEntry(AsIsMemberName(name), item.Value);
+                                    if (value.Value.Exists())
+                                    {
+                                        yield return new DictionaryEntry(AsIsMemberName(name), value.Value);
+                                    }
                                 }
-                            }
-                            if (item.IsElement || item.IsEphemeralCollection)
-                            {
-                                yield return new DictionaryEntry(AsIsMemberName(name),
-                                    new LazyDraftItemDictionary(item, this.includeAncestry));
+                                if (value.IsElement || value.IsEphemeralCollection)
+                                {
+                                    yield return new DictionaryEntry(AsIsMemberName(name),
+                                        new LazyDraftItemDictionary(value, this.includeAncestry));
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (this.draftItem.IsEphemeralCollection)
-            {
-                if (this.draftItem.IsMaterialised)
+                if (this.draftItem.IsEphemeralCollection)
                 {
                     if (this.draftItem.Items.HasAny())
                     {
@@ -1369,10 +1376,7 @@ namespace Automate.Runtime.Domain
                         yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
                     }
                 }
-            }
-            if (this.draftItem.IsAttribute)
-            {
-                if (this.draftItem.IsMaterialised)
+                if (this.draftItem.IsAttribute)
                 {
                     if (this.draftItem.Value.Exists())
                     {

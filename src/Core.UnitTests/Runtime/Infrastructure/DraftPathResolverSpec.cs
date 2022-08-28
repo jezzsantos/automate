@@ -218,7 +218,7 @@ namespace Core.UnitTests.Runtime.Infrastructure
             pattern.AddElement(element);
 
             var result = this.resolver.ResolveExpression("adescription", "anexpression",
-                new DraftItem(toolkit, element, null));
+                new DraftItem(toolkit, element, new DraftItem(toolkit, pattern)));
 
             result.Should().Be("anexpression");
         }
@@ -227,12 +227,12 @@ namespace Core.UnitTests.Runtime.Infrastructure
         public void WhenResolveExpressionAndExpressionContainsSyntax_ThenReturnsExpression()
         {
             var pattern = new PatternDefinition("apatternname");
+            var toolkit = new ToolkitDefinition(pattern);
             var element = new Element("anelementname");
             var attribute = new Attribute("anattributename", defaultValue: "adefaultvalue");
             element.AddAttribute(attribute);
             pattern.AddElement(element);
-            var draftItem = new DraftItem(new ToolkitDefinition(pattern), element,
-                null);
+            var draftItem = new DraftItem(toolkit, element, new DraftItem(toolkit, pattern));
             draftItem.Materialise();
 
             var result = this.resolver.ResolveExpression("adescription", "anexpression{{anattributename}}anexpression",
