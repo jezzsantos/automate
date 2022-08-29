@@ -20,7 +20,7 @@ namespace Core.UnitTests.Authoring.Domain
         public PatternElementSpec()
         {
             this.pattern = new PatternDefinition("apatternname");
-            this.element = new TestPatternElement("aname");
+            this.element = new TestPatternElement("anelementname");
             this.pattern.AddElement(this.element);
         }
 
@@ -462,7 +462,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenDeleteCodeTemplateCommandAndNotIncludeReferencingLaunchPoints_ThenDeletesCommandOnly()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             var launchPoint =
@@ -479,7 +479,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void
             WhenDeleteCodeTemplateCommandAndIncludeAutomationAndHasReferencingLaunchPoint_ThenDeletesCommandAndLaunchPoint()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
@@ -820,7 +820,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenDeleteCodeTemplate_ThenDeletesTemplate()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
 
             this.element.DeleteCodeTemplate(codeTemplate.Name, false);
@@ -832,7 +832,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenDeleteCodeTemplateAndNotIncludeReferencingCodeTemplateCommand_ThenDeletesTemplateOnly()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
 
@@ -847,7 +847,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void
             WhenDeleteCodeTemplateAndIncludeAutomationAndHasReferencingCodeTemplateCommand_ThenDeletesTemplateAndCommand()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
 
@@ -862,7 +862,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void
             WhenDeleteCodeTemplateAndIncludeAutomationAndHasDedicatedReferencingLaunchPoint_ThenDeletesTemplateAndCommandAndLaunchPoint()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
@@ -915,7 +915,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenDeleteCommandLaunchPoint_ThenDeletesLaunchPoint()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             var launchPoint =
@@ -942,7 +942,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenDeleteAutomationForCodeTemplateCommand_ThenDeletesCommand()
         {
-            var codeTemplate = new CodeTemplate("aname", "afullpath", "afileextension");
+            var codeTemplate = new CodeTemplate("atemplatename", "afullpath", "afileextension");
             this.element.AddCodeTemplate(codeTemplate);
             var command = this.element.AddCodeTemplateCommand("acommandname", codeTemplate.Name, false, "afilepath");
             this.element.AddCommandLaunchPoint("alaunchpointname", new List<string> { command.Id }, this.element);
@@ -1010,9 +1010,9 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenRenameAndDescribeWithDisplayName_ThenRenames()
         {
-            this.element.RenameAndDescribe("aname", "adisplayname");
+            this.element.RenameAndDescribe("anelementname", "adisplayname");
 
-            this.element.Name.Should().Be("aname");
+            this.element.Name.Should().Be("anelementname");
             this.element.DisplayName.Should().Be("adisplayname");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
@@ -1030,7 +1030,7 @@ namespace Core.UnitTests.Authoring.Domain
         {
             this.element.RenameAndDescribe(null, "adisplayname");
 
-            this.element.Name.Should().Be("aname");
+            this.element.Name.Should().Be("anelementname");
             this.element.DisplayName.Should().Be("adisplayname");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
         }
@@ -1050,6 +1050,27 @@ namespace Core.UnitTests.Authoring.Domain
 
             this.element.Description.Should().Be("adescription");
             this.element.Pattern.ToolkitVersion.LastChanges.Should().Be(VersionChange.NonBreaking);
+        }
+
+        [Fact]
+        public void WhenGetEditPathAndOnlyPattern_ThenReturnsPath()
+        {
+            var result = new PatternDefinition("apatternname").EditPath;
+
+            result.Should().Be($"{{{this.pattern.Name}}}");
+        }
+
+        [Fact]
+        public void WhenGetEditPathHasSomeDescendants_ThenReturnsPath()
+        {
+            var element2 = new Element("anelementname2");
+            var element3 = new Element("anelementname3");
+            element2.AddElement(element3);
+            this.element.AddElement(element2);
+
+            var result = element3.EditPath;
+
+            result.Should().Be($"{{{this.pattern.Name}.anelementname.anelementname2.anelementname3}}");
         }
     }
 

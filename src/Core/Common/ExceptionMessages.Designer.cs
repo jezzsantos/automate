@@ -627,6 +627,15 @@ namespace Automate.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This element does not have a path.
+        /// </summary>
+        internal static string PatternElement_UnknownPath {
+            get {
+                return ResourceManager.GetString("PatternElement_UnknownPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The expression: &apos;{0}&apos; is not a valid pattern expression.
         /// </summary>
         internal static string PatternPathResolver_InvalidExpression {

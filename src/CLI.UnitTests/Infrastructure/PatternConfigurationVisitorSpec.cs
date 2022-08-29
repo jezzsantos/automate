@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
-using Automate.Common.Domain;
 using FluentAssertions;
 using Xunit;
+#if TESTINGONLY
+using Automate.Common.Domain;
+#endif
 
 namespace CLI.UnitTests.Infrastructure
 {
@@ -208,7 +210,7 @@ namespace CLI.UnitTests.Infrastructure
                 var element2 = element1.Elements.Single();
                 result.As<JsonNode>().ToJsonString().Should()
                     .Be("{" +
-                        $"\"Id\":\"{this.pattern.Id}\",\"Name\":\"{this.pattern.Name}\"," +
+                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate1.Id}\",\"Name\":\"acodetemplate1\",\"OriginalFilePath\":\"afilepath1\",\"OriginalFileExtension\":\"anextension1\"}}" +
                         "]," +
@@ -222,7 +224,7 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{attribute2.Id}\",\"Name\":\"anattributename2\",\"DataType\":\"string\",\"IsRequired\":false,\"Choices\":[\"achoice1\",\"achoice2\",\"achoice3\"],\"DefaultValue\":\"achoice2\"}}" +
                         "]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element1.Id}\",\"Name\":\"{element1.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
+                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate2.Id}\",\"Name\":\"acodetemplate2\",\"OriginalFilePath\":\"afilepath2\",\"OriginalFileExtension\":\"anextension2\"}}" +
                         "]," +
@@ -232,7 +234,7 @@ namespace CLI.UnitTests.Infrastructure
                         "]," +
                         "\"Attributes\":[]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element2.Id}\",\"Name\":\"{element2.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
+                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
                         "\"CodeTemplates\":[]," +
                         "\"Automation\":[]," +
                         "\"Attributes\":[" +
@@ -242,7 +244,7 @@ namespace CLI.UnitTests.Infrastructure
                         "}" +
                         "]" +
                         "}," +
-                        $"{{\"Id\":\"{collection1.Id}\",\"Name\":\"{collection1.Name}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
+                        $"{{\"Id\":\"{collection1.Id}\",\"EditPath\":\"{collection1.EditPath}\",\"Name\":\"{collection1.Name}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate3.Id}\",\"Name\":\"acodetemplate3\",\"OriginalFilePath\":\"afilepath3\",\"OriginalFileExtension\":\"anextension3\"}}" +
                         "]," +
@@ -285,17 +287,17 @@ namespace CLI.UnitTests.Infrastructure
                 var element2 = this.pattern.Elements[1];
                 result.As<JsonNode>().ToJsonString().Should()
                     .Be("{" +
-                        $"\"Id\":\"{this.pattern.Id}\",\"Name\":\"{this.pattern.Name}\"," +
+                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint1.Id}\",\"Name\":\"acommandlaunchpoint1\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element1.Id}\",\"Name\":\"{element1.Name}\"," +
+                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint2.Id}\",\"Name\":\"acommandlaunchpoint2\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]" +
                         "}," +
-                        $"{{\"Id\":\"{element2.Id}\",\"Name\":\"{element2.Name}\"," +
+                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint3.Id}\",\"Name\":\"acommandlaunchpoint3\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]" +

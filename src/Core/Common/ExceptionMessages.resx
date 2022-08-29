@@ -99,6 +99,9 @@
     <data name="PatternElement_UnknownAutomationType" xml:space="preserve">
         <value>Unknown type of automation: {0}</value>
     </data>
+    <data name="PatternElement_UnknownPath" xml:space="preserve">
+        <value>This element does not have a path</value>
+    </data>
     <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
         <value>Pattern does not yet exist</value>
     </data>

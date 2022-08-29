@@ -66,6 +66,7 @@ namespace Automate.CLI.Infrastructure
             {
                 PrintInline("{");
                 PrintInline($"\"{nameof(PatternDefinition.Id)}\":\"{JsonEscape(pattern.Id)}\",");
+                PrintInline($"\"{nameof(PatternDefinition.EditPath)}\":\"{JsonEscape(pattern.EditPath)}\",");
                 PrintInline($"\"{nameof(PatternDefinition.Name)}\":\"{JsonEscape(pattern.Name)}\",");
             }
             else if (this.format == OutputFormat.Text)
@@ -144,6 +145,7 @@ namespace Automate.CLI.Infrastructure
             {
                 PrintInline("{");
                 PrintInline($"\"{nameof(Element.Id)}\":\"{JsonEscape(element.Id)}\",");
+                PrintInline($"\"{nameof(Element.EditPath)}\":\"{JsonEscape(element.EditPath)}\",");
                 PrintInline($"\"{nameof(Element.Name)}\":\"{JsonEscape(element.Name)}\",");
                 if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
                 {

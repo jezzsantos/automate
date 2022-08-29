@@ -101,47 +101,47 @@ If you can imagine that we were to ask for the configuration of a draft built wi
 ```
 {
     "Id": "1",
-    "ConfigurationPath": "{APatternName}",
+    "ConfigurePath": "{APatternName}",
     "AnAttributeName1": "avalue1",
     "AnElementName1": {
         "Id": "2",
-        "ConfigurationPath": "{APatternName.AnElementName1}",
+        "ConfigurePath": "{APatternName.AnElementName1}",
         "AnAttributeName2": "avalue2",
         "AnElementName2": {
             "Id": "3"
-            "ConfigurationPath": "{APatternName.AnElementName1.AnElementName2}",
+            "ConfigurePath": "{APatternName.AnElementName1.AnElementName2}",
             "AnAttributeName3": "avalue3",
         }
     },
     "ACollectionName1": {
         "Id": "4",
-        "ConfigurationPath": "{APatternName.ACollectionName1}",
+        "ConfigurePath": "{APatternName.ACollectionName1}",
         "AnAttributeName4": null,
         "Items": [{
                 "Id": "5",
-                "ConfigurationPath": "{APatternName.ACollectionName1.5}",
+                "ConfigurePath": "{APatternName.ACollectionName1.5}",
                 "AnAttributeName4": "avalue4",
                 "AnElementName3": {
                     "Id": "6",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.5.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.5.AnElementName3}",
                     "AnAttributeName5": "avalue5",
                 }
             }, {
                 "Id": "7",
-                "ConfigurationPath": "{APatternName.ACollectionName1.7}",
+                "ConfigurePath": "{APatternName.ACollectionName1.7}",
                 "AnAttributeName4": "avalue4",
                 "AnElementName3": {
                     "Id": "8",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.7.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.7.AnElementName3}",
                     "AnAttributeName5": "avalue5",
                 }
             }, {
                 "Id": "9",
-                "ConfigurationPath": "{APatternName.ACollectionName1.9}",
+                "ConfigurePath": "{APatternName.ACollectionName1.9}",
                 "AnAttributeName4": "avalue4",
                 "AnElementName3": {
                     "Id": "10",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.9.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.9.AnElementName3}",
                     "AnAttributeName5": "avalue5",
                 }
             }
@@ -244,43 +244,43 @@ If we were to ask for the configuration of this draft (`automate view draft`), w
 ```
 {
     "Id": "1",
-    "ConfigurationPath": "{APatternName}",
+    "ConfigurePath": "{APatternName}",
     "AnAttributeName1": "avalue1",
     "AnElementName1": {
         "Id": "2",
-        "ConfigurationPath": "{APatternName.AnElementName1}",
+        "ConfigurePath": "{APatternName.AnElementName1}",
         "AnElementName2": {
             "Id": "3"
-            "ConfigurationPath": "{APatternName.AnElementName1.AnElementName2}",
+            "ConfigurePath": "{APatternName.AnElementName1.AnElementName2}",
         }
     },
     "ACollectionName1": {
         "Id": "4",
-        "ConfigurationPath": "{APatternName.ACollectionName1}",
+        "ConfigurePath": "{APatternName.ACollectionName1}",
         "AnAttributeName2": null,
         "Items": [{
                 "Id": "5",
-                "ConfigurationPath": "{APatternName.ACollectionName1.5}",
+                "ConfigurePath": "{APatternName.ACollectionName1.5}",
                 "AnAttributeName2": "avalue2",
                 "AnElementName3": {
                     "Id": "6",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.5.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.5.AnElementName3}",
                 }
             }, {
                 "Id": "7",
-                "ConfigurationPath": "{APatternName.ACollectionName1.7}",
+                "ConfigurePath": "{APatternName.ACollectionName1.7}",
                 "AnAttributeName2": "avalue2",
                 "AnElementName3": {
                     "Id": "8",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.7.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.7.AnElementName3}",
                 }
             }, {
                 "Id": "9",
                 "AnAttributeName2": "avalue2",
-                "ConfigurationPath": "{APatternName.ACollectionName1.9}",
+                "ConfigurePath": "{APatternName.ACollectionName1.9}",
                 "AnElementName3": {
                     "Id": "10",
-                    "ConfigurationPath": "{APatternName.ACollectionName1.9.AnElementName3}",
+                    "ConfigurePath": "{APatternName.ACollectionName1.9.AnElementName3}",
                 }
             }
         ]

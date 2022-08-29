@@ -765,15 +765,15 @@ namespace Core.UnitTests.Runtime.Domain
             result.Should().Be(new Dictionary<string, object>
             {
                 { nameof(DraftItem.Id), draftPattern.Id },
-                { nameof(DraftItem.ConfigurationPath), draftPattern.ConfigurationPath },
+                { nameof(DraftItem.ConfigurePath), draftPattern.ConfigurePath },
                 { "anattributename1", "adefaultvalue1" },
                 {
                     "anelementname1", new Dictionary<string, object>
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["anelementname1"].Id },
                         {
-                            nameof(DraftItem.ConfigurationPath),
-                            draftPattern.Properties["anelementname1"].ConfigurationPath
+                            nameof(DraftItem.ConfigurePath),
+                            draftPattern.Properties["anelementname1"].ConfigurePath
                         },
                         {
                             "anelementname2", new Dictionary<string, object>
@@ -783,9 +783,9 @@ namespace Core.UnitTests.Runtime.Domain
                                     draftPattern.Properties["anelementname1"].Properties["anelementname2"].Id
                                 },
                                 {
-                                    nameof(DraftItem.ConfigurationPath),
+                                    nameof(DraftItem.ConfigurePath),
                                     draftPattern.Properties["anelementname1"].Properties["anelementname2"]
-                                        .ConfigurationPath
+                                        .ConfigurePath
                                 },
                                 { "anattributename2", "adefaultvalue2" }
                             }
@@ -797,8 +797,8 @@ namespace Core.UnitTests.Runtime.Domain
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Id },
                         {
-                            nameof(DraftItem.ConfigurationPath),
-                            draftPattern.Properties["acollectionname2"].ConfigurationPath
+                            nameof(DraftItem.ConfigurePath),
+                            draftPattern.Properties["acollectionname2"].ConfigurePath
                         },
                         {
                             nameof(DraftItem.Items), new List<object>
@@ -807,8 +807,8 @@ namespace Core.UnitTests.Runtime.Domain
                                 {
                                     { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Items[0].Id },
                                     {
-                                        nameof(DraftItem.ConfigurationPath),
-                                        draftPattern.Properties["acollectionname2"].Items[0].ConfigurationPath
+                                        nameof(DraftItem.ConfigurePath),
+                                        draftPattern.Properties["acollectionname2"].Items[0].ConfigurePath
                                     },
                                     { "anattributename3", 25 }
                                 }

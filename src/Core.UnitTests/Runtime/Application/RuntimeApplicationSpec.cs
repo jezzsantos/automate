@@ -567,16 +567,16 @@ namespace Core.UnitTests.Runtime.Application
                 result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
-                    draft.Model.ConfigurationPath,
+                    draft.Model.ConfigurePath,
                     anattributename1 = "adefaultvalue1",
                     anelementname1 = new
                     {
                         draft.Model.Properties["anelementname1"].Id,
-                        draft.Model.Properties["anelementname1"].ConfigurationPath,
+                        draft.Model.Properties["anelementname1"].ConfigurePath,
                         anelementname2 = new
                         {
                             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
-                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurationPath,
+                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurePath,
                             anattributename2 = "adefaultvalue2"
                         }
                     }
@@ -612,16 +612,16 @@ namespace Core.UnitTests.Runtime.Application
                 result.Configuration.ToJson().Should().Be(new
                 {
                     draft.Model.Id,
-                    draft.Model.ConfigurationPath,
+                    draft.Model.ConfigurePath,
                     anattributename1 = "adefaultvalue1",
                     anelementname1 = new
                     {
                         draft.Model.Properties["anelementname1"].Id,
-                        draft.Model.Properties["anelementname1"].ConfigurationPath,
+                        draft.Model.Properties["anelementname1"].ConfigurePath,
                         anelementname2 = new
                         {
                             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Id,
-                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurationPath,
+                            draft.Model.Properties["anelementname1"].Properties["anelementname2"].ConfigurePath,
                             anattributename2 = "adefaultvalue2"
                         }
                     }

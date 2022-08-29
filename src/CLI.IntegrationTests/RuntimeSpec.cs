@@ -458,24 +458,24 @@ namespace CLI.IntegrationTests
                     new
                     {
                         draft.Model.Id,
-                        draft.Model.ConfigurationPath,
+                        draft.Model.ConfigurePath,
                         AProperty1 = "avalue1",
                         AnElement1 = new
                         {
                             draft.Model.Properties["AnElement1"].Id,
-                            draft.Model.Properties["AnElement1"].ConfigurationPath,
+                            draft.Model.Properties["AnElement1"].ConfigurePath,
                             AProperty3 = "A",
                         },
                         ACollection2 = new
                         {
                             draft.Model.Properties["ACollection2"].Id,
-                            draft.Model.Properties["ACollection2"].ConfigurationPath,
+                            draft.Model.Properties["ACollection2"].ConfigurePath,
                             Items = new[]
                             {
                                 new
                                 {
                                     draft.Model.Properties["ACollection2"].Items.Single().Id,
-                                    draft.Model.Properties["ACollection2"].Items.Single().ConfigurationPath,
+                                    draft.Model.Properties["ACollection2"].Items.Single().ConfigurePath,
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
@@ -483,7 +483,7 @@ namespace CLI.IntegrationTests
                         AnElement3 = new
                         {
                             draft.Model.Properties["AnElement3"].Id,
-                            draft.Model.Properties["AnElement3"].ConfigurationPath,
+                            draft.Model.Properties["AnElement3"].ConfigurePath,
                             AProperty5 = "ADefaultValue1",
                             AProperty6 = 25
                         }
@@ -508,18 +508,18 @@ namespace CLI.IntegrationTests
                     new
                     {
                         draft.Model.Id,
-                        draft.Model.ConfigurationPath,
+                        draft.Model.ConfigurePath,
                         AProperty1 = "avalue1",
                         ACollection2 = new
                         {
                             draft.Model.Properties["ACollection2"].Id,
-                            draft.Model.Properties["ACollection2"].ConfigurationPath,
+                            draft.Model.Properties["ACollection2"].ConfigurePath,
                             Items = new[]
                             {
                                 new
                                 {
                                     draft.Model.Properties["ACollection2"].Items.Single().Id,
-                                    draft.Model.Properties["ACollection2"].Items.Single().ConfigurationPath,
+                                    draft.Model.Properties["ACollection2"].Items.Single().ConfigurePath,
                                     AProperty4 = "ADefaultValue4"
                                 }
                             }
@@ -527,7 +527,7 @@ namespace CLI.IntegrationTests
                         AnElement3 = new
                         {
                             draft.Model.Properties["AnElement3"].Id,
-                            draft.Model.Properties["AnElement3"].ConfigurationPath,
+                            draft.Model.Properties["AnElement3"].ConfigurePath,
                             AProperty5 = "ADefaultValue1",
                             AProperty6 = 25
                         }

@@ -148,7 +148,7 @@ namespace Automate.Runtime.Domain
 
         private string FullyQualifiedPath => GetPath(false);
 
-        public string ConfigurationPath => GetPath(true);
+        public string ConfigurePath => GetPath(true);
 
         public PersistableProperties Dehydrate()
         {
@@ -595,10 +595,10 @@ namespace Automate.Runtime.Domain
         ///     Cannot use the <see cref="IDraftItemVisitor" /> to traverse up the hierarchy,
         ///     so we have to traverse up using a custom iterator
         /// </summary>
-        private string GetPath(bool asConfigurationPath)
+        private string GetPath(bool asConfigurePath)
         {
             var path = GetAncestorPath(this);
-            return asConfigurationPath
+            return asConfigurePath
                 ? $"{{{path}}}"
                 : path;
 
@@ -1324,10 +1324,10 @@ namespace Automate.Runtime.Domain
                 {
                     yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Id)), this.draftItem.Id);
 
-                    if (this.draftItem.ConfigurationPath.HasValue())
+                    if (this.draftItem.ConfigurePath.HasValue())
                     {
-                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.ConfigurationPath)),
-                            this.draftItem.ConfigurationPath);
+                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.ConfigurePath)),
+                            this.draftItem.ConfigurePath);
                     }
                 }
                 if (this.includeAncestry)
