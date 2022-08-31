@@ -185,9 +185,10 @@
         <value>The Draft: '{Name}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{Version}), is now the default</value>
     </data>
     <data name="CommandLine_Output_DraftConfigured" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was configured successfully</value>
+        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was configured successfully, as:
+{Configuration}</value>
     </data>
-    <data name="CommandLine_Output_DraftResetElement" xml:space="preserve">
+    <data name="CommandLine_Output_DraftResetElement" xml:space="preserve"> 
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was reset successfully</value>
     </data>
     <data name="CommandLine_Output_DraftEmptyCollection" xml:space="preserve">

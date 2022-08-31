@@ -25,11 +25,6 @@ namespace CLI.IntegrationTests
             DeleteOutputFolders();
         }
 
-        public void Dispose()
-        {
-            this.setup.Reset();
-        }
-        
         [Fact]
         public void WhenInstallNoCommands_ThenDisplaysError()
         {
@@ -224,8 +219,8 @@ namespace CLI.IntegrationTests
             var draftPattern = this.setup.Draft.Model;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
-                .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern", draftPattern.Id));
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern",
+                    draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
             draftPattern.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
@@ -242,7 +237,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftPattern.Id));
+                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
             draftPattern.Properties["AProperty3"].Value.Should().Be("B");
         }
 
@@ -260,7 +255,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftPattern.Id));
+                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
             draftPattern.Properties["AProperty3"].Value.Should().Be("C");
         }
 
@@ -276,7 +271,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate(draftPattern.Name,
-                        draftPattern.Id));
+                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
             draftPattern.Properties["AProperty1"].Value.Should().BeNull();
         }
 
@@ -295,12 +290,12 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftElement.Id));
+                        draftElement.Id, draftElement.GetConfiguration(false).ToJson()));
             draftElement.Properties["AProperty3"].Value.Should().Be("C");
         }
 
         [Fact]
-        public void WhenConfigureDraftAndSetPropertyOnNewCollectionItem_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndAddNewCollectionItem_ThenDisplaysSuccess()
         {
             CreateDraftFromBuiltToolkit();
 
@@ -312,12 +307,12 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
-                        draftCollectionItem.Id));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
             draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
         [Fact]
-        public void WhenConfigureDraftAndSetPropertyOnNewNestedCollectionItem_ThenDisplaysSuccess()
+        public void WhenConfigureDraftAndAddNewNestedCollectionItem_ThenDisplaysSuccess()
         {
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand(
@@ -329,7 +324,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection1",
-                        draftCollectionItem.Id));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
             draftCollectionItem.Properties["AProperty8"].Value.Should().Be("anewvalue");
         }
 
@@ -349,7 +344,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
-                        draftCollectionItem.Id));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
             draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
@@ -464,7 +459,7 @@ namespace CLI.IntegrationTests
                         {
                             draft.Model.Properties["AnElement1"].Id,
                             draft.Model.Properties["AnElement1"].ConfigurePath,
-                            AProperty3 = "A",
+                            AProperty3 = "A"
                         },
                         ACollection2 = new
                         {
@@ -885,17 +880,22 @@ namespace CLI.IntegrationTests
                         this.setup.Pattern.Id));
         }
 
-        private static string GetFilePathInOutput(string filename)
+        public void Dispose()
+        {
+            this.setup.Reset();
+        }
+
+        internal static string GetFilePathInOutput(string filename)
         {
             return Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, filename));
         }
 
-        private static string GetFilePathOfExportedToolkit(string filename)
+        internal static string GetFilePathOfExportedToolkit(string filename)
         {
             return Path.GetFullPath(Path.Combine(InfrastructureConstants.GetExportDirectory(), filename));
         }
 
-        private static void DeleteOutputFolders()
+        internal static void DeleteOutputFolders()
         {
             var directory = new DirectoryInfo(GetFilePathInOutput("code"));
             if (directory.Exists)
@@ -996,7 +996,6 @@ namespace CLI.IntegrationTests
                     $"{CommandLineApi.EditCommandName} add-element AnElement4 --isrequired false --autocreate false");
                 this.setup.RunCommand(
                     $"{CommandLineApi.EditCommandName} add-attribute AProperty9 --aschildof {{APattern.AnElement4}} --defaultvalueis ADefaultValue9");
-
             }
 
             return BuildAndInstallToolkit();

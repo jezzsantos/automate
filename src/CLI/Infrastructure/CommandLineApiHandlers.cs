@@ -460,7 +460,7 @@ namespace Automate.CLI.Infrastructure
                             {
                                 toolkit.Id,
                                 toolkit.PatternName,
-                                toolkit.Version,
+                                toolkit.Version
                             }).ToList().ToJson()));
                     }
                     else
@@ -560,40 +560,44 @@ namespace Automate.CLI.Infrastructure
                     runtime.CurrentDraftToolkit.Id, runtime.CurrentDraftToolkit.Version);
             }
 
-            internal static void ConfigureDraftAddTo(string expression, string[] andSet)
+            internal static void ConfigureDraftOn(string expression, string[] andSet, bool outputStructured)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
                 {
                     sets.AddRange(andSet);
                 }
-
                 var nameValues = sets
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = runtime.ConfigureDraft(expression, null, null, nameValues);
+                var (configuration, draftItem) = runtime.ConfigureDraft(null, null, expression, nameValues);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
+                    draftItem.Name, draftItem.Id, outputStructured
+                        ? (object)JsonNode.Parse(configuration.ToJson())
+                        : configuration.ToJson());
             }
 
-            internal static void ConfigureDraftAddOneTo(string expression, string[] andSet)
+            internal static void ConfigureDraftAddTo(string expression, string[] andSet, bool outputStructured)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
                 {
                     sets.AddRange(andSet);
                 }
+
                 var nameValues = sets
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = runtime.ConfigureDraft(null, expression, null, nameValues);
+                var (configuration, draftItem) = runtime.ConfigureDraft(expression, null, null, nameValues);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
+                    draftItem.Name, draftItem.Id, outputStructured
+                        ? (object)JsonNode.Parse(configuration.ToJson())
+                        : configuration.ToJson());
             }
 
-            internal static void ConfigureDraftOn(string expression, string[] andSet)
+            internal static void ConfigureDraftAddOneTo(string expression, string[] andSet, bool outputStructured)
             {
                 var sets = new List<string>();
                 if (andSet.HasAny())
@@ -604,9 +608,11 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var draftItem = runtime.ConfigureDraft(null, null, expression, nameValues);
+                var (configuration, draftItem) = runtime.ConfigureDraft(null, expression, null, nameValues);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
-                    draftItem.Name, draftItem.Id);
+                    draftItem.Name, draftItem.Id, outputStructured
+                        ? (object)JsonNode.Parse(configuration.ToJson())
+                        : configuration.ToJson());
             }
 
             internal static void ConfigureDraftResetElement(string expression)

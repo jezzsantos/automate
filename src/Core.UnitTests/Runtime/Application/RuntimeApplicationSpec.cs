@@ -300,7 +300,7 @@ namespace Core.UnitTests.Runtime.Application
                 var result = this.application.ConfigureDraft(null, null, null,
                     new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-                result.Id.Should().NotBeNull();
+                result.Item.Id.Should().NotBeNull();
                 draft.Model.Properties["anattributename"].Value.Should().Be("avalue");
             }
 
@@ -315,7 +315,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 var result = this.application.ConfigureDraft("apatternname.anelementname", null, null, null);
 
-                result.Id.Should().NotBeNull();
+                result.Item.Id.Should().NotBeNull();
             }
 
             [Fact]
@@ -345,7 +345,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 var result = this.application.ConfigureDraft(null, "apatternname.acollectionname", null, null);
 
-                result.Id.Should().Be(draftCollection.Items.Single().Id);
+                result.Item.Id.Should().Be(draftCollection.Items.Single().Id);
             }
 
             [Fact]
@@ -397,7 +397,7 @@ namespace Core.UnitTests.Runtime.Application
                 var result = this.application.ConfigureDraft("anelementexpression", null, null,
                     new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-                result.Id.Should().Be(draftElement.Id);
+                result.Item.Id.Should().Be(draftElement.Id);
                 draftElement.Properties["anattributename"].Value.Should().Be("avalue");
             }
 
@@ -417,7 +417,7 @@ namespace Core.UnitTests.Runtime.Application
                 var result = this.application.ConfigureDraft(null, null, "anelementexpression",
                     new Dictionary<string, string> { { "anattributename", "avalue" } });
 
-                result.Id.Should().Be(draftElement.Id);
+                result.Item.Id.Should().Be(draftElement.Id);
                 draftElement.Properties["anattributename"].Value.Should().Be("avalue");
             }
 

@@ -310,7 +310,8 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully.
+        ///   Looks up a localized string similar to The Draft Item &apos;{DraftName}&apos; (ID: &apos;{DraftItemId}&apos;) was configured successfully, as:
+        ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_DraftConfigured {
             get {

@@ -1,8 +1,8 @@
 ﻿namespace CLI.IntegrationTests
 {
-    public class StandardOutput
+    public class StandardResult
     {
-        public StandardOutput(string value)
+        public StandardResult(string value)
         {
             Value = value;
         }

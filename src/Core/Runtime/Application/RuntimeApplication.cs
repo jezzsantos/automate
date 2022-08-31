@@ -101,7 +101,7 @@ namespace Automate.Runtime.Application
             this.toolkitStore.ChangeCurrent(draft.Toolkit.Id);
         }
 
-        public DraftItem ConfigureDraft(string addElementExpression,
+        public (LazyDraftItemDictionary Configuration, DraftItem Item) ConfigureDraft(string addElementExpression,
             string addToCollectionExpression, string onElementExpression,
             Dictionary<string, string> propertyAssignments)
         {
@@ -145,9 +145,11 @@ namespace Automate.Runtime.Application
                 target.SetProperties(propertyAssignments);
             }
 
+            var configuration = target.GetConfiguration(false);
+
             this.draftStore.Save(draft);
 
-            return target;
+            return (configuration, target);
         }
 
         public DraftItem ConfigureDraftAndResetElement(string elementExpression)

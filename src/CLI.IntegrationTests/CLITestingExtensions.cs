@@ -50,11 +50,11 @@ namespace CLI.IntegrationTests
                 .ForCondition(!string.IsNullOrEmpty(errorText))
                 .FailWith("You can't assert an error is displayed without specifying the text of the error")
                 .Then
-                .Given(() => Subject.Output.Value)
+                .Given(() => Subject.Value.Value)
                 .ForCondition(value =>
                     value.Trim(Environment.NewLine.ToCharArray()) == errorMessage || value.Contains(errorMessage))
                 .FailWith("Expected {context:StdOutput} to contain {0}{reason}, but found {1}.", errorText,
-                    Subject.Output.Value);
+                    Subject.Value.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }
@@ -106,10 +106,10 @@ namespace CLI.IntegrationTests
                 .ForCondition(!string.IsNullOrEmpty(messageText))
                 .FailWith("You can't assert a message is displayed without specifying the message")
                 .Then
-                .Given(() => Subject.Output.Value)
+                .Given(() => Subject.Value.Value)
                 .ForCondition(value => value.Contains(messageText ?? string.Empty))
                 .FailWith("Expected {context:StdOutput} to contain {0} {reason}, but found {1}.", messageText,
-                    Subject.Output.Value);
+                    Subject.Value.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }
@@ -118,10 +118,10 @@ namespace CLI.IntegrationTests
         {
             Execute.Assertion
                 .BecauseOf(because, becauseArgs)
-                .Given(() => Subject.Output.Value)
+                .Given(() => Subject.Value.Value)
                 .ForCondition(value => value.Equals(Environment.NewLine))
                 .FailWith("Expected {context:StdOutput} to contain no text{reason}, but found {0}.",
-                    Subject.Output.Value);
+                    Subject.Value.Value);
 
             return new AndConstraint<CliTestSetupAssertions>(this);
         }

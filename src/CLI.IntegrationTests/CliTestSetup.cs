@@ -39,9 +39,9 @@ namespace CLI.IntegrationTests
             this.repository = this.container.Resolve<LocalMachineFileRepository>();
         }
 
-        public StandardOutput Output { get; private set; }
+        public StandardResult Value { get; private set; }
 
-        public StandardOutput Error { get; private set; }
+        public StandardResult Error { get; private set; }
 
         internal PatternDefinition Pattern => Patterns.FirstOrDefault();
 
@@ -98,8 +98,8 @@ namespace CLI.IntegrationTests
 
                             try
                             {
-                                Output = new StandardOutput(string.Empty);
-                                Error = new StandardOutput(string.Empty);
+                                Value = new StandardResult(string.Empty);
+                                Error = new StandardResult(string.Empty);
                                 var exitCode = 0;
                                 
                                 try
@@ -113,8 +113,8 @@ namespace CLI.IntegrationTests
                                 }
 
                                 ExitCode = exitCode;
-                                Output = new StandardOutput(outputStream.ReadToEnd());
-                                Error = new StandardOutput(errorStream.ReadToEnd());
+                                Value = new StandardResult(outputStream.ReadToEnd());
+                                Error = new StandardResult(errorStream.ReadToEnd());
                             }
                             finally
                             {
@@ -138,7 +138,7 @@ namespace CLI.IntegrationTests
         public void Reset()
         {
             Error = null;
-            Output = null;
+            Value = null;
             ExitCode = 0;
         }
     }
