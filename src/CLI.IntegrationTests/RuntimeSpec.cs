@@ -19,7 +19,7 @@ namespace CLI.IntegrationTests
 
         public RuntimeSpec(CliTestSetup setup)
         {
-            this.testApplicationName = GetFilePathInOutput("../../../../../tools/TestApp/TestApp.exe");
+            this.testApplicationName = GetTestApplicationName();
             this.setup = setup;
             this.setup.ResetRepository();
             DeleteOutputFolders();
@@ -220,7 +220,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("APattern",
-                    draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
+                    draftPattern.Id, draftPattern.GetConfiguration(false, false).ToJson()));
             draftPattern.Properties["AProperty1"].Value.Should().Be("avalue");
         }
 
@@ -237,7 +237,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
+                        draftPattern.Id, draftPattern.GetConfiguration(false, false).ToJson()));
             draftPattern.Properties["AProperty3"].Value.Should().Be("B");
         }
 
@@ -255,7 +255,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
+                        draftPattern.Id, draftPattern.GetConfiguration(false, false).ToJson()));
             draftPattern.Properties["AProperty3"].Value.Should().Be("C");
         }
 
@@ -271,7 +271,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate(draftPattern.Name,
-                        draftPattern.Id, draftPattern.GetConfiguration(false).ToJson()));
+                        draftPattern.Id, draftPattern.GetConfiguration(false, false).ToJson()));
             draftPattern.Properties["AProperty1"].Value.Should().BeNull();
         }
 
@@ -290,7 +290,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("AnElement1",
-                        draftElement.Id, draftElement.GetConfiguration(false).ToJson()));
+                        draftElement.Id, draftElement.GetConfiguration(false, false).ToJson()));
             draftElement.Properties["AProperty3"].Value.Should().Be("C");
         }
 
@@ -307,7 +307,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
-                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false, false).ToJson()));
             draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
@@ -324,7 +324,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection1",
-                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false, false).ToJson()));
             draftCollectionItem.Properties["AProperty8"].Value.Should().Be("anewvalue");
         }
 
@@ -344,7 +344,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftConfigured.SubstituteTemplate("ACollection2",
-                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false).ToJson()));
+                        draftCollectionItem.Id, draftCollectionItem.GetConfiguration(false, false).ToJson()));
             draftCollectionItem.Properties["AProperty4"].Value.Should().Be("anewvalue");
         }
 
@@ -888,6 +888,11 @@ namespace CLI.IntegrationTests
         internal static string GetFilePathInOutput(string filename)
         {
             return Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, filename));
+        }
+
+        internal static string GetTestApplicationName()
+        {
+            return GetFilePathInOutput("../../../../../tools/TestApp/TestApp.exe");
         }
 
         internal static string GetFilePathOfExportedToolkit(string filename)

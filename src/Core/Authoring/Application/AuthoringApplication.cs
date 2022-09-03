@@ -493,7 +493,7 @@ namespace Automate.Authoring.Application
                         ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestDraft
                             .Substitute(codeTemplate.Id));
                 }
-                return draftItem.GetConfiguration(includeAncestry);
+                return draftItem.GetConfiguration(includeAncestry, false);
             }
         }
 
@@ -567,7 +567,7 @@ namespace Automate.Authoring.Application
                         ExceptionMessages.AuthoringApplication_CodeTemplateNotExistsTestDraft
                             .Substitute(command.Id));
                 }
-                return draftItems.First().DraftItem.GetConfiguration(includeAncestry);
+                return draftItems.First().DraftItem.GetConfiguration(includeAncestry, false);
             }
         }
 

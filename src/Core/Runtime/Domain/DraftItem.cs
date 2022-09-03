@@ -13,6 +13,7 @@ namespace Automate.Runtime.Domain
 {
     public class DraftItem : IIdentifiableEntity, IPersistable, IDraftItemVisitable
     {
+        public const string SchemaPropertyName = "Schema";
         private readonly List<ArtifactLink> artifactLinks;
 
         // ReSharper disable once InconsistentNaming
@@ -289,14 +290,18 @@ namespace Automate.Runtime.Domain
         ///     Warning: Will cause cyclic overflows if attempt is made to render a physical representation of this graph (i.e
         ///     serialization).
         /// </param>
-        public LazyDraftItemDictionary GetConfiguration(bool includeAncestry)
+        /// <param name="includeSchema">
+        ///     Whether to include the schema information of the <see cref="DraftItem" /> in this configuration
+        ///     graph.
+        /// </param>
+        public LazyDraftItemDictionary GetConfiguration(bool includeAncestry, bool includeSchema)
         {
             if (!IsPattern && !IsElement && !IsEphemeralCollection)
             {
                 throw new AutomateException(ExceptionMessages.DraftItem_ConfigurationForNonElement);
             }
 
-            return new LazyDraftItemDictionary(this, includeAncestry);
+            return new LazyDraftItemDictionary(this, includeAncestry, includeSchema);
         }
 
         public CommandExecutionResult ExecuteCommand(DraftDefinition draft, string name)
@@ -1231,6 +1236,7 @@ namespace Automate.Runtime.Domain
     {
         private readonly DraftItem draftItem;
         private readonly bool includeAncestry;
+        private readonly bool includeSchema;
 
         /// <summary>
         ///     For serialization
@@ -1240,11 +1246,12 @@ namespace Automate.Runtime.Domain
         {
         }
 
-        public LazyDraftItemDictionary(DraftItem draftItem, bool includeAncestry)
+        public LazyDraftItemDictionary(DraftItem draftItem, bool includeAncestry, bool includeSchema)
         {
             draftItem.GuardAgainstNull(nameof(draftItem));
             this.draftItem = draftItem;
             this.includeAncestry = includeAncestry;
+            this.includeSchema = includeSchema;
         }
 
         public object this[object key]
@@ -1324,10 +1331,17 @@ namespace Automate.Runtime.Domain
                 {
                     yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Id)), this.draftItem.Id);
 
-                    if (this.draftItem.ConfigurePath.HasValue())
+                    yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.ConfigurePath)),
+                        this.draftItem.ConfigurePath);
+
+                    if (this.includeSchema)
                     {
-                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.ConfigurePath)),
-                            this.draftItem.ConfigurePath);
+                        var schema = new Dictionary<string, object>
+                        {
+                            { AsIsMemberName("Id"), this.draftItem.Schema.SchemaId },
+                            { AsIsMemberName("Type"), this.draftItem.Schema.SchemaType.ToString() }
+                        };
+                        yield return new DictionaryEntry(AsIsMemberName(DraftItem.SchemaPropertyName), schema);
                     }
                 }
                 if (this.includeAncestry)
@@ -1338,7 +1352,8 @@ namespace Automate.Runtime.Domain
                         if (this.draftItem.Parent.Exists())
                         {
                             yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Parent)),
-                                new LazyDraftItemDictionary(this.draftItem.Parent, true));
+                                new LazyDraftItemDictionary(this.draftItem.Parent, this.includeAncestry,
+                                    this.includeSchema));
                         }
                     }
                 }
@@ -1361,7 +1376,7 @@ namespace Automate.Runtime.Domain
                                 if (value.IsElement || value.IsEphemeralCollection)
                                 {
                                     yield return new DictionaryEntry(AsIsMemberName(name),
-                                        new LazyDraftItemDictionary(value, this.includeAncestry));
+                                        new LazyDraftItemDictionary(value, this.includeAncestry, this.includeSchema));
                                 }
                             }
                         }
@@ -1372,7 +1387,7 @@ namespace Automate.Runtime.Domain
                     if (this.draftItem.Items.HasAny())
                     {
                         var items = this.draftItem.Items.Select(item =>
-                            new LazyDraftItemDictionary(item, this.includeAncestry));
+                            new LazyDraftItemDictionary(item, this.includeAncestry, this.includeSchema));
                         yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
                     }
                 }

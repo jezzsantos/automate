@@ -12,7 +12,7 @@ namespace Automate.Common.Infrastructure
             draftItem.GuardAgainstNull(nameof(draftItem));
             description.GuardAgainstNullOrEmpty(nameof(description));
 
-            var configuration = draftItem.GetConfiguration(true);
+            var configuration = draftItem.GetConfiguration(true, false);
 
             return configuration.Transform(description, textTemplate);
         }

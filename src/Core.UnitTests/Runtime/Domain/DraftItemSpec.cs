@@ -734,7 +734,7 @@ namespace Core.UnitTests.Runtime.Domain
         }
 
         [Fact]
-        public void WhenGetConfiguration_ThenReturnsConfiguration()
+        public void WhenGetConfigurationWithMetadata_ThenReturnsConfiguration()
         {
             var attribute1 = new Attribute("anattributename1", null, false, "adefaultvalue1");
             var attribute2 = new Attribute("anattributename2", null, false, "adefaultvalue2");
@@ -760,20 +760,31 @@ namespace Core.UnitTests.Runtime.Domain
             draftPattern.Properties["anelementname1"].Properties["anelementname2"].Materialise();
             draftPattern.Properties["acollectionname2"].MaterialiseCollectionItem();
 
-            var result = draftPattern.GetConfiguration(false).ToJson();
+            var result = draftPattern.GetConfiguration(false, true).ToJson();
 
             result.Should().Be(new Dictionary<string, object>
             {
                 { nameof(DraftItem.Id), draftPattern.Id },
                 { nameof(DraftItem.ConfigurePath), draftPattern.ConfigurePath },
+                {
+                    DraftItem.SchemaPropertyName, new Dictionary<string, object>
+                    {
+                        { "Id", draftPattern.Schema.SchemaId },
+                        { "Type", draftPattern.Schema.SchemaType.ToString() }
+                    }
+                },
                 { "anattributename1", "adefaultvalue1" },
                 {
                     "anelementname1", new Dictionary<string, object>
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["anelementname1"].Id },
+                        { nameof(DraftItem.ConfigurePath), draftPattern.Properties["anelementname1"].ConfigurePath },
                         {
-                            nameof(DraftItem.ConfigurePath),
-                            draftPattern.Properties["anelementname1"].ConfigurePath
+                            DraftItem.SchemaPropertyName, new Dictionary<string, object>
+                            {
+                                { "Id", draftPattern.Properties["anelementname1"].Schema.SchemaId },
+                                { "Type", draftPattern.Properties["anelementname1"].Schema.SchemaType.ToString() }
+                            }
                         },
                         {
                             "anelementname2", new Dictionary<string, object>
@@ -784,8 +795,22 @@ namespace Core.UnitTests.Runtime.Domain
                                 },
                                 {
                                     nameof(DraftItem.ConfigurePath),
-                                    draftPattern.Properties["anelementname1"].Properties["anelementname2"]
-                                        .ConfigurePath
+                                    draftPattern.Properties["anelementname1"].Properties["anelementname2"].ConfigurePath
+                                },
+                                {
+                                    DraftItem.SchemaPropertyName, new Dictionary<string, object>
+                                    {
+                                        {
+                                            "Id",
+                                            draftPattern.Properties["anelementname1"].Properties["anelementname2"]
+                                                .Schema.SchemaId
+                                        },
+                                        {
+                                            "Type",
+                                            draftPattern.Properties["anelementname1"].Properties["anelementname2"]
+                                                .Schema.SchemaType.ToString()
+                                        }
+                                    }
                                 },
                                 { "anattributename2", "adefaultvalue2" }
                             }
@@ -796,9 +821,13 @@ namespace Core.UnitTests.Runtime.Domain
                     "acollectionname2", new Dictionary<string, object>
                     {
                         { nameof(DraftItem.Id), draftPattern.Properties["acollectionname2"].Id },
+                        { nameof(DraftItem.ConfigurePath), draftPattern.Properties["acollectionname2"].ConfigurePath },
                         {
-                            nameof(DraftItem.ConfigurePath),
-                            draftPattern.Properties["acollectionname2"].ConfigurePath
+                            DraftItem.SchemaPropertyName, new Dictionary<string, object>
+                            {
+                                { "Id", draftPattern.Properties["acollectionname2"].Schema.SchemaId },
+                                { "Type", draftPattern.Properties["acollectionname2"].Schema.SchemaType.ToString() }
+                            }
                         },
                         {
                             nameof(DraftItem.Items), new List<object>
@@ -809,6 +838,20 @@ namespace Core.UnitTests.Runtime.Domain
                                     {
                                         nameof(DraftItem.ConfigurePath),
                                         draftPattern.Properties["acollectionname2"].Items[0].ConfigurePath
+                                    },
+                                    {
+                                        DraftItem.SchemaPropertyName, new Dictionary<string, object>
+                                        {
+                                            {
+                                                "Id",
+                                                draftPattern.Properties["acollectionname2"].Items[0].Schema.SchemaId
+                                            },
+                                            {
+                                                "Type",
+                                                draftPattern.Properties["acollectionname2"].Items[0].Schema.SchemaType
+                                                    .ToString()
+                                            }
+                                        }
                                     },
                                     { "anattributename3", 25 }
                                 }

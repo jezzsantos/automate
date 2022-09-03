@@ -485,21 +485,15 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ViewDraft(bool todo, bool outputStructured)
             {
-                var (configuration, pattern, validation) = runtime.GetDraftConfiguration(todo, todo);
+                var (configuration, pattern, validation) = runtime.GetDraftConfiguration(todo, todo, outputStructured);
 
                 var draftId = runtime.CurrentDraftId;
                 var draftName = runtime.CurrentDraftName;
 
-                if (outputStructured)
-                {
-                    Output(OutputMessages.CommandLine_Output_DraftConfiguration,
-                        draftName, draftId, JsonNode.Parse(configuration.ToJson()));
-                }
-                else
-                {
-                    Output(OutputMessages.CommandLine_Output_DraftConfiguration,
-                        draftName, draftId, configuration.ToJson());
-                }
+                Output(OutputMessages.CommandLine_Output_DraftConfiguration,
+                    draftName, draftId, outputStructured
+                        ? (object)JsonNode.Parse(configuration.ToJson())
+                        : configuration.ToJson());
 
                 if (todo)
                 {
@@ -571,7 +565,8 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var (configuration, draftItem) = runtime.ConfigureDraft(null, null, expression, nameValues);
+                var (configuration, draftItem) =
+                    runtime.ConfigureDraft(null, null, expression, nameValues, outputStructured);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id, outputStructured
                         ? (object)JsonNode.Parse(configuration.ToJson())
@@ -590,7 +585,8 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var (configuration, draftItem) = runtime.ConfigureDraft(expression, null, null, nameValues);
+                var (configuration, draftItem) =
+                    runtime.ConfigureDraft(expression, null, null, nameValues, outputStructured);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id, outputStructured
                         ? (object)JsonNode.Parse(configuration.ToJson())
@@ -608,7 +604,8 @@ namespace Automate.CLI.Infrastructure
                     .Select(set => set.SplitPropertyAssignment())
                     .ToDictionary(pair => pair.Name, pair => pair.Value);
 
-                var (configuration, draftItem) = runtime.ConfigureDraft(null, expression, null, nameValues);
+                var (configuration, draftItem) =
+                    runtime.ConfigureDraft(null, expression, null, nameValues, outputStructured);
                 Output(OutputMessages.CommandLine_Output_DraftConfigured,
                     draftItem.Name, draftItem.Id, outputStructured
                         ? (object)JsonNode.Parse(configuration.ToJson())

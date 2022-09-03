@@ -103,7 +103,7 @@ namespace Automate.Runtime.Application
 
         public (LazyDraftItemDictionary Configuration, DraftItem Item) ConfigureDraft(string addElementExpression,
             string addToCollectionExpression, string onElementExpression,
-            Dictionary<string, string> propertyAssignments)
+            Dictionary<string, string> propertyAssignments, bool includeSchema)
         {
             var draft = EnsureCurrentDraftExists();
 
@@ -145,7 +145,7 @@ namespace Automate.Runtime.Application
                 target.SetProperties(propertyAssignments);
             }
 
-            var configuration = target.GetConfiguration(false);
+            var configuration = target.GetConfiguration(false, includeSchema);
 
             this.draftStore.Save(draft);
 
@@ -200,7 +200,7 @@ namespace Automate.Runtime.Application
         }
 
         public (LazyDraftItemDictionary Configuration, PatternDefinition Pattern, ValidationResults Validation)
-            GetDraftConfiguration(bool includeSchema, bool includeValidationResults)
+            GetDraftConfiguration(bool includePattern, bool includeValidationResults, bool includeSchema)
         {
             var draft = EnsureCurrentDraftExists();
 
@@ -208,11 +208,11 @@ namespace Automate.Runtime.Application
                 ? Validate(null)
                 : ValidationResults.None;
 
-            var schema = includeSchema
+            var schema = includePattern
                 ? draft.Toolkit.Pattern
                 : null;
 
-            return (draft.GetConfiguration(), schema, validation);
+            return (draft.GetConfiguration(includeSchema), schema, validation);
         }
 
         public ToolkitDefinition ViewCurrentToolkit()

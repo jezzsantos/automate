@@ -85,7 +85,7 @@ namespace Automate.Runtime.Infrastructure
 
         private static string Transform(string template, string description, DraftItem draftItem)
         {
-            var configuration = draftItem.GetConfiguration(true);
+            var configuration = draftItem.GetConfiguration(true, false);
             return configuration.Transform(description, template);
         }
     }

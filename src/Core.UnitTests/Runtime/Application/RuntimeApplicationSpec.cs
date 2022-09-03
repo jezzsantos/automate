@@ -200,7 +200,7 @@ namespace Core.UnitTests.Runtime.Application
             public void WhenConfigureDraftAndCurrentDraftNotExists_ThenThrows()
             {
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, null, null, new Dictionary<string, string>()))
+                    .Invoking(x => x.ConfigureDraft(null, null, null, new Dictionary<string, string>(), false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
@@ -211,7 +211,7 @@ namespace Core.UnitTests.Runtime.Application
                 var draft = this.application.CreateDraft("apatternname", null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, null, null, null))
+                    .Invoking(x => x.ConfigureDraft(null, null, null, null, false))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_NoChanges.Substitute(
@@ -224,7 +224,7 @@ namespace Core.UnitTests.Runtime.Application
                 var draft = this.application.CreateDraft("apatternname", null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft("anelementexpression", "acollectionexpression", null, null))
+                    .Invoking(x => x.ConfigureDraft("anelementexpression", "acollectionexpression", null, null, false))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_AddAndAddTo.Substitute(
@@ -237,7 +237,7 @@ namespace Core.UnitTests.Runtime.Application
                 var draft = this.application.CreateDraft("apatternname", null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, "anelementexpression", null))
+                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, "anelementexpression", null, false))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAdd.Substitute(
@@ -250,7 +250,7 @@ namespace Core.UnitTests.Runtime.Application
                 var draft = this.application.CreateDraft("apatternname", null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", "anelementexpression", null))
+                    .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", "anelementexpression", null, false))
                     .Should().Throw<ArgumentOutOfRangeException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_OnAndAddTo.Substitute(
@@ -265,7 +265,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns((DraftItem)null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null))
+                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.DraftDefinition_ItemExpressionNotFound.Substitute(
@@ -282,7 +282,7 @@ namespace Core.UnitTests.Runtime.Application
                         this.pattern.Elements.Single(), null).Materialise());
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null))
+                    .Invoking(x => x.ConfigureDraft("anelementexpression", null, null, null, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_AddElementExists.Substitute(
@@ -298,7 +298,7 @@ namespace Core.UnitTests.Runtime.Application
                 var draft = this.application.CreateDraft("apatternname", null);
 
                 var result = this.application.ConfigureDraft(null, null, null,
-                    new Dictionary<string, string> { { "anattributename", "avalue" } });
+                    new Dictionary<string, string> { { "anattributename", "avalue" } }, false);
 
                 result.Item.Id.Should().NotBeNull();
                 draft.Model.Properties["anattributename"].Value.Should().Be("avalue");
@@ -313,7 +313,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns(new DraftItem(this.toolkit,
                         this.pattern.Elements.Single(), null));
 
-                var result = this.application.ConfigureDraft("apatternname.anelementname", null, null, null);
+                var result = this.application.ConfigureDraft("apatternname.anelementname", null, null, null, false);
 
                 result.Item.Id.Should().NotBeNull();
             }
@@ -326,7 +326,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns((DraftItem)null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", null, null))
+                    .Invoking(x => x.ConfigureDraft(null, "acollectionexpression", null, null, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.DraftDefinition_ItemExpressionNotFound.Substitute(
@@ -343,7 +343,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                     .Returns(draftCollection);
 
-                var result = this.application.ConfigureDraft(null, "apatternname.acollectionname", null, null);
+                var result = this.application.ConfigureDraft(null, "apatternname.acollectionname", null, null, false);
 
                 result.Item.Id.Should().Be(draftCollection.Items.Single().Id);
             }
@@ -356,7 +356,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns((DraftItem)null);
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null))
+                    .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.DraftDefinition_ItemExpressionNotFound.Substitute(
@@ -374,7 +374,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns(new DraftItem(this.toolkit, element, null));
 
                 this.application
-                    .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null))
+                    .Invoking(x => x.ConfigureDraft(null, null, "anelementexpression", null, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_ConfigureDraft_OnElementNotExists.Substitute(
@@ -395,7 +395,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns(draftElement);
 
                 var result = this.application.ConfigureDraft("anelementexpression", null, null,
-                    new Dictionary<string, string> { { "anattributename", "avalue" } });
+                    new Dictionary<string, string> { { "anattributename", "avalue" } }, false);
 
                 result.Item.Id.Should().Be(draftElement.Id);
                 draftElement.Properties["anattributename"].Value.Should().Be("avalue");
@@ -415,7 +415,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns(draftElement);
 
                 var result = this.application.ConfigureDraft(null, null, "anelementexpression",
-                    new Dictionary<string, string> { { "anattributename", "avalue" } });
+                    new Dictionary<string, string> { { "anattributename", "avalue" } }, false);
 
                 result.Item.Id.Should().Be(draftElement.Id);
                 draftElement.Properties["anattributename"].Value.Should().Be("avalue");
@@ -518,7 +518,7 @@ namespace Core.UnitTests.Runtime.Application
             public void WhenGetDraftConfigurationAndCurrentDraftNotExists_ThenThrows()
             {
                 this.application
-                    .Invoking(x => x.GetDraftConfiguration(false, false))
+                    .Invoking(x => x.GetDraftConfiguration(false, false, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
@@ -531,7 +531,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.toolkitStore.Import(new ToolkitDefinition(this.pattern, new Version("0.2.0")));
 
                 this.application
-                    .Invoking(x => x.GetDraftConfiguration(false, false))
+                    .Invoking(x => x.GetDraftConfiguration(false, false, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Substitute(draft.Name, draft.Id,
@@ -560,7 +560,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 this.draftStore.Save(draft);
 
-                var result = this.application.GetDraftConfiguration(false, false);
+                var result = this.application.GetDraftConfiguration(false, false, false);
 
                 result.Pattern.Should().BeNull();
                 result.Validation.Should().BeEquivalentTo(ValidationResults.None);
@@ -605,7 +605,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 this.draftStore.Save(draft);
 
-                var result = this.application.GetDraftConfiguration(true, true);
+                var result = this.application.GetDraftConfiguration(true, true, false);
 
                 result.Pattern.Should().Be(this.pattern);
                 result.Validation.Results.Should().BeEmpty();
