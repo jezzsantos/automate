@@ -68,6 +68,8 @@ namespace Automate.CLI.Infrastructure
                 PrintInline($"\"{nameof(PatternDefinition.Id)}\":\"{JsonEscape(pattern.Id)}\",");
                 PrintInline($"\"{nameof(PatternDefinition.EditPath)}\":\"{JsonEscape(pattern.EditPath)}\",");
                 PrintInline($"\"{nameof(PatternDefinition.Name)}\":\"{JsonEscape(pattern.Name)}\",");
+                PrintInline($"\"{nameof(PatternDefinition.DisplayName)}\":\"{JsonEscape(pattern.DisplayName)}\",");
+                PrintInline($"\"{nameof(PatternDefinition.Description)}\":\"{JsonEscape(pattern.Description)}\",");
             }
             else if (this.format == OutputFormat.Text)
             {
@@ -147,6 +149,8 @@ namespace Automate.CLI.Infrastructure
                 PrintInline($"\"{nameof(Element.Id)}\":\"{JsonEscape(element.Id)}\",");
                 PrintInline($"\"{nameof(Element.EditPath)}\":\"{JsonEscape(element.EditPath)}\",");
                 PrintInline($"\"{nameof(Element.Name)}\":\"{JsonEscape(element.Name)}\",");
+                PrintInline($"\"{nameof(Element.DisplayName)}\":\"{JsonEscape(element.DisplayName)}\",");
+                PrintInline($"\"{nameof(Element.Description)}\":\"{JsonEscape(element.Description)}\",");
                 if (this.options != VisitorConfigurationOptions.OnlyLaunchPoints)
                 {
                     PrintInline(

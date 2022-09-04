@@ -518,16 +518,6 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;, v{Version}) is defined as:
-        ///{Tree}.
-        /// </summary>
-        internal static string CommandLine_Output_PatternConfiguration {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_PatternConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Pattern: &apos;{Name}&apos; (v.{Version}) was created with ID: {PatternId}.
         /// </summary>
         internal static string CommandLine_Output_PatternCreated {
@@ -543,6 +533,16 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_PatternLaunchableAutomation {
             get {
                 return ResourceManager.GetString("CommandLine_Output_PatternLaunchableAutomation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pattern &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;, v{Version}) is defined as:
+        ///{Schema}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternSchema {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternSchema", resourceCulture);
             }
         }
         
@@ -633,11 +633,11 @@ namespace Automate.CLI.Infrastructure {
         
         /// <summary>
         ///   Looks up a localized string similar to Toolkit pattern &apos;{Name}&apos; (ID: &apos;{ToolkitId}&apos;, v{Version}) is defined as:
-        ///{Tree}.
+        ///{Schema}.
         /// </summary>
-        internal static string CommandLine_Output_ToolkitConfiguration {
+        internal static string CommandLine_Output_ToolkitSchema {
             get {
-                return ResourceManager.GetString("CommandLine_Output_ToolkitConfiguration", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_ToolkitSchema", resourceCulture);
             }
         }
         

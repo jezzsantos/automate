@@ -533,7 +533,7 @@ namespace CLI.IntegrationTests
             var element1 = this.setup.Pattern.Elements.First();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
+                    OutputMessages.CommandLine_Output_PatternSchema.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +
@@ -821,7 +821,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewToolkitAndNoDraft_ThenDisplaysPatternTree()
+        public void WhenViewToolkitAndNoDraft_ThenDisplaysPatternSchema()
         {
             ConfigureBuildAndInstallToolkit();
 
@@ -831,7 +831,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
+                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
@@ -851,7 +851,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewToolkit_ThenDisplaysPatternTree()
+        public void WhenViewToolkit_ThenDisplaysPatternSchema()
         {
             CreateDraftFromBuiltToolkit();
 
@@ -861,7 +861,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_ToolkitConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
+                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +

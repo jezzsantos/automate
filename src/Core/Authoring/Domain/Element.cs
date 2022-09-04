@@ -9,10 +9,8 @@ namespace Automate.Authoring.Domain
 
         public Element(string name,
             ElementCardinality cardinality = ElementCardinality.One, bool autoCreate = true,
-            string displayName = null, string description = null) : base(name)
+            string displayName = null, string description = null) : base(name, displayName, description)
         {
-            DisplayName = displayName;
-            Description = description;
             IsCollection = cardinality is ElementCardinality.OneOrMany or ElementCardinality.ZeroOrMany;
             Cardinality = cardinality;
             AutoCreate = autoCreate;
@@ -21,8 +19,6 @@ namespace Automate.Authoring.Domain
         private Element(PersistableProperties properties, IPersistableFactory factory) :
             base(properties, factory)
         {
-            DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
-            Description = properties.Rehydrate<string>(factory, nameof(Description));
             IsCollection = properties.Rehydrate<bool>(factory, nameof(IsCollection));
             Cardinality = properties.Rehydrate<string>(factory, nameof(Cardinality))
                 .ToEnumOrDefault(ElementCardinality.One);
@@ -38,8 +34,6 @@ namespace Automate.Authoring.Domain
         public override PersistableProperties Dehydrate()
         {
             var properties = base.Dehydrate();
-            properties.Dehydrate(nameof(DisplayName), DisplayName);
-            properties.Dehydrate(nameof(Description), Description);
             properties.Dehydrate(nameof(IsCollection), IsCollection);
             properties.Dehydrate(nameof(Cardinality), Cardinality);
             properties.Dehydrate(nameof(AutoCreate), AutoCreate);

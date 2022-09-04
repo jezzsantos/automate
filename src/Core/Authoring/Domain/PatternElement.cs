@@ -16,7 +16,7 @@ namespace Automate.Authoring.Domain
         private readonly List<CodeTemplate> codeTemplates;
         private readonly List<Element> elements;
 
-        protected PatternElement(string name)
+        protected PatternElement(string name, string displayName, string description)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
@@ -24,6 +24,8 @@ namespace Automate.Authoring.Domain
 
             Id = IdGenerator.Create();
             Name = name;
+            DisplayName = displayName ?? name;
+            Description = description;
             Parent = null;
             this.codeTemplates = new List<CodeTemplate>();
             this.automations = new List<Automation>();
@@ -37,6 +39,8 @@ namespace Automate.Authoring.Domain
         {
             Id = properties.Rehydrate<string>(factory, nameof(Id));
             Name = properties.Rehydrate<string>(factory, nameof(Name));
+            DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
+            Description = properties.Rehydrate<string>(factory, nameof(Description));
             this.attributes = properties.Rehydrate<List<Attribute>>(factory, nameof(Attributes));
             this.elements = properties.Rehydrate<List<Element>>(factory, nameof(Elements));
             this.automations = properties.Rehydrate<List<Automation>>(factory, nameof(Automation));
@@ -57,6 +61,8 @@ namespace Automate.Authoring.Domain
             var properties = new PersistableProperties();
             properties.Dehydrate(nameof(Id), Id);
             properties.Dehydrate(nameof(Name), Name);
+            properties.Dehydrate(nameof(DisplayName), DisplayName);
+            properties.Dehydrate(nameof(Description), Description);
             properties.Dehydrate(nameof(Attributes), Attributes);
             properties.Dehydrate(nameof(Elements), Elements);
             properties.Dehydrate(nameof(CodeTemplates), CodeTemplates);

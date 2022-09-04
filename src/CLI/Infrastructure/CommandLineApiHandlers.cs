@@ -112,8 +112,8 @@ namespace Automate.CLI.Infrastructure
             {
                 var pattern = authoring.GetCurrentPattern();
 
-                Output(OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current, FormatPatternConfiguration(outputStructured, pattern, all));
+                Output(OutputMessages.CommandLine_Output_PatternSchema, pattern.Name, pattern.Id,
+                    pattern.ToolkitVersion.Current, FormatPatternSchema(outputStructured, pattern, all));
             }
 
             internal static void ListPatterns(bool outputStructured)
@@ -404,7 +404,7 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
-            internal static object FormatPatternConfiguration(bool outputStructured, PatternDefinition pattern,
+            internal static object FormatPatternSchema(bool outputStructured, PatternDefinition pattern,
                 bool isDetailed)
             {
                 var configuration = new PatternConfigurationVisitor(outputStructured
@@ -443,9 +443,9 @@ namespace Automate.CLI.Infrastructure
             {
                 var pattern = runtime.ViewCurrentToolkit().Pattern;
 
-                Output(OutputMessages.CommandLine_Output_ToolkitConfiguration, pattern.Name, pattern.Id,
+                Output(OutputMessages.CommandLine_Output_ToolkitSchema, pattern.Name, pattern.Id,
                     pattern.ToolkitVersion.Current,
-                    AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, all));
+                    AuthoringHandlers.FormatPatternSchema(outputStructured, pattern, all));
             }
 
             internal static void ListToolkits(bool outputStructured)
@@ -497,9 +497,9 @@ namespace Automate.CLI.Infrastructure
 
                 if (todo)
                 {
-                    Output(OutputMessages.CommandLine_Output_PatternConfiguration, pattern.Name, pattern.Id,
+                    Output(OutputMessages.CommandLine_Output_PatternSchema, pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
-                        AuthoringHandlers.FormatPatternConfiguration(outputStructured, pattern, true));
+                        AuthoringHandlers.FormatPatternSchema(outputStructured, pattern, true));
                     Output(OutputMessages.CommandLine_Output_PatternLaunchableAutomation, pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         AuthoringHandlers.FormatPatternLaunchableAutomation(outputStructured, pattern));

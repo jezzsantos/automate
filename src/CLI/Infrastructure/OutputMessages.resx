@@ -81,9 +81,9 @@
     <data name="CommandLine_Output_CodeTemplateCommandTestExported" xml:space="preserve">
         <value>Data from testing Code Template Command '{Name}' (ID: '{CommandId}') has been exported to: '{Exported}'</value>
     </data>
-    <data name="CommandLine_Output_PatternConfiguration" xml:space="preserve">
+    <data name="CommandLine_Output_PatternSchema" xml:space="preserve">
         <value>Pattern '{Name}' (ID: '{PatternId}', v{Version}) is defined as:
-{Tree}</value>
+{Schema}</value>
     </data>
     <data name="CommandLine_Output_PatternLaunchableAutomation" xml:space="preserve">
         <value>Pattern '{Name}' (ID: '{PatternId}', v{Version}) has these launch points available:
@@ -224,9 +224,9 @@
         <value>Aborted upgrade of Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
-    <data name="CommandLine_Output_ToolkitConfiguration" xml:space="preserve">
+    <data name="CommandLine_Output_ToolkitSchema" xml:space="preserve">
         <value>Toolkit pattern '{Name}' (ID: '{ToolkitId}', v{Version}) is defined as:
-{Tree}</value>
+{Schema}</value>
     </data>
     <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">
         <value>Everything is up to date</value>

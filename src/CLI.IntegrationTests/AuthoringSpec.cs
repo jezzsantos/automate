@@ -163,7 +163,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewPatternWithoutAutomation_ThenDisplaysTree()
+        public void WhenViewPatternWithoutAutomation_ThenDisplaysSchema()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -182,7 +182,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
+                    OutputMessages.CommandLine_Output_PatternSchema.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty (attribute) (string){Environment.NewLine}" +
@@ -195,7 +195,7 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewPatternWithAllDetails_ThenDisplaysTree()
+        public void WhenViewPatternWithAllDetails_ThenDisplaysSchema()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
             this.setup.RunCommand(
@@ -222,7 +222,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_PatternConfiguration.SubstituteTemplate(pattern.Name, pattern.Id,
+                    OutputMessages.CommandLine_Output_PatternSchema.SubstituteTemplate(pattern.Name, pattern.Id,
                         pattern.ToolkitVersion.Current,
                         $"- APattern [{pattern.Id}] (root element){Environment.NewLine}" +
                         $"\t- CodeTemplates:{Environment.NewLine}" +

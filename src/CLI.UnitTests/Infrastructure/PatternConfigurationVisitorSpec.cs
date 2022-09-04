@@ -210,7 +210,7 @@ namespace CLI.UnitTests.Infrastructure
                 var element2 = element1.Elements.Single();
                 result.As<JsonNode>().ToJsonString().Should()
                     .Be("{" +
-                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\"," +
+                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\",\"DisplayName\":\"{this.pattern.DisplayName}\",\"Description\":\"{this.pattern.Description}\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate1.Id}\",\"Name\":\"acodetemplate1\",\"OriginalFilePath\":\"afilepath1\",\"OriginalFileExtension\":\"anextension1\"}}" +
                         "]," +
@@ -224,7 +224,7 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{attribute2.Id}\",\"Name\":\"anattributename2\",\"DataType\":\"string\",\"IsRequired\":false,\"Choices\":[\"achoice1\",\"achoice2\",\"achoice3\"],\"DefaultValue\":\"achoice2\"}}" +
                         "]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
+                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\",\"DisplayName\":\"{element1.DisplayName}\",\"Description\":\"{element1.Description}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate2.Id}\",\"Name\":\"acodetemplate2\",\"OriginalFilePath\":\"afilepath2\",\"OriginalFileExtension\":\"anextension2\"}}" +
                         "]," +
@@ -234,7 +234,7 @@ namespace CLI.UnitTests.Infrastructure
                         "]," +
                         "\"Attributes\":[]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
+                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\",\"DisplayName\":\"{element2.DisplayName}\",\"Description\":\"{element2.Description}\",\"AutoCreate\":true,\"IsCollection\":false,\"Cardinality\":\"One\"," +
                         "\"CodeTemplates\":[]," +
                         "\"Automation\":[]," +
                         "\"Attributes\":[" +
@@ -244,7 +244,7 @@ namespace CLI.UnitTests.Infrastructure
                         "}" +
                         "]" +
                         "}," +
-                        $"{{\"Id\":\"{collection1.Id}\",\"EditPath\":\"{collection1.EditPath}\",\"Name\":\"{collection1.Name}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
+                        $"{{\"Id\":\"{collection1.Id}\",\"EditPath\":\"{collection1.EditPath}\",\"Name\":\"{collection1.Name}\",\"DisplayName\":\"{collection1.DisplayName}\",\"Description\":\"{collection1.Description}\",\"AutoCreate\":true,\"IsCollection\":true,\"Cardinality\":\"ZeroOrMany\"," +
                         "\"CodeTemplates\":[" +
                         $"{{\"Id\":\"{codeTemplate3.Id}\",\"Name\":\"acodetemplate3\",\"OriginalFilePath\":\"afilepath3\",\"OriginalFileExtension\":\"anextension3\"}}" +
                         "]," +
@@ -287,17 +287,17 @@ namespace CLI.UnitTests.Infrastructure
                 var element2 = this.pattern.Elements[1];
                 result.As<JsonNode>().ToJsonString().Should()
                     .Be("{" +
-                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\"," +
+                        $"\"Id\":\"{this.pattern.Id}\",\"EditPath\":\"{this.pattern.EditPath}\",\"Name\":\"{this.pattern.Name}\",\"DisplayName\":\"{this.pattern.DisplayName}\",\"Description\":\"{this.pattern.Description}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint1.Id}\",\"Name\":\"acommandlaunchpoint1\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]," +
                         "\"Elements\":[" +
-                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\"," +
+                        $"{{\"Id\":\"{element1.Id}\",\"EditPath\":\"{element1.EditPath}\",\"Name\":\"{element1.Name}\",\"DisplayName\":\"{element1.DisplayName}\",\"Description\":\"{element1.Description}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint2.Id}\",\"Name\":\"acommandlaunchpoint2\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]" +
                         "}," +
-                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\"," +
+                        $"{{\"Id\":\"{element2.Id}\",\"EditPath\":\"{element2.EditPath}\",\"Name\":\"{element2.Name}\",\"DisplayName\":\"{element2.DisplayName}\",\"Description\":\"{element2.Description}\"," +
                         "\"LaunchPoints\":[" +
                         $"{{\"Id\":\"{launchPoint3.Id}\",\"Name\":\"acommandlaunchpoint3\",\"Type\":\"CommandLaunchPoint\"}}" +
                         "]" +

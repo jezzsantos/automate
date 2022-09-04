@@ -10,9 +10,8 @@ namespace Automate.Authoring.Domain
     public class PatternDefinition : PatternElement, IValidateable, IPersistable
     {
         public PatternDefinition(string name, string displayName = null,
-            string description = null) : base(name)
+            string description = null) : base(name, displayName, description)
         {
-            DisplayName = displayName ?? name;
             Description = description;
             ToolkitVersion = new ToolkitVersion();
         }
@@ -21,8 +20,6 @@ namespace Automate.Authoring.Domain
             IPersistableFactory factory) : base(properties,
             factory)
         {
-            DisplayName = properties.Rehydrate<string>(factory, nameof(DisplayName));
-            Description = properties.Rehydrate<string>(factory, nameof(Description));
             ToolkitVersion = properties.Rehydrate<ToolkitVersion>(factory, nameof(ToolkitVersion));
         }
 
@@ -31,8 +28,6 @@ namespace Automate.Authoring.Domain
         public override PersistableProperties Dehydrate()
         {
             var properties = base.Dehydrate();
-            properties.Dehydrate(nameof(DisplayName), DisplayName);
-            properties.Dehydrate(nameof(Description), Description);
             properties.Dehydrate(nameof(ToolkitVersion), ToolkitVersion);
 
             return properties;
