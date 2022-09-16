@@ -7,7 +7,7 @@
 In a terminal, navigate to the root of your source codebase.
 
 Create a new pattern:
-```console
+``` batch
 automate create pattern "<PATTERNNAME>"
 ```
 
@@ -21,18 +21,18 @@ automate create pattern "<PATTERNNAME>"
     This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.
 
 !!! example
-    ```console
+    ``` batch
     automate create pattern "APatternName" --displayedas "A Pattern Name" --describedas "an example pattern"
     ```
 
 ## Listing patterns
 
 You can view all the patterns in your codebase:
-```console
+``` batch
 automate list patterns
 ```
 or
-```console
+``` batch
 automate list all
 ```
 
@@ -42,7 +42,7 @@ automate list all
 ## Switching patterns
 
 If you have multiple patterns going, you can switch between them using their ID:
-```console
+``` batch
 automate edit switch "<PATTERNID>"
 ```
 
@@ -50,14 +50,14 @@ automate edit switch "<PATTERNID>"
     Which makes this pattern the 'active' pattern for subsequent commands.
 
 !!! example
-    ```console
+    ``` batch
     automate edit switch 12345678
     ```
 
 ## Viewing the current pattern
 
 You can view the current pattern:
-```console
+``` batch
 automate view pattern
 ```
 
@@ -65,7 +65,7 @@ automate view pattern
     Which will display the summarized configuration of the current pattern.
 
 You can view the detailed configuration of the pattern:
-```console
+``` batch
 automate view pattern --all
 ```
 
@@ -88,7 +88,7 @@ The structure of a pattern describes a (conceptual) model of your code and its c
 ### Update pattern
 
 To update the name and metadata for a pattern:
-```console
+``` batch
 automate edit update-pattern
 ```
 
@@ -99,7 +99,7 @@ automate edit update-pattern
 - The `--describedas` is an optional parameter that defines how the pattern might be displayed in a user interface.
 
 !!! example
-    ```console
+    ``` batch
     automate edit update-pattern --name "ANewName"
     ```
 
@@ -109,7 +109,7 @@ automate edit update-pattern
     An "Attribute" is a means to represent the variability of a pattern (or the variance within a set of use-cases). When applied, they are essentially a name-value pair.
 
 To add a new attribute to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -127,18 +127,18 @@ automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3"
     ```
     To an element:
-    ```console
+    ``` batch
     automate edit add-attribute "AnAttributeName" --isrequired --isoftype string --defaultvalueis "achoice3" --isoneof "achoice1;achoice2;achoice3" --aschildof "{AnElementName}"
     ```
 
 ### Update attributes
 
 To update an existing attribute on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -156,18 +156,18 @@ automate edit update-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false
     ```
     Of an element:
-    ```console
+    ``` batch
     automate edit update-attribute "AnAttributeName" --name "ANewAttributeName" --isrequired false --aschildof "{AnElementName}"
     ```
 
 ### Delete attributes
 
 To delete an existing attribute:
-```console
+``` batch
 automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -176,11 +176,11 @@ automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit delete-attribute "AnAttributeName"
     ```
     Of an element:
-    ```console
+    ``` batch
     automate edit delete-attribute "AnAttributeName" --aschildof "{AnElementName}"
     ```
 
@@ -193,7 +193,7 @@ automate edit delete-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
     Use a collection instead of an element, if you want to represent other kinds of relationships (`ZeroToMany` or `OneOrMany`).
 
 To add a new element to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -211,18 +211,18 @@ automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-element "AnElementName"
     ```
     To an element:
-    ```console
+    ``` batch
     automate edit add-element "AnElementName" --aschildof "{AnotherElementName}"
     ```
 
 ### Update elements
 
 To update an existing element on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -240,14 +240,14 @@ automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of an element:
-    ```console
+    ``` batch
     automate edit update-element "AnElementName" --name "ANewName" --isrequired false --aschildof "{AnotherElementName}"
     ```
 
 ### Delete elements
 
 To delete an existing element on any element/collection in the pattern:
-```console
+``` batch
 automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -255,7 +255,7 @@ automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of an element:
-    ```console
+    ``` batch
     automate edit delete-element "AnElementName" --aschildof "{AnotherElementName}"
     ```
 
@@ -265,7 +265,7 @@ automate edit delete-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
     A "Collection" is a special case of an "Element" that represents a collection of concepts. A collection is essentially an element with a choice of cardinality (`ZeroOrMany`, `OneOrMany`). When it is applied to a specific use-case, multiple instances of the element (described by the collection) are instantiated as (required `One`) elements.
 
 To add a new collection to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -283,18 +283,18 @@ automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-collection "ACollectionName"
     ```
     To an element: 
-    ```console
+    ``` batch
     automate edit add-collection "ACollectionName" --aschildof "{AnElementName}"
     ```
 
 ### Update collections
 
 To update an existing collection on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -312,14 +312,14 @@ automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of an element:
-    ```console
+    ``` batch
     automate edit update-collection "ACollectionName" --name "ANewName" --isrequired false --aschildof "{AnElementName}"
     ```
 
 ### Delete collections
 
 To delete an existing collection on any element/collection in the pattern:
-```console
+``` batch
 automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -327,7 +327,7 @@ automate edit delete-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of an element:
-    ```console
+    ``` batch
     automate edit delete-collection "ACollectionName" --aschildof "{AnElementName}"
     ```
 
@@ -345,7 +345,7 @@ There are several concepts here. The first is "Commands" which can enact things 
     A "Code Template" is a way to capture any kind of code (or configuration viz: JSON, XML, etc) of a pattern so that when a use-case is realized, code artifacts can be injected/modified/augmented/inserted/generated into codebases in specific locations of the codebase. Once a piece of code has been captured by the pattern, it can be templatized by the author and marked up so that variance in a specific use-case can parameterize the actual code injected into a codebase.
 
 To capture a piece of code:
-```console
+``` batch
 automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -357,11 +357,11 @@ automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName"
     ```
     To an element: 
-    ```console
+    ``` batch
     automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName" --aschildof "{AnElementName}"
     ```
 
@@ -371,7 +371,7 @@ automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"
     Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
 
 To edit the contents of an existing code template:
-```console
+``` batch
 automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -385,22 +385,22 @@ automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschild
 
 !!! example
     Of the pattern (On Windows):
-    ```console
+    ``` batch
     automate edit codetemplate "ATemplateName" --with "notepad"
     ```
     Of an element (On Windows): 
-    ```console
+    ``` batch
     automate edit codetemplate "ATemplateName" --with "notepad" --aschildof "{AnElementName}"
     ```
     Of an element, with VS Code (On Windows): 
-    ```console
+    ``` batch
     automate edit codetemplate "ATemplateName" --with "%localappdata%\Programs\Microsoft VS Code\code.exe" --aschildof "{AnElementName}"
     ```
 
 ### Delete code templates
 
 To delete an existing code template:
-```console
+``` batch
 automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -410,11 +410,11 @@ automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit delete-codetemplate "ATemplateName"
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate edit delete-codetemplate "ATemplateName" --aschildof "{AnElementName}"
     ```
 
@@ -424,7 +424,7 @@ automate edit delete-codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}
     Code templates contain content that may contain [Templating Expressions](reference.md#templating-expressions). Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
 To can test the contents of an existing code template:
-```console
+``` batch
 automate test codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -438,11 +438,11 @@ automate test codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate test codetemplate "ATemplateName"
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate test codetemplate "ATemplateName" --aschildof "{AnElementName}"
     ```
 
@@ -453,7 +453,7 @@ automate test codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
     After a code template is rendered into a codebase, an "Artifact Link" is defined for the location of the rendered code. This link is then tracked and maintained on subsequent executions of this command. This is useful if rendered files are later renamed, or the `--targetpath` property of this command changes.
 
 To add a new code template command to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-codetemplate-command "<CODETEMPLATENAME>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -469,11 +469,11 @@ automate edit add-codetemplate-command "<CODETEMPLATENAME>" --targetpath "<TARGE
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff
     ```
     To an element: 
-    ```console
+    ``` batch
     automate edit add-codetemplate-command "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
     ```
 
@@ -483,7 +483,7 @@ automate edit add-codetemplate-command "<CODETEMPLATENAME>" --targetpath "<TARGE
     This command makes it possible to add a code template and add a new code template command (to render it) in one command.
 
 To capture a piece of code and wire it up to a code template command:
-```console
+``` batch
 automate edit add-codetemplate-with-command "<FILEPATH>" --targetpath "<TARGETPATH>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -499,18 +499,18 @@ automate edit add-codetemplate-with-command "<FILEPATH>" --targetpath "<TARGETPA
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff
     ```
     To an element: 
-    ```console
+    ``` batch
     automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
     ```
 
 ### Update code template commands
 
 To update an existing code template command on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -526,11 +526,11 @@ automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRE
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit update-codetemplate-command "ACommandName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate edit update-codetemplate-command "ATemplateName" --targetpath "~/anewpath/anewfilename.ext" --isoneoff false --aschildof "{AnElementName}"
     ```
 
@@ -540,7 +540,7 @@ automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRE
     Code template commands contain a "target path" that may contain [Templating Expressions](reference.md#templating-expressions). Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.
 
 To can test the contents of an existing code template command:
-```console
+``` batch
 automate test codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -554,15 +554,15 @@ automate test codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}
 
 !!! example
     Testing with default data:
-    ```console
+    ``` batch
     automate test codetemplate-command "ACommandName"
     ```
     Testing with default data, and export that data: 
-    ```console
+    ``` batch
     automate test codetemplate-command "ACommandName" --export-data "C:/projects/data/exportedtestdata.json"
     ```
     Testing with imported data: 
-    ```console
+    ``` batch
     automate test codetemplate-command "ACommandName" --import-data "C:/projects/data/exportedtestdata.json"
     ```
 
@@ -572,7 +572,7 @@ automate test codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}
     A "CLI Command" is simply a type of automation that executes another command-line program (with arguments).
 
 To add a new CLI command to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -586,18 +586,18 @@ automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     To the pattern:
-    ```console
+    ``` batch
     automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName"
     ```
     To an element: 
-    ```console
+    ``` batch
     automate edit add-cli-command "C:/tools/atool.exe" --arguments "anargument1 anargument2" --name "ACommandName" --aschildof "{AnElementName}"
     ```
 
 ### Update CLI commands
 
 To update an existing CLI command on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-cli-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -613,18 +613,18 @@ automate edit update-cli-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit update-cli-command --app "C:/tools/anothertool.exe" --arguments "anewnargument1 anewargument2" --name "ANewCommandName"
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate edit update-cli-command -app "C:/tools/anothertool.exe" --arguments "anewargument1 anewargument2" --name "ANewCommandName" --aschildof "{AnElementName}"
     ```
 
 ### Delete any commands
 
 To delete any existing command on any element/collection in the pattern:
-```console
+``` batch
 automate edit delete-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -637,11 +637,11 @@ automate edit delete-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit delete-command "ACommandName"
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate edit delete-command "ACommandName" --aschildof "{AnElementName}"
     ```
 
@@ -654,7 +654,7 @@ automate edit delete-command "<COMMANDNAME>" --aschildof "{<ANEXPRESSION>}"
     Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.
 
 To add a new launch point to any element/collection in the pattern:
-```console
+``` batch
 automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -668,26 +668,26 @@ automate edit add-command-launchpoint "<COMMANDIDENTIFIERS>" --aschildof "{<ANEX
 
 !!! example
     To the pattern, for all commands on the pattern:
-    ```console
+    ``` batch
     automate edit add-command-launchpoint "*" --name "ALaunchPointName"
     ```
     To the pattern, for specific commands on the pattern: 
-    ```console
+    ``` batch
     automate edit add-command-launchpoint "ACOMDID1;ACMDID2" --name "ALaunchPointName"
     ```
     To the pattern, for all commands on another element:
-    ```console
+    ``` batch
     automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName"
     ```
     To an element, for all commands on another element: 
-    ```console
+    ``` batch
     automate edit add-command-launchpoint "*" --from "{AnotherElementName}" --name "ALaunchPointName" --aschildof "{AnElementName}"
     ```
 
 ### Update launch points
 
 To update an existing launch point on any element/collection in the pattern:
-```console
+``` batch
 automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --add "<COMMANDIDENTIFIERS>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -703,18 +703,18 @@ automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --add "<COMMANDIDEN
 
 !!! example
     Of the pattern, to re-add all commands on the pattern:
-    ```console
+    ``` batch
     automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName"
     ```
     Of an element, to re-add all commands from another element: 
-    ```console
+    ``` batch
     automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName" --from "{AnotherElementName}" --aschildof "{AnElementName}"
     ```
 
 ### Delete launch points
 
 To delete an existing launch point on any element/collection in the pattern:
-```console
+``` batch
 automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
@@ -724,11 +724,11 @@ automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEX
 
 !!! example
     Of the pattern:
-    ```console
+    ``` batch
     automate edit delete-command-launchpoint "ALaunchPointName"
     ```
     Of an element: 
-    ```console
+    ``` batch
     automate edit delete-command-launchpoint "ALaunchPointName" --aschildof "{AnElementName}"
     ```
 
@@ -769,7 +769,7 @@ Drafts can be auto-migrated safely in most cases (see: [Upgrading a Draft](runti
 ### Publishing a toolkit
 
 To build and publish an existing pattern into a toolkit:
-```console
+``` batch
 automate publish toolkit
 ```
 
@@ -782,11 +782,11 @@ automate publish toolkit
 
 !!! example
     To create a toolkit file that can be shared: 
-    ```console
+    ``` batch
     automate publish toolkit --asversion "2.0.0"
     ```
     To create a toolkit file, for next appropriate version, that is installed into the same codebase: 
-    ```console
+    ``` batch
     automate publish toolkit --install
     ```
 

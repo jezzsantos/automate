@@ -35,11 +35,11 @@ To install a toolkit yourself:
 ### Listing installed toolkits
 
 You can view all the installed toolkits in your codebase: 
-```console
+``` batch
 automate list toolkits
 ```
 or
-```console
+``` batch
 automate list all
 ```
 
@@ -53,14 +53,14 @@ If a toolkit is changed and upgraded by its creator, and then it can be upgraded
 You first need to install the upgraded toolkit. This will automatically upgrade the older version of the toolkit
 
 To upgrade a toolkit to a new version:
-```console
+``` batch
 automate install toolkit <INSTALLLOCATION>
 ```
 
 * The `<INSTALLLOCATION>` is the full path to the upgraded toolkit file. e.g. `C:\desktop\AToolkit_0.2.0.toolkit`
 
 !!! example
-    ```console
+    ``` batch
     automate install toolkit "C:\desktop\AToolkit_0.2.0.toolkit"
     ```
 
@@ -72,7 +72,7 @@ Next, you will need to upgrade any drafts that you may have created from the pre
 #### Upgrading drafts
 
 To upgrade an existing draft to a newly upgraded toolkit:
-```console
+``` batch
 automate upgrade draft
 ```
 
@@ -107,7 +107,7 @@ A Draft can only be created when a toolkit containing a pattern is installed.
 ### Creating a draft from a toolkit
 
 To create a draft from an installed toolkit:
-```console
+``` batch
 automate run toolkit "<TOOLKITNAME>" --name "<DRAFTNAME>"
 ```
 
@@ -121,7 +121,7 @@ automate run toolkit "<TOOLKITNAME>" --name "<DRAFTNAME>"
     Each Draft should be named for easy future reference. If you don't define a name (`--name`), one will be fabricated for you automatically. The name is useful for keeping track of which draft you are using right now, and which have been used in the past. Since they may have a long life in your codebase, and you may have several.
 
 !!! example
-    ```console
+    ``` batch
     automate run toolkit "AToolkitName" --name MyFirstUsage
     ```
 
@@ -130,11 +130,11 @@ automate run toolkit "<TOOLKITNAME>" --name "<DRAFTNAME>"
 Since you can have multiple drafts on the go at the same time (even from different toolkits) you will need a way to track them and which one is in use right now.
 
 To list all the drafts you have right now:
-```console
+``` batch
 automate list drafts
 ```
 or
-```console
+``` batch
 automate list all
 ```
 
@@ -142,21 +142,21 @@ automate list all
     This command will produce a list of drafts, and their names and IDs.
 
 To switch to using a specific draft:
-```console
+``` batch
 automate run switch "<DRAFTID>"
 ```
 
 * The `<DRAFTID>` is the ID of the draft you want to use.
 
 !!! example
-    ```console
+    ``` batch
     automate run switch 12345678
     ```
 
 ### Viewing the current draft
 
 You can view the current draft:
-```console
+``` batch
 automate view draft
 ```
 
@@ -188,7 +188,7 @@ Following is are the common kinds of things you can do with any specific draft.
 ### View the current configuration of a draft
 
 To view the current configuration of your draft:
-```console
+``` batch
 automate view draft
 ```
 
@@ -198,7 +198,7 @@ automate view draft
 You can also ask the draft if it is currently in a "valid" state (i.e. if it requires further configuration), and look at the structure and any launchable automation (launch points) of the toolkit that you can use.
 
 To view any constraint violations (validations):
-```console
+``` batch
 automate view draft --todo
 ```
 
@@ -211,7 +211,7 @@ automate view draft --todo
 ### Validating a draft
 
 To validate the draft:
-```console
+``` batch
 automate validate draft
 ```
 
@@ -219,7 +219,7 @@ automate validate draft
     Any validation rule violations are reported. These will need to be addressed before any launch points can be executed on it.
 
 To validate specific items in the draft:
-```console
+``` batch
 automate validate draft on "{<ANEXPRESSION>}"
 ```
 
@@ -227,22 +227,22 @@ automate validate draft on "{<ANEXPRESSION>}"
 
 !!! example
     On the draft:
-    ```console
+    ``` batch
     automate validate draft
     ```
     On an element:
-    ```console
+    ``` batch
     automate validate draft on "{APatternName.AnElementName}"
     ```
     On a collection item:
-    ```console
+    ``` batch
     automate validate draft on "{APatternName.ACollectionName.12345678}"
     ```
 
 ### Configuring an attribute
 
 To set an attribute on any element (or any collection item) in the draft:
-```console
+``` batch
 automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
 ```
 
@@ -254,50 +254,48 @@ automate configure on "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
 
 !!! example
     On an element:
-    ```console
+    ``` batch
     automate configure on "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
     On a collection item:
-    ```console
+    ``` batch
     automate configure on "{APatternName.ACollectionName.12345678}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
 
 ### Adding an element or collection
 
-If an element or collection does not yet exist in the draft, you can add it.
-
 !!! tip
-    By default, all elements and collections will be automatically created when their parent elements are created, but only if they are defined as`AutoCreate=true` in the toolkit.
+    By default, all child elements and collections will be automatically created at the same time as their parent elements are created, but only if the child element is defined as `AutoCreate=true` in the toolkit.
 
 To add an element or collection to any other element (or to any collection item) in the draft:
-```console
+``` batch
 automate configure add "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
 ```
 
-- The `ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to the non-existent element in the draft
-- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
+- The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to the non-existent element in the draft
+- The `--and-set "<ANATTRIBUTENAME>=<VALUE>"` is the name-value pair of the attribute and the value you wish to set to it.
 
 !!! tip
     You can also add as many `--and-set "NAME=VALUE"` expressions as you like (one after the other) on the same element or collection item
 
 !!! example
     An element:
-    ```console
+    ``` batch
     automate configure add "{APatternName.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
     A collection:
-    ```console
+    ``` batch
     automate configure add "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
     An element of a collection item:
-    ```console
+    ``` batch
     automate configure add "{APatternName.ACollectionName.12345678.AnElementName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
 
 ### Resetting an element
 
 To reset all the attributes of any element (or any collection item) in the draft:
-```console
+``` batch
 automate configure reset "{<ANEXPRESSION>}"
 ```
 
@@ -305,23 +303,23 @@ automate configure reset "{<ANEXPRESSION>}"
 
 !!! example
     On an element:
-    ```console
+    ``` batch
     automate configure reset "{APatternName.AnElementName}"
     ```
     On a collection item:
-    ```console
+    ``` batch
     automate configure reset "{APatternName.ACollectionName.12345678}"
     ```
 
 ### Adding collection items
 
 To add a new item of a collection to any collection in the draft:
-```console
+``` batch
 automate configure add-one-to "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<VALUE>"
 ```
 
 - The `<ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing collection in the draft
-- The `--and-set <ANATTRIBUTENAME>=<VALUE>` is the name-value pair of the attribute and the value you wish to set to it.
+- The `--and-set "<ANATTRIBUTENAME>=<VALUE>"` is the name-value pair of the attribute and the value you wish to set to it.
 
 !!! tip
     You can also add as many `--and-set "NAME=VALUE"` expressions as you like to the collection item to make configuring its attributes easier
@@ -331,18 +329,18 @@ automate configure add-one-to "{<ANEXPRESSION>}" --and-set "<ANATTRIBUTENAME>=<V
 
 !!! example
     To a collection:
-    ```console
+    ``` batch
     automate configure add-one-to "{APatternName.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
     To a collection of a collection item:
-    ```console
+    ``` batch
     automate configure add-one-to "{APatternName.ACollectionName.12345678.ACollectionName}" --and-set "APropertyName1=avalue1"  --and-set "APropertyName2=avalue2"
     ```
 
 ### Clearing collection items
 
 To clear all items of a collection in the draft:
-```console
+``` batch
 automate configure clear "{<ANEXPRESSION>}"
 ```
 
@@ -350,18 +348,18 @@ automate configure clear "{<ANEXPRESSION>}"
 
 !!! example
     Of a collection:
-    ```console
+    ``` batch
     automate configure clear "{APatternName.ACollectionName}"
     ```
     Of a collection of a collection item:
-    ```console
+    ``` batch
     automate configure clear "{APatternName.ACollectionName.12345678.AnAlementName}"
     ```
 
 ### Deleting elements, collections or collection items
 
 To delete an element, a collection, or an item of a collection in the draft:
-```console
+``` batch
 automate configure delete "{<ANEXPRESSION>}"
 ```
 
@@ -369,15 +367,15 @@ automate configure delete "{<ANEXPRESSION>}"
 
 !!! example
     An element:
-    ```console
+    ``` batch
     automate configure delete "{APatternName.AnElementName}"
     ```
     A collection:
-    ```console
+    ``` batch
     automate configure delete "{APatternName.ACollectionName}"
     ```
     A collection item:
-    ```console
+    ``` batch
     automate configure delete "{APatternName.ACollectionName.12345678}"
     ```
 
@@ -387,12 +385,12 @@ automate configure delete "{<ANEXPRESSION>}"
     A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.
 
 To view all the launch points configured on the elements/collections within the toolkit:
-```console
+``` batch
 automate view toolkit --all
 ```
 
 To view all the launch points available on the draft:
-```console
+``` batch
 automate view draft --todo
 ```
 
@@ -400,7 +398,7 @@ automate view draft --todo
     All launch points require that the entire draft is in a "valid" state before they are allowed to execute, no matter what element/collection the launch point is configured on.
 
 To execute a launch point on any element (or collection) in the draft:
-```console
+``` batch
 automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
 ```
 
@@ -412,10 +410,10 @@ automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
 
 !!! example
     On the pattern:
-    ```console
+    ``` batch
     automate execute command "ACommandName"
     ```
     On a nested collection item:
-    ```console
+    ``` batch
     automate execute command "ACommandName" on "{APatternName.ACollectionName.12345678}"
     ```
