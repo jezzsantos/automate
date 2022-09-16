@@ -1151,7 +1151,7 @@ namespace Automate.Runtime.Domain
         {
             var properties = new PersistableProperties();
             properties.Dehydrate(nameof(SchemaId), SchemaId);
-            properties.Dehydrate(nameof(System.Data.SchemaType), SchemaType);
+            properties.Dehydrate(nameof(SchemaType), SchemaType);
 
             return properties;
         }
@@ -1384,12 +1384,9 @@ namespace Automate.Runtime.Domain
                 }
                 if (this.draftItem.IsEphemeralCollection)
                 {
-                    if (this.draftItem.Items.HasAny())
-                    {
-                        var items = this.draftItem.Items.Select(item =>
-                            new LazyDraftItemDictionary(item, this.includeAncestry, this.includeSchema));
-                        yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
-                    }
+                    var items = this.draftItem.Items.Select(item =>
+                        new LazyDraftItemDictionary(item, this.includeAncestry, this.includeSchema));
+                    yield return new DictionaryEntry(AsIsMemberName(nameof(DraftItem.Items)), items);
                 }
                 if (this.draftItem.IsAttribute)
                 {
