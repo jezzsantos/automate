@@ -147,24 +147,42 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void AddAttribute(string name, string isOfType, string defaultValueIs,
-                bool isRequired, string isOneOf, string asChildOf)
+                bool isRequired, string isOneOf, string asChildOf, bool outputStructured)
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
                     authoring.AddAttribute(name, isOfType, defaultValueIs, isRequired, choices, asChildOf);
-                Output(OutputMessages.CommandLine_Output_AttributeAdded, name,
-                    attribute.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_AttributeAdded_ForStructured, attribute.Name,
+                        attribute.Id, parent.Id, attribute.IsRequired, attribute.DataType, attribute.DefaultValue,
+                        attribute.Choices);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_AttributeAdded, attribute.Name,
+                        attribute.Id, parent.Id);
+                }
             }
 
             internal static void UpdateAttribute(string attributeName, string name, string isOfType,
-                string defaultValueIs, bool? isRequired, string isOneOf, string asChildOf)
+                string defaultValueIs, bool? isRequired, string isOneOf, string asChildOf, bool outputStructured)
             {
                 var choices = isOneOf.SafeSplit(";").ToList();
                 var (parent, attribute) =
                     authoring.UpdateAttribute(attributeName, name, isOfType, defaultValueIs, isRequired, choices,
                         asChildOf);
-                Output(OutputMessages.CommandLine_Output_AttributeUpdated,
-                    attribute.Name, attribute.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_AttributeUpdated_ForStructured, attribute.Name,
+                        attribute.Id, parent.Id, attribute.IsRequired, attribute.DataType, attribute.DefaultValue,
+                        attribute.Choices);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_AttributeUpdated, attribute.Name,
+                        attribute.Id, parent.Id);
+                }
             }
 
             internal static void DeleteAttribute(string name, string asChildOf)
@@ -176,24 +194,41 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void AddElement(string name, bool? autoCreate, string displayedAs, string describedAs,
-                string asChildOf,
-                bool isRequired)
+                string asChildOf, bool isRequired, bool outputStructured)
             {
                 var (parent, element) = authoring.AddElement(name,
                     isRequired
                         ? ElementCardinality.One
                         : ElementCardinality.ZeroOrOne, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
-                Output(OutputMessages.CommandLine_Output_ElementAdded, name, element.Id,
-                    parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_ElementAdded_ForStructured, element.Name, element.Id,
+                        parent.Id, element.EditPath, element.DisplayName, element.Description,
+                        element.AutoCreate, element.Cardinality.ToString(), element.IsCollection);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_ElementAdded, element.Name, element.Id,
+                        parent.Id);
+                }
             }
 
             internal static void UpdateElement(string elementName, string name, bool? autoCreate,
-                string displayedAs, string describedAs, string asChildOf, bool? isRequired)
+                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured)
             {
                 var (parent, element) = authoring.UpdateElement(elementName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
-                Output(OutputMessages.CommandLine_Output_ElementUpdated, element.Name,
-                    element.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_ElementUpdated_ForStructured, element.Name, element.Id,
+                        parent.Id, element.EditPath, element.DisplayName, element.Description,
+                        element.AutoCreate, element.Cardinality.ToString(), element.IsCollection);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_ElementUpdated, element.Name, element.Id,
+                        parent.Id);
+                }
             }
 
             internal static void DeleteElement(string name, string asChildOf)
@@ -205,23 +240,43 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void AddCollection(string name, bool? autoCreate, string displayedAs,
-                string describedAs,
-                string asChildOf, bool isRequired)
+                string describedAs, string asChildOf, bool isRequired, bool outputStructured)
             {
                 var (parent, collection) = authoring.AddElement(name, isRequired
                     ? ElementCardinality.OneOrMany
                     : ElementCardinality.ZeroOrMany, autoCreate ?? isRequired, displayedAs, describedAs, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CollectionAdded, name,
-                    collection.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CollectionAdded_ForStructured, collection.Name,
+                        collection.Id,
+                        parent.Id, collection.EditPath, collection.DisplayName, collection.Description,
+                        collection.AutoCreate, collection.Cardinality.ToString(), collection.IsCollection);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CollectionAdded, collection.Name, collection.Id,
+                        parent.Id);
+                }
             }
 
             internal static void UpdateCollection(string collectionName, string name, bool? autoCreate,
-                string displayedAs, string describedAs, string asChildOf, bool? isRequired)
+                string displayedAs, string describedAs, string asChildOf, bool? isRequired, bool outputStructured)
             {
-                var (parent, element) = authoring.UpdateElement(collectionName, name,
+                var (parent, collection) = authoring.UpdateElement(collectionName, name,
                     isRequired, autoCreate, displayedAs, describedAs, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CollectionUpdated, element.Name,
-                    element.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CollectionUpdated_ForStructured, collection.Name,
+                        collection.Id,
+                        parent.Id, collection.EditPath, collection.DisplayName, collection.Description,
+                        collection.AutoCreate, collection.Cardinality.ToString(), collection.IsCollection);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CollectionUpdated, collection.Name, collection.Id,
+                        parent.Id);
+                }
+
             }
 
             internal static void DeleteCollection(string name, string asChildOf)

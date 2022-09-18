@@ -60,7 +60,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) to element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) to element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_AttributeAdded {
             get {
@@ -69,7 +69,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: required {IsRequired}, data-type {DataType}, default-value {DefaultValue}, and choices {Choices}.
+        /// </summary>
+        internal static string CommandLine_Output_AttributeAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_AttributeAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) from element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_AttributeDeleted {
             get {
@@ -87,8 +96,17 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated Attribute: &apos;{Name}&apos; (ID: &apos;{AttributeId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: required {IsRequired}, data-type {DataType}, default-value {DefaultValue}, and choices {Choices}.
+        /// </summary>
+        internal static string CommandLine_Output_AttributeUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_AttributeUpdated_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; has been built (v.{Version}), and is ready to be installed with command:
-        ///`automate install toolkit &quot;{&lt;FilePath&gt;}&quot;`.
+        ///`automate install toolkit &quot;{FilePath}&quot;`.
         /// </summary>
         internal static string CommandLine_Output_BuiltToolkit {
             get {
@@ -225,7 +243,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CollectionAdded {
             get {
@@ -234,7 +252,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}.
+        /// </summary>
+        internal static string CommandLine_Output_CollectionAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CollectionAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CollectionDeleted {
             get {
@@ -248,6 +275,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_CollectionUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CollectionUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Collection: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) on element &apos;{ParentId}&apos;, successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}.
+        /// </summary>
+        internal static string CommandLine_Output_CollectionUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CollectionUpdated_ForStructured", resourceCulture);
             }
         }
         
@@ -405,7 +441,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_ElementAdded {
             get {
@@ -414,7 +450,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}.
+        /// </summary>
+        internal static string CommandLine_Output_ElementAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) from element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_ElementDeleted {
             get {
@@ -428,6 +473,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_ElementUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_ElementUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Element: &apos;{Name}&apos; (ID: &apos;{ElementId}&apos;) on element &apos;{ParentId}&apos;, successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}.
+        /// </summary>
+        internal static string CommandLine_Output_ElementUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_ElementUpdated_ForStructured", resourceCulture);
             }
         }
         

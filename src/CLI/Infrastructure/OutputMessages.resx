@@ -90,31 +90,49 @@
 {LaunchPoints}</value>
     </data>
     <data name="CommandLine_Output_AttributeAdded" xml:space="preserve">
-        <value>Added Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}'</value>
+        <value>Added Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_AttributeAdded_ForStructured" xml:space="preserve">
+        <value>Added Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}', successfully, with: required {IsRequired}, data-type {DataType}, default-value {DefaultValue}, and choices {Choices}</value>
     </data>
     <data name="CommandLine_Output_AttributeUpdated" xml:space="preserve">
         <value>Updated Attribute: '{Name}' (ID: '{AttributeId}') on element '{ParentId}', successfully</value>
     </data>
+    <data name="CommandLine_Output_AttributeUpdated_ForStructured" xml:space="preserve">
+        <value>Updated Attribute: '{Name}' (ID: '{AttributeId}') to element '{ParentId}', successfully, with: required {IsRequired}, data-type {DataType}, default-value {DefaultValue}, and choices {Choices}</value>
+    </data>
     <data name="CommandLine_Output_AttributeDeleted" xml:space="preserve">
-        <value>Deleted Attribute: '{Name}' (ID: '{AttributeId}') from element '{ParentId}'</value>
+        <value>Deleted Attribute: '{Name}' (ID: '{AttributeId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_ElementAdded" xml:space="preserve">
-        <value>Added Element: '{Name}' (ID: '{ElementId}') to element '{ParentId}'</value>
+        <value>Added Element: '{Name}' (ID: '{ElementId}') to element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_ElementAdded_ForStructured" xml:space="preserve">
+        <value>Added Element: '{Name}' (ID: '{ElementId}') to element '{ParentId}', successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}</value>
     </data>
     <data name="CommandLine_Output_ElementUpdated" xml:space="preserve">
         <value>Updated Element: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully</value>
     </data>
+    <data name="CommandLine_Output_ElementUpdated_ForStructured" xml:space="preserve">
+        <value>Updated Element: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}</value>
+    </data>
     <data name="CommandLine_Output_ElementDeleted" xml:space="preserve">
-        <value>Deleted Element: '{Name}' (ID: '{ElementId}') from element '{ParentId}'</value>
+        <value>Deleted Element: '{Name}' (ID: '{ElementId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_CollectionAdded" xml:space="preserve">
-        <value>Added Collection: '{Name}' (ID: '{ElementId}') to element '{ParentId}'</value>
+        <value>Added Collection: '{Name}' (ID: '{ElementId}') to element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_CollectionAdded_ForStructured" xml:space="preserve">
+        <value>Added Collection: '{Name}' (ID: '{ElementId}') to element '{ParentId}', successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}</value>
     </data>
     <data name="CommandLine_Output_CollectionUpdated" xml:space="preserve">
         <value>Updated Collection: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully</value>
     </data>
+    <data name="CommandLine_Output_CollectionUpdated_ForStructured" xml:space="preserve">
+        <value>Updated Collection: '{Name}' (ID: '{ElementId}') on element '{ParentId}', successfully, with: edit-path {EditPath}, display-name {DisplayName}, description {Description}, auto-create {AutoCreate}, cardinality {Cardinality}, and is-collection {IsCollection}</value>
+    </data>
     <data name="CommandLine_Output_CollectionDeleted" xml:space="preserve">
-        <value>Deleted Collection: '{Name}' (ID: '{ElementId}') from element '{ParentId}'</value>
+        <value>Deleted Collection: '{Name}' (ID: '{ElementId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
         <value>Added Code Template Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}'</value>
@@ -142,7 +160,7 @@
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:
-`automate install toolkit "{&lt;FilePath&gt;}"`</value>
+`automate install toolkit "{FilePath}"`</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit_Warning" xml:space="preserve">
         <value>Warning: {Warning}</value>
