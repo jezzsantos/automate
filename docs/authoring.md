@@ -113,7 +113,7 @@ To add a new attribute to any element/collection in the pattern:
 automate edit add-attribute "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Cannot be one of the reserved names: `Id`, `DisplayName`, `Description`, `ConfigurePath`, `Schema` or `Items`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the attribute to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern
 
@@ -197,7 +197,7 @@ To add a new element to any element/collection in the pattern:
 automate edit add-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Cannot be one of the reserved names: `Id`, `DisplayName`, `Description`, `ConfigurePath`, `Schema` or `Items`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. <ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
@@ -234,7 +234,7 @@ automate edit update-element "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 - The `--isrequired` optionally defines whether the element is required (`One`) or not required (`ZeroToOne`).
 
-- The `--name` optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
+- The `--name` optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Cannot be one of the reserved names: `Id`, `DisplayName`, `Description`, `ConfigurePath`, `Schema` or `Items`.
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.
 
@@ -269,7 +269,7 @@ To add a new collection to any element/collection in the pattern:
 automate edit add-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
-- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
+- The `<NAME>` must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing element/collection or attribute on the `--aschildof` element/collection. Cannot be one of the reserved names: `Id`, `DisplayName`, `Description`, `ConfigurePath`, `Schema` or `Items`.
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are adding the element to the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) of an existing element/collection in the pattern.
 
@@ -306,7 +306,7 @@ automate edit update-collection "<NAME>" --aschildof "{<ANEXPRESSION>}"
 
 - The `--isrequired`optionally defines whether the collection must have at least one item within it (`OneToMany`) or not required (`ZeroToMany`).
 
-- The `--name` optionally defines a new name for the collection. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Must also not be named `Id`, `DisplayName` or `Description`.
+- The `--name` optionally defines a new name for the collection. It must be alphanumeric and can contain the following additional characters:`._`. The name must not be the same as any existing attribute or element/collection on the `--aschildof` element/collection. Cannot be one of the reserved names: `Id`, `DisplayName`, `Description`, `ConfigurePath`, `Schema` or `Items`.
 
 - The `--autocreate` is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied.
 

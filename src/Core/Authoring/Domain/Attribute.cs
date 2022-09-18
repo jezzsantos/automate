@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
+using Automate.Runtime.Domain;
 
 namespace Automate.Authoring.Domain
 {
@@ -14,7 +15,10 @@ namespace Automate.Authoring.Domain
             DefaultType, "bool", "int", "float", "datetime"
         };
         public static readonly string[] ReservedAttributeNames =
-            { nameof(INamedEntity.Id), nameof(Element.DisplayName), nameof(Element.Description) };
+        {
+            nameof(INamedEntity.Id), nameof(Element.DisplayName), nameof(Element.Description),
+            nameof(DraftItem.ConfigurePath), nameof(DraftItem.Schema), nameof(DraftItem.Items)
+        };
         private List<string> choices;
 
         public Attribute(string name, string dataType = DefaultType, bool isRequired = false,
