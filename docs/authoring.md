@@ -3,7 +3,7 @@
 [A Pattern](reference.md#pattern) is a major top-level concept in automate, used to describe coding patterns. When published, it is packaged and distributed in [A Toolkit](reference.md#toolkit) that is installed into a codebase.
 
 !!! info
-    To make toolkits, you will need to have the `automate` CLI (or plugin) installed on your machine. (see [Installing automate](started.md#installation))
+    To make toolkits, you will need to have the `automate` CLI (or plugin) installed on your machine. (see [Installing automate](installation.md))
 
 ## Capture a new pattern
 

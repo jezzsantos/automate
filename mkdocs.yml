@@ -48,17 +48,18 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 nav:
-  - Getting Started: 'started.md'
+  - 'Installing': 'installation.md'
+  - 'How It Works': 'howitworks.md'
   - 'Evaluating automate': 'evaluating.md'
   - 'Your First Toolkit': 'tutorial.md'
   - 'Developers Guide':
       - 'Command Line (CLI)':
-          - 'Installation': 'started.md'
+          - 'Installation': 'installation.md'
           - 'Using Toolkits': 'runtime.md'
           - 'Making Toolkits': 'authoring.md'
           - 'Additional Commands': 'cli.md'
       - 'IDE Plugin':
-          - 'Installation': 'started.md'
+          - 'Installation': 'installation.md'
           - 'Using Toolkits': 'runtime-plugin.md'
           - 'Making Toolkits': 'authoring-plugin.md'
       - 'Reference': 'reference.md'

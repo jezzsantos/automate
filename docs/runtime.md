@@ -18,7 +18,7 @@ Toolkits come in `*.toolkit` files, obtained from their creators who [make and p
 
 To install a toolkit yourself:
 
-1. You will need to have `automate` CLI (or plugin) installed on your machine. (see [Installing automate](started.md#installation))
+1. You will need to have `automate` CLI (or plugin) installed on your machine. (see [Installing automate](installation.md))
 2. Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine. 
     * For example: A toolkit file like `AToolkit_0.1.0.toolkit`, could be located on your desktop or downloads folder.
 3. In a terminal, navigate to the root of your source codebase (where you want to use the toolkit). For example: `cd C:\myprojects\myproject\src`
