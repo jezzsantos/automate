@@ -2,6 +2,9 @@
 
 [A Pattern](reference.md#pattern) is a major top-level concept in automate, used to describe coding patterns. When published, it is packaged and distributed in [A Toolkit](reference.md#toolkit) that is installed into a codebase.
 
+!!! info
+    To make toolkits, you will need to have the `automate` CLI (or plugin) installed on your machine. (see [Installing automate](started.md#installation))
+
 ## Capture a new pattern
 
 In a terminal, navigate to the root of your source codebase.
@@ -24,6 +27,9 @@ automate create pattern "<PATTERNNAME>"
     ``` batch
     automate create pattern "APatternName" --displayedas "A Pattern Name" --describedas "an example pattern"
     ```
+
+!!! info
+    This pattern automatically becomes the 'active' pattern for subsequent commands.
 
 ## Listing patterns
 

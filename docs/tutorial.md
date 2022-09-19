@@ -15,7 +15,7 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 
 ---
 
-1. Install the [automate CLI](about.md#installing-automate)
+1. Install the [automate CLI](started.md#installation)
 
 2. Navigate to the root of a codebase of yours (e.g. `C:\myprojects\myproject\src`)
 
@@ -50,7 +50,7 @@ This tutorial will walk you through building a very basic toolkit, and then usin
 
 Now, that person that you shared the toolkit with (or you yourself), can:
 
-1. Install the [automate CLI](about.md#installing-automate)
+1. Install the [automate CLI](started.md#installation)
 
 2. Install the toolkit, fetched from above (i.e email/slack/etc):
 

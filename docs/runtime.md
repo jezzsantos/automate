@@ -8,15 +8,17 @@
 
 Toolkits come in `*.toolkit` files, obtained from their creators who [make and publish them](authoring.md), like from a team's Tech Lead, or Tech Consultant.
 
-Since they are single files they can be: emailed, dropped in Slack, downloaded from Dropbox, or shared in all the common ways that files can be transferred to you.
+!!! info
+    Since they are single files they can be: emailed, dropped in Slack, downloaded from Dropbox, or shared in all the common ways that files can be transferred to you.
 
-Toolkits can also be already available already installed into a codebase (installed by other contributors or creators).
+!!! info
+    Toolkits can also be installed into a codebase (installed by other contributors or creators).
 
 ### Installing a toolkit
 
 To install a toolkit yourself:
 
-1. You will need to have `automate` CLI (or plugin) installed on your machine. (see [Installing automate](about.md#installing-automate))
+1. You will need to have `automate` CLI (or plugin) installed on your machine. (see [Installing automate](started.md#installation))
 2. Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine. 
     * For example: A toolkit file like `AToolkit_0.1.0.toolkit`, could be located on your desktop or downloads folder.
 3. In a terminal, navigate to the root of your source codebase (where you want to use the toolkit). For example: `cd C:\myprojects\myproject\src`

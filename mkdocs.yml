@@ -48,17 +48,19 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 nav:
-  - Getting Started: 'about.md'
+  - Getting Started: 'started.md'
   - 'Evaluating automate': 'evaluating.md'
   - 'Your First Toolkit': 'tutorial.md'
   - 'Developers Guide':
       - 'Command Line (CLI)':
-          - 'Making Toolkits': 'authoring.md'
+          - 'Installation': 'started.md'
           - 'Using Toolkits': 'runtime.md'
+          - 'Making Toolkits': 'authoring.md'
           - 'Additional Commands': 'cli.md'
-      - 'Jetbrains Rider Plugin':
-          - 'Making Toolkits': 'authoring-plugin.md'
+      - 'IDE Plugin':
+          - 'Installation': 'started.md'
           - 'Using Toolkits': 'runtime-plugin.md'
+          - 'Making Toolkits': 'authoring-plugin.md'
       - 'Reference': 'reference.md'
   - About:
       - 'GitHub': 'https://github.com/jezzsantos/automate'
