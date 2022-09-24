@@ -37,7 +37,7 @@ namespace CLI.UnitTests.Infrastructure
                 new CommandExecutableContext(this.launchPoint, draft, draftItem));
 
             this.executor
-                .Invoking(x => x.Execute(this.launchPoint, executionResult, (result, automation, arg3) => { }))
+                .Invoking(x => x.Execute(this.launchPoint, executionResult, (_, _, _) => { }))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.CommandLaunchPoint_CommandIdNotFound.Substitute(this.launchPoint.CommandIds
@@ -60,7 +60,7 @@ namespace CLI.UnitTests.Infrastructure
             new CommandLaunchPointExecutor()
                 .Execute(new CommandLaunchPoint("alaunchpointname",
                         new List<string> { automation.Id }), executionResult,
-                    (result, auto, type) => { result.Record("alog"); });
+                    (result, _, _) => { result.RecordSuccess("alog"); });
 
             executionResult.CommandName.Should().Be("alaunchpointname");
             executionResult.Log.Should().ContainSingle("alog");
@@ -88,7 +88,7 @@ namespace CLI.UnitTests.Infrastructure
             new CommandLaunchPointExecutor()
                 .Execute(new CommandLaunchPoint("alaunchpointname",
                         new List<string> { automation.Id }), executionResult,
-                    (result, auto, type) => { result.Record("alog"); });
+                    (result, _, _) => { result.RecordSuccess("alog"); });
 
             executionResult.CommandName.Should().Be("alaunchpointname");
             executionResult.Log.Should().ContainSingle("alog");
@@ -119,10 +119,12 @@ namespace CLI.UnitTests.Infrastructure
             new CommandLaunchPointExecutor()
                 .Execute(new CommandLaunchPoint("alaunchpointname",
                         new List<string> { automation.Id }), executionResult,
-                    (result, auto, type) => { result.Record("alog"); });
+                    (result, _, _) => { result.RecordSuccess("alog"); });
 
             executionResult.CommandName.Should().Be("alaunchpointname");
-            executionResult.Log.Should().Contain("alog", "alog");
+            executionResult.Log.Should()
+                .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message == "alog")
+                .And.Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message == "alog");
             executionResult.IsSuccess.Should().BeTrue();
         }
 
@@ -149,13 +151,14 @@ namespace CLI.UnitTests.Infrastructure
             new CommandLaunchPointExecutor()
                 .Execute(new CommandLaunchPoint("alaunchpointname",
                         new List<string> { automation.Id }), executionResult,
-                    (result, auto, type) => { result.Record("alog"); });
+                    (result, _, _) => { result.RecordSuccess("alog"); });
 
             executionResult.CommandName.Should().Be("alaunchpointname");
-            executionResult.Log.Should().Contain("alog",
-                InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(
-                    this.launchPoint.CommandIds.First(),
-                    "anexceptionmessage"));
+            executionResult.Log.Should()
+                .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message == "alog")
+                .And.Contain(x => x.Type == CommandExecutionLogItemType.Failed && x.Message ==
+                    InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(
+                        automation.Id, "anexceptionmessage"));
             executionResult.IsSuccess.Should().BeFalse();
         }
 #endif

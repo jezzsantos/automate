@@ -307,6 +307,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; was not executed. The draft is not correctly configured in these ways:
+        ///{ValidationErrors}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandExecutionFailed_WithValidation {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandExecutionFailed_WithValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Command: &apos;{Command}&apos; executed successfully:
         ///{Log}.
         /// </summary>

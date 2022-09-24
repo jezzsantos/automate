@@ -276,7 +276,6 @@ namespace Automate.CLI.Infrastructure
                     Output(OutputMessages.CommandLine_Output_CollectionUpdated, collection.Name, collection.Id,
                         parent.Id);
                 }
-
             }
 
             internal static void DeleteCollection(string name, string asChildOf)
@@ -735,9 +734,18 @@ namespace Automate.CLI.Infrastructure
                 {
                     if (execution.IsInvalid)
                     {
-                        OutputWarning(OutputMessages.CommandLine_Output_DraftValidationFailed,
-                            runtime.CurrentDraftName, runtime.CurrentDraftId,
-                            FormatValidationErrors(outputStructured, execution.ValidationErrors));
+                        if (outputStructured)
+                        {
+                            OutputWarning(OutputMessages.CommandLine_Output_CommandExecutionFailed_WithValidation,
+                                execution.CommandName,
+                                FormatValidationErrors(true, execution.ValidationErrors));
+                        }
+                        else
+                        {
+                            OutputWarning(OutputMessages.CommandLine_Output_CommandExecutionFailed_WithValidation,
+                                execution.CommandName,
+                                FormatValidationErrors(false, execution.ValidationErrors));
+                        }
                     }
                     else
                     {
@@ -758,15 +766,23 @@ namespace Automate.CLI.Infrastructure
                 return results.Results.ToMultiLineText(item => $"{counter++}. {item.Context.Path} {item.Message}");
             }
 
-            private static object FormatExecutionLog(bool outputStructured, IReadOnlyList<string> items)
+            private static object FormatExecutionLog(bool outputStructured,
+                IReadOnlyList<CommandExecutionLogItem> items)
             {
                 if (items.HasAny())
                 {
                     if (outputStructured)
                     {
-                        return JsonNode.Parse(items.ToJson());
+                        return JsonNode.Parse(items
+                            .Select(item => new
+                            {
+                                item.Message,
+                                Type = item.Type.ToString()
+                            })
+                            .ToList()
+                            .ToJson());
                     }
-                    return items.ToBulletList(item => item);
+                    return items.ToBulletList(item => $"{item.Type}: {item.Message}");
                 }
                 return $"* {OutputMessages.CommandLine_Output_ExecuteLaunchPointSucceededNoOutput}";
             }

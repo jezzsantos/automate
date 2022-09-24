@@ -638,12 +638,12 @@ namespace CLI.IntegrationTests
             CreateDraftFromBuiltToolkit();
             this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1");
 
-            var draft = this.setup.Draft;
+            var command = this.setup.Pattern.Automation[1];
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftValidationFailed
-                        .SubstituteTemplate(draft.Name, draft.Id,
+                    OutputMessages.CommandLine_Output_CommandExecutionFailed_WithValidation
+                        .SubstituteTemplate(command.Name,
                             $"1. {{APattern.AProperty1}} requires its value to be set{Environment.NewLine}" +
                             $"2. {{APattern.AnElement1}} requires at least one instance{Environment.NewLine}" +
                             $"3. {{APattern.ACollection2}} requires at least one instance{Environment.NewLine}{Environment.NewLine}"
@@ -669,16 +669,18 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionFailed.SubstituteTemplate(
                     "ALaunchPoint2",
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("Bnamingtest.cs",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                        "Bnamingtest.cs",
                         codeTemplate.Id, path) +
                     $"{Environment.NewLine}" +
-                    "* " + InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(command.Id,
+                    "* Failed: " + InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution.Substitute(
+                        command.Id,
                         ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Substitute(
                             InfrastructureMessages.CodeTemplateCommand_FilePathExpression_Description.Substitute(
                                 command.Metadata[nameof(CodeTemplateCommand.FilePath)]),
                             $"((20:0,20),(21:0,21)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
                             $"((19:0,19),(19:0,19)): Invalid token found `.`. Expecting <EOL>/end of line.{Environment.NewLine}" +
-                            "* " + InfrastructureMessages.ApplicationExecutor_Succeeded.Substitute(
+                            "* Succeeded: " + InfrastructureMessages.ApplicationExecutor_Succeeded.Substitute(
                                 this.testApplicationName,
                                 "--succeeds", "Success") + $"{Environment.NewLine}"))));
         }
@@ -702,7 +704,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("Bnamingtest.cs",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                        "Bnamingtest.cs",
                         codeTemplate.Id,
                         path) + $"{Environment.NewLine}"));
             artifactLink.Should().Be(path);
@@ -729,7 +732,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint3",
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
                         "parentsubstitutiontest.cs",
                         codeTemplate.Id,
                         path) + $"{Environment.NewLine}"));
@@ -766,11 +769,14 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating1.code",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                        "templating1.code",
                         codeTemplate1.Id, codeFile1) + $"{Environment.NewLine}" +
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating2.code",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                        "templating2.code",
                         codeTemplate2.Id, codeFile2) + $"{Environment.NewLine}" +
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("templating3.code",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                        "templating3.code",
                         codeTemplate3.Id, codeFile3) + $"{Environment.NewLine}"
                 ));
             artifactLink1.Should().Be(codeFile1);

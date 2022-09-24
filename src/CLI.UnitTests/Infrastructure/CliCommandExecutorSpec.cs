@@ -49,7 +49,7 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.IsSuccess.Should().BeFalse();
                 executionResult.Log.Should()
-                    .Contain("amessage");
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Failed && x.Message == "amessage");
                 this.applicationExecutor.Verify(ae => ae.RunApplicationProcess(true, "anapplicationname", "arguments"));
             }
 
@@ -72,7 +72,7 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.IsSuccess.Should().BeTrue();
                 executionResult.Log.Should()
-                    .Contain("amessage");
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message == "amessage");
                 this.applicationExecutor.Verify(ae => ae.RunApplicationProcess(true, "anapplicationname", "arguments"));
             }
         }

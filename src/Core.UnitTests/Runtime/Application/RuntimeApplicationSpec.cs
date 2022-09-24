@@ -783,7 +783,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                     .Returns(draft.Model.Properties["anelementname"].Materialise());
                 this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
-                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
+                    .Callback((CommandExecutionResult result) => { result.RecordSuccess("alog"); });
 
                 var result = this.application.ExecuteLaunchPoint("acommandname", "anelementname");
 
@@ -807,7 +807,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                     .Returns(draft.Model);
                 this.automationExecutor.Setup(ae => ae.Execute(It.IsAny<CommandExecutionResult>()))
-                    .Callback((CommandExecutionResult result) => { result.Record("alog"); });
+                    .Callback((CommandExecutionResult result) => { result.RecordSuccess("alog"); });
 
                 var result = this.application.ExecuteLaunchPoint("acommandname", null);
 

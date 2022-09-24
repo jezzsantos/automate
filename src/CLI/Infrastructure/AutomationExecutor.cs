@@ -65,7 +65,7 @@ namespace Automate.CLI.Infrastructure
 
 #if TESTINGONLY
                 case AutomationType.TestingOnlyLaunchable:
-                    result.Record("testingonly");
+                    result.RecordSuccess("testingonly");
                     break;
 #endif
                 case AutomationType.Unknown:
@@ -103,7 +103,7 @@ namespace Automate.CLI.Infrastructure
 
         public void Execute(CodeTemplateCommand command, CommandExecutionResult result)
         {
-            var log = new List<string>();
+            var log = new List<CommandExecutionLogItem>();
 
             var codeTemplate = result.ExecutableContext.Draft.Toolkit.CodeTemplateFiles.Safe()
                 .FirstOrDefault(ctf => ctf.Id == command.CodeTemplateId);
@@ -152,7 +152,7 @@ namespace Automate.CLI.Infrastructure
 
         private void GenerateAndOverwriteFile(CodeTemplateCommand command, DraftItem target,
             CodeTemplateFile codeTemplate,
-            string destinationFullPath, List<string> log)
+            string destinationFullPath, List<CommandExecutionLogItem> log)
         {
             var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
 
@@ -165,22 +165,25 @@ namespace Automate.CLI.Infrastructure
                 target);
 
             this.fileSystem.Write(generatedCode, destinationFullPath);
-            log.Add(InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(destinationFilename,
+            log.Add(new CommandExecutionLogItem(InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute(
+                destinationFilename,
                 command.CodeTemplateId,
-                destinationFullPath));
+                destinationFullPath)));
         }
 
-        private void MoveExistingFile(ArtifactLink existingLink, string destinationFullPath, List<string> log)
+        private void MoveExistingFile(ArtifactLink existingLink, string destinationFullPath,
+            List<CommandExecutionLogItem> log)
         {
             var oldFilePath = existingLink.Path;
             this.fileSystem.Move(oldFilePath, destinationFullPath);
-            log.Add(InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(oldFilePath,
-                destinationFullPath));
+            log.Add(new CommandExecutionLogItem(InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(
+                oldFilePath,
+                destinationFullPath), CommandExecutionLogItemType.Warning));
         }
 
         private void UpdateArtifactLink(CodeTemplateCommand command, DraftItem target, ArtifactLink existingLink,
             bool existingLinkChangedLocation,
-            bool destinationFileExists, string destinationFullPath, List<string> log)
+            bool destinationFileExists, string destinationFullPath, List<CommandExecutionLogItem> log)
         {
             var destinationFilename = this.filePathResolver.GetFilename(destinationFullPath);
 
@@ -194,20 +197,23 @@ namespace Automate.CLI.Infrastructure
                         if (destinationFileExists)
                         {
                             this.fileSystem.Delete(oldFilePath);
-                            log.Add(InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute(
-                                oldFilePath));
+                            log.Add(new CommandExecutionLogItem(
+                                InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute(
+                                    oldFilePath), CommandExecutionLogItemType.Warning));
                         }
                         else
                         {
-                            log.Add(InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute(
-                                destinationFilename,
-                                destinationFullPath));
+                            log.Add(new CommandExecutionLogItem(
+                                InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute(
+                                    destinationFilename, destinationFullPath)));
                         }
                     }
                     else
                     {
                         this.fileSystem.Delete(oldFilePath);
-                        log.Add(InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute(oldFilePath));
+                        log.Add(new CommandExecutionLogItem(
+                            InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute(oldFilePath),
+                            CommandExecutionLogItemType.Warning));
                     }
                 }
                 existingLink.UpdatePathAndTag(destinationFullPath, destinationFilename);
@@ -217,8 +223,9 @@ namespace Automate.CLI.Infrastructure
                 target.AddArtifactLink(command.Id, destinationFullPath, destinationFilename);
                 if (command.IsOneOff)
                 {
-                    log.Add(InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute(destinationFilename,
-                        destinationFullPath));
+                    log.Add(new CommandExecutionLogItem(
+                        InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute(destinationFilename,
+                            destinationFullPath)));
                 }
             }
         }
@@ -256,7 +263,7 @@ namespace Automate.CLI.Infrastructure
             var execution = this.applicationExecutor.RunApplicationProcess(true, applicationName, arguments);
             if (execution.IsSuccess)
             {
-                result.Record(execution.Output);
+                result.RecordSuccess(execution.Output);
             }
             else
             {

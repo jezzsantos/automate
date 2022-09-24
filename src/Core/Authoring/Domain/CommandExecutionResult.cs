@@ -6,9 +6,33 @@ using Automate.Runtime.Domain;
 
 namespace Automate.Authoring.Domain
 {
+    public enum CommandExecutionLogItemType
+    {
+        Succeeded = 0,
+        Warning = 1,
+        Failed = 2
+    }
+
+    public class CommandExecutionLogItem
+    {
+        public CommandExecutionLogItem(string message) : this(message, CommandExecutionLogItemType.Succeeded)
+        {
+        }
+
+        public CommandExecutionLogItem(string message, CommandExecutionLogItemType type)
+        {
+            Message = message;
+            Type = type;
+        }
+
+        public string Message { get; }
+
+        public CommandExecutionLogItemType Type { get; }
+    }
+
     public class CommandExecutionResult
     {
-        private readonly List<string> log;
+        private readonly List<CommandExecutionLogItem> log;
 
         public CommandExecutionResult(string commandName, CommandExecutableContext executableContext)
         {
@@ -17,7 +41,7 @@ namespace Automate.Authoring.Domain
             IsSuccess = true;
             CommandName = commandName;
             ExecutableContext = executableContext;
-            this.log = new List<string>();
+            this.log = new List<CommandExecutionLogItem>();
             ValidationErrors = new ValidationResults();
         }
 
@@ -29,7 +53,7 @@ namespace Automate.Authoring.Domain
             IsSuccess = false;
             CommandName = commandName;
             ExecutableContext = null;
-            this.log = new List<string>();
+            this.log = new List<CommandExecutionLogItem>();
             ValidationErrors = validations;
         }
 
@@ -37,7 +61,7 @@ namespace Automate.Authoring.Domain
 
         public string CommandName { get; }
 
-        public IReadOnlyList<string> Log => this.log;
+        public IReadOnlyList<CommandExecutionLogItem> Log => this.log;
 
         public ValidationResults ValidationErrors { get; }
 
@@ -45,29 +69,24 @@ namespace Automate.Authoring.Domain
 
         public CommandExecutableContext ExecutableContext { get; }
 
-        public void Fail()
-        {
-            IsSuccess = false;
-        }
-
         public void Fail(string message)
         {
             Fail();
-            Record(message);
+            this.log.Add(new CommandExecutionLogItem(message, CommandExecutionLogItemType.Failed));
         }
 
-        public void Record(string message)
+        public void RecordSuccess(string message)
         {
             message.GuardAgainstNullOrEmpty(nameof(message));
 
-            this.log.Add(message);
+            this.log.Add(new CommandExecutionLogItem(message, CommandExecutionLogItemType.Succeeded));
         }
 
-        public void Record(IReadOnlyList<string> messages)
+        public void Record(IReadOnlyList<CommandExecutionLogItem> items)
         {
-            messages.GuardAgainstNull(nameof(messages));
+            items.GuardAgainstNull(nameof(items));
 
-            this.log.AddRange(messages);
+            this.log.AddRange(items);
         }
 
         public void Merge(CommandExecutionResult source)
@@ -81,6 +100,11 @@ namespace Automate.Authoring.Domain
             {
                 ValidationErrors.AddRange(source.ValidationErrors);
             }
+        }
+
+        private void Fail()
+        {
+            IsSuccess = false;
         }
     }
 

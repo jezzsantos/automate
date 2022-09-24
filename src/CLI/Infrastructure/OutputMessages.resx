@@ -223,6 +223,10 @@
         <value>Draft '{Name}' (ID: '{DraftId}') is not correctly configured in these ways:
 {Errors}</value>
     </data>
+    <data name="CommandLine_Output_CommandExecutionFailed_WithValidation" xml:space="preserve">
+        <value>The Command: '{Command}' was not executed. The draft is not correctly configured in these ways:
+{ValidationErrors}</value>
+    </data>
     <data name="CommandLine_Output_DraftValidationSuccess" xml:space="preserve">
         <value>Draft '{Name}' (ID: '{DraftId}') is configured correctly</value>
     </data>

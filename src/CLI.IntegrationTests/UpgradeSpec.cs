@@ -150,10 +150,11 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_CommandExecutionSucceeded.SubstituteTemplate(
                     "ALaunchPoint1",
-                    "* " + InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(oldPath, newPath) +
+                    "* Warning: " +
+                    InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute(oldPath, newPath) +
                     $"{Environment.NewLine}" +
-                    "* " +
-                    InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute("updatedroundtrip.cs",
+                    "* Succeeded: " + InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute(
+                        "updatedroundtrip.cs",
                         newPath) +
                     $"{Environment.NewLine}"
                 ));

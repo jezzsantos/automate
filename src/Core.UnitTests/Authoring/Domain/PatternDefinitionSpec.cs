@@ -217,47 +217,31 @@ namespace Core.UnitTests.Authoring.Domain
             result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[1].Properties["acollection2"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items.Count.Should().Be(3);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items.Count.Should().Be(3);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute1"].Value.Should().Be("anattribute11");
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute2"].Value.Should().Be(1);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute3"].Value.Should().Be(true);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute4"].Value.Should().Be(1.1M);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute5"].Value.As<DateTime>().Should()
-                .BeCloseTo(DateTime.Today.ToUniversalTime().AddHours(1), TimeSpan.FromSeconds(1));
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[0].Properties["anattribute6"].Value.Should().Be("A");
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute1"].Value.Should().Be("anattribute12");
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute2"].Value.Should().Be(2);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute3"].Value.Should().Be(false);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute4"].Value.Should().Be(2.2M);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute5"].Value.As<DateTime>().Should()
-                .BeCloseTo(DateTime.Today.ToUniversalTime().AddHours(2), TimeSpan.FromSeconds(1));
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[1].Properties["anattribute6"].Value.Should().Be("B");
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute1"].Value.Should().Be("anattribute13");
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute2"].Value.Should().Be(3);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute3"].Value.Should().Be(true);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute4"].Value.Should().Be(3.3M);
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute5"].Value.As<DateTime>().Should()
-                .BeCloseTo(DateTime.Today.ToUniversalTime().AddHours(3), TimeSpan.FromSeconds(3));
-            result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[0]
-                .Properties["acollection3"].Items[2].Properties["anattribute6"].Value.Should().Be("A");
+            var firstCollection3Items = result.Model.Properties["acollection1"].Items[0].Properties["acollection2"]
+                .Items[0]
+                .Properties["acollection3"].Items;
+            firstCollection3Items.Count.Should().Be(3);
+            firstCollection3Items[0].Properties["anattribute1"].Value.Should().Be("anattribute11");
+            firstCollection3Items[0].Properties["anattribute2"].Value.Should().Be(1);
+            firstCollection3Items[0].Properties["anattribute3"].Value.Should().Be(true);
+            firstCollection3Items[0].Properties["anattribute4"].Value.Should().Be(1.1M);
+            firstCollection3Items[0].Properties["anattribute5"].Value.As<DateTime>().Should()
+                .BeCloseTo(DateTime.Today.AddHours(1).ToUniversalTime(), TimeSpan.FromSeconds(1));
+            firstCollection3Items[0].Properties["anattribute6"].Value.Should().Be("A");
+            firstCollection3Items[1].Properties["anattribute1"].Value.Should().Be("anattribute12");
+            firstCollection3Items[1].Properties["anattribute2"].Value.Should().Be(2);
+            firstCollection3Items[1].Properties["anattribute3"].Value.Should().Be(false);
+            firstCollection3Items[1].Properties["anattribute4"].Value.Should().Be(2.2M);
+            firstCollection3Items[1].Properties["anattribute5"].Value.As<DateTime>().Should()
+                .BeCloseTo(DateTime.Today.AddHours(2).ToUniversalTime(), TimeSpan.FromSeconds(1));
+            firstCollection3Items[1].Properties["anattribute6"].Value.Should().Be("B");
+            firstCollection3Items[2].Properties["anattribute1"].Value.Should().Be("anattribute13");
+            firstCollection3Items[2].Properties["anattribute2"].Value.Should().Be(3);
+            firstCollection3Items[2].Properties["anattribute3"].Value.Should().Be(true);
+            firstCollection3Items[2].Properties["anattribute4"].Value.Should().Be(3.3M);
+            firstCollection3Items[2].Properties["anattribute5"].Value.As<DateTime>().Should()
+                .BeCloseTo(DateTime.Today.AddHours(3).ToUniversalTime(), TimeSpan.FromSeconds(1));
+            firstCollection3Items[2].Properties["anattribute6"].Value.Should().Be("A");
 
             result.Model.Properties["acollection1"].Items[0].Properties["acollection2"].Items[1]
                 .Properties["acollection3"].Items.Count.Should().Be(3);

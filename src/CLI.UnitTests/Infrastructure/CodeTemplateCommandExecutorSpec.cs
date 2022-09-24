@@ -170,11 +170,11 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.CommandName.Should().Be("acommandname");
                 executionResult.Log.Should()
-                    .Contain(InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
-                        "acodetemplateid",
-                        "c:\\anabsolutepath\\afilename.cs"));
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message ==
+                        InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
+                            "acodetemplateid", "c:\\anabsolutepath\\afilename.cs"));
                 executionResult.Log.Should()
-                    .Contain(
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Warning && x.Message ==
                         InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute("anoriginalpath"));
                 ownerItem.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -212,11 +212,11 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.CommandName.Should().Be("acommandname");
                 executionResult.Log.Should()
-                    .Contain(InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
-                        "acodetemplateid",
-                        "c:\\anabsolutepath\\afilename.cs"));
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message ==
+                        InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
+                            "acodetemplateid", "c:\\anabsolutepath\\afilename.cs"));
                 executionResult.Log.Should()
-                    .Contain(
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Warning && x.Message ==
                         InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute("anoriginalpath"));
                 ownerItem.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -397,7 +397,7 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.CommandName.Should().Be("acommandname");
                 executionResult.Log.Should()
-                    .Contain(
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Warning && x.Message ==
                         InfrastructureMessages.CodeTemplateCommand_Log_Warning_Deleted.Substitute("anoriginalpath"));
                 ownerItem.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
@@ -436,11 +436,13 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.CommandName.Should().Be("acommandname");
                 executionResult.Log.Should()
-                    .Contain(InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute("apath",
-                        "c:\\anabsolutepath\\afilename.cs"));
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Warning && x.Message ==
+                        InfrastructureMessages.CodeTemplateCommand_Log_Warning_Moved.Substitute("apath",
+                            "c:\\anabsolutepath\\afilename.cs"));
                 executionResult.Log.Should()
-                    .Contain(InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute("afilename.cs",
-                        "c:\\anabsolutepath\\afilename.cs"));
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message ==
+                        InfrastructureMessages.CodeTemplateCommand_Log_UpdatedLink.Substitute("afilename.cs",
+                            "c:\\anabsolutepath\\afilename.cs"));
                 ownerItem.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
                     && link.Tag == "afilename.cs"
@@ -477,9 +479,9 @@ namespace CLI.UnitTests.Infrastructure
 
                 executionResult.CommandName.Should().Be("acommandname");
                 executionResult.Log.Should()
-                    .Contain(InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
-                        "acodetemplateid",
-                        "c:\\anabsolutepath\\afilename.cs"));
+                    .Contain(x => x.Type == CommandExecutionLogItemType.Succeeded && x.Message ==
+                        InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile.Substitute("afilename.cs",
+                            "acodetemplateid", "c:\\anabsolutepath\\afilename.cs"));
                 ownerItem.ArtifactLinks.Should().ContainSingle(link =>
                     link.CommandId == this.command.Id
                     && link.Tag == "afilename.cs"

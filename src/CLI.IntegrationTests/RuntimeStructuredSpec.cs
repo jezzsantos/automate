@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
+using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
@@ -921,39 +923,305 @@ namespace CLI.IntegrationTests
                 .DisplayOutput(structuredOutput);
         }
 
+        [Fact]
+        public void WhenValidateAndHasValidationErrors_ThenDisplaysValidations()
+        {
+            CreateDraftFromBuiltToolkit(TestCaseSetup.Automation);
+            this.setup.RunCommand($"{CommandLineApi.ValidateCommandName} draft --output-structured");
+
+            var draft = this.setup.Draft;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentDraftInUse.SubstituteTemplate(draft.Name, draft.Id)}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_DraftValidationFailed,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", draft.Name },
+                            { "DraftId", draft.Id },
+                            {
+                                "Errors", new[]
+                                {
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AProperty1}"
+                                        },
+                                        Message = ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue
+                                    },
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AnElement1}"
+                                        },
+                                        Message = ValidationMessages
+                                            .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    },
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AnElement1.ACollection1}"
+                                        },
+                                        Message = ValidationMessages
+                                            .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointAndHasValidationErrors_ThenDisplaysValidations()
+        {
+            CreateDraftFromBuiltToolkit(TestCaseSetup.Automation);
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1 --output-structured");
+
+            var draft = this.setup.Draft;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentDraftInUse.SubstituteTemplate(draft.Name, draft.Id)}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandExecutionFailed_WithValidation,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Command", "ALaunchPoint1" },
+                            {
+                                "ValidationErrors", new[]
+                                {
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AProperty1}"
+                                        },
+                                        Message = ValidationMessages.Attribute_ValidationRule_RequiredAttributeValue
+                                    },
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AnElement1}"
+                                        },
+                                        Message = ValidationMessages
+                                            .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    },
+                                    new
+                                    {
+                                        Context = new
+                                        {
+                                            Path = "{APattern.AnElement1.ACollection1}"
+                                        },
+                                        Message = ValidationMessages
+                                            .DraftItem_ValidationRule_ElementRequiresAtLeastOneInstance
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointAndFails_ThenDisplaysResults()
+        {
+            CreateDraftFromBuiltToolkit(TestCaseSetup.Automation);
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}}");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{AnElement1.ACollection1}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint2 --output-structured");
+
+            var path = RuntimeSpec.GetFilePathInOutput(@"code/namingtest.cs");
+            var command = this.setup.Pattern.Automation[2];
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var draft = this.setup.Draft;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentDraftInUse.SubstituteTemplate(draft.Name, draft.Id)}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandExecutionFailed,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Command", "ALaunchPoint2" },
+                            {
+                                "Log", new[]
+                                {
+                                    new
+                                    {
+                                        Message = InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile
+                                            .Substitute(
+                                                "namingtest.cs",
+                                                codeTemplate.Id, path),
+                                        Type = CommandExecutionLogItemType.Succeeded.ToString()
+                                    },
+                                    new
+                                    {
+                                        Message = InfrastructureMessages.CommandLaunchPoint_CommandIdFailedExecution
+                                            .Substitute(
+                                                command.Id,
+                                                ExceptionMessages.TextTemplatingExtensions_HasSyntaxErrors.Substitute(
+                                                    InfrastructureMessages
+                                                        .CodeTemplateCommand_FilePathExpression_Description
+                                                        .Substitute(
+                                                            command.Metadata[nameof(CodeTemplateCommand.FilePath)]),
+                                                    $"((20:0,20),(21:0,21)): Invalid token `CodeExit`. The dot operator is expected to be followed by a plain identifier{Environment.NewLine}" +
+                                                    "((19:0,19),(19:0,19)): Invalid token found `.`. Expecting <EOL>/end of line."
+                                                )),
+                                        Type = CommandExecutionLogItemType.Failed.ToString()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenExecuteLaunchPointAndSucceeds_ThenDisplaysSuccess()
+        {
+            CreateDraftFromBuiltToolkit(TestCaseSetup.Automation);
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}}");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{AnElement1.ACollection1}}");
+
+            this.setup.RunCommand($"{CommandLineApi.ExecuteCommandName} command ALaunchPoint1 --output-structured");
+
+            var path = RuntimeSpec.GetFilePathInOutput(@"code/namingtest.cs");
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var draft = this.setup.Draft;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentDraftInUse.SubstituteTemplate(draft.Name, draft.Id)}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandExecutionSucceeded,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Command", "ALaunchPoint1" },
+                            {
+                                "Log", new[]
+                                {
+                                    new
+                                    {
+                                        Message = InfrastructureMessages.CodeTemplateCommand_Log_GeneratedFile
+                                            .Substitute(
+                                                "namingtest.cs",
+                                                codeTemplate.Id, path),
+                                        Type = CommandExecutionLogItemType.Succeeded.ToString()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(structuredOutput);
+        }
+
         public void Dispose()
         {
             this.setup.Reset();
         }
 
-        private void CreateDraftFromBuiltToolkit()
+        private void CreateDraftFromBuiltToolkit(TestCaseSetup testCase = TestCaseSetup.Normal)
         {
-            ConfigureBuildAndInstallToolkit();
+            ConfigureBuildAndInstallToolkit(testCase);
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
         }
 
-        private void ConfigureBuildAndInstallToolkit()
+        private void ConfigureBuildAndInstallToolkit(TestCaseSetup testCase = TestCaseSetup.Normal)
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis ADefaultValue1");
-            this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis ADefaultValue2");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis ADefaultValue3");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.AnElement1.ACollection1}} --defaultvalueis ADefaultValue4");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-element AnElement3 --aschildof {{APattern.AnElement1.ACollection1}}");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty5 --aschildof {{APattern.AnElement1.ACollection1.AnElement3}} --defaultvalueis ADefaultValue5");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-element AnElement2 --aschildof {{APattern}} --isrequired --autocreate false");
-            this.setup.RunCommand(
-                $"{CommandLineApi.EditCommandName} add-attribute AProperty6 --aschildof {{APattern.AnElement2}} --defaultvalueis ADefaultValue6");
+            if (testCase == TestCaseSetup.Normal)
+            {
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --defaultvalueis ADefaultValue1");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty2 --aschildof {{APattern.AnElement1}} --defaultvalueis ADefaultValue2");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty3 --aschildof {{APattern.AnElement1}} --defaultvalueis ADefaultValue3");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-collection ACollection1 --aschildof {{APattern.AnElement1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty4 --aschildof {{APattern.AnElement1.ACollection1}} --defaultvalueis ADefaultValue4");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-element AnElement3 --aschildof {{APattern.AnElement1.ACollection1}}");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty5 --aschildof {{APattern.AnElement1.ACollection1.AnElement3}} --defaultvalueis ADefaultValue5");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-element AnElement2 --aschildof {{APattern}} --isrequired --autocreate false");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty6 --aschildof {{APattern.AnElement2}} --defaultvalueis ADefaultValue6");
+            }
+            if (testCase == TestCaseSetup.Automation)
+            {
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-attribute AProperty1 --isrequired");
+                this.setup.RunCommand($"{CommandLineApi.EditCommandName} add-element AnElement1 --autocreate false");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-collection ACollection1 --isrequired --aschildof {{APattern.AnElement1}}");
+
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ACodeTemplate1");
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.AProperty3}}}}namingtest.cs\"");
+                var commandId1 = this.setup.Pattern.Automation[0].Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1} --name ALaunchPoint1");
+
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ACodeTemplate1\" --targetpath \"~/code/{{{{AnElement1.}}}}invalid.cs\"");
+                var commandId2 = this.setup.Pattern.Automation[2].Id;
+                this.setup.RunCommand(
+                    $"{CommandLineApi.EditCommandName} add-command-launchpoint {commandId1};{commandId2} --name ALaunchPoint2");
+            }
 
             BuildAndInstallToolkit();
         }
@@ -965,6 +1233,12 @@ namespace CLI.IntegrationTests
 
             var location = RuntimeSpec.GetFilePathOfExportedToolkit($"APattern_{latestVersion}.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
+        }
+
+        private enum TestCaseSetup
+        {
+            Normal = 0,
+            Automation = 1
         }
     }
 }
