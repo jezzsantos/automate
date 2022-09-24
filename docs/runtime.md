@@ -222,10 +222,10 @@ automate validate draft
 
 To validate specific items in the draft:
 ``` batch
-automate validate draft on "{<ANEXPRESSION>}"
+automate validate draft --on "{<ANEXPRESSION>}"
 ```
 
-* The `on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing item in the draft.
+* The `--on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing item in the draft.
 
 !!! example
     On the draft:
@@ -234,11 +234,11 @@ automate validate draft on "{<ANEXPRESSION>}"
     ```
     On an element:
     ``` batch
-    automate validate draft on "{APatternName.AnElementName}"
+    automate validate draft --on "{APatternName.AnElementName}"
     ```
     On a collection item:
     ``` batch
-    automate validate draft on "{APatternName.ACollectionName.12345678}"
+    automate validate draft --on "{APatternName.ACollectionName.12345678}"
     ```
 
 ### Configuring an attribute
@@ -405,7 +405,7 @@ automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
 ```
 
 - The `<LAUNCHPOINTNAME>` is the name of the launch point defined on the respective
-- The  `-on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing parent element/collection in the draft.
+- The  `--on <ANEXPRESSION>` is an [Expression](reference.md#draft-expressions) to an existing parent element/collection in the draft.
 
 !!! tip
     You can omit the `--on "{<ANEXPRESSION>}"` if the command is defined on the root element.
@@ -417,5 +417,5 @@ automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
     ```
     On a nested collection item:
     ``` batch
-    automate execute command "ACommandName" on "{APatternName.ACollectionName.12345678}"
+    automate execute command "ACommandName" --on "{APatternName.ACollectionName.12345678}"
     ```
