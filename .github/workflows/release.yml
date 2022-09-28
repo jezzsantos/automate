@@ -49,7 +49,7 @@ jobs:
       - name: Package (LinuxOS)
         run: |
           dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime linux-x64 "${{env.CLIPROJECT_PATH}}"
-          copy "${{env.OUTPUT_DIR}}/osx-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64"
+          copy "${{env.OUTPUT_DIR}}/linux-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64"
       - name: Upload Package (LinuxOS)
         uses: actions/upload-artifact@v2
         with:
