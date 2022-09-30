@@ -182,19 +182,19 @@ When you push your changes (or push your pull requests), they will be built and 
 
 ### Versioning
 
-> We use [SemVer](www.semver.org) rules for publishing releases (Major for breaking, Minor and Patch for Non-Breaking).
+> We use [SemVer](https://www.semver.org) rules for publishing releases (Major for breaking, Minor and Patch for Non-Breaking).
 >
 > If this is a 'pre-release' version (using `-preview`) we only ever increase the Minor number for breaking changes.
 
-1. In `src/Directory.Build.props`, update the `<VersionPrefix>x.x.x</VersionPrefix>` and `<VersionSuffix>-preview</VersionSuffix>`
-1. Commit message `#vx.x.x-preview`
-1. Tag the commit `vx.x.x-preview`
-1. Push commit and tags
+1. In `src/Directory.Build.props`, update the `<VersionPrefix>x.y.z</VersionPrefix>` (and optionally `<VersionSuffix>-preview</VersionSuffix>`)
+2. Commit message `#vx.y.z` (or `#vx.y.z-preview`) 
+3. Tag the commit `vx.y.z` (or `vx.y.z-preview`)
+4. Push commit and tags
 
 Wait until the latest build goes green, at which point:
 
 1. A new [Github Draft Release](https://github.com/jezzsantos/automate/releases) has already been created
-1. A new [NuGet release](https://www.nuget.org/packages/automate) has also already been published
+2. A new [NuGet release](https://www.nuget.org/packages/automate) has also already been published
 
 **Final Step**: Open the [Draft Release](https://github.com/jezzsantos/automate/releases), check the details, and Publish it.
 
@@ -208,9 +208,9 @@ Either:
 
 OR:
 
-1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.x.x-preview CLI/CLI.csproj`
-1. Uninstall existing tool: `dotnet tool uninstall automate --global`
-1. Install the local tool: `dotnet tool install automate --global --add-source CLI\nupkg --version x.x.x-preview`
+1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.y.z CLI/CLI.csproj`
+2. Uninstall existing tool: `dotnet tool uninstall automate --global`
+3. Install the local tool: `dotnet tool install automate --global --add-source CLI\nupkg --version x.y.z`
 
 ### Public Release
 
@@ -222,7 +222,7 @@ https://www.nuget.org/packages/automate
 
 MANUALLY:
 
-1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.x.x-preview CLI/CLI.csproj`
+1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.y.z CLI/CLI.csproj`
 2. Log into nuget.org, and upload the built package at: `src/CLI/nupkg`
 
 #### Github.com
@@ -232,12 +232,12 @@ The GitHub Action that has run in response to you pushing the tag, has already c
 MANUALLY:
 
 1. Create a new Draft Release: https://github.com/jezzsantos/automate/releases
-1. Set the release title: `vx.x.x-preview`
-1. Attach the build NuGet package from `src/CLI/nupkg`
-1. Download the `Win-x64 Binary`, `Linux-64 Binary` and `OSX-64 Binary` built artifacts from the last successful build (of the #vx.x.x-preview commit) at: https://github.com/jezzsantos/automate/actions
-1. Attach those zip files to the draft release
-1. Tick: pre-release
-1. Publish release
+2. Set the release title: `vx.y.z` (or `vx.y.z-preview`)
+3. Attach the build NuGet package from `src/CLI/nupkg`
+4. Download the `Win-x64 Binary`, `Linux-64 Binary` and `OSX-64 Binary` built artifacts from the last successful build (of the #vx.y.z commit) at: https://github.com/jezzsantos/automate/actions
+5. Attach those zip files to the draft release
+6. Tick: pre-release
+7. Publish release
 
 # Your First Contribution
 

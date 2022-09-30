@@ -82,7 +82,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{env.TAG_NAME}}
-          prerelease: true
+          prerelease: false
           draft: true
           generateReleaseNotes: true
           artifacts: "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.OSX-x64,${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64,${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Win-x64.exe,${{env.NUGET_OUTPUT_DIR}}/*.nupkg"

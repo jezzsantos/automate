@@ -27,7 +27,7 @@ What if you had a selection of these kinds of tools stored alongside that code, 
 
 # What is Automate?
 
-1. Why? - Consistency, and Timesaving
+1. Why? - Consistency, and  tim saving
 2. Who? - Tech Leads, Lead Developers, Tech Consultants
 3. How? - Give fellow codebase contributors tools that capture and apply their own coding patterns, naming and structure consistently. And evolve as the code changes.
 
@@ -73,7 +73,7 @@ If this sounds like your situation, then maybe we can help you define (and enfor
 
 # Getting Started
 
-See our [Getting Started](https://jezzsantos.github.io/automate/about) documentation to see how to install automate.
+See our [Getting Started](https://jezzsantos.github.io/automate) documentation to see how to install automate.
 
 ## Making your first toolkit
 
