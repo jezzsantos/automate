@@ -28,7 +28,8 @@ theme:
   logo: logo.svg
   font:
     # Any of the https://fonts.google.com/
-    text: Nunito
+    text: Source Sans Pro
+    code: JetBrains Mono
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"

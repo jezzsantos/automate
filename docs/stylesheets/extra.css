@@ -1,11 +1,6 @@
 ﻿:root > * {
-    --md-code-font: "ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
     --md-code-bg-color: hsl(80, 9%, 87%);
     --md-code-fg-color: hsla(200, 18%, 26%, 1);
-}
-
-@font-face {
-    font-family: "ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
 }
 
 .md-typeset .task-list-indicator:before {
