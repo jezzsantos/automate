@@ -58,13 +58,20 @@ If you don't have `dotnet.exe` installed on your machine, update the CLI manuall
 
 ## Jetbrains IDE Plugin
 
-Install the plugin within Rider itself, from: `File | Settings | Plugins | Marketplace` and search for `automate` ![Logo](logo_plugin.svg){ align=right }
+<div id="plugin" style="float: right"></div>
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('install', 19421, "#plugin");
+</script>
+
+Install the plugin within Rider itself, from: `File | Settings | Plugins | Marketplace` and search for `automate`
 
 !!! info
-    The plugin can be found [on the Jetbrains Marketplace](https://plugins.jetbrains.com/plugin/19421-automate)
+    This plugin relies on the automate CLI to be installed to run. Furthermore, each version of the plugin will require a specific version of the automate CLI to be installed. 
 
-!!! warning
-    This plugin relies on the automate CLI to be installed to run. Furthermore, each version of the plugin will require a specific version of the automate CLI to be installed. Versions of the plugin (v1.0.4 and later) will automatically install and upgrade the version of the automate CLI that is required by the plugin. Prior versions of the plugin (less than v1.0.4) will require you to manually install the automate CLI first (see instructions above).
+    Version (v1.0.4 and later) of the plugin will automatically install and upgrade the version of the automate CLI that is required by the plugin. Prior versions (less than v1.0.4) of the plugin will require you to manually install the automate CLI first.
+
+    By default, the plugin is configured to point to the default install location of the automate CLI (as a dotnet tool). 
 
 !!! tip
-    The plugin is configured by default to point to the default install location of the automate CLI, and it is configured to automatically install and upgrade the CLI (as needed). You can view and configure the plugin in Rider, from the settings (`File | Settings | Tools | automate`)
+    You can view and configure the installation location in Rider, from the settings (`File | Settings | Tools | automate`)

@@ -3,6 +3,10 @@
     --md-code-fg-color: hsla(200, 18%, 26%, 1);
 }
 
+.md-typeset {
+    font-weight: 300
+}
+
 .md-typeset .task-list-indicator:before {
     background-color: hsla(0, 0%, 83%, 1);
 }
