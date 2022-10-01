@@ -68,7 +68,37 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
-                        $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
+                        $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
+        }
+
+        [Fact]
+        public void WhenListAllAndToolkitUpgraded_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --install --asversion 2.0.0");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
+                        $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\", \"IsCurrent\": \"true\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
+                        $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
+                        $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
         
         [Fact]

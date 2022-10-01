@@ -170,7 +170,7 @@
 `automate run toolkit &lt;PatternName&gt; --name "DraftName"`</value>
     </data>
     <data name="CommandLine_Output_CreateDraftFromToolkit" xml:space="preserve">
-        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{Version})</value>
+        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{ToolkitVersion})</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
         <value>There are no installed Toolkits yet. Use this command to install one:
@@ -216,7 +216,7 @@
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
     <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
-        <value>Draft '{Name}' (ID: '{DraftId}') is configured as:
+        <value>Draft '{Name}' (ID: '{DraftId}', v.{ToolkitVersion}) is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationFailed" xml:space="preserve">

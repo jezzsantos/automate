@@ -154,7 +154,8 @@ namespace Core.UnitTests.Runtime.Application
 
                 var result = this.application.ListCreatedDrafts();
 
-                result.Should().Contain(draft);
+                result.Count.Should().Be(1);
+                result.Should().Contain(tuple => tuple.Draft == draft);
             }
 
             [Fact]

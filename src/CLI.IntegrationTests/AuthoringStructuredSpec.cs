@@ -21,6 +21,172 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenListAllAndSome_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_EditablePatternsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Patterns", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", pattern.Id },
+                                        { "Name", pattern.Name },
+                                        { "Version", "0.1.0" },
+                                        { "IsCurrent", true }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_InstalledToolkitsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Toolkits", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", toolkit.Id },
+                                        { "PatternName", "APattern1" },
+                                        { "Version", "0.1.0" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Drafts", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", draft.Id },
+                                        { "Name", draft.Name },
+                                        { "ToolkitId", toolkit.Id },
+                                        { "ToolkitVersion", "0.1.0" },
+                                        { "CurrentToolkitVersion", "0.1.0" },
+                                        { "IsCurrent", true }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenListAllAndToolkitUpgraded_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --install --asversion 2.0.0");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_EditablePatternsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Patterns", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", pattern.Id },
+                                        { "Name", pattern.Name },
+                                        { "Version", "2.0.0" },
+                                        { "IsCurrent", true }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_InstalledToolkitsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Toolkits", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", toolkit.Id },
+                                        { "PatternName", "APattern1" },
+                                        { "Version", "2.0.0" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Drafts", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", draft.Id },
+                                        { "Name", draft.Name },
+                                        { "ToolkitId", toolkit.Id },
+                                        { "ToolkitVersion", "0.1.0" },
+                                        { "CurrentToolkitVersion", "2.0.0" },
+                                        { "IsCurrent", true }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
         public void WhenAddAttribute_ThenAddsAttribute()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");

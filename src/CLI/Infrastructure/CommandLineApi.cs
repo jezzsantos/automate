@@ -64,14 +64,14 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--describedas", "A description for the pattern", typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.CreatePattern))
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.CreatePattern))
             };
             var editCommands = new Command(EditCommandName, "Editing patterns")
             {
                 new Command("switch", "Switches to configuring another pattern")
                 {
                     new Argument("Id", "The ID of the existing pattern to edit")
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.SwitchPattern)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.SwitchPattern)),
                 new Command("update-pattern", "Updates the pattern")
                 {
                     new Option("--name", "A new name for the pattern", typeof(string),
@@ -80,7 +80,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--describedas", "A new description for the pattern", typeof(string),
                         arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdatePattern)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdatePattern)),
                 new Command("add-attribute", "Adds an attribute to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
@@ -93,7 +93,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the attribute to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddAttribute)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddAttribute)),
                 new Command("update-attribute", "Updates an attribute on an element/collection in the pattern")
                 {
                     new Argument("AttributeName", "The name of the attribute"),
@@ -109,13 +109,13 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to update the attribute on",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateAttribute)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateAttribute)),
                 new Command("delete-attribute", "Deletes an attribute from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the attribute"),
                     new Option("--aschildof", "The expression of the element/collection to delete the attribute from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteAttribute)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteAttribute)),
                 new Command("add-element", "Adds an element to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the element"),
@@ -129,7 +129,7 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool), () => true, ArgumentArity.ZeroOrOne),
                     new Option("--autocreate", "Whether the element will be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddElement)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddElement)),
                 new Command("update-element", "Updates an element on an element/collection in the pattern")
                 {
                     new Argument("ElementName", "The name of the element"),
@@ -145,13 +145,13 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
                     new Option("--autocreate", "Whether the element will now be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateElement)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateElement)),
                 new Command("delete-element", "Deletes an element from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the element"),
                     new Option("--aschildof", "The expression of the element/collection to delete the element from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteElement)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteElement)),
                 new Command("add-collection", "Adds a collection to an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the collection"),
@@ -165,7 +165,7 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                     new Option("--autocreate", "Whether the collection will be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCollection)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCollection)),
                 new Command("update-collection", "Updates a collection on an element/collection in the pattern")
                 {
                     new Argument("CollectionName", "The name of the collection"),
@@ -181,13 +181,13 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne),
                     new Option("--autocreate", "Whether the collection will now be created automatically or not",
                         typeof(bool?), () => null, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateCollection)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateCollection)),
                 new Command("delete-collection", "Deletes a collection from an element/collection in the pattern")
                 {
                     new Argument("Name", "The name of the collection"),
                     new Option("--aschildof", "The expression of the element/collection to delete the collection from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteCollection)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteCollection)),
                 new Command("add-codetemplate", "Adds a code template to an element")
                 {
                     new Argument("FilePath", "A relative path to the code file, from the current directory"),
@@ -195,7 +195,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCodeTemplate)),
                 new Command("add-codetemplate-with-command",
                     "Adds a code template to an element, with a command to render it")
                 {
@@ -209,7 +209,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCodeTemplateWithCommand)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCodeTemplateWithCommand)),
                 new Command("codetemplate", "Edits a code template in an editor")
                 {
                     new Argument("TemplateName", "The name of the code template"),
@@ -219,14 +219,14 @@ namespace Automate.CLI.Infrastructure
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to edit the code template from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.EditCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.EditCodeTemplate)),
                 new Command("delete-codetemplate", "Deletes a code template from an element/collection in the pattern")
                 {
                     new Argument("TemplateName", "The name of the code template"),
                     new Option("--aschildof",
                         "The expression of the element/collection to delete the code template from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteCodeTemplate)),
                 new Command("add-codetemplate-command", "Adds a command that renders a code template")
                 {
                     new Argument("CodeTemplateName", "The name of the code template"),
@@ -239,7 +239,7 @@ namespace Automate.CLI.Infrastructure
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the command to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCodeTemplateCommand)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCodeTemplateCommand)),
                 new Command("update-codetemplate-command", "Updates an existing code template command")
                 {
                     new Argument("CommandName", "The name of the command to update"),
@@ -252,7 +252,7 @@ namespace Automate.CLI.Infrastructure
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection on which the command exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateCodeTemplateCommand)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateCodeTemplateCommand)),
                 new Command("add-cli-command", "Adds a command that executes another command line application")
                     {
                         new Argument("ApplicationName",
@@ -266,7 +266,7 @@ namespace Automate.CLI.Infrastructure
                             "The expression of the element/collection on which the command exists",
                             typeof(string), arity: ArgumentArity.ZeroOrOne)
                     }
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCliCommand)),
+                    .WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCliCommand)),
                 new Command("update-cli-command", "Updates an existing CLI command")
                 {
                     new Argument("CommandName", "The name of the command to update"),
@@ -281,13 +281,13 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof",
                         "The expression of the element/collection on which the command exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateCliCommand)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateCliCommand)),
                 new Command("delete-command", "Deletes any command from an element/collection in the pattern")
                 {
                     new Argument("CommandName", "The name of the command"),
                     new Option("--aschildof", "The expression of the element/collection to delete the command from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteCommand)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteCommand)),
                 new Command("add-command-launchpoint", "Adds a launch point for a command")
                 {
                     new Argument("CommandIdentifiers",
@@ -298,7 +298,7 @@ namespace Automate.CLI.Infrastructure
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--from", "The expression of the element/collection to add commands from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.AddCommandLaunchPoint)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCommandLaunchPoint)),
                 new Command("update-command-launchpoint", "Updates an existing launch point")
                 {
                     new Argument("LaunchPointName", "The name of the launch point to update"),
@@ -312,7 +312,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof",
                         "The expression of the element/collection on which the launch point exists",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.UpdateLaunchPoint)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.UpdateLaunchPoint)),
                 new Command("delete-command-launchpoint",
                     "Deletes a launch point from an element/collection in the pattern")
                 {
@@ -320,7 +320,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--aschildof",
                         "The expression of the element/collection to delete the launch point from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.DeleteLaunchPoint))
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.DeleteLaunchPoint))
             };
             var testCommands = new Command(TestCommandName, "Testing automation of a pattern")
             {
@@ -336,7 +336,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--export-data",
                         "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.TestCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.TestCodeTemplate)),
                 new Command("codetemplate-command", "Tests a code template command")
                 {
                     new Argument("CommandName", "The name of the command"),
@@ -349,7 +349,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--export-data",
                         "Export the generated test data to the specified file. A relative path to the JSON file, from the current directory",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.TestCodeTemplateCommand))
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.TestCodeTemplateCommand))
             };
             var publishCommands = new Command(PublishCommandName, "Publishing toolkits from patterns")
             {
@@ -363,7 +363,7 @@ namespace Automate.CLI.Infrastructure
                             typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                         new Option("--install", "Install the built toolkit locally",
                             typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                    }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.Publish))
+                    }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.Publish))
                     .WithAlias(PatternSubCommandName)
             }.WithAlias(BuildCommandName);
             var installCommands = new Command(InstallCommandName, "Installing toolkits")
@@ -371,7 +371,7 @@ namespace Automate.CLI.Infrastructure
                 new Command(ToolkitSubCommandName, "Installs the pattern from a toolkit")
                 {
                     new Argument("Location", "The location of the *.toolkit file to install into the current directory")
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.Install))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.Install))
             };
             var runCommands = new Command(RunCommandName, "Running patterns from toolkits")
             {
@@ -379,11 +379,11 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Argument("PatternName", "The name of the pattern in the toolkit that you want to use"),
                     new Option("--name", "A name for the draft", arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.NewDraft)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.NewDraft)),
                 new Command("switch", "Switches to configuring another draft")
                 {
                     new Argument("DraftId", "The id of the existing draft to configure")
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.SwitchDraft))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.SwitchDraft))
             };
             var configureCommands = new Command(ConfigureCommandName, "Configuring drafts to patterns from toolkits")
             {
@@ -392,31 +392,31 @@ namespace Automate.CLI.Infrastructure
                     new Argument("Expression", "The expression of the element to configure"),
                     new Option("--and-set", "A Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftAddTo)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftAddTo)),
                 new Command("add-one-to", "Add a new item to a collection in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to add to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftAddOneTo)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftAddOneTo)),
                 new Command("on", "Set the properties of an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to assign to"),
                     new Option("--and-set", "Additional Name=Value pair of a property assignment",
                         arity: ArgumentArity.ZeroOrMore)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftOn)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftOn)),
                 new Command("reset", "Reset all the properties of an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element to reset")
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftResetElement)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftResetElement)),
                 new Command("clear", "Deletes all the items from an existing collection in the draft")
                 {
                     new Argument("Expression", "The expression of the collection to clear")
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftClearCollection)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftClearCollection)),
                 new Command("delete", "Deletes an existing item in the draft")
                 {
                     new Argument("Expression", "The expression of the element/collection to delete")
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ConfigureDraftDeleteElement))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ConfigureDraftDeleteElement))
             };
             var validateCommands = new Command(ValidateCommandName, "Validating patterns from toolkits")
             {
@@ -424,7 +424,7 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Option("--on", "The expression of the element/collection to validate",
                         arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ValidateDraft))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ValidateDraft))
             };
             var executeCommands = new Command(ExecuteCommandName, "Executing automation on patterns from toolkits")
             {
@@ -434,7 +434,7 @@ namespace Automate.CLI.Infrastructure
                     new Option("--on",
                         "The expression of the element/collection containing the launch point to execute",
                         arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ExecuteLaunchPoint))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ExecuteLaunchPoint))
             };
             var viewCommands = new Command(ViewCommandName, "Viewing patterns and drafts")
             {
@@ -442,29 +442,29 @@ namespace Automate.CLI.Infrastructure
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ViewPattern)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ViewPattern)),
                 new Command(ToolkitSubCommandName, "View the configuration of the current toolkit")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ViewToolkit)),
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ViewToolkit)),
                 new Command(DraftSubCommandName, "View the configuration of the current draft")
                 {
                     new Option("--todo", "Displays the details of the pattern, and any validation errors", typeof(bool),
                         () => false, ArgumentArity.ZeroOrOne)
-                }.WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ViewDraft))
+                }.WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ViewDraft))
             };
             var listCommands = new Command(ListCommandName, "Listing patterns, toolkits and drafts")
             {
                 new Command("all", "Lists all patterns, toolkits and drafts")
                     .WithAlias("everything")
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ListEverything)),
+                    .WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ListEverything)),
                 new Command(PatternsSubCommandName, "Lists all patterns being edited")
-                    .WithHandler<AuthoringHandlers>(nameof(AuthoringHandlers.ListPatterns)),
+                    .WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ListPatterns)),
                 new Command(ToolkitsSubCommandName, "Lists all installed toolkits")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ListToolkits)),
+                    .WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ListToolkits)),
                 new Command(DraftsSubCommandName, "Lists all drafts being configured")
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.ListDrafts))
+                    .WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.ListDrafts))
             };
             var upgradeCommands = new Command(UpgradeCommandName, "Upgrading toolkits and drafts")
             {
@@ -472,7 +472,7 @@ namespace Automate.CLI.Infrastructure
                     {
                         new Option("--force", "Force the upgrade despite any compatability errors")
                     }
-                    .WithHandler<RuntimeHandlers>(nameof(RuntimeHandlers.UpgradeDraft))
+                    .WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.UpgradeDraft))
             };
 #if TESTINGONLY
             var testingOnlyCommands = new Command(TestingOnlyCommandName, "For testing only!")
@@ -482,12 +482,12 @@ namespace Automate.CLI.Infrastructure
                     new Option("--nested", "Whether to nest the exception", typeof(bool), () => false,
                         ArgumentArity.ZeroOrOne),
                     new Option("--message", "A message for the thrown exception", arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Fail)),
+                }.WithHandler<TestingOnlyApiHandlers>(nameof(TestingOnlyApiHandlers.Fail)),
                 new Command("succeed", "Runs a command successfully")
                 {
                     new Option("--message", "A message to output", arity: ArgumentArity.ZeroOrOne),
                     new Option("--value", "A value to substitute into the message", arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<TestingOnlyHandlers>(nameof(TestingOnlyHandlers.Succeed))
+                }.WithHandler<TestingOnlyApiHandlers>(nameof(TestingOnlyApiHandlers.Succeed))
             };
 #endif
             var command =

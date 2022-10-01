@@ -237,13 +237,13 @@ namespace CLI.IntegrationTests
             var assemblyLocation = typeof(CommandLineApi).Assembly.Location;
             var solutionDirectory = GetSolutionDirectory(assemblyLocation, "src");
             var throwingMethodLineNumber = hasInnerException
-                ? 60
-                : 62;
+                ? 30
+                : 32;
             var throwingMethodLocation =
                 Path.GetFullPath(Path.Combine(solutionDirectory,
-                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/CommandLineApiHandlers.cs"));
+                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/{nameof(CommandLineApi.TestingOnlyApiHandlers)}.cs"));
             var throwingMethodName =
-                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyHandlers)}.{nameof(CommandLineApi.TestingOnlyHandlers.Fail)}";
+                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyApiHandlers)}.{nameof(CommandLineApi.TestingOnlyApiHandlers.Fail)}";
             var throwingMethodSignature = "String message, Boolean nested";
 
             return hasInnerException

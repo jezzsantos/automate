@@ -200,12 +200,13 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} drafts");
 
             var draft = this.setup.Draft;
+            var toolkit = this.setup.Toolkit;
 
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
-                        $"\"Name\": \"{draft.Name}\", \"Version\": \"{draft.Toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
+                        $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
 
         [Fact]
@@ -449,7 +450,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id,
+                    draft.Id, draft.Toolkit.Version,
                     new
                     {
                         draft.Model.Id,
@@ -499,7 +500,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id,
+                    draft.Id, draft.Toolkit.Version,
                     new
                     {
                         draft.Model.Id,

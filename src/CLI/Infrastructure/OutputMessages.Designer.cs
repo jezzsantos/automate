@@ -337,7 +337,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{ToolkitName}&apos; (ID: &apos;{ToolkitId}&apos;, v.{Version}).
+        ///   Looks up a localized string similar to Created a new Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{ToolkitName}&apos; (ID: &apos;{ToolkitId}&apos;, v.{ToolkitVersion}).
         /// </summary>
         internal static string CommandLine_Output_CreateDraftFromToolkit {
             get {
@@ -346,7 +346,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;) is configured as:
+        ///   Looks up a localized string similar to Draft &apos;{Name}&apos; (ID: &apos;{DraftId}&apos;, v.{ToolkitVersion}) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_DraftConfiguration {

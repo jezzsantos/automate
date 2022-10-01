@@ -49,6 +49,8 @@ namespace Automate.Runtime.Application
 
         public ToolkitDefinition CurrentDraftToolkit => this.draftStore.GetCurrent()?.Toolkit;
 
+        public ToolkitDefinition CurrentToolkit => this.toolkitStore.GetCurrent();
+
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
             if (!this.fileResolver.ExistsAtPath(installerLocation))
@@ -88,9 +90,13 @@ namespace Automate.Runtime.Application
             return this.draftStore.Create(draft);
         }
 
-        public List<DraftDefinition> ListCreatedDrafts()
+        public List<(ToolkitDefinition Toolkit, DraftDefinition Draft)> ListCreatedDrafts()
         {
-            return this.draftStore.ListAll();
+            var drafts = this.draftStore.ListAll();
+
+            return drafts
+                .Select(draft => (this.toolkitStore.FindById(draft.Toolkit.Id), draft))
+                .ToList();
         }
 
         public void SwitchCurrentDraft(string draftId)

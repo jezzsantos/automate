@@ -257,6 +257,7 @@ namespace CLI.IntegrationTests
                 {
                     { "Name", draft.Name },
                     { "DraftId", draft.Id },
+                    { "ToolkitVersion", draft.Toolkit.Version },
                     {
                         "Configuration", new Dictionary<string, object>
                         {
@@ -405,6 +406,7 @@ namespace CLI.IntegrationTests
                 {
                     { "Name", draft.Name },
                     { "DraftId", draft.Id },
+                    { "ToolkitVersion", draft.Toolkit.Version },
                     {
                         "Configuration", new Dictionary<string, object>
                         {
@@ -1162,6 +1164,58 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenUpgradeDraftAndToolkitNotUpgraded_ThenDisplaysWarning()
+        {
+            CreateDraftFromBuiltToolkit();
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add-one-to {{APattern.AnElement1.ACollection1}}");
+
+            this.setup.RunCommand($"{CommandLineApi.UpgradeCommandName} draft --output-structured");
+
+            var draft = this.setup.Draft;
+            var upgrade = new StructuredMessage
+            {
+                Message = OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
+                Values = new Dictionary<string, object>
+                {
+                    { "Name", draft.Name },
+                    { "DraftId", draft.Id },
+                    { "ToolkitName", draft.Toolkit.PatternName },
+                    { "OldVersion", draft.Toolkit.Version },
+                    { "NewVersion", draft.Toolkit.Version },
+                    {
+                        "Log", new[]
+                        {
+                            new
+                            {
+                                Type = MigrationChangeType.Abort.ToString(),
+                                MessageTemplate = MigrationMessages.DraftDefinition_Upgrade_SameToolkitVersion,
+                                Arguments = new Dictionary<string, object>
+                                {
+                                    { "Name", draft.Toolkit.PatternName },
+                                    { "Version", draft.Toolkit.Version }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    upgrade
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
         }
 
         public void Dispose()
