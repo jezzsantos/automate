@@ -170,7 +170,7 @@
 `automate run toolkit &lt;PatternName&gt; --name "DraftName"`</value>
     </data>
     <data name="CommandLine_Output_CreateDraftFromToolkit" xml:space="preserve">
-        <value>Created a new Draft '{Name}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{ToolkitVersion})</value>
+        <value>Created a new Draft '{DraftName}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{ToolkitVersion}, rt.v{RuntimeVersion})</value>
     </data>
     <data name="CommandLine_Output_NoInstalledToolkits" xml:space="preserve">
         <value>There are no installed Toolkits yet. Use this command to install one:
@@ -197,13 +197,13 @@
         <value>This is only for testingonly</value>
     </data>
     <data name="CommandLine_Output_Preamble_CurrentDraftInUse" xml:space="preserve">
-        <value>The Draft: '{Name}' (ID: '{DraftId}') is now being configured</value>
+        <value>The Draft: '{Name}' (ID: '{Id}') is now being configured</value>
     </data>
     <data name="CommandLine_Output_DraftSwitched" xml:space="preserve">
-        <value>The Draft: '{Name}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{Version}), is now the default</value>
+        <value>The Draft: '{DraftName}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{ToolkitVersion} rt.v{RuntimeVersion}), is now the default</value>
     </data>
     <data name="CommandLine_Output_DraftConfigured" xml:space="preserve">
-        <value>The Draft Item '{DraftName}' (ID: '{DraftItemId}') was configured successfully, as:
+        <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was configured successfully, as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_DraftResetElement" xml:space="preserve"> 
@@ -216,11 +216,11 @@
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
     <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
-        <value>Draft '{Name}' (ID: '{DraftId}', v.{ToolkitVersion}) is configured as:
+        <value>Draft '{DraftName}' (ID: '{DraftId}', v.{ToolkitVersion}, rt.v{RuntimeVersion}) is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationFailed" xml:space="preserve">
-        <value>Draft '{Name}' (ID: '{DraftId}') is not correctly configured in these ways:
+        <value>Draft '{Name}' (ID: '{Id}') is not correctly configured in these ways:
 {Errors}</value>
     </data>
     <data name="CommandLine_Output_CommandExecutionFailed_WithValidation" xml:space="preserve">
@@ -228,7 +228,7 @@
 {ValidationErrors}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationSuccess" xml:space="preserve">
-        <value>Draft '{Name}' (ID: '{DraftId}') is configured correctly</value>
+        <value>Draft '{Name}' (ID: '{Id}') is configured correctly</value>
     </data>
     <data name="CommandLine_Output_CommandExecutionSucceeded" xml:space="preserve">
         <value>The Command: '{Command}' executed successfully:
@@ -239,15 +239,15 @@
 {Log}</value>
     </data>
     <data name="CommandLine_Output_DraftUpgradeSucceeded" xml:space="preserve">
-        <value>Successfully upgraded Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+        <value>Successfully upgraded Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_DraftUpgradeWithWarning" xml:space="preserve">
-        <value>Aborted upgrade of Draft '{Name}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
+        <value>Aborted upgrade of Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
     </data>
     <data name="CommandLine_Output_ToolkitSchema" xml:space="preserve">
-        <value>Toolkit pattern '{Name}' (ID: '{ToolkitId}', v{Version}) is defined as:
+        <value>Toolkit pattern '{Name}' (ID: '{Id}', v{Version}, rt.v{RuntimeVersion}) is defined as:
 {Schema}</value>
     </data>
     <data name="CommandLine_Output_ExecuteLaunchPointSucceededNoOutput" xml:space="preserve">

@@ -34,7 +34,7 @@ namespace Core.UnitTests.Runtime.Application
                 var packager = new Mock<IPatternToolkitPackager>();
                 var draftPathResolver = new Mock<IDraftPathResolver>();
                 var automationService = new Mock<IAutomationExecutor>();
-                var runtimeMetadata = new Mock<IRuntimeMetadata>();
+                var runtimeMetadata = new Mock<IAssemblyMetadata>();
 
                 this.application =
                     new RuntimeApplication(toolkitStore, draftStore,
@@ -76,7 +76,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.packager = new Mock<IPatternToolkitPackager>();
                 this.draftPathResolver = new Mock<IDraftPathResolver>();
                 this.automationExecutor = new Mock<IAutomationExecutor>();
-                var runtimeMetadata = new Mock<IRuntimeMetadata>();
+                var runtimeMetadata = new Mock<IAssemblyMetadata>();
                 runtimeMetadata.Setup(rm => rm.ProductName).Returns("aproductname");
                 runtimeMetadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
 
@@ -111,7 +111,7 @@ namespace Core.UnitTests.Runtime.Application
             [Fact]
             public void WhenInstallToolkit_ThenReturnsInstalledToolkit()
             {
-                this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IRuntimeMetadata>(), It.IsAny<IFile>()))
+                this.packager.Setup(pkg => pkg.UnPack(It.IsAny<IAssemblyMetadata>(), It.IsAny<IFile>()))
                     .Returns(this.toolkit);
 
                 var result = this.application.InstallToolkit("aninstallerlocation");
@@ -535,7 +535,8 @@ namespace Core.UnitTests.Runtime.Application
                     .Invoking(x => x.GetDraftConfiguration(false, false, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
-                        ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Substitute(draft.Name, draft.Id,
+                        ExceptionMessages.RuntimeApplication_Incompatible_ToolkitAheadOfDraft.Substitute(draft.Name,
+                            draft.Id,
                             "0.0.0", "0.2.0"));
             }
 

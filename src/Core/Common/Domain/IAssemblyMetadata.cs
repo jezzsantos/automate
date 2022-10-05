@@ -1,6 +1,6 @@
 ﻿namespace Automate.Common.Domain
 {
-    public interface IRuntimeMetadata
+    public interface IAssemblyMetadata
     {
         string RuntimeVersion { get; }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Automate.Common.Domain;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -7,10 +8,12 @@ namespace Automate.CLI.Infrastructure
         internal abstract class HandlerBase
         {
             private static List<OutputMessage> outputMessages;
+            private static IAssemblyMetadata assemblyMetadata;
 
-            internal static void Initialise(List<OutputMessage> messages)
+            internal static void Initialise(List<OutputMessage> messages, IAssemblyMetadata metadata)
             {
                 outputMessages = messages;
+                assemblyMetadata = metadata;
             }
 
             protected static void Output(string messageTemplate, params object[] args)
@@ -23,9 +26,9 @@ namespace Automate.CLI.Infrastructure
                 outputMessages.Add(new OutputMessage(OutputMessageLevel.Warning, messageTemplate, args));
             }
 
-            protected static void OutputError(string messageTemplate, params object[] args)
+            protected static IAssemblyMetadata GetMetadata()
             {
-                outputMessages.Add(new OutputMessage(OutputMessageLevel.Error, messageTemplate, args));
+                return assemblyMetadata;
             }
         }
     }

@@ -13,16 +13,22 @@ namespace Automate.Authoring.Domain
     {
         private readonly List<CodeTemplateFile> codeTemplateFiles;
 
-        public ToolkitDefinition(PatternDefinition pattern, Version version = null)
+        public ToolkitDefinition(PatternDefinition pattern, Version version = null) : this(pattern,
+            ToolkitConstants.GetRuntimeVersion(), version)
+        {
+        }
+
+        internal ToolkitDefinition(PatternDefinition pattern, string runtimeVersion, Version version = null)
         {
             pattern.GuardAgainstNull(nameof(pattern));
+            runtimeVersion.GuardAgainstNullOrEmpty(nameof(runtimeVersion));
 
             Id = pattern.Id;
             Pattern = pattern;
             Version = version.Exists()
                 ? version.ToString(ToolkitVersion.VersionFieldCount)
                 : pattern.ToolkitVersion.Current;
-            RuntimeVersion = ToolkitConstants.GetRuntimeVersion();
+            RuntimeVersion = runtimeVersion;
             this.codeTemplateFiles = new List<CodeTemplateFile>();
         }
 
@@ -96,79 +102,45 @@ namespace Automate.Authoring.Domain
             Version = latestToolkit.Pattern.ToolkitVersion.Current;
         }
 
-        public void VerifyRuntimeCompatability(IRuntimeMetadata metadata)
+        public void VerifyRuntimeCompatibility(IAssemblyMetadata metadata)
         {
             metadata.GuardAgainstNull(nameof(metadata));
-            VerifyRuntimeCompatability(metadata, RuntimeVersion);
+            VerifyRuntimeCompatibility(this, metadata);
         }
 
         public string Id { get; }
 
-        internal static void VerifyRuntimeCompatability(IRuntimeMetadata metadata, string toolkitRuntimeVersion)
+        internal static void VerifyRuntimeCompatibility(ToolkitDefinition toolkit, IAssemblyMetadata metadata)
         {
+            toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
 
             var runtimeName = metadata.ProductName;
-            var runtimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
-            var toolkitVersion = toolkitRuntimeVersion.HasValue()
-                ? SemVersion.Parse(toolkitRuntimeVersion, SemVersionStyles.Any)
-                : null;
-
-            if (toolkitVersion.NotExists())
+            var assemblyRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
+            var runtimeVersion = toolkit.RuntimeVersion;
+            if (runtimeVersion.HasNoValue())
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Substitute(
-                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
+                    ExceptionMessages.ToolkitDefinition_Incompatible_NoToolkitVersion.Substitute(
+                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, assemblyRuntimeVersion, runtimeName));
             }
 
-            if (IsToolkitOutOfDate())
+            var toolkitRuntimeVersion = SemVersion.Parse(runtimeVersion, SemVersionStyles.Any);
+            var compatibility = toolkit.GetCompatibility(metadata);
+            if (compatibility == ToolkitRuntimeVersionCompatibility.RuntimeAheadOfToolkit)
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute(toolkitVersion,
-                        runtimeVersion, runtimeName));
+                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute(
+                        toolkitRuntimeVersion,
+                        assemblyRuntimeVersion, runtimeName));
             }
 
-            if (IsRuntimeOutOfDate())
+            if (compatibility == ToolkitRuntimeVersionCompatibility.ToolkitAheadOfRuntime)
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_CompatabilityRuntimeOutOfDate.Substitute(toolkitVersion,
-                        runtimeVersion, runtimeName));
-            }
-
-            bool IsToolkitOutOfDate()
-            {
-                if (runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion.Minor > toolkitVersion.Minor;
-                }
-                if (!runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion > toolkitVersion.WithoutPrerelease();
-                }
-                if (runtimeVersion.IsPrerelease && !toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion.WithoutPrerelease() > toolkitVersion;
-                }
-
-                return runtimeVersion.Major > toolkitVersion.Major;
-            }
-
-            bool IsRuntimeOutOfDate()
-            {
-                if (runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion.Minor < toolkitVersion.Minor;
-                }
-                if (!runtimeVersion.IsPrerelease && toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion < toolkitVersion.WithoutPrerelease();
-                }
-                if (runtimeVersion.IsPrerelease && !toolkitVersion.IsPrerelease)
-                {
-                    return runtimeVersion.WithoutPrerelease() < toolkitVersion;
-                }
-
-                return runtimeVersion.Major < toolkitVersion.Major;
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute(
+                        toolkitRuntimeVersion,
+                        assemblyRuntimeVersion, runtimeName));
             }
         }
 
@@ -265,5 +237,12 @@ namespace Automate.Authoring.Domain
                     MigrationMessages.ToolkitDefinition_CodeTemplateFile_Added, template.Name, template.Id);
             });
         }
+#if TESTINGONLY
+
+        internal void ResetRuntimeVersion()
+        {
+            RuntimeVersion = null;
+        }
+#endif
     }
 }

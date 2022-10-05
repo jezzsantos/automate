@@ -20,6 +20,7 @@ namespace CLI.IntegrationTests
             RuntimeSpec.DeleteOutputFolders();
         }
 
+        
         [Fact]
         public void WhenListAllAndSome_ThenDisplaysLists()
         {
@@ -69,7 +70,29 @@ namespace CLI.IntegrationTests
                                     {
                                         { "Id", toolkit.Id },
                                         { "PatternName", "APattern1" },
-                                        { "Version", "0.1.0" }
+                                        {
+                                            "Version", new Dictionary<string, object>
+                                            {
+                                                {
+                                                    "Toolkit", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.Version },
+                                                        { "Installed", toolkit.Version }
+                                                    }
+                                                },
+                                                {
+                                                    "Runtime", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Installed", toolkit.RuntimeVersion }
+                                                    }
+                                                },
+                                                {
+                                                    "Compatibility",
+                                                    ToolkitRuntimeVersionCompatibility.Compatible.ToString()
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -85,11 +108,36 @@ namespace CLI.IntegrationTests
                                 {
                                     new()
                                     {
-                                        { "Id", draft.Id },
-                                        { "Name", draft.Name },
+                                        { "DraftId", draft.Id },
+                                        { "DraftName", draft.Name },
                                         { "ToolkitId", toolkit.Id },
-                                        { "ToolkitVersion", "0.1.0" },
-                                        { "CurrentToolkitVersion", "0.1.0" },
+                                        {
+                                            "ToolkitVersion", new Dictionary<string, object>
+                                            {
+                                                {
+                                                    "DraftCompatibility",
+                                                    DraftToolkitVersionCompatibility.Compatible.ToString()
+                                                },
+                                                {
+                                                    "Toolkit", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.Version },
+                                                        { "Installed", toolkit.Version }
+                                                    }
+                                                },
+                                                {
+                                                    "Runtime", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Installed", toolkit.RuntimeVersion }
+                                                    }
+                                                },
+                                                {
+                                                    "Compatibility",
+                                                    ToolkitRuntimeVersionCompatibility.Compatible.ToString()
+                                                }
+                                            }
+                                        },
                                         { "IsCurrent", true }
                                     }
                                 }
@@ -153,7 +201,29 @@ namespace CLI.IntegrationTests
                                     {
                                         { "Id", toolkit.Id },
                                         { "PatternName", "APattern1" },
-                                        { "Version", "2.0.0" }
+                                        {
+                                            "Version", new Dictionary<string, object>
+                                            {
+                                                {
+                                                    "Toolkit", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", "2.0.0" },
+                                                        { "Installed", "2.0.0" }
+                                                    }
+                                                },
+                                                {
+                                                    "Runtime", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Installed", toolkit.RuntimeVersion }
+                                                    }
+                                                },
+                                                {
+                                                    "Compatibility",
+                                                    ToolkitRuntimeVersionCompatibility.Compatible.ToString()
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -169,11 +239,36 @@ namespace CLI.IntegrationTests
                                 {
                                     new()
                                     {
-                                        { "Id", draft.Id },
-                                        { "Name", draft.Name },
+                                        { "DraftId", draft.Id },
+                                        { "DraftName", draft.Name },
                                         { "ToolkitId", toolkit.Id },
-                                        { "ToolkitVersion", "0.1.0" },
-                                        { "CurrentToolkitVersion", "2.0.0" },
+                                        {
+                                            "ToolkitVersion", new Dictionary<string, object>
+                                            {
+                                                {
+                                                    "DraftCompatibility",
+                                                    DraftToolkitVersionCompatibility.ToolkitAheadOfDraft.ToString()
+                                                },
+                                                {
+                                                    "Toolkit", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", draft.Toolkit.Version },
+                                                        { "Installed", "2.0.0" }
+                                                    }
+                                                },
+                                                {
+                                                    "Runtime", new Dictionary<string, object>
+                                                    {
+                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Installed", toolkit.RuntimeVersion }
+                                                    }
+                                                },
+                                                {
+                                                    "Compatibility",
+                                                    ToolkitRuntimeVersionCompatibility.Compatible.ToString()
+                                                }
+                                            }
+                                        },
                                         { "IsCurrent", true }
                                     }
                                 }

@@ -33,7 +33,7 @@ namespace Automate.Authoring.Infrastructure
             return new ToolkitPackage(toolkit, exportedLocation, version.Message);
         }
 
-        public ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer)
+        public ToolkitDefinition UnPack(IAssemblyMetadata metadata, IFile installer)
         {
             metadata.GuardAgainstNull(nameof(metadata));
             installer.GuardAgainstNull(nameof(installer));
@@ -59,7 +59,7 @@ namespace Automate.Authoring.Infrastructure
             return (version, toolkit);
         }
 
-        private ToolkitDefinition UnpackToolkit(IRuntimeMetadata metadata, IFile installer)
+        private ToolkitDefinition UnpackToolkit(IAssemblyMetadata metadata, IFile installer)
         {
             var contents = installer.GetContents();
 
@@ -85,7 +85,7 @@ namespace Automate.Authoring.Infrastructure
                         installer.FullPath));
             }
 
-            toolkit.VerifyRuntimeCompatability(metadata);
+            toolkit.VerifyRuntimeCompatibility(metadata);
 
             return toolkit;
         }

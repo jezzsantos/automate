@@ -807,21 +807,31 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The installed toolkit for this draft &apos;{0}&apos; (ID: &apos;{1}&apos;) has been upgraded from version: &apos;{2}&apos; to version: &apos;{3}&apos;. Please upgrade this draft with command:
-        ///`automate upgrade draft`.
-        /// </summary>
-        internal static string RuntimeApplication_CurrentDraftUpgraded {
-            get {
-                return ResourceManager.GetString("RuntimeApplication_CurrentDraftUpgraded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No draft with ID: &apos;{0}&apos; has been created..
         /// </summary>
         internal static string RuntimeApplication_DraftNotFound {
             get {
                 return ResourceManager.GetString("RuntimeApplication_DraftNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This draft &apos;{0}&apos; (ID: &apos;{1}&apos;) has already been upgraded from version: &apos;{3}&apos; to version: &apos;{2}&apos;, and is incompatible with the toolkit version &apos;{3}&apos;. Please install the &apos;{2}&apos; version of the toolkit with command:
+        ///`automate install toolkit &lt;FilePath&gt;`.
+        /// </summary>
+        internal static string RuntimeApplication_Incompatible_DraftAheadOfToolkit {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_Incompatible_DraftAheadOfToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The installed toolkit for this draft &apos;{0}&apos; (ID: &apos;{1}&apos;) has been upgraded from version: &apos;{2}&apos; to version: &apos;{3}&apos;. Please upgrade this draft with command:
+        ///`automate upgrade draft`.
+        /// </summary>
+        internal static string RuntimeApplication_Incompatible_ToolkitAheadOfDraft {
+            get {
+                return ResourceManager.GetString("RuntimeApplication_Incompatible_ToolkitAheadOfDraft", resourceCulture);
             }
         }
         
@@ -910,26 +920,14 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This toolkit has been built (by its author) with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
-        ///1. Upgrade your installation of `{2}` to a newer version of `{2}` (v{0} or higher)
-        ///or 2. Obtain a downgraded version of this toolkit (from its author) built against a compatible version of `{2}` (such as v{0})
-        ///.
-        /// </summary>
-        internal static string ToolkitDefinition_CompatabilityRuntimeOutOfDate {
-            get {
-                return ResourceManager.GetString("ToolkitDefinition_CompatabilityRuntimeOutOfDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This toolkit has been built (by its author) with an older version of `{2}` prior to (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
         ///1. Downgrade your installation of `{2}` to an older version prior to (v{0}) 
         ///or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher
         ///.
         /// </summary>
-        internal static string ToolkitDefinition_CompatabilityToolkitNoVersion {
+        internal static string ToolkitDefinition_Incompatible_NoToolkitVersion {
             get {
-                return ResourceManager.GetString("ToolkitDefinition_CompatabilityToolkitNoVersion", resourceCulture);
+                return ResourceManager.GetString("ToolkitDefinition_Incompatible_NoToolkitVersion", resourceCulture);
             }
         }
         
@@ -939,9 +937,21 @@ namespace Automate.Common {
         ///or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher)
         ///.
         /// </summary>
-        internal static string ToolkitDefinition_CompatabilityToolkitOutOfDate {
+        internal static string ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit {
             get {
-                return ResourceManager.GetString("ToolkitDefinition_CompatabilityToolkitOutOfDate", resourceCulture);
+                return ResourceManager.GetString("ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This toolkit has been built (by its author) with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
+        ///1. Upgrade your installation of `{2}` to a newer version of `{2}` (at least v{0} or higher)
+        ///or 2. Obtain a downgraded version of this toolkit (from its author) built against a compatible version of `{2}` (such as v{0})
+        ///.
+        /// </summary>
+        internal static string ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime {
+            get {
+                return ResourceManager.GetString("ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime", resourceCulture);
             }
         }
         

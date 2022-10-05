@@ -95,11 +95,11 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var metadata = new CliRuntimeMetadata();
+            var metadata = new CliAssemblyMetadata();
             var runtimeVersion = metadata.RuntimeVersion;
             var runtimeName = metadata.ProductName;
             this.setup.Should()
-                .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitNoVersion.Substitute(
+                .DisplayError(ExceptionMessages.ToolkitDefinition_Incompatible_NoToolkitVersion.Substitute(
                     ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
         }
 
@@ -109,11 +109,11 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/OlderRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var metadata = new CliRuntimeMetadata();
+            var metadata = new CliAssemblyMetadata();
             var runtimeVersion = metadata.RuntimeVersion;
             var runtimeName = metadata.ProductName;
             this.setup.Should()
-                .DisplayError(ExceptionMessages.ToolkitDefinition_CompatabilityToolkitOutOfDate.Substitute(
+                .DisplayError(ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute(
                     "0.1.0-preview", runtimeVersion, runtimeName));
         }
 
@@ -156,7 +156,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_CreateDraftFromToolkit.SubstituteTemplate(draft.Name,
-                        draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version));
+                        draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version,
+                        draft.Toolkit.RuntimeVersion));
         }
 
         [Fact]
@@ -175,7 +176,8 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_DraftSwitched.SubstituteTemplate(draft.Name, draft.Id,
-                        draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version));
+                        draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version,
+                        draft.Toolkit.RuntimeVersion));
         }
 
         [Fact]
@@ -450,7 +452,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id, draft.Toolkit.Version,
+                    draft.Id, draft.Toolkit.Version, draft.Toolkit.RuntimeVersion,
                     new
                     {
                         draft.Model.Id,
@@ -500,7 +502,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id, draft.Toolkit.Version,
+                    draft.Id, draft.Toolkit.Version, draft.Toolkit.RuntimeVersion,
                     new
                     {
                         draft.Model.Id,
@@ -834,12 +836,12 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
 
-            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(pattern.Name, pattern.Id,
-                        pattern.ToolkitVersion.Current,
+                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(toolkit.PatternName, toolkit.Id,
+                        toolkit.Version, toolkit.RuntimeVersion,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
                         $"\t- AProperty2 (attribute) (int){Environment.NewLine}" +
@@ -864,12 +866,12 @@ namespace CLI.IntegrationTests
 
             this.setup.RunCommand($"{CommandLineApi.ViewCommandName} toolkit");
 
-            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(pattern.Name, pattern.Id,
-                        pattern.ToolkitVersion.Current,
+                    OutputMessages.CommandLine_Output_ToolkitSchema.SubstituteTemplate(toolkit.PatternName, toolkit.Id,
+                        toolkit.Version, toolkit.RuntimeVersion,
                         $"- APattern (root element) (attached with 1 code templates){Environment.NewLine}" +
                         $"\t- AProperty1 (attribute) (string, required){Environment.NewLine}" +
                         $"\t- AProperty2 (attribute) (int){Environment.NewLine}" +

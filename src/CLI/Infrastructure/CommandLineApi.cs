@@ -53,7 +53,7 @@ namespace Automate.CLI.Infrastructure
 
             var outputMessages = new List<OutputMessage>();
             var contextualMessages = new List<ContextualMessage>();
-            HandlerBase.Initialise(outputMessages);
+            HandlerBase.Initialise(outputMessages, container.Resolve<IAssemblyMetadata>());
 
             var createCommands = new Command(CreateCommandName, "Creating new patterns")
             {
@@ -707,7 +707,7 @@ namespace Automate.CLI.Infrastructure
                 container.Resolve<IDraftStore>(),
                 container.Resolve<IFilePathResolver>(), container.Resolve<IPatternToolkitPackager>(),
                 container.Resolve<IDraftPathResolver>(), container.Resolve<IAutomationExecutor>(),
-                container.Resolve<IRuntimeMetadata>());
+                container.Resolve<IAssemblyMetadata>());
         }
 
         private static void WriteBanner()

@@ -148,9 +148,13 @@
     <data name="RuntimeApplication_NoCurrentDraft" xml:space="preserve">
         <value>There is no current draft yet. Create a new draft with `automate run toolkit "&lt;PatternName&gt;"`, or use `automate run switch "&lt;DraftId&gt;"` to switch to an existing draft</value>
     </data>
-    <data name="RuntimeApplication_CurrentDraftUpgraded" xml:space="preserve">
+    <data name="RuntimeApplication_Incompatible_ToolkitAheadOfDraft" xml:space="preserve">
         <value>The installed toolkit for this draft '{0}' (ID: '{1}') has been upgraded from version: '{2}' to version: '{3}'. Please upgrade this draft with command:
 `automate upgrade draft`</value>
+    </data>
+    <data name="RuntimeApplication_Incompatible_DraftAheadOfToolkit" xml:space="preserve">
+        <value>This draft '{0}' (ID: '{1}') has already been upgraded from version: '{3}' to version: '{2}', and is incompatible with the toolkit version '{3}'. Please install the '{2}' version of the toolkit with command:
+`automate install toolkit &lt;FilePath&gt;`</value>
     </data>
     <data name="RuntimeApplication_DraftNotFound" xml:space="preserve">
         <value>No draft with ID: '{0}' has been created.</value>
@@ -276,21 +280,21 @@
     <data name="DictionaryEntryEnumerator_OutOfRange" xml:space="preserve">
         <value>Enumerator is before or after the collection</value>
     </data>
-    <data name="ToolkitDefinition_CompatabilityToolkitNoVersion" xml:space="preserve">
+    <data name="ToolkitDefinition_Incompatible_NoToolkitVersion" xml:space="preserve">
         <value>This toolkit has been built (by its author) with an older version of `{2}` prior to (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
 1. Downgrade your installation of `{2}` to an older version prior to (v{0}) 
 or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher
 </value>
 </data>
-    <data name="ToolkitDefinition_CompatabilityToolkitOutOfDate" xml:space="preserve">
+    <data name="ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit" xml:space="preserve">
         <value>This toolkit has been built (by its author) with an older version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
 1. Downgrade your installation of `{2}` to version (v{0}) 
 or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher)
 </value>
     </data>
-    <data name="ToolkitDefinition_CompatabilityRuntimeOutOfDate" xml:space="preserve">
+    <data name="ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime" xml:space="preserve">
         <value>This toolkit has been built (by its author) with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
-1. Upgrade your installation of `{2}` to a newer version of `{2}` (v{0} or higher)
+1. Upgrade your installation of `{2}` to a newer version of `{2}` (at least v{0} or higher)
 or 2. Obtain a downgraded version of this toolkit (from its author) built against a compatible version of `{2}` (such as v{0})
 </value>
     </data>

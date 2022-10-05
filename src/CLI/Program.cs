@@ -75,7 +75,7 @@ namespace Automate.CLI
             services.AddSingleton<IFileSystemReaderWriter, SystemIoFileSystemReaderWriter>();
             services.AddSingleton<IAutomationExecutor, AutomationExecutor>();
             services.AddSingleton<IPersistableFactory, AutomatePersistableFactory>();
-            services.AddSingleton<IRuntimeMetadata, CliRuntimeMetadata>();
+            services.AddSingleton<IAssemblyMetadata, CliAssemblyMetadata>();
 
             services.AddSingleton<IDependencyContainer>(new DotNetDependencyContainer(services));
         }

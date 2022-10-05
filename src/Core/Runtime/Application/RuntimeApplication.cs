@@ -17,14 +17,14 @@ namespace Automate.Runtime.Application
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
-        private readonly IRuntimeMetadata runtimeMetadata;
+        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,
             IFilePathResolver fileResolver,
             IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver,
             IAutomationExecutor automationExecutor,
-            IRuntimeMetadata runtimeMetadata
+            IAssemblyMetadata assemblyMetadata
         )
         {
             toolkitStore.GuardAgainstNull(nameof(toolkitStore));
@@ -33,14 +33,14 @@ namespace Automate.Runtime.Application
             packager.GuardAgainstNull(nameof(packager));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             automationExecutor.GuardAgainstNull(nameof(automationExecutor));
-            runtimeMetadata.GuardAgainstNull(nameof(runtimeMetadata));
+            assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
             this.toolkitStore = toolkitStore;
             this.draftStore = draftStore;
             this.fileResolver = fileResolver;
             this.packager = packager;
             this.draftPathResolver = draftPathResolver;
             this.automationExecutor = automationExecutor;
-            this.runtimeMetadata = runtimeMetadata;
+            this.assemblyMetadata = assemblyMetadata;
         }
 
         public string CurrentDraftId => this.draftStore.GetCurrent()?.Id;
@@ -60,7 +60,7 @@ namespace Automate.Runtime.Application
             }
 
             var installer = this.fileResolver.GetFileAtPath(installerLocation);
-            var toolkit = this.packager.UnPack(this.runtimeMetadata, installer);
+            var toolkit = this.packager.UnPack(this.assemblyMetadata, installer);
 
             this.toolkitStore.Import(toolkit);
 
@@ -83,7 +83,7 @@ namespace Automate.Runtime.Application
                     ExceptionMessages.RuntimeApplication_ToolkitNotFound.Substitute(toolkitName));
             }
 
-            toolkit.VerifyRuntimeCompatability(this.runtimeMetadata);
+            toolkit.VerifyRuntimeCompatibility(this.assemblyMetadata);
 
             var draft = new DraftDefinition(toolkit, draftName);
 
@@ -348,17 +348,23 @@ namespace Automate.Runtime.Application
                 return draft;
             }
 
-            var currentVersion = draft.Toolkit.Version;
             var toolkit = this.toolkitStore.FindById(draft.Toolkit.Id);
-            var installedVersion = toolkit.Version;
-            if (currentVersion != installedVersion)
+            if (draft.GetCompatibility(toolkit) == DraftToolkitVersionCompatibility.ToolkitAheadOfDraft)
             {
                 throw new AutomateException(
-                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Substitute(draft.Name, draft.Id,
-                        currentVersion, installedVersion));
+                    ExceptionMessages.RuntimeApplication_Incompatible_ToolkitAheadOfDraft.Substitute(draft.Name,
+                        draft.Id,
+                        draft.Toolkit.Version, toolkit.Version));
+            }
+            if (draft.GetCompatibility(toolkit) == DraftToolkitVersionCompatibility.DraftAheadOfToolkit)
+            {
+                throw new AutomateException(
+                    ExceptionMessages.RuntimeApplication_Incompatible_DraftAheadOfToolkit.Substitute(draft.Name,
+                        draft.Id,
+                        draft.Toolkit.Version, toolkit.Version));
             }
 
-            toolkit.VerifyRuntimeCompatability(this.runtimeMetadata);
+            toolkit.VerifyRuntimeCompatibility(this.assemblyMetadata);
 
             return draft;
         }

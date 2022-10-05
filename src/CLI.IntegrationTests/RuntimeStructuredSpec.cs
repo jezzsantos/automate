@@ -24,214 +24,69 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
-        public void WhenViewToolkit_ThenDisplaysSchema()
+        public void WhenCreateDraft_ThenDisplaysConfiguration()
         {
-            CreateDraftFromBuiltToolkit();
+            ConfigureBuildAndInstallToolkit();
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern --output-structured");
 
-            this.setup.RunCommand(
-                $"{CommandLineApi.ViewCommandName} toolkit --output-structured");
-
-            var pattern = this.setup.Pattern;
-            var patternSchema = new StructuredMessage
+            var draft = this.setup.Draft;
+            var draftConfiguration = new StructuredMessage
             {
-                Message = OutputMessages.CommandLine_Output_ToolkitSchema,
+                Message = OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
                 Values = new Dictionary<string, object>
                 {
-                    { "Name", "APattern" },
-                    { "ToolkitId", pattern.Id },
-                    { "Version", "0.1.0" },
-                    {
-                        "Schema", new Dictionary<string, object>
-                        {
-                            { "Id", pattern.Id },
-                            { "EditPath", "{APattern}" },
-                            { "Name", "APattern" },
-                            { "DisplayName", "APattern" },
-                            { "Description", "" },
-                            { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
-                            { "Automation", Array.Empty<Dictionary<string, object>>() },
-                            {
-                                "Attributes", new List<Dictionary<string, object>>
-                                {
-                                    new()
-                                    {
-                                        { "Id", pattern.Attributes[0].Id },
-                                        { "Name", "AProperty1" },
-                                        { "DataType", "string" },
-                                        { "IsRequired", false },
-                                        { "Choices", Array.Empty<string>() },
-                                        { "DefaultValue", "ADefaultValue1" }
-                                    }
-                                }
-                            },
-                            {
-                                "Elements", new List<Dictionary<string, object>>
-                                {
-                                    new()
-                                    {
-                                        { "Id", pattern.Elements[0].Id },
-                                        { "EditPath", "{APattern.AnElement1}" },
-                                        { "Name", "AnElement1" },
-                                        { "DisplayName", "AnElement1" },
-                                        { "Description", "" },
-                                        { "AutoCreate", true },
-                                        { "IsCollection", false },
-                                        { "Cardinality", "One" },
-                                        { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
-                                        { "Automation", Array.Empty<Dictionary<string, object>>() },
-                                        {
-                                            "Attributes", new List<Dictionary<string, object>>
-                                            {
-                                                new()
-                                                {
-                                                    { "Id", pattern.Elements[0].Attributes[0].Id },
-                                                    { "Name", "AProperty2" },
-                                                    { "DataType", "string" },
-                                                    { "IsRequired", false },
-                                                    { "Choices", Array.Empty<string>() },
-                                                    { "DefaultValue", "ADefaultValue2" }
-                                                },
-                                                new()
-                                                {
-                                                    { "Id", pattern.Elements[0].Attributes[1].Id },
-                                                    { "Name", "AProperty3" },
-                                                    { "DataType", "string" },
-                                                    { "IsRequired", false },
-                                                    { "Choices", Array.Empty<string>() },
-                                                    { "DefaultValue", "ADefaultValue3" }
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "Elements", new List<Dictionary<string, object>>
-                                            {
-                                                new()
-                                                {
-                                                    { "Id", pattern.Elements[0].Elements[0].Id },
-                                                    { "EditPath", "{APattern.AnElement1.ACollection1}" },
-                                                    { "Name", "ACollection1" },
-                                                    { "DisplayName", "ACollection1" },
-                                                    { "Description", "" },
-                                                    { "AutoCreate", false },
-                                                    { "IsCollection", true },
-                                                    { "Cardinality", "ZeroOrMany" },
-                                                    { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
-                                                    { "Automation", Array.Empty<Dictionary<string, object>>() },
-                                                    {
-                                                        "Attributes", new List<Dictionary<string, object>>
-                                                        {
-                                                            new()
-                                                            {
-                                                                {
-                                                                    "Id",
-                                                                    pattern.Elements[0].Elements[0].Attributes[0].Id
-                                                                },
-                                                                { "Name", "AProperty4" },
-                                                                { "DataType", "string" },
-                                                                { "IsRequired", false },
-                                                                { "Choices", Array.Empty<string>() },
-                                                                { "DefaultValue", "ADefaultValue4" }
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        "Elements", new List<Dictionary<string, object>>
-                                                        {
-                                                            new()
-                                                            {
-                                                                {
-                                                                    "Id", pattern.Elements[0].Elements[0].Elements[0].Id
-                                                                },
-                                                                {
-                                                                    "EditPath",
-                                                                    "{APattern.AnElement1.ACollection1.AnElement3}"
-                                                                },
-                                                                { "Name", "AnElement3" },
-                                                                { "DisplayName", "AnElement3" },
-                                                                { "Description", "" },
-                                                                { "AutoCreate", true },
-                                                                { "IsCollection", false },
-                                                                { "Cardinality", "One" },
-                                                                {
-                                                                    "CodeTemplates",
-                                                                    Array.Empty<Dictionary<string, object>>()
-                                                                },
-                                                                {
-                                                                    "Automation",
-                                                                    Array.Empty<Dictionary<string, object>>()
-                                                                },
-                                                                {
-                                                                    "Attributes", new List<Dictionary<string, object>>
-                                                                    {
-                                                                        new()
-                                                                        {
-                                                                            {
-                                                                                "Id",
-                                                                                pattern.Elements[0].Elements[0]
-                                                                                    .Elements[0].Attributes[0].Id
-                                                                            },
-                                                                            { "Name", "AProperty5" },
-                                                                            { "DataType", "string" },
-                                                                            { "IsRequired", false },
-                                                                            { "Choices", Array.Empty<string>() },
-                                                                            { "DefaultValue", "ADefaultValue5" }
-                                                                        }
-                                                                    }
-                                                                },
-                                                                {
-                                                                    "Elements",
-                                                                    Array.Empty<Dictionary<string, object>>()
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    new()
-                                    {
-                                        { "Id", pattern.Elements[1].Id },
-                                        { "EditPath", "{APattern.AnElement2}" },
-                                        { "Name", "AnElement2" },
-                                        { "DisplayName", "AnElement2" },
-                                        { "Description", "" },
-                                        { "AutoCreate", false },
-                                        { "IsCollection", false },
-                                        { "Cardinality", "One" },
-                                        { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
-                                        { "Automation", Array.Empty<Dictionary<string, object>>() },
-                                        {
-                                            "Attributes", new List<Dictionary<string, object>>
-                                            {
-                                                new()
-                                                {
-                                                    {
-                                                        "Id",
-                                                        pattern.Elements[1].Attributes[0].Id
-                                                    },
-                                                    { "Name", "AProperty6" },
-                                                    { "DataType", "string" },
-                                                    { "IsRequired", false },
-                                                    { "Choices", Array.Empty<string>() },
-                                                    { "DefaultValue", "ADefaultValue6" }
-                                                }
-                                            }
-                                        },
-                                        { "Elements", new List<Dictionary<string, object>>() }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    { "DraftName", draft.Name },
+                    { "DraftId", draft.Id },
+                    { "ToolkitName", draft.Toolkit.PatternName },
+                    { "ToolkitId", draft.Toolkit.Id },
+                    { "ToolkitVersion", draft.Toolkit.Version },
+                    { "RuntimeVersion", draft.Toolkit.RuntimeVersion }
                 }
             };
+
             var structuredOutput = new StructuredOutput
             {
                 Info = new List<string>(),
                 Output = new List<StructuredMessage>
                 {
-                    patternSchema
+                    draftConfiguration
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenSwitchDraft_ThenDisplaysConfiguration()
+        {
+            ConfigureBuildAndInstallToolkit();
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern");
+
+            var draft = this.setup.Drafts.First();
+
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} switch \"{draft.Id}\" --output-structured");
+
+            var draftConfiguration = new StructuredMessage
+            {
+                Message = OutputMessages.CommandLine_Output_DraftSwitched,
+                Values = new Dictionary<string, object>
+                {
+                    { "DraftName", draft.Name },
+                    { "DraftId", draft.Id },
+                    { "ToolkitName", draft.Toolkit.PatternName },
+                    { "ToolkitId", draft.Toolkit.Id },
+                    { "ToolkitVersion", draft.Toolkit.Version },
+                    { "RuntimeVersion", draft.Toolkit.RuntimeVersion }
+                }
+            };
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    draftConfiguration
                 }
             }.ToJson();
             this.setup.Should().DisplayNoError();
@@ -255,9 +110,10 @@ namespace CLI.IntegrationTests
                 Message = OutputMessages.CommandLine_Output_DraftConfiguration,
                 Values = new Dictionary<string, object>
                 {
-                    { "Name", draft.Name },
+                    { "DraftName", draft.Name },
                     { "DraftId", draft.Id },
                     { "ToolkitVersion", draft.Toolkit.Version },
+                    { "RuntimeVersion", draft.Toolkit.RuntimeVersion },
                     {
                         "Configuration", new Dictionary<string, object>
                         {
@@ -404,9 +260,10 @@ namespace CLI.IntegrationTests
                 Message = OutputMessages.CommandLine_Output_DraftConfiguration,
                 Values = new Dictionary<string, object>
                 {
-                    { "Name", draft.Name },
+                    { "DraftName", draft.Name },
                     { "DraftId", draft.Id },
                     { "ToolkitVersion", draft.Toolkit.Version },
+                    { "RuntimeVersion", draft.Toolkit.RuntimeVersion },
                     {
                         "Configuration", new Dictionary<string, object>
                         {
@@ -739,7 +596,7 @@ namespace CLI.IntegrationTests
                 Values = new Dictionary<string, object>
                 {
                     { "Name", draft.Name },
-                    { "DraftId", draft.Id },
+                    { "Id", draft.Id },
                     {
                         "Errors", new List<ValidationResult>
                         {
@@ -749,6 +606,7 @@ namespace CLI.IntegrationTests
                     }
                 }
             };
+            
             var structuredOutput = new StructuredOutput
             {
                 Info = new List<string>
@@ -791,7 +649,7 @@ namespace CLI.IntegrationTests
                         Message = OutputMessages.CommandLine_Output_DraftConfigured,
                         Values = new Dictionary<string, object>
                         {
-                            { "DraftName", "AnElement1" },
+                            { "Name", "AnElement1" },
                             { "DraftItemId", draftElement.Id },
                             {
                                 "Configuration", new
@@ -840,7 +698,7 @@ namespace CLI.IntegrationTests
                         Message = OutputMessages.CommandLine_Output_DraftConfigured,
                         Values = new Dictionary<string, object>
                         {
-                            { "DraftName", "AnElement2" },
+                            { "Name", "AnElement2" },
                             { "DraftItemId", draftElement.Id },
                             {
                                 "Configuration", new
@@ -889,7 +747,7 @@ namespace CLI.IntegrationTests
                         Message = OutputMessages.CommandLine_Output_DraftConfigured,
                         Values = new Dictionary<string, object>
                         {
-                            { "DraftName", "ACollection1" },
+                            { "Name", "ACollection1" },
                             { "DraftItemId", draftCollectionItem.Id },
                             {
                                 "Configuration", new
@@ -946,7 +804,7 @@ namespace CLI.IntegrationTests
                         Values = new Dictionary<string, object>
                         {
                             { "Name", draft.Name },
-                            { "DraftId", draft.Id },
+                            { "Id", draft.Id },
                             {
                                 "Errors", new[]
                                 {
@@ -1183,7 +1041,7 @@ namespace CLI.IntegrationTests
                 Message = OutputMessages.CommandLine_Output_DraftUpgradeWithWarning,
                 Values = new Dictionary<string, object>
                 {
-                    { "Name", draft.Name },
+                    { "DraftName", draft.Name },
                     { "DraftId", draft.Id },
                     { "ToolkitName", draft.Toolkit.PatternName },
                     { "OldVersion", draft.Toolkit.Version },
@@ -1212,6 +1070,223 @@ namespace CLI.IntegrationTests
                 Output = new List<StructuredMessage>
                 {
                     upgrade
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenViewToolkit_ThenDisplaysSchema()
+        {
+            CreateDraftFromBuiltToolkit();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ViewCommandName} toolkit --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var patternSchema = new StructuredMessage
+            {
+                Message = OutputMessages.CommandLine_Output_ToolkitSchema,
+                Values = new Dictionary<string, object>
+                {
+                    { "Name", "APattern" },
+                    { "Id", toolkit.Id },
+                    { "Version", toolkit.Version },
+                    { "RuntimeVersion", toolkit.RuntimeVersion },
+                    {
+                        "Schema", new Dictionary<string, object>
+                        {
+                            { "Id", pattern.Id },
+                            { "EditPath", "{APattern}" },
+                            { "Name", "APattern" },
+                            { "DisplayName", "APattern" },
+                            { "Description", "" },
+                            { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
+                            { "Automation", Array.Empty<Dictionary<string, object>>() },
+                            {
+                                "Attributes", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", pattern.Attributes[0].Id },
+                                        { "Name", "AProperty1" },
+                                        { "DataType", "string" },
+                                        { "IsRequired", false },
+                                        { "Choices", Array.Empty<string>() },
+                                        { "DefaultValue", "ADefaultValue1" }
+                                    }
+                                }
+                            },
+                            {
+                                "Elements", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "Id", pattern.Elements[0].Id },
+                                        { "EditPath", "{APattern.AnElement1}" },
+                                        { "Name", "AnElement1" },
+                                        { "DisplayName", "AnElement1" },
+                                        { "Description", "" },
+                                        { "AutoCreate", true },
+                                        { "IsCollection", false },
+                                        { "Cardinality", "One" },
+                                        { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
+                                        { "Automation", Array.Empty<Dictionary<string, object>>() },
+                                        {
+                                            "Attributes", new List<Dictionary<string, object>>
+                                            {
+                                                new()
+                                                {
+                                                    { "Id", pattern.Elements[0].Attributes[0].Id },
+                                                    { "Name", "AProperty2" },
+                                                    { "DataType", "string" },
+                                                    { "IsRequired", false },
+                                                    { "Choices", Array.Empty<string>() },
+                                                    { "DefaultValue", "ADefaultValue2" }
+                                                },
+                                                new()
+                                                {
+                                                    { "Id", pattern.Elements[0].Attributes[1].Id },
+                                                    { "Name", "AProperty3" },
+                                                    { "DataType", "string" },
+                                                    { "IsRequired", false },
+                                                    { "Choices", Array.Empty<string>() },
+                                                    { "DefaultValue", "ADefaultValue3" }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Elements", new List<Dictionary<string, object>>
+                                            {
+                                                new()
+                                                {
+                                                    { "Id", pattern.Elements[0].Elements[0].Id },
+                                                    { "EditPath", "{APattern.AnElement1.ACollection1}" },
+                                                    { "Name", "ACollection1" },
+                                                    { "DisplayName", "ACollection1" },
+                                                    { "Description", "" },
+                                                    { "AutoCreate", false },
+                                                    { "IsCollection", true },
+                                                    { "Cardinality", "ZeroOrMany" },
+                                                    { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
+                                                    { "Automation", Array.Empty<Dictionary<string, object>>() },
+                                                    {
+                                                        "Attributes", new List<Dictionary<string, object>>
+                                                        {
+                                                            new()
+                                                            {
+                                                                {
+                                                                    "Id",
+                                                                    pattern.Elements[0].Elements[0].Attributes[0].Id
+                                                                },
+                                                                { "Name", "AProperty4" },
+                                                                { "DataType", "string" },
+                                                                { "IsRequired", false },
+                                                                { "Choices", Array.Empty<string>() },
+                                                                { "DefaultValue", "ADefaultValue4" }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "Elements", new List<Dictionary<string, object>>
+                                                        {
+                                                            new()
+                                                            {
+                                                                {
+                                                                    "Id", pattern.Elements[0].Elements[0].Elements[0].Id
+                                                                },
+                                                                {
+                                                                    "EditPath",
+                                                                    "{APattern.AnElement1.ACollection1.AnElement3}"
+                                                                },
+                                                                { "Name", "AnElement3" },
+                                                                { "DisplayName", "AnElement3" },
+                                                                { "Description", "" },
+                                                                { "AutoCreate", true },
+                                                                { "IsCollection", false },
+                                                                { "Cardinality", "One" },
+                                                                {
+                                                                    "CodeTemplates",
+                                                                    Array.Empty<Dictionary<string, object>>()
+                                                                },
+                                                                {
+                                                                    "Automation",
+                                                                    Array.Empty<Dictionary<string, object>>()
+                                                                },
+                                                                {
+                                                                    "Attributes", new List<Dictionary<string, object>>
+                                                                    {
+                                                                        new()
+                                                                        {
+                                                                            {
+                                                                                "Id",
+                                                                                pattern.Elements[0].Elements[0]
+                                                                                    .Elements[0].Attributes[0].Id
+                                                                            },
+                                                                            { "Name", "AProperty5" },
+                                                                            { "DataType", "string" },
+                                                                            { "IsRequired", false },
+                                                                            { "Choices", Array.Empty<string>() },
+                                                                            { "DefaultValue", "ADefaultValue5" }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "Elements",
+                                                                    Array.Empty<Dictionary<string, object>>()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    new()
+                                    {
+                                        { "Id", pattern.Elements[1].Id },
+                                        { "EditPath", "{APattern.AnElement2}" },
+                                        { "Name", "AnElement2" },
+                                        { "DisplayName", "AnElement2" },
+                                        { "Description", "" },
+                                        { "AutoCreate", false },
+                                        { "IsCollection", false },
+                                        { "Cardinality", "One" },
+                                        { "CodeTemplates", Array.Empty<Dictionary<string, object>>() },
+                                        { "Automation", Array.Empty<Dictionary<string, object>>() },
+                                        {
+                                            "Attributes", new List<Dictionary<string, object>>
+                                            {
+                                                new()
+                                                {
+                                                    {
+                                                        "Id",
+                                                        pattern.Elements[1].Attributes[0].Id
+                                                    },
+                                                    { "Name", "AProperty6" },
+                                                    { "DataType", "string" },
+                                                    { "IsRequired", false },
+                                                    { "Choices", Array.Empty<string>() },
+                                                    { "DefaultValue", "ADefaultValue6" }
+                                                }
+                                            }
+                                        },
+                                        { "Elements", new List<Dictionary<string, object>>() }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    patternSchema
                 }
             }.ToJson();
             this.setup.Should().DisplayNoError();

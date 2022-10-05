@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
@@ -9,9 +10,11 @@ using JetBrains.Annotations;
 
 namespace Automate.CLI.Infrastructure
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     internal partial class CommandLineApi
     {
         [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class RuntimeApiHandlers : HandlerBase
         {
             internal static void Install(string location)
@@ -23,11 +26,11 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ViewToolkit(bool all, bool outputStructured)
             {
-                var pattern = runtime.ViewCurrentToolkit().Pattern;
+                var toolkit = runtime.ViewCurrentToolkit();
 
-                Output(OutputMessages.CommandLine_Output_ToolkitSchema, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current,
-                    AuthoringApiHandlers.FormatPatternSchema(outputStructured, pattern, all));
+                Output(OutputMessages.CommandLine_Output_ToolkitSchema, toolkit.PatternName, toolkit.Id,
+                    toolkit.Version, toolkit.RuntimeVersion,
+                    AuthoringApiHandlers.FormatPatternSchema(outputStructured, toolkit.Pattern, all));
             }
 
             internal static void ListToolkits(bool outputStructured)
@@ -38,11 +41,20 @@ namespace Automate.CLI.Infrastructure
                     if (outputStructured)
                     {
                         Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
-                            JsonNode.Parse(toolkits.Select(toolkit => new
+                            JsonNode.Parse(toolkits.Select(toolkit =>
                             {
-                                toolkit.Id,
-                                toolkit.PatternName,
-                                toolkit.Version
+                                var compatibility = new StructuredToolkitCompatibilityInfo(toolkit, GetMetadata());
+                                return new
+                                {
+                                    toolkit.Id,
+                                    toolkit.PatternName,
+                                    Version = new
+                                    {
+                                        compatibility.Toolkit,
+                                        compatibility.Runtime,
+                                        Compatibility = compatibility.ToolkitRuntimeCompatibility.ToString()
+                                    }
+                                };
                             }).ToList().ToJson()));
                     }
                     else
@@ -62,7 +74,8 @@ namespace Automate.CLI.Infrastructure
             {
                 var draft = runtime.CreateDraft(patternName, name);
                 Output(OutputMessages.CommandLine_Output_CreateDraftFromToolkit,
-                    draft.Name, draft.Id, draft.PatternName, draft.Toolkit.Id, draft.Toolkit.Version);
+                    draft.Name, draft.Id, draft.PatternName, draft.Toolkit.Id, draft.Toolkit.Version,
+                    draft.Toolkit.RuntimeVersion);
             }
 
             internal static void ViewDraft(bool todo, bool outputStructured)
@@ -72,9 +85,10 @@ namespace Automate.CLI.Infrastructure
                 var draftId = runtime.CurrentDraftId;
                 var draftName = runtime.CurrentDraftName;
                 var draftVersion = runtime.CurrentDraftToolkit.Version;
+                var runtimeVersion = runtime.CurrentDraftToolkit.RuntimeVersion;
 
                 Output(OutputMessages.CommandLine_Output_DraftConfiguration,
-                    draftName, draftId, draftVersion, outputStructured
+                    draftName, draftId, draftVersion, runtimeVersion, outputStructured
                         ? (object)JsonNode.Parse(configuration.ToJson())
                         : configuration.ToJson());
 
@@ -107,14 +121,24 @@ namespace Automate.CLI.Infrastructure
                     if (outputStructured)
                     {
                         Output(OutputMessages.CommandLine_Output_ConfiguredDraftsListed,
-                            JsonNode.Parse(pairs.Select(pair => new
+                            JsonNode.Parse(pairs.Select(pair =>
                             {
-                                pair.Draft.Id,
-                                pair.Draft.Name,
-                                ToolkitId = pair.Draft.Toolkit.Id,
-                                ToolkitVersion = pair.Draft.Toolkit.Version,
-                                CurrentToolkitVersion = pair.Toolkit.Version,
-                                IsCurrent = pair.Draft.Id == currentDraft
+                                var compatibility = new StructuredToolkitCompatibilityInfo(pair.Draft, pair.Toolkit,
+                                    GetMetadata());
+                                return new
+                                {
+                                    DraftId = pair.Draft.Id,
+                                    DraftName = pair.Draft.Name,
+                                    ToolkitId = pair.Draft.Toolkit.Id,
+                                    ToolkitVersion = new
+                                    {
+                                        DraftCompatibility = compatibility.DraftCompatibility?.ToString(),
+                                        compatibility.Toolkit,
+                                        compatibility.Runtime,
+                                        Compatibility = compatibility.ToolkitRuntimeCompatibility.ToString()
+                                    },
+                                    IsCurrent = pair.Draft.Id == currentDraft
+                                };
                             }).ToList().ToJson()));
                     }
                     else
@@ -133,9 +157,10 @@ namespace Automate.CLI.Infrastructure
             internal static void SwitchDraft(string draftId)
             {
                 runtime.SwitchCurrentDraft(draftId);
+                var toolkit = runtime.CurrentDraftToolkit;
                 Output(OutputMessages.CommandLine_Output_DraftSwitched, runtime.CurrentDraftName,
-                    runtime.CurrentDraftId, runtime.CurrentDraftToolkit.PatternName,
-                    runtime.CurrentDraftToolkit.Id, runtime.CurrentDraftToolkit.Version);
+                    runtime.CurrentDraftId, toolkit.PatternName,
+                    toolkit.Id, toolkit.Version, toolkit.RuntimeVersion);
             }
 
             internal static void ConfigureDraftOn(string expression, string[] andSet, bool outputStructured)
@@ -342,6 +367,47 @@ namespace Automate.CLI.Infrastructure
                         $"{item.Type}: {item.MessageTemplate.SubstituteTemplate(item.Arguments.ToArray())}");
                 }
                 return $"* {OutputMessages.CommandLine_Output_UpgradedDraftSucceededNoOutput}";
+            }
+
+            private class StructuredToolkitVersionInfo
+            {
+                public StructuredToolkitVersionInfo(string created, string installed)
+                {
+                    Created = created;
+                    Installed = installed;
+                }
+
+                public string Created { get; }
+
+                public string Installed { get; }
+            }
+
+            private class StructuredToolkitCompatibilityInfo
+            {
+                public StructuredToolkitCompatibilityInfo(ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+                {
+                    DraftCompatibility = null;
+                    Toolkit = new StructuredToolkitVersionInfo(toolkit.Version, toolkit.Version);
+                    Runtime = new StructuredToolkitVersionInfo(toolkit.RuntimeVersion, metadata.RuntimeVersion);
+                    ToolkitRuntimeCompatibility = toolkit.GetCompatibility(metadata);
+                }
+
+                public StructuredToolkitCompatibilityInfo(DraftDefinition draft, ToolkitDefinition toolkit,
+                    IAssemblyMetadata metadata)
+                {
+                    DraftCompatibility = draft.GetCompatibility(toolkit);
+                    Toolkit = new StructuredToolkitVersionInfo(draft.Toolkit.Version, toolkit.Version);
+                    Runtime = new StructuredToolkitVersionInfo(draft.Toolkit.RuntimeVersion, metadata.RuntimeVersion);
+                    ToolkitRuntimeCompatibility = toolkit.GetCompatibility(metadata);
+                }
+
+                public StructuredToolkitVersionInfo Toolkit { get; }
+
+                public StructuredToolkitVersionInfo Runtime { get; }
+
+                public DraftToolkitVersionCompatibility? DraftCompatibility { get; }
+
+                public ToolkitRuntimeVersionCompatibility ToolkitRuntimeCompatibility { get; }
             }
         }
     }

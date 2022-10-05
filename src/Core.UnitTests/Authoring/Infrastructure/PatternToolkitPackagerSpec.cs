@@ -16,7 +16,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
     [Trait("Category", "Unit")]
     public class PatternToolkitPackagerSpec
     {
-        private readonly Mock<IRuntimeMetadata> metadata;
+        private readonly Mock<IAssemblyMetadata> metadata;
         private readonly PatternToolkitPackager packager;
         private readonly Mock<IPatternStore> patternStore;
         private readonly Mock<IToolkitStore> toolkitStore;
@@ -31,7 +31,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
                 .Returns(new PatternDefinition("apatternname"));
             this.packager = new PatternToolkitPackager(this.patternStore.Object,
                 this.toolkitStore.Object);
-            this.metadata = new Mock<IRuntimeMetadata>();
+            this.metadata = new Mock<IAssemblyMetadata>();
             this.metadata.Setup(rm => rm.ProductName).Returns("aproductname");
             this.metadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
         }

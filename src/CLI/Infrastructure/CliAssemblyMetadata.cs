@@ -3,7 +3,7 @@ using Automate.Common.Domain;
 
 namespace Automate.CLI.Infrastructure
 {
-    public class CliRuntimeMetadata : IRuntimeMetadata
+    public class CliAssemblyMetadata : IAssemblyMetadata
     {
         public string RuntimeVersion => Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()!

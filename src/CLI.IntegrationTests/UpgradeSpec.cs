@@ -39,7 +39,8 @@ namespace CLI.IntegrationTests
             var draft = this.setup.Draft;
             this.setup.Should()
                 .DisplayError(
-                    ExceptionMessages.RuntimeApplication_CurrentDraftUpgraded.Substitute(draft.Name, draft.Id,
+                    ExceptionMessages.RuntimeApplication_Incompatible_ToolkitAheadOfDraft.Substitute(draft.Name,
+                        draft.Id,
                         "0.1.0", "0.2.0"));
         }
 

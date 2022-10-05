@@ -7,6 +7,6 @@ namespace Automate.Authoring.Application
     {
         ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction);
 
-        ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer);
+        ToolkitDefinition UnPack(IAssemblyMetadata metadata, IFile installer);
     }
 }
