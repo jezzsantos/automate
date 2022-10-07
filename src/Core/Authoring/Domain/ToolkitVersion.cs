@@ -35,6 +35,8 @@ namespace Automate.Authoring.Domain
 
         public IReadOnlyList<VersionChangeLog> ChangeLog => this.changeLog;
 
+        public string NextVersion => CalculateNextVersion().ToString();
+
         public PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
@@ -130,14 +132,7 @@ namespace Automate.Authoring.Domain
         {
             var currentVersion = new Version(Current);
 
-            var expectedNewVersion = LastChanges switch
-            {
-                VersionChange.NonBreaking => currentVersion.RevMinor(),
-                VersionChange.Breaking => currentVersion.RevMajor(),
-                _ => Current == InitialVersionNumber.ToString(VersionFieldCount)
-                    ? currentVersion.RevMinor()
-                    : currentVersion
-            };
+            var expectedNewVersion = CalculateNextVersion(currentVersion);
 
             if (instruction.Instruction.HasNoValue())
             {
@@ -196,6 +191,23 @@ namespace Automate.Authoring.Domain
             }
 
             return new VersionUpdateResult(requestedVersion);
+        }
+
+        private Version CalculateNextVersion()
+        {
+            return CalculateNextVersion(new Version(Current));
+        }
+
+        private Version CalculateNextVersion(Version currentVersion)
+        {
+            return LastChanges switch
+            {
+                VersionChange.NonBreaking => currentVersion.RevMinor(),
+                VersionChange.Breaking => currentVersion.RevMajor(),
+                _ => Current == InitialVersionNumber.ToString(VersionFieldCount)
+                    ? currentVersion.RevMinor()
+                    : currentVersion
+            };
         }
     }
 

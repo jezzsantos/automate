@@ -74,12 +74,14 @@ namespace Automate.Authoring.Application
             return pattern;
         }
 
-        public void SwitchCurrentPattern(string id)
+        public PatternDefinition SwitchCurrentPattern(string id)
         {
             id.GuardAgainstNullOrEmpty(nameof(id));
 
             var current = this.store.FindById(id);
-            this.store.ChangeCurrent(current.Id);
+            var pattern = this.store.ChangeCurrent(current.Id);
+
+            return pattern;
         }
 
         public List<PatternDefinition> ListPatterns()

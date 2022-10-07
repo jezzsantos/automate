@@ -20,7 +20,6 @@ namespace CLI.IntegrationTests
             RuntimeSpec.DeleteOutputFolders();
         }
 
-        
         [Fact]
         public void WhenListAllAndSome_ThenDisplaysLists()
         {
@@ -51,7 +50,14 @@ namespace CLI.IntegrationTests
                                     {
                                         { "Id", pattern.Id },
                                         { "Name", pattern.Name },
-                                        { "Version", "0.1.0" },
+                                        {
+                                            "Version", new Dictionary<string, object>
+                                            {
+                                                { "Current", "0.1.0" },
+                                                { "Next", "0.1.0" },
+                                                { "Change", VersionChange.NoChange.ToString() }
+                                            }
+                                        },
                                         { "IsCurrent", true }
                                     }
                                 }
@@ -182,7 +188,14 @@ namespace CLI.IntegrationTests
                                     {
                                         { "Id", pattern.Id },
                                         { "Name", pattern.Name },
-                                        { "Version", "2.0.0" },
+                                        {
+                                            "Version", new Dictionary<string, object>
+                                            {
+                                                { "Current", "2.0.0" },
+                                                { "Next", "2.0.0" },
+                                                { "Change", VersionChange.NoChange.ToString() }
+                                            }
+                                        },
                                         { "IsCurrent", true }
                                     }
                                 }
@@ -271,6 +284,96 @@ namespace CLI.IntegrationTests
                                         },
                                         { "IsCurrent", true }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenCreatePattern_ThenDisplaysSchema()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"ErrorWarning: {OutputMessages.CommandLine_Output_Preamble_NoPatternSelected}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_PatternCreated,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "APattern" },
+                            {
+                                "Version", new Dictionary<string, object>
+                                {
+                                    { "Current", "0.0.0" },
+                                    { "Next", "0.1.0" },
+                                    { "Change", VersionChange.NoChange.ToString() }
+                                }
+                            },
+                            { "PatternId", pattern.Id }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenViewPattern_ThenDisplaysSchema()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand($"{CommandLineApi.ViewCommandName} pattern --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_PatternSchema,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "APattern" },
+                            { "PatternId", pattern.Id },
+                            {
+                                "Version", new Dictionary<string, object>
+                                {
+                                    { "Current", "0.0.0" },
+                                    { "Next", "0.1.0" },
+                                    { "Change", VersionChange.NoChange.ToString() }
+                                }
+                            },
+                            {
+                                "Schema", new Dictionary<string, object>
+                                {
+                                    { "Id", pattern.Id },
+                                    { "EditPath", "{APattern}" },
+                                    { "Name", "APattern" },
+                                    { "DisplayName", "APattern" },
+                                    { "Description", "" },
+                                    { "CodeTemplates", Array.Empty<object>() },
+                                    { "Automation", Array.Empty<object>() },
+                                    { "Attributes", Array.Empty<object>() },
+                                    { "Elements", Array.Empty<object>() }
                                 }
                             }
                         }

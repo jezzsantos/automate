@@ -20,11 +20,25 @@ namespace Automate.CLI.Infrastructure
             }
 
             internal static void CreatePattern(string name, string displayedAs,
-                string describedAs)
+                string describedAs, bool outputStructured)
             {
-                authoring.CreateNewPattern(name, displayedAs, describedAs);
-                Output(OutputMessages.CommandLine_Output_PatternCreated, authoring.CurrentPatternName,
-                    authoring.CurrentPatternVersion, authoring.CurrentPatternId);
+                var pattern = authoring.CreateNewPattern(name, displayedAs, describedAs);
+
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternCreated, pattern.Name,
+                        new
+                        {
+                            pattern.ToolkitVersion.Current,
+                            Next = pattern.ToolkitVersion.NextVersion,
+                            Change = pattern.ToolkitVersion.LastChanges.ToString()
+                        }, pattern.Id);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternCreated, pattern.Name,
+                        pattern.ToolkitVersion.Current, pattern.Id);
+                }
             }
 
             internal static void UpdatePattern(string name, string displayedAs, string describedAs)
@@ -33,19 +47,46 @@ namespace Automate.CLI.Infrastructure
                 Output(OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
             }
 
-            internal static void SwitchPattern(string id)
+            internal static void SwitchPattern(string id, bool outputStructured)
             {
-                authoring.SwitchCurrentPattern(id);
-                Output(OutputMessages.CommandLine_Output_PatternSwitched, authoring.CurrentPatternName,
-                    authoring.CurrentPatternVersion, authoring.CurrentPatternId);
+                var pattern = authoring.SwitchCurrentPattern(id);
+
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternSwitched, pattern.Name,
+                        new
+                        {
+                            pattern.ToolkitVersion.Current,
+                            Next = pattern.ToolkitVersion.NextVersion,
+                            Change = pattern.ToolkitVersion.LastChanges.ToString()
+                        }, pattern.Id);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternSwitched, pattern.Name,
+                        pattern.ToolkitVersion.Current, pattern.Id);
+                }
             }
 
             internal static void ViewPattern(bool all, bool outputStructured)
             {
                 var pattern = authoring.GetCurrentPattern();
 
-                Output(OutputMessages.CommandLine_Output_PatternSchema, pattern.Name, pattern.Id,
-                    pattern.ToolkitVersion.Current, FormatPatternSchema(outputStructured, pattern, all));
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternSchema, pattern.Name, pattern.Id,
+                        new
+                        {
+                            pattern.ToolkitVersion.Current,
+                            Next = pattern.ToolkitVersion.NextVersion,
+                            Change = pattern.ToolkitVersion.LastChanges.ToString()
+                        }, FormatPatternSchema(true, pattern, all));
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternSchema, pattern.Name, pattern.Id,
+                        pattern.ToolkitVersion.Current, FormatPatternSchema(false, pattern, all));
+                }
             }
 
             internal static void ListPatterns(bool outputStructured)
@@ -61,7 +102,12 @@ namespace Automate.CLI.Infrastructure
                             {
                                 pattern.Id,
                                 pattern.Name,
-                                Version = pattern.ToolkitVersion.Current,
+                                Version = new
+                                {
+                                    pattern.ToolkitVersion.Current,
+                                    Next = pattern.ToolkitVersion.NextVersion,
+                                    Change = pattern.ToolkitVersion.LastChanges.ToString()
+                                },
                                 IsCurrent = pattern.Id == currentPattern
                             }).ToList().ToJson()));
                     }
