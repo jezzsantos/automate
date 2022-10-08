@@ -238,7 +238,7 @@ namespace Automate.CLI.Infrastructure
             internal static void ConfigureDraftDeleteElement(string expression)
             {
                 var draftItem = runtime.ConfigureDraftAndDelete(expression);
-                Output(OutputMessages.CommandLine_Output_DraftDelete,
+                Output(OutputMessages.CommandLine_Output_DraftDeleteElement,
                     draftItem.Name, draftItem.Id);
             }
 
@@ -277,6 +277,13 @@ namespace Automate.CLI.Infrastructure
                 }
             }
 
+            internal static void DeleteDraft()
+            {
+                var draft = runtime.DeleteDraft();
+                Output(OutputMessages.CommandLine_Output_DraftDeleted,
+                    draft.Name, draft.Id);
+            }
+            
             internal static void ExecuteLaunchPoint(string name, string on, bool outputStructured)
             {
                 var execution = runtime.ExecuteLaunchPoint(name, on);

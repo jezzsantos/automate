@@ -52,6 +52,16 @@ namespace Automate.Common.Infrastructure
                 .FirstOrDefault(p => p.Key == id).Value;
         }
 
+        public void DeleteDraft(string id)
+        {
+            if (!this.inMemoryDrafts.ContainsKey(id))
+            {
+                throw new AutomateException(ExceptionMessages.MemoryRepository_NotFound.Substitute(id));
+            }
+
+            this.inMemoryDrafts.Remove(id);
+        }
+
         public List<DraftDefinition> ListDrafts()
         {
             return this.inMemoryDrafts

@@ -107,5 +107,18 @@ namespace Core.UnitTests.Runtime.Infrastructure
 
             this.repository.GetLocalState().CurrentDraft.Should().Be(draft2.Id);
         }
+
+        [Fact]
+        public void WhenDelete_ThenDeletes()
+        {
+            var draft =
+                this.store.Create(new DraftDefinition(new ToolkitDefinition(new PatternDefinition("apatternname1")),
+                    "aname"));
+
+            this.store.DeleteById(draft.Id);
+
+            this.repository.ListDrafts().Count.Should().Be(0);
+            this.repository.GetLocalState().CurrentDraft.Should().BeNull();
+        }
     }
 }

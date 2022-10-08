@@ -104,6 +104,20 @@ namespace Automate.CLI.Infrastructure
                 .FirstOrDefault(draft => draft.Id == id);
         }
 
+        public void DeleteDraft(string id)
+        {
+            var filename = CreateFilenameForDraftById(id);
+            if (!this.fileSystem.FileExists(filename))
+            {
+                throw new AutomateException(ExceptionMessages.LocalMachineFileRepository_DraftNotFound.Substitute(id));
+            }
+
+            this.fileSystem.Delete(filename);
+
+            var directoryName = CreatePathForDraft(id);
+            this.fileSystem.DirectoryDelete(this.fileSystem.GetDirectory(directoryName));
+        }
+
         public void SaveLocalState(LocalState state)
         {
             this.localStateRepository.SaveLocalState(state);

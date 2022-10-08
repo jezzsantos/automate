@@ -15,6 +15,8 @@ namespace Automate.Runtime.Infrastructure
 
         DraftDefinition FindDraftById(string id);
 
+        void DeleteDraft(string id);
+
         void DestroyAll();
 
         List<DraftDefinition> ListDrafts();

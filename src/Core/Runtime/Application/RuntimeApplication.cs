@@ -12,12 +12,12 @@ namespace Automate.Runtime.Application
 {
     public class RuntimeApplication
     {
+        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IAutomationExecutor automationExecutor;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
-        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,
@@ -48,8 +48,6 @@ namespace Automate.Runtime.Application
         public string CurrentDraftName => this.draftStore.GetCurrent()?.Name;
 
         public ToolkitDefinition CurrentDraftToolkit => this.draftStore.GetCurrent()?.Toolkit;
-
-        public ToolkitDefinition CurrentToolkit => this.toolkitStore.GetCurrent();
 
         public ToolkitDefinition InstallToolkit(string installerLocation)
         {
@@ -271,6 +269,15 @@ namespace Automate.Runtime.Application
             this.draftStore.Save(draft);
 
             return result;
+        }
+
+        public DraftDefinition DeleteDraft()
+        {
+            var draft = EnsureCurrentDraftExists(true);
+
+            this.draftStore.DeleteById(draft.Id);
+
+            return draft;
         }
 
         private DraftItem ResolveTargetItem(DraftDefinition draft, string addElementExpression,

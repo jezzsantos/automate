@@ -64,6 +64,17 @@ namespace Automate.Runtime.Infrastructure
                 .FirstOrDefault(sol => sol.Id == id);
         }
 
+        public void DeleteById(string draftId)
+        {
+            draftId.GuardAgainstNullOrEmpty(nameof(draftId));
+
+            this.draftRepository.DeleteDraft(draftId);
+
+            var state = this.localStateRepository.GetLocalState();
+            state.ClearCurrentDraft();
+            this.localStateRepository.SaveLocalState(state);
+        }
+
         public DraftDefinition ChangeCurrent(string id)
         {
             var draft = this.draftRepository.FindDraftById(id);

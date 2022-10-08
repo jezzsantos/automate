@@ -212,7 +212,7 @@
     <data name="CommandLine_Output_DraftEmptyCollection" xml:space="preserve">
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was cleared successfully</value>
     </data>
-    <data name="CommandLine_Output_DraftDelete" xml:space="preserve">
+    <data name="CommandLine_Output_DraftDeleteElement" xml:space="preserve">
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
     <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
@@ -245,6 +245,9 @@
     <data name="CommandLine_Output_DraftUpgradeWithWarning" xml:space="preserve">
         <value>Aborted upgrade of Draft '{DraftName}' (ID: '{DraftId}') from toolkit '{ToolkitName}' ({OldVersion} -> {NewVersion}):
 {Log}</value>
+    </data>
+    <data name="CommandLine_Output_DraftDeleted" xml:space="preserve">
+        <value>Successfully deleted Draft '{DraftName}' (ID: '{DraftId}'), and reset the current draft</value>
     </data>
     <data name="CommandLine_Output_ToolkitSchema" xml:space="preserve">
         <value>Toolkit pattern '{Name}' (ID: '{Id}', v{Version}, rt.v{RuntimeVersion}) is defined as:

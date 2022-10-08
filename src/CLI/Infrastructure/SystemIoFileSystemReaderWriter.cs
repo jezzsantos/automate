@@ -97,6 +97,13 @@ namespace Automate.CLI.Infrastructure
             return File.ReadAllText(absolutePath);
         }
 
+        public FileSystemDirectory GetDirectory(string absolutePath)
+        {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+
+            return new FileSystemDirectory(new DirectoryInfo(absolutePath).Name, absolutePath);
+        }
+
         public IEnumerable<FileSystemDirectory> GetSubDirectories(string absolutePath)
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));

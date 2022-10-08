@@ -366,11 +366,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Successfully deleted Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;), and reset the current draft.
+        /// </summary>
+        internal static string CommandLine_Output_DraftDeleted {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_DraftDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Draft Item &apos;{Name}&apos; (ID: &apos;{DraftItemId}&apos;) was deleted successfully.
         /// </summary>
-        internal static string CommandLine_Output_DraftDelete {
+        internal static string CommandLine_Output_DraftDeleteElement {
             get {
-                return ResourceManager.GetString("CommandLine_Output_DraftDelete", resourceCulture);
+                return ResourceManager.GetString("CommandLine_Output_DraftDeleteElement", resourceCulture);
             }
         }
         

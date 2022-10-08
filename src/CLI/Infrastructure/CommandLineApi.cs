@@ -34,6 +34,7 @@ namespace Automate.CLI.Infrastructure
         public const string ExecuteCommandName = "execute";
         public const string ViewCommandName = "view";
         public const string UpgradeCommandName = "upgrade";
+        public const string DeleteCommandName = "delete";
         public const string TestingOnlyCommandName = "testingonly";
         private const string DebugOption = "debug";
         private const string StructuredOutputOption = "output-structured";
@@ -474,6 +475,11 @@ namespace Automate.CLI.Infrastructure
                     }
                     .WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.UpgradeDraft))
             };
+            var deleteCommands = new Command(DeleteCommandName, "Deleting patterns, toolkits and drafts")
+            {
+                new Command(DraftSubCommandName, "Deletes the current draft")
+                    .WithHandler<RuntimeApiHandlers>(nameof(RuntimeApiHandlers.DeleteDraft))
+            };
 #if TESTINGONLY
             var testingOnlyCommands = new Command(TestingOnlyCommandName, "For testing only!")
             {
@@ -506,6 +512,7 @@ namespace Automate.CLI.Infrastructure
                     validateCommands,
                     executeCommands,
                     upgradeCommands,
+                    deleteCommands,
 #if TESTINGONLY
                     testingOnlyCommands
 #endif

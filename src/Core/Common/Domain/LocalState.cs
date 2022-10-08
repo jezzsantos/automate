@@ -51,5 +51,10 @@ namespace Automate.Common.Domain
         {
             CurrentDraft = id;
         }
+
+        public void ClearCurrentDraft()
+        {
+            CurrentDraft = null!;
+        }
     }
 }

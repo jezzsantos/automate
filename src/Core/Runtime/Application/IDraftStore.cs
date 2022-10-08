@@ -13,6 +13,8 @@ namespace Automate.Runtime.Application
 
         DraftDefinition FindById(string id);
 
+        void DeleteById(string draftId);
+
         DraftDefinition ChangeCurrent(string id);
 
         DraftDefinition GetCurrent();

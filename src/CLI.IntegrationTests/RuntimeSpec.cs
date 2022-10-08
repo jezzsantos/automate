@@ -411,7 +411,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("AnElement3",
+                    OutputMessages.CommandLine_Output_DraftDeleteElement.SubstituteTemplate("AnElement3",
                         draftElement.Id));
             draftPattern.Properties["AnElement3"].IsMaterialised.Should().BeFalse();
         }
@@ -431,7 +431,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_DraftDelete.SubstituteTemplate("ACollection2",
+                    OutputMessages.CommandLine_Output_DraftDeleteElement.SubstituteTemplate("ACollection2",
                         draftCollectionItem.Id));
             draftCollection.Items.Should().BeEmpty();
         }
@@ -887,6 +887,26 @@ namespace CLI.IntegrationTests
                         $"\t\t- AProperty7 (attribute) (string){Environment.NewLine}"
                         ,
                         this.setup.Pattern.Id));
+        }
+
+        [Fact]
+        public void WhenDelete_ThenDeletes()
+        {
+            CreateDraftFromBuiltToolkit();
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} on {{APattern}} --and-set \"AProperty1=avalue1\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.ConfigureCommandName} add {{AnElement1}} --and-set \"AProperty3=A\"");
+            this.setup.RunCommand($"{CommandLineApi.ConfigureCommandName} add-one-to {{ACollection2}}");
+
+            var draft = this.setup.Draft;
+            this.setup.RunCommand($"{CommandLineApi.DeleteCommandName} draft");
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(OutputMessages.CommandLine_Output_DraftDeleted.SubstituteTemplate(draft.Name,
+                    draft.Id));
+            this.setup.Draft.Should().BeNull();
         }
 
         public void Dispose()

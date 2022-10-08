@@ -419,3 +419,16 @@ automate execute command "<LAUNCHPOINTNAME>" --on "{<ANEXPRESSION>}"
     ``` batch
     automate execute command "ACommandName" --on "{APatternName.ACollectionName.12345678}"
     ```
+
+### Deleting drafts
+
+To delete the current draft:
+```batch
+automate delete draft
+```
+
+!!! warning
+    This command will permanently delete the current draft, and there will no longer be a current draft.
+
+!!! tip
+    After running this command, you will need to [switch to another draft](#switching-drafts), or [create a new draft](#creating-a-draft-from-a-toolkit)

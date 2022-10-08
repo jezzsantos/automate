@@ -31,6 +31,8 @@ namespace Automate.Common.Application
 
         string ReadAllText(string absolutePath);
 
+        FileSystemDirectory GetDirectory(string absolutePath);
+
         IEnumerable<FileSystemDirectory> GetSubDirectories(string absolutePath);
 
         string MakePath(string directory, string filename);
