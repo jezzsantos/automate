@@ -82,14 +82,14 @@ namespace CLI.IntegrationTests
                                                 {
                                                     "Toolkit", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.Version },
+                                                        { "Published", toolkit.Version },
                                                         { "Installed", toolkit.Version }
                                                     }
                                                 },
                                                 {
                                                     "Runtime", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Published", toolkit.RuntimeVersion },
                                                         { "Installed", toolkit.RuntimeVersion }
                                                     }
                                                 },
@@ -128,14 +128,14 @@ namespace CLI.IntegrationTests
                                                 {
                                                     "Toolkit", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.Version },
+                                                        { "Published", toolkit.Version },
                                                         { "Installed", toolkit.Version }
                                                     }
                                                 },
                                                 {
                                                     "Runtime", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Published", toolkit.RuntimeVersion },
                                                         { "Installed", toolkit.RuntimeVersion }
                                                     }
                                                 },
@@ -221,14 +221,14 @@ namespace CLI.IntegrationTests
                                                 {
                                                     "Toolkit", new Dictionary<string, object>
                                                     {
-                                                        { "Created", "2.0.0" },
+                                                        { "Published", "2.0.0" },
                                                         { "Installed", "2.0.0" }
                                                     }
                                                 },
                                                 {
                                                     "Runtime", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Published", toolkit.RuntimeVersion },
                                                         { "Installed", toolkit.RuntimeVersion }
                                                     }
                                                 },
@@ -267,14 +267,14 @@ namespace CLI.IntegrationTests
                                                 {
                                                     "Toolkit", new Dictionary<string, object>
                                                     {
-                                                        { "Created", draft.Toolkit.Version },
+                                                        { "Published", draft.Toolkit.Version },
                                                         { "Installed", "2.0.0" }
                                                     }
                                                 },
                                                 {
                                                     "Runtime", new Dictionary<string, object>
                                                     {
-                                                        { "Created", toolkit.RuntimeVersion },
+                                                        { "Published", toolkit.RuntimeVersion },
                                                         { "Installed", toolkit.RuntimeVersion }
                                                     }
                                                 },
@@ -378,6 +378,46 @@ namespace CLI.IntegrationTests
                                     { "Elements", Array.Empty<object>() }
                                 }
                             }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenSwitchPattern_ThenDisplaysSchema()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} switch {this.setup.Pattern.Id} --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_PatternSwitched,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "APattern" },
+                            {
+                                "Version", new Dictionary<string, object>
+                                {
+                                    { "Current", "0.0.0" },
+                                    { "Next", "0.1.0" },
+                                    { "Change", VersionChange.NoChange.ToString() }
+                                }
+                            },
+                            { "PatternId", pattern.Id }
                         }
                     }
                 }

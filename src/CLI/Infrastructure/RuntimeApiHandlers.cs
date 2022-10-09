@@ -381,13 +381,13 @@ namespace Automate.CLI.Infrastructure
 
             private class StructuredToolkitVersionInfo
             {
-                public StructuredToolkitVersionInfo(string created, string installed)
+                public StructuredToolkitVersionInfo(string published, string installed)
                 {
-                    Created = created;
+                    Published = published;
                     Installed = installed;
                 }
 
-                public string Created { get; }
+                public string Published { get; }
 
                 public string Installed { get; }
             }
