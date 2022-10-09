@@ -113,7 +113,7 @@ namespace CLI.IntegrationTests
             var runtimeVersion = metadata.RuntimeVersion;
             var runtimeName = metadata.ProductName;
             this.setup.Should()
-                .DisplayError(ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute(
+                .DisplayError(ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute(
                     "0.1.0-preview", runtimeVersion, runtimeName));
         }
 

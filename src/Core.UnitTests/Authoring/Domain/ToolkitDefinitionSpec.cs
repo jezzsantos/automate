@@ -214,7 +214,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute("0.1.0-preview",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute("0.1.0-preview",
                         "0.2.0-preview",
                         "aproductname"));
         }
@@ -253,7 +253,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute("0.2.0-preview",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfMachine.Substitute("0.2.0-preview",
                         "0.1.0-preview", "aproductname"));
         }
 
@@ -268,7 +268,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute("1.0.0-preview",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute("1.0.0-preview",
                         "1.1.0", "aproductname"));
         }
 
@@ -283,7 +283,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute("1.1.0-preview",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfMachine.Substitute("1.1.0-preview",
                         "1.0.0", "aproductname"));
         }
 
@@ -298,7 +298,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute("1.0.0",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute("1.0.0",
                         "1.1.0-preview", "aproductname"));
         }
 
@@ -313,7 +313,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute("1.1.0",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfMachine.Substitute("1.1.0",
                         "1.0.0-preview", "aproductname"));
         }
 
@@ -328,7 +328,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute("0.1.0", "1.0.0",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute("0.1.0", "1.0.0",
                         "aproductname"));
         }
 
@@ -343,7 +343,7 @@ namespace Core.UnitTests.Authoring.Domain
             FluentActions.Invoking(() => ToolkitDefinition.VerifyRuntimeCompatibility(toolkit, metadata.Object))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute("2.0.0", "1.0.0",
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfMachine.Substitute("2.0.0", "1.0.0",
                         "aproductname"));
         }
 

@@ -3,8 +3,8 @@
     public enum ToolkitRuntimeVersionCompatibility
     {
         Compatible = 0,
-        RuntimeAheadOfToolkit = 1,
-        ToolkitAheadOfRuntime = 2
+        MachineAheadOfToolkit = 1,
+        ToolkitAheadOfMachine = 2
     }
 
     public enum DraftToolkitVersionCompatibility

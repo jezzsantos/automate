@@ -286,13 +286,13 @@
 or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher
 </value>
 </data>
-    <data name="ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit" xml:space="preserve">
+    <data name="ToolkitDefinition_Incompatible_MachineAheadOfToolkit" xml:space="preserve">
         <value>This toolkit has been built (by its author) with an older version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
 1. Downgrade your installation of `{2}` to version (v{0}) 
 or 2. Obtain an upgraded version of this toolkit (from its author) which has been built against a compatible version of `{2}` (v{1} or higher)
 </value>
     </data>
-    <data name="ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime" xml:space="preserve">
+    <data name="ToolkitDefinition_Incompatible_ToolkitAheadOfMachine" xml:space="preserve">
         <value>This toolkit has been built (by its author) with an newer version of `{2}` (v{0}), and is not compatible with the currently installed version of `{2}` (v{1}). You must either:
 1. Upgrade your installation of `{2}` to a newer version of `{2}` (at least v{0} or higher)
 or 2. Obtain a downgraded version of this toolkit (from its author) built against a compatible version of `{2}` (such as v{0})

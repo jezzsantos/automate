@@ -9,64 +9,64 @@ namespace Automate.Authoring.Domain
         public static ToolkitRuntimeVersionCompatibility GetCompatibility(this ToolkitDefinition toolkit,
             IAssemblyMetadata metadata)
         {
-            if (toolkit.IsToolkitOutOfDate(metadata))
+            if (toolkit.IsMachineAheadOfToolkit(metadata))
             {
-                return ToolkitRuntimeVersionCompatibility.RuntimeAheadOfToolkit;
+                return ToolkitRuntimeVersionCompatibility.MachineAheadOfToolkit;
             }
-            if (toolkit.IsRuntimeOutOfDate(metadata))
+            if (toolkit.IsToolkitAheadOfMachine(metadata))
             {
-                return ToolkitRuntimeVersionCompatibility.ToolkitAheadOfRuntime;
+                return ToolkitRuntimeVersionCompatibility.ToolkitAheadOfMachine;
             }
 
             return ToolkitRuntimeVersionCompatibility.Compatible;
         }
 
-        public static bool IsToolkitOutOfDate(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+        private static bool IsMachineAheadOfToolkit(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
 
-            var assemblyRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
+            var machineRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
             var toolkitRuntimeVersion = SemVersion.Parse(toolkit.RuntimeVersion, SemVersionStyles.Any);
 
-            if (assemblyRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
+            if (machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion.Minor > toolkitRuntimeVersion.Minor;
+                return machineRuntimeVersion.Minor > toolkitRuntimeVersion.Minor;
             }
-            if (!assemblyRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
+            if (!machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion > toolkitRuntimeVersion.WithoutPrerelease();
+                return machineRuntimeVersion > toolkitRuntimeVersion.WithoutPrerelease();
             }
-            if (assemblyRuntimeVersion.IsPrerelease && !toolkitRuntimeVersion.IsPrerelease)
+            if (machineRuntimeVersion.IsPrerelease && !toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion.WithoutPrerelease() > toolkitRuntimeVersion;
+                return machineRuntimeVersion.WithoutPrerelease() > toolkitRuntimeVersion;
             }
 
-            return assemblyRuntimeVersion.Major > toolkitRuntimeVersion.Major;
+            return machineRuntimeVersion.Major > toolkitRuntimeVersion.Major;
         }
 
-        public static bool IsRuntimeOutOfDate(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+        private static bool IsToolkitAheadOfMachine(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
 
-            var assemblyRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
+            var machineRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
             var toolkitRuntimeVersion = SemVersion.Parse(toolkit.RuntimeVersion, SemVersionStyles.Any);
 
-            if (assemblyRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
+            if (machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion.Minor < toolkitRuntimeVersion.Minor;
+                return toolkitRuntimeVersion.Minor > machineRuntimeVersion.Minor;
             }
-            if (!assemblyRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
+            if (!machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion < toolkitRuntimeVersion.WithoutPrerelease();
+                return toolkitRuntimeVersion.WithoutPrerelease() > machineRuntimeVersion;
             }
-            if (assemblyRuntimeVersion.IsPrerelease && !toolkitRuntimeVersion.IsPrerelease)
+            if (machineRuntimeVersion.IsPrerelease && !toolkitRuntimeVersion.IsPrerelease)
             {
-                return assemblyRuntimeVersion.WithoutPrerelease() < toolkitRuntimeVersion;
+                return toolkitRuntimeVersion > machineRuntimeVersion.WithoutPrerelease();
             }
 
-            return assemblyRuntimeVersion.Major < toolkitRuntimeVersion.Major;
+            return toolkitRuntimeVersion.Major > machineRuntimeVersion.Major;
         }
     }
 }

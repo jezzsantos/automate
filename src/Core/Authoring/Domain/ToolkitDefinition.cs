@@ -127,18 +127,18 @@ namespace Automate.Authoring.Domain
 
             var toolkitRuntimeVersion = SemVersion.Parse(runtimeVersion, SemVersionStyles.Any);
             var compatibility = toolkit.GetCompatibility(metadata);
-            if (compatibility == ToolkitRuntimeVersionCompatibility.RuntimeAheadOfToolkit)
+            if (compatibility == ToolkitRuntimeVersionCompatibility.MachineAheadOfToolkit)
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_RuntimeAheadOfToolkit.Substitute(
+                    ExceptionMessages.ToolkitDefinition_Incompatible_MachineAheadOfToolkit.Substitute(
                         toolkitRuntimeVersion,
                         assemblyRuntimeVersion, runtimeName));
             }
 
-            if (compatibility == ToolkitRuntimeVersionCompatibility.ToolkitAheadOfRuntime)
+            if (compatibility == ToolkitRuntimeVersionCompatibility.ToolkitAheadOfMachine)
             {
                 throw new AutomateException(
-                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfRuntime.Substitute(
+                    ExceptionMessages.ToolkitDefinition_Incompatible_ToolkitAheadOfMachine.Substitute(
                         toolkitRuntimeVersion,
                         assemblyRuntimeVersion, runtimeName));
             }
