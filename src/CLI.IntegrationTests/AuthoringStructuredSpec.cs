@@ -117,6 +117,7 @@ namespace CLI.IntegrationTests
                                         { "DraftId", draft.Id },
                                         { "DraftName", draft.Name },
                                         { "ToolkitId", toolkit.Id },
+                                        { "ToolkitName", toolkit.PatternName },
                                         {
                                             "ToolkitVersion", new Dictionary<string, object>
                                             {
@@ -255,6 +256,7 @@ namespace CLI.IntegrationTests
                                         { "DraftId", draft.Id },
                                         { "DraftName", draft.Name },
                                         { "ToolkitId", toolkit.Id },
+                                        { "ToolkitName", toolkit.PatternName },
                                         {
                                             "ToolkitVersion", new Dictionary<string, object>
                                             {

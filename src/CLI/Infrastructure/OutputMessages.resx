@@ -216,7 +216,7 @@
         <value>The Draft Item '{Name}' (ID: '{DraftItemId}') was deleted successfully</value>
     </data>
     <data name="CommandLine_Output_DraftConfiguration" xml:space="preserve">
-        <value>Draft '{DraftName}' (ID: '{DraftId}', v.{ToolkitVersion}, rt.v{RuntimeVersion}) is configured as:
+        <value>Draft '{DraftName}' (ID: '{DraftId}') from toolkit: '{ToolkitName}' (ID: '{ToolkitId}', v.{ToolkitVersion}, rt.v{RuntimeVersion}) is configured as:
 {Configuration}</value>
     </data>
     <data name="CommandLine_Output_DraftValidationFailed" xml:space="preserve">

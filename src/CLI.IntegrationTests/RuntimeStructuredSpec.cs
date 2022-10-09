@@ -112,6 +112,8 @@ namespace CLI.IntegrationTests
                 {
                     { "DraftName", draft.Name },
                     { "DraftId", draft.Id },
+                    { "ToolkitName", draft.Toolkit.PatternName },
+                    { "ToolkitId", draft.Toolkit.Id },
                     { "ToolkitVersion", draft.Toolkit.Version },
                     { "RuntimeVersion", draft.Toolkit.RuntimeVersion },
                     {
@@ -262,6 +264,8 @@ namespace CLI.IntegrationTests
                 {
                     { "DraftName", draft.Name },
                     { "DraftId", draft.Id },
+                    { "ToolkitName", draft.Toolkit.PatternName },
+                    { "ToolkitId", draft.Toolkit.Id },
                     { "ToolkitVersion", draft.Toolkit.Version },
                     { "RuntimeVersion", draft.Toolkit.RuntimeVersion },
                     {

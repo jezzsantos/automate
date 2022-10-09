@@ -86,9 +86,11 @@ namespace Automate.CLI.Infrastructure
                 var draftName = runtime.CurrentDraftName;
                 var draftVersion = runtime.CurrentDraftToolkit.Version;
                 var runtimeVersion = runtime.CurrentDraftToolkit.RuntimeVersion;
+                var toolkitName = runtime.CurrentDraftToolkit.PatternName;
+                var toolkitId = runtime.CurrentDraftToolkit.Id;
 
                 Output(OutputMessages.CommandLine_Output_DraftConfiguration,
-                    draftName, draftId, draftVersion, runtimeVersion, outputStructured
+                    draftName, draftId, toolkitName, toolkitId, draftVersion, runtimeVersion, outputStructured
                         ? (object)JsonNode.Parse(configuration.ToJson())
                         : configuration.ToJson());
 
@@ -130,6 +132,7 @@ namespace Automate.CLI.Infrastructure
                                     DraftId = pair.Draft.Id,
                                     DraftName = pair.Draft.Name,
                                     ToolkitId = pair.Draft.Toolkit.Id,
+                                    ToolkitName = pair.Draft.Toolkit.PatternName,
                                     ToolkitVersion = new
                                     {
                                         DraftCompatibility = compatibility.DraftCompatibility?.ToString(),

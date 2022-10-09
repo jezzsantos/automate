@@ -346,7 +346,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;, v.{ToolkitVersion}, rt.v{RuntimeVersion}) is configured as:
+        ///   Looks up a localized string similar to Draft &apos;{DraftName}&apos; (ID: &apos;{DraftId}&apos;) from toolkit: &apos;{ToolkitName}&apos; (ID: &apos;{ToolkitId}&apos;, v.{ToolkitVersion}, rt.v{RuntimeVersion}) is configured as:
         ///{Configuration}.
         /// </summary>
         internal static string CommandLine_Output_DraftConfiguration {

@@ -452,7 +452,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id, draft.Toolkit.Version, draft.Toolkit.RuntimeVersion,
+                    draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version,
+                    draft.Toolkit.RuntimeVersion,
                     new
                     {
                         draft.Model.Id,
@@ -502,7 +503,8 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_DraftConfiguration.SubstituteTemplate(draft.Name,
-                    draft.Id, draft.Toolkit.Version, draft.Toolkit.RuntimeVersion,
+                    draft.Id, draft.Toolkit.PatternName, draft.Toolkit.Id, draft.Toolkit.Version,
+                    draft.Toolkit.RuntimeVersion,
                     new
                     {
                         draft.Model.Id,
