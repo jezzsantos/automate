@@ -398,7 +398,8 @@ namespace Automate.CLI.Infrastructure
                 {
                     DraftCompatibility = null;
                     Toolkit = new StructuredToolkitVersionInfo(toolkit.Version, toolkit.Version);
-                    Runtime = new StructuredToolkitVersionInfo(toolkit.RuntimeVersion, metadata.RuntimeVersion);
+                    Runtime = new StructuredToolkitVersionInfo(toolkit.RuntimeVersion,
+                        metadata.RuntimeVersion.ToString());
                     ToolkitRuntimeCompatibility = toolkit.GetCompatibility(metadata);
                 }
 
@@ -407,7 +408,8 @@ namespace Automate.CLI.Infrastructure
                 {
                     DraftCompatibility = draft.GetCompatibility(toolkit);
                     Toolkit = new StructuredToolkitVersionInfo(draft.Toolkit.Version, toolkit.Version);
-                    Runtime = new StructuredToolkitVersionInfo(draft.Toolkit.RuntimeVersion, metadata.RuntimeVersion);
+                    Runtime = new StructuredToolkitVersionInfo(draft.Toolkit.RuntimeVersion,
+                        metadata.RuntimeVersion.ToString());
                     ToolkitRuntimeCompatibility = toolkit.GetCompatibility(metadata);
                 }
 

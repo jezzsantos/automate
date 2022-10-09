@@ -4,6 +4,7 @@ using Automate.Authoring.Domain;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using FluentAssertions;
+using Moq;
 using Xunit;
 using Attribute = Automate.Authoring.Domain.Attribute;
 
@@ -259,6 +260,72 @@ namespace Core.UnitTests.Authoring.Domain
                 .Properties["acollection3"].Items.Count.Should().Be(3);
             result.Model.Properties["acollection1"].Items[2].Properties["acollection2"].Items[2]
                 .Properties["acollection3"].Items.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public void WhenSyncRuntimeChangesAndNoRuntimeVersion_ThenDoesNothing()
+        {
+            var installedMachineVersion = MachineConstants.GetRuntimeVersion();
+            var metadata = new Mock<IAssemblyMetadata>();
+            metadata.Setup(m => m.RuntimeVersion)
+                .Returns(installedMachineVersion.NextMajor());
+#if TESTINGONLY
+            this.pattern.ResetRuntimeVersion();
+#endif
+
+            this.pattern.SyncRuntimeChanges(metadata.Object);
+
+            metadata.VerifyGet(m => m.RuntimeVersion, Times.Never);
+            this.pattern.RuntimeVersion.Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenSyncRuntimeChangesAndRuntimeVersionSameAsMachine_ThenDoesNothing()
+        {
+            var installedMachineVersion = MachineConstants.GetRuntimeVersion();
+            var metadata = new Mock<IAssemblyMetadata>();
+            metadata.Setup(m => m.RuntimeVersion)
+                .Returns(installedMachineVersion);
+
+            this.pattern.SyncRuntimeChanges(metadata.Object);
+
+            metadata.VerifyGet(m => m.RuntimeVersion);
+            this.pattern.ToolkitVersion.ChangeLog.Should().BeEmpty();
+            this.pattern.RuntimeVersion.Should().Be(installedMachineVersion.ToString());
+        }
+
+        [Fact]
+        public void WhenSyncRuntimeChangesAndRuntimeVersionSameMajorAsMachine_ThenUpdates()
+        {
+            var installedMachineVersion = MachineConstants.GetRuntimeVersion();
+            var nextMinor = installedMachineVersion.NextMinor();
+            var metadata = new Mock<IAssemblyMetadata>();
+            metadata.Setup(m => m.RuntimeVersion)
+                .Returns(nextMinor);
+
+            this.pattern.SyncRuntimeChanges(metadata.Object);
+
+            metadata.VerifyGet(m => m.RuntimeVersion);
+            this.pattern.ToolkitVersion.ChangeLog.Should().BeEmpty();
+            this.pattern.RuntimeVersion.Should().Be(nextMinor.ToString());
+        }
+
+        [Fact]
+        public void WhenSyncRuntimeChangesAndRuntimeVersionLessThanMachine_ThenRegistersChangeAndUpdates()
+        {
+            var installedMachineVersion = MachineConstants.GetRuntimeVersion();
+            var nextMajor = installedMachineVersion.NextMajor();
+            var metadata = new Mock<IAssemblyMetadata>();
+            metadata.Setup(m => m.RuntimeVersion)
+                .Returns(nextMajor);
+
+            this.pattern.SyncRuntimeChanges(metadata.Object);
+
+            metadata.VerifyGet(m => m.RuntimeVersion);
+            this.pattern.ToolkitVersion.ChangeLog.Should().ContainSingle(x =>
+                x.MessageTemplate == VersionChanges.Pattern_RuntimeVersion_Update &&
+                x.Change == VersionChange.NonBreaking);
+            this.pattern.RuntimeVersion.Should().Be(nextMajor.ToString());
         }
 #if TESTINGONLY
         [Fact]

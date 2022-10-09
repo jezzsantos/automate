@@ -705,7 +705,7 @@ namespace Automate.CLI.Infrastructure
             return new AuthoringApplication(container.Resolve<IPatternStore>(),
                 container.Resolve<IFilePathResolver>(), container.Resolve<IPatternPathResolver>(),
                 container.Resolve<IPatternToolkitPackager>(), container.Resolve<ITextTemplatingEngine>(),
-                container.Resolve<IApplicationExecutor>());
+                container.Resolve<IApplicationExecutor>(), container.Resolve<IAssemblyMetadata>());
         }
 
         private static RuntimeApplication CreateRuntimeApplication(IDependencyContainer container)

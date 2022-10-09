@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -54,10 +53,12 @@ namespace Core.UnitTests.Authoring.Application
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
+            var metadata = new Mock<IAssemblyMetadata>();
+            
             this.application =
                 new AuthoringApplication(this.store, this.filePathResolver.Object,
                     this.patternPathResolver.Object,
-                    this.builder.Object, this.textTemplatingEngine.Object, applicationExecutor.Object);
+                    this.builder.Object, this.textTemplatingEngine.Object, applicationExecutor.Object, metadata.Object);
         }
 
         [Fact]
@@ -795,14 +796,16 @@ namespace Core.UnitTests.Authoring.Application
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
             this.application.CreateNewPattern("apatternname", null, null);
-            this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.IsAny<VersionInstruction>()))
-                .Returns((PatternDefinition pattern, VersionInstruction version) =>
-                    new ToolkitPackage(new ToolkitDefinition(pattern, new Version(version.Instruction)),
+            this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<IAssemblyMetadata>(), It.IsAny<PatternDefinition>(),
+                    It.IsAny<VersionInstruction>()))
+                .Returns((IAssemblyMetadata metadata, PatternDefinition pattern, VersionInstruction version) =>
+                    new ToolkitPackage(new ToolkitDefinition(pattern, version.Instruction.ToSemVersion()),
                         "abuildlocation", null));
 
             var toolkit = this.application.BuildAndExportToolkit("2.0.0", false);
 
-            this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<PatternDefinition>(), It.Is<VersionInstruction>(vi =>
+            this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<IAssemblyMetadata>(), It.IsAny<PatternDefinition>(),
+                It.Is<VersionInstruction>(vi =>
                 vi.Instruction == "2.0.0")));
             toolkit.ExportedLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");

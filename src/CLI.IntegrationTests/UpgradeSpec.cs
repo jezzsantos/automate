@@ -214,7 +214,7 @@ namespace CLI.IntegrationTests
         }
 
         private void RebuildReversionAndInstallToolkit(
-            string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
+            string versionInstruction = PatternVersioningHistory.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;

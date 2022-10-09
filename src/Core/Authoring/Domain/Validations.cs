@@ -91,7 +91,7 @@ namespace Automate.Authoring.Domain
                 return true;
             }
 
-            if (instruction.EqualsIgnoreCase(ToolkitVersion.AutoIncrementInstruction))
+            if (instruction.EqualsIgnoreCase(PatternVersioningHistory.AutoIncrementInstruction))
             {
                 return true;
             }

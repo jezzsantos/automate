@@ -99,6 +99,9 @@
     <data name="Pattern_CodeTemplates_Update" xml:space="preserve">
         <value>CodeTemplate (ID: {TemplateId}) was modified on element {ParentId}</value>
     </data>
+    <data name="Pattern_RuntimeVersion_Update" xml:space="preserve">
+        <value>Pattern (ID: {PatternId}) has changed its runtime version from {Published} to {Installed}</value>
+    </data>
     <data name="Pattern_Name_Updated" xml:space="preserve">
         <value>Pattern (ID: {PatternId}) changed its name</value>
     </data>

@@ -1,8 +1,10 @@
-﻿namespace Automate.Common.Domain
+﻿using Semver;
+
+namespace Automate.Common.Domain
 {
     public interface IAssemblyMetadata
     {
-        string RuntimeVersion { get; }
+        SemVersion RuntimeVersion { get; }
 
         string ProductName { get; }
     }

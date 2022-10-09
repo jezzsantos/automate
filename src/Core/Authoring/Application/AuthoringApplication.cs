@@ -15,6 +15,7 @@ namespace Automate.Authoring.Application
 {
     public class AuthoringApplication
     {
+        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IApplicationExecutor applicationExecutor;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
@@ -24,7 +25,8 @@ namespace Automate.Authoring.Application
 
         public AuthoringApplication(IPatternStore store, IFilePathResolver fileResolver,
             IPatternPathResolver patternResolver, IPatternToolkitPackager packager,
-            ITextTemplatingEngine textTemplatingEngine, IApplicationExecutor applicationExecutor)
+            ITextTemplatingEngine textTemplatingEngine, IApplicationExecutor applicationExecutor,
+            IAssemblyMetadata assemblyMetadata)
         {
             store.GuardAgainstNull(nameof(store));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
@@ -32,12 +34,14 @@ namespace Automate.Authoring.Application
             packager.GuardAgainstNull(nameof(packager));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
             applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
+            assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
             this.store = store;
             this.fileResolver = fileResolver;
             this.patternResolver = patternResolver;
             this.packager = packager;
             this.textTemplatingEngine = textTemplatingEngine;
             this.applicationExecutor = applicationExecutor;
+            this.assemblyMetadata = assemblyMetadata;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -577,7 +581,8 @@ namespace Automate.Authoring.Application
         {
             var pattern = EnsureCurrentPatternExists();
 
-            return this.packager.PackAndExport(pattern, new VersionInstruction(versionInstruction, forceVersion));
+            return this.packager.PackAndExport(this.assemblyMetadata, pattern,
+                new VersionInstruction(versionInstruction, forceVersion));
         }
 
         private IPatternElement ResolveTargetElement(PatternDefinition pattern, string parentExpression)

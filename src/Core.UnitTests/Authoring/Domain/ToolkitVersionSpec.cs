@@ -14,11 +14,11 @@ namespace Core.UnitTests.Authoring.Domain
         [Trait("Category", "Unit")]
         public class GivenNoContext
         {
-            private readonly ToolkitVersion version;
+            private readonly PatternVersioningHistory version;
 
             public GivenNoContext()
             {
-                this.version = new ToolkitVersion();
+                this.version = new PatternVersioningHistory();
             }
 
             [Fact]
@@ -86,9 +86,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("auto"));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -98,9 +98,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("1.1"));
 
-                result.Version.Should().Be("1.1.0");
+                result.Version.Should().Be("1.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -110,9 +110,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("1.1.1"));
 
-                result.Version.Should().Be("1.1.1");
+                result.Version.Should().Be("1.1.1".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -131,11 +131,11 @@ namespace Core.UnitTests.Authoring.Domain
         [Trait("Category", "Unit")]
         public class GivenNoChange
         {
-            private readonly ToolkitVersion version;
+            private readonly PatternVersioningHistory version;
 
             public GivenNoChange()
             {
-                this.version = new ToolkitVersion();
+                this.version = new PatternVersioningHistory();
             }
 
             [Fact]
@@ -173,9 +173,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction());
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -184,11 +184,12 @@ namespace Core.UnitTests.Authoring.Domain
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMinor()
             {
                 var result =
-                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                    this.version.UpdateVersion(
+                        new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -198,9 +199,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.1.0"));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -210,9 +211,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.10.0"));
 
-                result.Version.Should().Be("0.10.0");
+                result.Version.Should().Be("0.10.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -222,9 +223,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("10.0.0"));
 
-                result.Version.Should().Be("10.0.0");
+                result.Version.Should().Be("10.0.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -233,11 +234,11 @@ namespace Core.UnitTests.Authoring.Domain
         [Trait("Category", "Unit")]
         public class GivenNonBreakingChange
         {
-            private readonly ToolkitVersion version;
+            private readonly PatternVersioningHistory version;
 
             public GivenNonBreakingChange()
             {
-                this.version = new ToolkitVersion();
+                this.version = new PatternVersioningHistory();
                 this.version.RegisterChange(VersionChange.NonBreaking, "anonbreakingchange");
             }
 
@@ -285,9 +286,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction());
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -296,11 +297,12 @@ namespace Core.UnitTests.Authoring.Domain
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMinor()
             {
                 var result =
-                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                    this.version.UpdateVersion(
+                        new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -310,10 +312,10 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.1.0"));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should()
                     .Be(DomainMessages.ToolkitVersion_Warning.Substitute("0.1.0", "* anonbreakingchange"));
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -323,9 +325,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.10.0"));
 
-                result.Version.Should().Be("0.10.0");
+                result.Version.Should().Be("0.10.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -335,9 +337,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("10.0.0"));
 
-                result.Version.Should().Be("10.0.0");
+                result.Version.Should().Be("10.0.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -346,11 +348,11 @@ namespace Core.UnitTests.Authoring.Domain
         [Trait("Category", "Unit")]
         public class GivenBreakingChange
         {
-            private readonly ToolkitVersion version;
+            private readonly PatternVersioningHistory version;
 
             public GivenBreakingChange()
             {
-                this.version = new ToolkitVersion();
+                this.version = new PatternVersioningHistory();
                 this.version.RegisterChange(VersionChange.Breaking, "abreakingchange");
             }
 
@@ -398,9 +400,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction());
 
-                result.Version.Should().Be("1.0.0");
+                result.Version.Should().Be("1.0.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -409,11 +411,12 @@ namespace Core.UnitTests.Authoring.Domain
             public void WhenUpdateVersionWithAutoInstruction_ThenReturnsNextMajor()
             {
                 var result =
-                    this.version.UpdateVersion(new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                    this.version.UpdateVersion(
+                        new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
-                result.Version.Should().Be("1.0.0");
+                result.Version.Should().Be("1.0.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -434,10 +437,10 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.1.0", true));
 
-                result.Version.Should().Be("0.1.0");
+                result.Version.Should().Be("0.1.0".ToSemVersion());
                 result.Message.Should()
                     .Be(DomainMessages.ToolkitVersion_Forced.Substitute("0.1.0", "* abreakingchange"));
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -458,10 +461,10 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("0.10.0", true));
 
-                result.Version.Should().Be("0.10.0");
+                result.Version.Should().Be("0.10.0".ToSemVersion());
                 result.Message.Should()
                     .Be(DomainMessages.ToolkitVersion_Forced.Substitute("0.10.0", "* abreakingchange"));
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }
@@ -471,9 +474,9 @@ namespace Core.UnitTests.Authoring.Domain
             {
                 var result = this.version.UpdateVersion(new VersionInstruction("2.0.0"));
 
-                result.Version.Should().Be("2.0.0");
+                result.Version.Should().Be("2.0.0".ToSemVersion());
                 result.Message.Should().BeNull();
-                this.version.Current.Should().Be(result.Version);
+                this.version.Current.Should().Be(result.Version.ToString());
                 this.version.LastChanges.Should().Be(VersionChange.NoChange);
                 this.version.ChangeLog.Should().BeEmpty();
             }

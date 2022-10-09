@@ -13,12 +13,12 @@ namespace Automate.Authoring.Domain
     {
         private readonly List<CodeTemplateFile> codeTemplateFiles;
 
-        public ToolkitDefinition(PatternDefinition pattern, Version version = null) : this(pattern,
-            ToolkitConstants.GetRuntimeVersion(), version)
+        public ToolkitDefinition(PatternDefinition pattern, SemVersion version = null) : this(pattern,
+            MachineConstants.GetRuntimeVersion().ToString(), version)
         {
         }
 
-        internal ToolkitDefinition(PatternDefinition pattern, string runtimeVersion, Version version = null)
+        internal ToolkitDefinition(PatternDefinition pattern, string runtimeVersion, SemVersion version = null)
         {
             pattern.GuardAgainstNull(nameof(pattern));
             runtimeVersion.GuardAgainstNullOrEmpty(nameof(runtimeVersion));
@@ -26,7 +26,7 @@ namespace Automate.Authoring.Domain
             Id = pattern.Id;
             Pattern = pattern;
             Version = version.Exists()
-                ? version.ToString(ToolkitVersion.VersionFieldCount)
+                ? version.ToString()
                 : pattern.ToolkitVersion.Current;
             RuntimeVersion = runtimeVersion;
             this.codeTemplateFiles = new List<CodeTemplateFile>();
@@ -116,16 +116,16 @@ namespace Automate.Authoring.Domain
             metadata.GuardAgainstNull(nameof(metadata));
 
             var runtimeName = metadata.ProductName;
-            var assemblyRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
+            var assemblyRuntimeVersion = metadata.RuntimeVersion;
             var runtimeVersion = toolkit.RuntimeVersion;
             if (runtimeVersion.HasNoValue())
             {
                 throw new AutomateException(
                     ExceptionMessages.ToolkitDefinition_Incompatible_NoToolkitVersion.Substitute(
-                        ToolkitConstants.FirstVersionSupportingRuntimeVersion, assemblyRuntimeVersion, runtimeName));
+                        MachineConstants.FirstVersionSupportingRuntimeVersion, assemblyRuntimeVersion, runtimeName));
             }
 
-            var toolkitRuntimeVersion = SemVersion.Parse(runtimeVersion, SemVersionStyles.Any);
+            var toolkitRuntimeVersion = runtimeVersion.ToSemVersion();
             var compatibility = toolkit.GetCompatibility(metadata);
             if (compatibility == ToolkitRuntimeVersionCompatibility.MachineAheadOfToolkit)
             {

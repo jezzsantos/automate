@@ -21,11 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CLI\CLI.csproj"/>
         <ProjectReference Include="..\Core\Core.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Common\Application"/>
     </ItemGroup>
 
 </Project>

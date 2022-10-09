@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using Semver;
 
 namespace Automate.Common.Extensions
 {
@@ -17,6 +18,16 @@ namespace Automate.Common.Extensions
 
     public static class StringExtensions
     {
+        public static SemVersion ToSemVersion(this string value)
+        {
+            if (value.HasNoValue())
+            {
+                return null;
+            }
+
+            return SemVersion.Parse(value, SemVersionStyles.Any);
+        }
+
         public static int ToInt(this string text)
         {
             return text == null

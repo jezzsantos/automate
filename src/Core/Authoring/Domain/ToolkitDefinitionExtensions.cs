@@ -1,6 +1,5 @@
 ﻿using Automate.Common.Domain;
 using Automate.Common.Extensions;
-using Semver;
 
 namespace Automate.Authoring.Domain
 {
@@ -26,8 +25,8 @@ namespace Automate.Authoring.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
 
-            var machineRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
-            var toolkitRuntimeVersion = SemVersion.Parse(toolkit.RuntimeVersion, SemVersionStyles.Any);
+            var machineRuntimeVersion = metadata.RuntimeVersion;
+            var toolkitRuntimeVersion = toolkit.RuntimeVersion.ToSemVersion();
 
             if (machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {
@@ -50,8 +49,8 @@ namespace Automate.Authoring.Domain
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
 
-            var machineRuntimeVersion = SemVersion.Parse(metadata.RuntimeVersion, SemVersionStyles.Any);
-            var toolkitRuntimeVersion = SemVersion.Parse(toolkit.RuntimeVersion, SemVersionStyles.Any);
+            var machineRuntimeVersion = metadata.RuntimeVersion;
+            var toolkitRuntimeVersion = toolkit.RuntimeVersion.ToSemVersion();
 
             if (machineRuntimeVersion.IsPrerelease && toolkitRuntimeVersion.IsPrerelease)
             {

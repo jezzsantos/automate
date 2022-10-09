@@ -27,26 +27,6 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Update="Application\ApplicationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Patterns\Domain\DomainMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>DomainMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Patterns\Domain\MigrationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Patterns\Domain\ValidationMessages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Patterns\Domain\VersionChanges.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="Common\Application\ApplicationMessages.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>ApplicationMessages.Designer.cs</LastGenOutput>
@@ -63,10 +43,18 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>MigrationMessages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Authoring\Domain\ValidationMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Authoring\Domain\VersionChanges.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Application\ApplicationMessages.Designer.cs">
+        <Compile Update="Common\Application\ApplicationMessages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ApplicationMessages.resx</DependentUpon>
@@ -75,6 +63,26 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ExceptionMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Common\Domain\DomainMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>DomainMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Runtime\Domain\MigrationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>MigrationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Authoring\Domain\ValidationMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ValidationMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Authoring\Domain\VersionChanges.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>VersionChanges.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

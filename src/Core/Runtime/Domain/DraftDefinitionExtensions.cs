@@ -1,6 +1,5 @@
 ﻿using Automate.Authoring.Domain;
 using Automate.Common.Extensions;
-using Semver;
 
 namespace Automate.Runtime.Domain
 {
@@ -12,8 +11,8 @@ namespace Automate.Runtime.Domain
             draft.GuardAgainstNull(nameof(draft));
             installedToolkit.GuardAgainstNull(nameof(installedToolkit));
 
-            var draftToolkitVersion = SemVersion.Parse(draft.Toolkit.Version, SemVersionStyles.Any);
-            var installedToolkitVersion = SemVersion.Parse(installedToolkit.Version, SemVersionStyles.Any);
+            var draftToolkitVersion = draft.Toolkit.Version.ToSemVersion();
+            var installedToolkitVersion = installedToolkit.Version.ToSemVersion();
             if (draftToolkitVersion > installedToolkitVersion)
             {
                 return DraftToolkitVersionCompatibility.DraftAheadOfToolkit;

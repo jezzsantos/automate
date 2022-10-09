@@ -75,9 +75,9 @@ namespace Automate.Common.Domain
             {
                 return LocalState.Rehydrate(properties, this);
             }
-            if (persistableType == typeof(ToolkitVersion))
+            if (persistableType == typeof(PatternVersioningHistory))
             {
-                return ToolkitVersion.Rehydrate(properties, this);
+                return PatternVersioningHistory.Rehydrate(properties, this);
             }
             if (persistableType == typeof(VersionChangeLog))
             {

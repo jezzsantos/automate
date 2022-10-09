@@ -34,12 +34,12 @@ namespace Core.UnitTests.Runtime.Application
                 var packager = new Mock<IPatternToolkitPackager>();
                 var draftPathResolver = new Mock<IDraftPathResolver>();
                 var automationService = new Mock<IAutomationExecutor>();
-                var runtimeMetadata = new Mock<IAssemblyMetadata>();
+                var metadata = new Mock<IAssemblyMetadata>();
 
                 this.application =
                     new RuntimeApplication(toolkitStore, draftStore,
                         fileResolver.Object,
-                        packager.Object, draftPathResolver.Object, automationService.Object, runtimeMetadata.Object);
+                        packager.Object, draftPathResolver.Object, automationService.Object, metadata.Object);
             }
 
             [Fact]
@@ -78,7 +78,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.automationExecutor = new Mock<IAutomationExecutor>();
                 var runtimeMetadata = new Mock<IAssemblyMetadata>();
                 runtimeMetadata.Setup(rm => rm.ProductName).Returns("aproductname");
-                runtimeMetadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
+                runtimeMetadata.Setup(rm => rm.RuntimeVersion).Returns(MachineConstants.GetRuntimeVersion);
 
                 this.application =
                     new RuntimeApplication(this.toolkitStore, this.draftStore,
@@ -529,7 +529,7 @@ namespace Core.UnitTests.Runtime.Application
             {
                 ResetToolkit();
                 var draft = this.application.CreateDraft("apatternname", null);
-                this.toolkitStore.Import(new ToolkitDefinition(this.pattern, new Version("0.2.0")));
+                this.toolkitStore.Import(new ToolkitDefinition(this.pattern, "0.2.0".ToSemVersion()));
 
                 this.application
                     .Invoking(x => x.GetDraftConfiguration(false, false, false))

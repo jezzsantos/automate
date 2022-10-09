@@ -22,10 +22,11 @@ namespace Automate.Authoring.Infrastructure
             this.toolkitStore = toolkitStore;
         }
 
-        public ToolkitPackage PackAndExport(PatternDefinition pattern, VersionInstruction instruction)
+        public ToolkitPackage PackAndExport(IAssemblyMetadata metadata, PatternDefinition pattern,
+            VersionInstruction instruction)
         {
-            var (version, toolkit) =
-                Pack(pattern, instruction, (pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
+            var (version, toolkit) = Pack(metadata, pattern, instruction,
+                (pat, temp) => this.store.DownloadCodeTemplate(pat, temp));
             this.store.Save(pattern);
 
             var exportedLocation = this.toolkitStore.Export(toolkit);
@@ -45,12 +46,13 @@ namespace Automate.Authoring.Infrastructure
             return toolkit;
         }
 
-        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(PatternDefinition pattern,
-            VersionInstruction instruction, Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
+        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(IAssemblyMetadata metadata,
+            PatternDefinition pattern, VersionInstruction instruction,
+            Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
         {
             pattern.GuardAgainstNull(nameof(pattern));
 
-            pattern.RegisterCodeTemplatesChanges(getContent);
+            pattern.SyncChanges(metadata, getContent);
             var version = pattern.UpdateToolkitVersion(instruction);
 
             var toolkit = new ToolkitDefinition(pattern);

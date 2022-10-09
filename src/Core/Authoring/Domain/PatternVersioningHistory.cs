@@ -4,24 +4,24 @@ using System.Linq;
 using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
+using Semver;
 
 namespace Automate.Authoring.Domain
 {
-    public class ToolkitVersion : IPersistable
+    public class PatternVersioningHistory : IPersistable
     {
-        internal const int VersionFieldCount = 3;
         internal const string AutoIncrementInstruction = "auto";
-        internal static readonly Version InitialVersionNumber = new(0, 0, 0);
+        private static readonly SemVersion InitialVersionNumber = new(0, 0, 0);
         private readonly List<VersionChangeLog> changeLog;
 
-        public ToolkitVersion()
+        public PatternVersioningHistory()
         {
-            Current = InitialVersionNumber.ToString(VersionFieldCount);
+            Current = InitialVersionNumber.ToString();
             LastChanges = VersionChange.NoChange;
             this.changeLog = new List<VersionChangeLog>();
         }
 
-        private ToolkitVersion(PersistableProperties properties,
+        private PatternVersioningHistory(PersistableProperties properties,
             IPersistableFactory factory)
         {
             Current = properties.Rehydrate<string>(factory, nameof(Current));
@@ -31,11 +31,11 @@ namespace Automate.Authoring.Domain
 
         public string Current { get; private set; }
 
+        public string Next => EstimateNextVersion().ToString();
+
         public VersionChange LastChanges { get; private set; }
 
         public IReadOnlyList<VersionChangeLog> ChangeLog => this.changeLog;
-
-        public string NextVersion => CalculateNextVersion().ToString();
 
         public PersistableProperties Dehydrate()
         {
@@ -47,10 +47,10 @@ namespace Automate.Authoring.Domain
             return properties;
         }
 
-        public static ToolkitVersion Rehydrate(PersistableProperties properties,
+        public static PatternVersioningHistory Rehydrate(PersistableProperties properties,
             IPersistableFactory factory)
         {
-            return new ToolkitVersion(properties, factory);
+            return new PatternVersioningHistory(properties, factory);
         }
 
         public void RegisterChange(VersionChange change, string description, params object[] args)
@@ -110,14 +110,14 @@ namespace Automate.Authoring.Domain
             instruction.GuardAgainstNull(nameof(instruction));
 
             var result = CalculateNewVersion(instruction);
-            if (Current == result.Version)
+            if (Current.ToSemVersion() == result.Version)
             {
                 return result;
             }
 
             this.changeLog.Add(new VersionChangeLog(VersionChange.NoChange, VersionChanges.ToolkitVersion_NewVersion,
                 Current, result.Version));
-            Current = result.Version;
+            Current = result.Version.ToString();
             ResetAfterUpdate();
             return result;
         }
@@ -130,82 +130,80 @@ namespace Automate.Authoring.Domain
 
         private VersionUpdateResult CalculateNewVersion(VersionInstruction instruction)
         {
-            var currentVersion = new Version(Current);
+            var currentVersion = Current.ToSemVersion();
 
-            var expectedNewVersion = CalculateNextVersion(currentVersion);
+            var estimatedNextVersion = EstimateNextVersion(currentVersion);
 
             if (instruction.Instruction.HasNoValue())
             {
-                return new VersionUpdateResult(expectedNewVersion);
+                return new VersionUpdateResult(estimatedNextVersion);
             }
 
             if (instruction.Instruction.EqualsIgnoreCase(AutoIncrementInstruction))
             {
-                return new VersionUpdateResult(expectedNewVersion);
+                return new VersionUpdateResult(estimatedNextVersion);
             }
 
-            if (!Version.TryParse(instruction.Instruction, out var requestedVersion))
+            if (!SemVersion.TryParse(instruction.Instruction, SemVersionStyles.Any, out var instructedVersion))
             {
                 throw new AutomateException(
                     ExceptionMessages.VersionInstruction_InvalidVersionInstruction.Substitute(instruction));
             }
 
-            requestedVersion = requestedVersion.To2Dot();
-
-            if (requestedVersion == InitialVersionNumber)
+            if (instructedVersion == InitialVersionNumber)
             {
                 throw new AutomateException(
                     ExceptionMessages.ToolkitVersion_ZeroVersion.Substitute(
-                        requestedVersion.ToString(VersionFieldCount)));
+                        instructedVersion.ToString()));
             }
 
-            if (requestedVersion < currentVersion)
+            if (instructedVersion < currentVersion)
             {
                 throw new AutomateException(
                     ExceptionMessages.ToolkitVersion_VersionBeforeCurrent.Substitute(instruction.Instruction,
-                        currentVersion.ToString(VersionFieldCount)));
+                        currentVersion.ToString()));
             }
 
-            if (requestedVersion <= expectedNewVersion)
+            if (instructedVersion <= estimatedNextVersion)
             {
                 if (LastChanges == VersionChange.Breaking)
                 {
                     if (instruction.Force)
                     {
-                        return new VersionUpdateResult(requestedVersion,
+                        return new VersionUpdateResult(instructedVersion,
                             DomainMessages.ToolkitVersion_Forced.Substitute(instruction.Instruction,
                                 ChangeLog.ToBulletList(item => item.Message)));
                     }
                     throw new AutomateException(ExceptionMessages.ToolkitVersion_IllegalVersion.Substitute(
                         instruction.Instruction,
-                        expectedNewVersion.ToString(VersionFieldCount),
+                        estimatedNextVersion.ToString(),
                         ChangeLog.ToMultiLineText(item => item.Message)));
                 }
 
                 if (LastChanges == VersionChange.NonBreaking)
                 {
-                    return new VersionUpdateResult(requestedVersion,
+                    return new VersionUpdateResult(instructedVersion,
                         DomainMessages.ToolkitVersion_Warning.Substitute(instruction.Instruction,
                             ChangeLog.ToBulletList(item => item.Message)));
                 }
             }
 
-            return new VersionUpdateResult(requestedVersion);
+            return new VersionUpdateResult(instructedVersion);
         }
 
-        private Version CalculateNextVersion()
+        private SemVersion EstimateNextVersion()
         {
-            return CalculateNextVersion(new Version(Current));
+            return EstimateNextVersion(Current.ToSemVersion());
         }
 
-        private Version CalculateNextVersion(Version currentVersion)
+        private SemVersion EstimateNextVersion(SemVersion currentVersion)
         {
             return LastChanges switch
             {
-                VersionChange.NonBreaking => currentVersion.RevMinor(),
-                VersionChange.Breaking => currentVersion.RevMajor(),
-                _ => Current == InitialVersionNumber.ToString(VersionFieldCount)
-                    ? currentVersion.RevMinor()
+                VersionChange.NonBreaking => currentVersion.NextMinor(),
+                VersionChange.Breaking => currentVersion.NextMajor(),
+                _ => Current == InitialVersionNumber.ToString()
+                    ? currentVersion.NextMinor()
                     : currentVersion
             };
         }
@@ -259,15 +257,13 @@ namespace Automate.Authoring.Domain
 
     public class VersionUpdateResult
     {
-        private readonly Version version;
-
-        public VersionUpdateResult(Version version, string message = null)
+        public VersionUpdateResult(SemVersion version, string message = null)
         {
-            this.version = new Version(version.Major, version.Minor, version.BuildOrZero());
+            Version = version;
             Message = message;
         }
 
-        public string Version => this.version.ToString(ToolkitVersion.VersionFieldCount);
+        public SemVersion Version { get; }
 
         public string Message { get; }
     }

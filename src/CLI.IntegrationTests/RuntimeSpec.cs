@@ -100,7 +100,7 @@ namespace CLI.IntegrationTests
             var runtimeName = metadata.ProductName;
             this.setup.Should()
                 .DisplayError(ExceptionMessages.ToolkitDefinition_Incompatible_NoToolkitVersion.Substitute(
-                    ToolkitConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
+                    MachineConstants.FirstVersionSupportingRuntimeVersion, runtimeVersion, runtimeName));
         }
 
         [Fact]
@@ -1038,7 +1038,7 @@ namespace CLI.IntegrationTests
         }
 
         private string BuildAndInstallToolkit(
-            string versionInstruction = ToolkitVersion.AutoIncrementInstruction)
+            string versionInstruction = PatternVersioningHistory.AutoIncrementInstruction)
         {
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} toolkit --asversion {versionInstruction}");
             var latestVersion = this.setup.Pattern.ToolkitVersion.Current;

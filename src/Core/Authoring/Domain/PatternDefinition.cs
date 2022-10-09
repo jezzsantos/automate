@@ -13,22 +13,27 @@ namespace Automate.Authoring.Domain
             string description = null) : base(name, displayName, description)
         {
             Description = description;
-            ToolkitVersion = new ToolkitVersion();
+            ToolkitVersion = new PatternVersioningHistory();
+            RuntimeVersion = MachineConstants.GetRuntimeVersion().ToString();
         }
 
         private PatternDefinition(PersistableProperties properties,
             IPersistableFactory factory) : base(properties,
             factory)
         {
-            ToolkitVersion = properties.Rehydrate<ToolkitVersion>(factory, nameof(ToolkitVersion));
+            ToolkitVersion = properties.Rehydrate<PatternVersioningHistory>(factory, nameof(ToolkitVersion));
+            RuntimeVersion = properties.Rehydrate<string>(factory, nameof(RuntimeVersion));
         }
 
-        public ToolkitVersion ToolkitVersion { get; private set; }
+        public PatternVersioningHistory ToolkitVersion { get; private set; }
+
+        public string RuntimeVersion { get; private set; }
 
         public override PersistableProperties Dehydrate()
         {
             var properties = base.Dehydrate();
             properties.Dehydrate(nameof(ToolkitVersion), ToolkitVersion);
+            properties.Dehydrate(nameof(RuntimeVersion), RuntimeVersion);
 
             return properties;
         }
@@ -163,22 +168,11 @@ namespace Automate.Authoring.Domain
             return visitor.VisitPatternExit(this);
         }
 
-        public void RegisterCodeTemplatesChanges(
+        public void SyncChanges(IAssemblyMetadata metadata,
             Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
         {
-            GetAllCodeTemplates()
-                .ForEach(template =>
-                {
-                    var lastModified = template.Template.LastModifiedUtc;
-                    var lastChangedInStore = getTemplateContent(this, template.Template).LastModifiedUtc;
-
-                    if (!lastModified.IsNear(lastChangedInStore, TimeSpan.FromSeconds(1)))
-                    {
-                        template.Template.UpdateLastModified(lastChangedInStore);
-                        ToolkitVersion.RegisterChange(VersionChange.NonBreaking,
-                            VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
-                    }
-                });
+            SyncRuntimeChanges(metadata);
+            SyncCodeTemplatesChanges(getTemplateContent);
         }
 
         /// <summary>
@@ -198,9 +192,51 @@ namespace Automate.Authoring.Domain
             Accept(visitor);
         }
 
+#if TESTINGONLY
+        public void ResetRuntimeVersion()
+        {
+            RuntimeVersion = null;
+        }
+#endif
+
         public ValidationResults Validate(ValidationContext context, object value)
         {
             return ValidationResults.None;
+        }
+
+        internal void SyncRuntimeChanges(IAssemblyMetadata metadata)
+        {
+            if (RuntimeVersion.HasNoValue()) //introduced at 1.0.5
+            {
+                return;
+            }
+
+            var installed = metadata.RuntimeVersion;
+            var published = RuntimeVersion.ToSemVersion();
+            if (installed.Major > published.Major)
+            {
+                ToolkitVersion.RegisterChange(VersionChange.NonBreaking,
+                    VersionChanges.Pattern_RuntimeVersion_Update, Id, published.ToString(), installed.ToString());
+            }
+            RuntimeVersion = installed.ToString();
+        }
+
+        private void SyncCodeTemplatesChanges(
+            Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
+        {
+            GetAllCodeTemplates()
+                .ForEach(template =>
+                {
+                    var lastModified = template.Template.LastModifiedUtc;
+                    var lastChangedInStore = getTemplateContent(this, template.Template).LastModifiedUtc;
+
+                    if (!lastModified.IsNear(lastChangedInStore, TimeSpan.FromSeconds(1)))
+                    {
+                        template.Template.UpdateLastModified(lastChangedInStore);
+                        ToolkitVersion.RegisterChange(VersionChange.NonBreaking,
+                            VersionChanges.Pattern_CodeTemplates_Update, template.Template.Id, template.Parent.Id);
+                    }
+                });
         }
 
         private void PopulateAncestry()

@@ -748,15 +748,15 @@ automate edit delete-command-launchpoint "<LAUNCHPOINTNAME>" --aschildof "{<ANEX
 !!! abstract "Concept"
     Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change.
 
-Patterns use a (2-dot) [semantic versioning](https://semver.org/) scheme (i.e. `Major.Minor.Patch`).
+Patterns use a (2-dot) [semantic versioning](https://semver.org/) scheme (i.e. `Major.Minor.Patch`), with no pre-release information.
 
 - A **Breaking** change to a pattern forces the pattern to auto-increment its **major** version number. e.g. deleting an existing attribute, element, or collection.
-- A **Non-Breaking** change force the pattern to auto-increment its **minor** number. e.g. adding a new attribute, element, or collection, or updating the contents of a code template.
-- The **patch** number is not used in the automatic versioning process.
+- A **Non-Breaking** change force the pattern to auto-increment its **minor** number. e.g. adding a new attribute, element, or collection, or updating the contents of a code template (or when the runtime has had a major/breaking upgrade)
+- The **patch** number is not used in the automatic versioning process. But it can be used manually.
 
-When a toolkit is built, the next version number can be automatically calculated for you (based on the edits to the pattern), or you can force a specific version number of your own (in cases where you want to have a specific release number).
+When a toolkit is built, the next version number can be automatically calculated for you (based on the previous edits to the pattern), or you can force a specific version number of your own (in cases where you want to have a specific release number).
 
-You will need to force a version number change if the given version violates the semantic versioning rules, or it is a past version number than the one that is auto-calculated.
+You will need to force a version number change if the given version violates the versioning rules above, or it is a past version number than the one that is auto-calculated.
 
 !!! warning
     Forcing a version number that violates these rules, may result in existing drafts being migrated into an invalid state.

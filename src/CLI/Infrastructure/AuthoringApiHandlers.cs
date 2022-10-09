@@ -30,7 +30,7 @@ namespace Automate.CLI.Infrastructure
                         new
                         {
                             pattern.ToolkitVersion.Current,
-                            Next = pattern.ToolkitVersion.NextVersion,
+                            pattern.ToolkitVersion.Next,
                             Change = pattern.ToolkitVersion.LastChanges.ToString()
                         }, pattern.Id);
                 }
@@ -57,7 +57,7 @@ namespace Automate.CLI.Infrastructure
                         new
                         {
                             pattern.ToolkitVersion.Current,
-                            Next = pattern.ToolkitVersion.NextVersion,
+                            pattern.ToolkitVersion.Next,
                             Change = pattern.ToolkitVersion.LastChanges.ToString()
                         }, pattern.Id);
                 }
@@ -78,7 +78,7 @@ namespace Automate.CLI.Infrastructure
                         new
                         {
                             pattern.ToolkitVersion.Current,
-                            Next = pattern.ToolkitVersion.NextVersion,
+                            pattern.ToolkitVersion.Next,
                             Change = pattern.ToolkitVersion.LastChanges.ToString()
                         }, FormatPatternSchema(true, pattern, all));
                 }
@@ -105,7 +105,7 @@ namespace Automate.CLI.Infrastructure
                                 Version = new
                                 {
                                     pattern.ToolkitVersion.Current,
-                                    Next = pattern.ToolkitVersion.NextVersion,
+                                    pattern.ToolkitVersion.Next,
                                     Change = pattern.ToolkitVersion.LastChanges.ToString()
                                 },
                                 IsCurrent = pattern.Id == currentPattern

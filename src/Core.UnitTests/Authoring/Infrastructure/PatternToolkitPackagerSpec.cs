@@ -33,7 +33,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
                 this.toolkitStore.Object);
             this.metadata = new Mock<IAssemblyMetadata>();
             this.metadata.Setup(rm => rm.ProductName).Returns("aproductname");
-            this.metadata.Setup(rm => rm.RuntimeVersion).Returns(ToolkitConstants.GetRuntimeVersion);
+            this.metadata.Setup(rm => rm.RuntimeVersion).Returns(MachineConstants.GetRuntimeVersion);
         }
 
         [Fact]
@@ -42,7 +42,8 @@ namespace Core.UnitTests.Authoring.Infrastructure
             var pattern = new PatternDefinition("apatternname");
 
             var result =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             result.Toolkit.Version.Should().Be("0.1.0");
             this.toolkitStore.Verify(ts => ts.Export(It.Is<ToolkitDefinition>(tk => tk.Version == "0.1.0")));
@@ -54,7 +55,8 @@ namespace Core.UnitTests.Authoring.Infrastructure
             var pattern = new PatternDefinition("apatternname");
 
             var result =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             result.Toolkit.Version.Should().Be("0.1.0");
             this.patternStore.Verify(ps =>
@@ -67,10 +69,12 @@ namespace Core.UnitTests.Authoring.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
             var result1 =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             var result2 =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             result1.Toolkit.Version.Should().Be("0.1.0");
             result2.Toolkit.Version.Should().Be("0.1.0");
@@ -92,10 +96,12 @@ namespace Core.UnitTests.Authoring.Infrastructure
                     ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
                 .Returns(new CodeTemplateContent { Content = fileContents, LastModifiedUtc = DateTime.UtcNow });
             var result1 =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             var result2 =
-                this.packager.PackAndExport(pattern, new VersionInstruction(ToolkitVersion.AutoIncrementInstruction));
+                this.packager.PackAndExport(this.metadata.Object, pattern,
+                    new VersionInstruction(PatternVersioningHistory.AutoIncrementInstruction));
 
             result1.Toolkit.Version.Should().Be("0.1.0");
             result2.Toolkit.Version.Should().Be("0.1.0");
@@ -111,7 +117,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
             var pattern = new PatternDefinition("apatternname");
             pattern.UpdateToolkitVersion(new VersionInstruction("1.0.0"));
 
-            var result = this.packager.PackAndExport(pattern, new VersionInstruction("2.1.0"));
+            var result = this.packager.PackAndExport(this.metadata.Object, pattern, new VersionInstruction("2.1.0"));
 
             result.Toolkit.Version.Should().Be("2.1.0");
             this.patternStore.Verify(ps =>
@@ -134,7 +140,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
                     ps.DownloadCodeTemplate(It.IsAny<PatternDefinition>(), It.IsAny<CodeTemplate>()))
                 .Returns(new CodeTemplateContent { Content = fileContents });
 
-            var result = this.packager.PackAndExport(pattern, new VersionInstruction());
+            var result = this.packager.PackAndExport(this.metadata.Object, pattern, new VersionInstruction());
 
             result.Toolkit.CodeTemplateFiles.Should().ContainSingle(ctf =>
                 ctf.Id == pattern.CodeTemplates.Single().Id && ctf.Contents == fileContents);
@@ -158,7 +164,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
         {
             var pattern = new PatternDefinition("apatternname");
 
-            var result = this.packager.PackAndExport(pattern, new VersionInstruction());
+            var result = this.packager.PackAndExport(this.metadata.Object, pattern, new VersionInstruction());
 
             result.Toolkit.Id.Should().NotBeNull();
             result.Toolkit.Version.Should().Be("0.1.0");
