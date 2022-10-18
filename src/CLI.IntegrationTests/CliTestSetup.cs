@@ -34,7 +34,7 @@ namespace CLI.IntegrationTests
         public CliTestSetup()
         {
             var services = new ServiceCollection();
-            Program.PopulateContainerForLocalMachineAndCurrentDirectory(services);
+            Program.PopulateContainerForLocalMachineAndCurrentDirectory(null, services);
             this.container = new DotNetDependencyContainer(services);
             this.repository = this.container.Resolve<LocalMachineFileRepository>();
         }

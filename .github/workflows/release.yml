@@ -17,6 +17,7 @@ env:
   TAG_NAME: '${{github.ref_name}}'
   NUGET_APIKEY: '${{secrets.NUGET_APIKEY}}'
   NUGET_OUTPUT_DIR: 'src/CLI/nupkg'
+  APPLICATIONINSIGHTS_CONNECTIONSTRING: '${{secrets.APPLICATIONINSIGHTS_CONNECTIONSTRING}}'
 
 jobs:
   build:
@@ -32,6 +33,12 @@ jobs:
           dotnet-version: 6.0.x
       - name: Restore dependencies
         run: dotnet restore "${{env.SOLUTION_PATH}}"
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{env.OUTPUT_DIR}}/appsettings.json'
+        env:
+          ApplicationInsights.ConnectionString: ${{APPLICATIONINSIGHTS_CONNECTIONSTRING}}
       - name: Build
         run: dotnet build "${{env.SOLUTION_PATH}}" --no-restore
       - name: Create Publish folder

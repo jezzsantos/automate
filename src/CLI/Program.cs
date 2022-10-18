@@ -5,25 +5,50 @@ using Automate.CLI.Infrastructure;
 using Automate.Common;
 using Automate.Common.Application;
 using Automate.Common.Domain;
+using Automate.Common.Extensions;
 using Automate.Common.Infrastructure;
 using Automate.Runtime.Application;
 using Automate.Runtime.Domain;
 using Automate.Runtime.Infrastructure;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+#if !TESTINGONLY
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+#endif
 
 namespace Automate.CLI
 {
     [UsedImplicitly]
     internal class Program
     {
+#if !TESTINGONLY
+        private const string AppInsightsConnectionStringSetting = "ApplicationInsights:ConnectionString";
+#endif
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
-                .ConfigureServices((_, services) => PopulateContainerForLocalMachineAndCurrentDirectory(services));
+                .ConfigureAppConfiguration(builder =>
+                {
+                    builder
+                        .AddJsonFile("appsettings.json", false, false)
+                        .AddJsonFile("appsettings.local.json", true, false)
+                        .AddEnvironmentVariables();
+                })
+                .ConfigureLogging((_, logging) =>
+                {
+                    logging.ClearProviders();
+#if TESTINGONLY
+                    logging.AddConsole();
+#else
+                    //We are not sending Traces to AI
+#endif
+                })
+                .ConfigureServices((context, services) =>
+                    PopulateContainerForLocalMachineAndCurrentDirectory(context.Configuration, services));
         }
 
         [UsedImplicitly]
@@ -31,6 +56,9 @@ namespace Automate.CLI
         {
             using (var host = CreateHostBuilder(args).Build())
             {
+                var recorder = host.Services.GetRequiredService<IRecorder>();
+                recorder.TraceInformation("Starting up CLI host");
+
                 host.Start();
 
                 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
@@ -38,24 +66,35 @@ namespace Automate.CLI
 
                 try
                 {
+                    recorder.TraceInformation("Running CLI");
+                    recorder.Measure("Run");
                     var result = CommandLineApi.Execute(container, args);
                     lifetime.StopApplication();
                     host.WaitForShutdownAsync().GetAwaiter().GetResult();
 
+                    recorder.TraceInformation("Shutting down CLI host");
                     return result;
                 }
                 catch (Exception ex)
                 {
+                    recorder.CrashFatal(ex, "CLI failed to run");
                     Console.Error.WriteLine(ex.Message);
                     return 1;
                 }
             }
         }
 
-        internal static void PopulateContainerForLocalMachineAndCurrentDirectory(IServiceCollection services)
+        internal static void PopulateContainerForLocalMachineAndCurrentDirectory(IConfiguration settings,
+            IServiceCollection services)
         {
+#if !TESTINGONLY
+            var configuration = TelemetryConfiguration.CreateDefault();
+            var connectionString = settings.GetValue<string>(AppInsightsConnectionStringSetting, null);
+            configuration.ConnectionString = connectionString;
+            services.AddSingleton(new TelemetryClient(configuration));
+#endif
             var currentDirectory = Environment.CurrentDirectory;
-
+            services.AddSingleton(c => CreateRecorder(c, "automate-cli"));
             services.AddSingleton(c =>
                 new LocalMachineFileRepository(currentDirectory, c.GetRequiredService<IFileSystemReaderWriter>(),
                     c.GetRequiredService<IPersistableFactory>()));
@@ -78,6 +117,20 @@ namespace Automate.CLI
             services.AddSingleton<IAssemblyMetadata, CliAssemblyMetadata>();
 
             services.AddSingleton<IDependencyContainer>(new DotNetDependencyContainer(services));
+        }
+
+        private static IRecorder CreateRecorder(IServiceProvider services, string categoryName)
+        {
+            var logger = new DotNetCoreLogger(services.GetRequiredService<ILoggerFactory>(), categoryName);
+            var recorder = new Recorder(logger,
+#if TESTINGONLY
+                new LoggingCrashReporter(logger),
+                new LoggingMetricReporter(logger));
+#else
+                new ApplicationInsightsCrashReporter(services.GetRequiredService<TelemetryClient>()),
+                new ApplicationInsightsMetricReporter(services.GetRequiredService<TelemetryClient>()));
+#endif
+            return recorder;
         }
     }
 }

@@ -175,3 +175,5 @@ nupkg/
 
 # MkDocs
 /site/
+
+*.local.json
