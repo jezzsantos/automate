@@ -7,9 +7,10 @@ namespace Automate.Common
 {
     public class Recorder : IRecorder, IDisposable
     {
-        private readonly ILogger logger;
         private readonly ICrashReporter crasher;
+        private readonly ILogger logger;
         private readonly IMetricReporter measurer;
+        private string userId;
 
         public Recorder(ILogger logger, ICrashReporter crasher, IMetricReporter measurer)
         {
@@ -21,27 +22,51 @@ namespace Automate.Common
             this.measurer = measurer;
         }
 
-        public void Measure(string eventName, Dictionary<string, string> context = null)
+        public void Dispose()
         {
-            this.logger.Log(LogLevel.Information, "Measured event: {Event}", eventName);
-            this.measurer.Measure(eventName, context);
+            (this.crasher as IDisposable)?.Dispose();
+            (this.measurer as IDisposable)?.Dispose();
+        }
+
+        public void Count(string eventName, Dictionary<string, string> context = null)
+        {
+            Trace(LogLevel.Information, "Measured event: {Event}", eventName);
+            this.measurer.Count(eventName, context);
+        }
+
+        public void DisableUsageCollection()
+        {
+            this.measurer.DisableUsageCollection();
+            this.crasher.DisableUsageCollection();
+        }
+
+        public void SetUserId(string id)
+        {
+            this.userId = id;
+            this.measurer.SetUserId(id);
+            this.crasher.SetUserId(id);
+        }
+
+        public string GetUserId()
+        {
+            return this.userId;
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
         {
-            this.logger.Log(LogLevel.Error, exception, $"Crashed: {messageTemplate}", args);
+            if (this.logger.IsEnabled(LogLevel.Error))
+            {
+                this.logger.Log(LogLevel.Error, exception, $"Crashed: {messageTemplate}", args);
+            }
             this.crasher.Crash(level, exception, messageTemplate, args);
         }
 
         public void Trace(LogLevel level, string messageTemplate, params object[] args)
         {
-            this.logger.Log(level, messageTemplate, args);
-        }
-
-        public void Dispose()
-        {
-            (this.crasher as IDisposable)?.Dispose();
-            (this.measurer as IDisposable)?.Dispose();
+            if (this.logger.IsEnabled(level))
+            {
+                this.logger.Log(level, messageTemplate, args);
+            }
         }
     }
 }

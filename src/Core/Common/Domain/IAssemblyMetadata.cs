@@ -7,5 +7,7 @@ namespace Automate.Common.Domain
         SemVersion RuntimeVersion { get; }
 
         string ProductName { get; }
+
+        string InstallationPath { get; }
     }
 }

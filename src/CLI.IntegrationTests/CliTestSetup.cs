@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,11 +31,15 @@ namespace CLI.IntegrationTests
     {
         private readonly IDependencyContainer container;
         private readonly LocalMachineFileRepository repository;
+        private readonly TestRecorder testRecorder;
 
         public CliTestSetup()
         {
             var services = new ServiceCollection();
+            services.AddSingleton<ILoggerFactory>(new LoggerFactory());
             Program.PopulateContainerForLocalMachineAndCurrentDirectory(null, services);
+            this.testRecorder = new TestRecorder();
+            services.AddSingleton<IRecorder>(this.testRecorder);
             this.container = new DotNetDependencyContainer(services);
             this.repository = this.container.Resolve<LocalMachineFileRepository>();
         }
@@ -61,6 +66,8 @@ namespace CLI.IntegrationTests
 
         public int ExitCode { get; private set; }
 
+        public Recordings Recordings => this.testRecorder.Recordings;
+
         public void ResetRepository()
         {
             this.repository.DestroyAll();
@@ -78,6 +85,7 @@ namespace CLI.IntegrationTests
                 .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
                 .Build();
             host.Start();
+
             var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
             using (var errorStream = new MemoryStream())
@@ -98,10 +106,11 @@ namespace CLI.IntegrationTests
 
                             try
                             {
+                                this.testRecorder.Reset();
                                 Value = new StandardResult(string.Empty);
                                 Error = new StandardResult(string.Empty);
                                 var exitCode = 0;
-                                
+
                                 try
                                 {
                                     exitCode = CommandLineApi.Execute(this.container,
@@ -131,15 +140,15 @@ namespace CLI.IntegrationTests
             }
         }
 
-        public void Dispose()
-        {
-        }
-
         public void Reset()
         {
             Error = null;
             Value = null;
             ExitCode = 0;
+        }
+
+        public void Dispose()
+        {
         }
     }
 
@@ -222,5 +231,136 @@ namespace CLI.IntegrationTests
                 }
             }
         }
+    }
+
+    public class TestRecorder : IRecorder
+    {
+        public TestRecorder()
+        {
+            Recordings = new Recordings();
+        }
+
+        public Recordings Recordings { get; }
+
+        public void Reset()
+        {
+            Recordings.Reset();
+        }
+
+        public void Count(string eventName, Dictionary<string, string> context = null)
+        {
+            Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.UserId));
+        }
+
+        public void DisableUsageCollection()
+        {
+            Recordings.IsUsageCollectionEnabled = false;
+        }
+
+        void IRecorder.SetUserId(string id)
+        {
+            Recordings.UserId = id;
+        }
+
+        public string GetUserId()
+        {
+            return Recordings.UserId;
+        }
+
+        public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
+        {
+            Recordings.Crashes.Add(new TestCrash(level, exception, messageTemplate, args));
+        }
+
+        public void Trace(LogLevel level, string messageTemplate, params object[] args)
+        {
+            Recordings.Traces.Add(new TestTrace(level, messageTemplate, args));
+        }
+
+        void ICrashReporter.SetUserId(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IMetricReporter.SetUserId(string id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+    public class Recordings
+    {
+        public List<TestMeasurement> Measurements { get; } = new();
+
+        public bool IsUsageCollectionEnabled { get; set; } = true;
+
+        public List<TestCrash> Crashes { get; } = new();
+
+        public List<TestTrace> Traces { get; } = new();
+
+        public string UserId { get; set; }
+
+        public void Reset()
+        {
+            UserId = null;
+            IsUsageCollectionEnabled = true;
+            Measurements.Clear();
+            Crashes.Clear();
+            Traces.Clear();
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class TestCrash
+    {
+        public TestCrash(CrashLevel level, Exception exception, string messageTemplate, object[] args)
+        {
+            Level = level;
+            Exception = exception;
+            MessageTemplate = messageTemplate;
+            Args = args;
+        }
+
+        public object[] Args { get; }
+
+        public string MessageTemplate { get; }
+
+        public CrashLevel Level { get; }
+
+        public Exception Exception { get; }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class TestTrace
+    {
+        public TestTrace(LogLevel level, string messageTemplate, object[] args)
+        {
+            Level = level;
+            MessageTemplate = messageTemplate;
+            Args = args;
+        }
+
+        public object[] Args { get; }
+
+        public string MessageTemplate { get; }
+
+        public LogLevel Level { get; }
+    }
+
+    public class TestMeasurement
+    {
+        public TestMeasurement(string eventName, string userId)
+        {
+            EventName = eventName;
+            UserId = userId;
+        }
+
+        public string EventName { get; }
+
+        public string UserId { get; }
     }
 }

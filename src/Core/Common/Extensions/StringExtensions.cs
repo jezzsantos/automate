@@ -116,11 +116,7 @@ namespace Automate.Common.Extensions
 
         public static bool ToBool(this string value)
         {
-            if (!value.HasValue())
-            {
-                return false;
-            }
-            return Convert.ToBoolean(value);
+            return BooleanExtensions.ToBool(value);
         }
 
         public static string ToSnakeCase(this string value)

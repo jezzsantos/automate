@@ -37,9 +37,9 @@ namespace Core.UnitTests.Runtime.Application
                 var metadata = new Mock<IAssemblyMetadata>();
 
                 this.application =
-                    new RuntimeApplication(toolkitStore, draftStore,
-                        fileResolver.Object,
-                        packager.Object, draftPathResolver.Object, automationService.Object, metadata.Object);
+                    new RuntimeApplication(Mock.Of<IRecorder>(), toolkitStore, draftStore,
+                        fileResolver.Object, packager.Object, draftPathResolver.Object, automationService.Object,
+                        metadata.Object);
             }
 
             [Fact]
@@ -81,7 +81,7 @@ namespace Core.UnitTests.Runtime.Application
                 runtimeMetadata.Setup(rm => rm.RuntimeVersion).Returns(MachineConstants.GetRuntimeVersion);
 
                 this.application =
-                    new RuntimeApplication(this.toolkitStore, this.draftStore,
+                    new RuntimeApplication(Mock.Of<IRecorder>(), this.toolkitStore, this.draftStore,
                         this.fileResolver.Object,
                         this.packager.Object, this.draftPathResolver.Object, this.automationExecutor.Object,
                         runtimeMetadata.Object);
@@ -514,7 +514,7 @@ namespace Core.UnitTests.Runtime.Application
                 result.Should().Be(draftCollectionItem);
                 draftCollection.Items.Should().BeEmpty();
             }
-            
+
             [Fact]
             public void WhenGetDraftConfigurationAndCurrentDraftNotExists_ThenThrows()
             {
@@ -769,7 +769,6 @@ namespace Core.UnitTests.Runtime.Application
                 this.toolkitStore.Import(new ToolkitDefinition(this.pattern));
             }
 #if TESTINGONLY
-
             [Fact]
             public void WhenExecuteLaunchPointOnElement_ThenReturnsResult()
             {

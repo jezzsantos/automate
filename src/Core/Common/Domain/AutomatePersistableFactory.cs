@@ -83,6 +83,10 @@ namespace Automate.Common.Domain
             {
                 return VersionChangeLog.Rehydrate(properties, this);
             }
+            if (persistableType == typeof(MachineState))
+            {
+                return MachineState.Rehydrate(properties, this);
+            }
 
             throw new AutomateException($"Tried to Rehydrate an unknown persistable type '{persistableType}'");
         }

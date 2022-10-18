@@ -1,10 +1,13 @@
 using System;
+using Automate.CLI.Infrastructure;
+using Automate.Common.Extensions;
+using FluentAssertions;
+using Xunit;
+#if TESTINGONLY
 using System.Collections.Generic;
 using System.IO;
 using Automate.CLI;
-using Automate.CLI.Infrastructure;
-using Automate.Common.Extensions;
-using Xunit;
+#endif
 
 namespace CLI.IntegrationTests
 {
@@ -19,11 +22,6 @@ namespace CLI.IntegrationTests
             this.setup.ResetRepository();
         }
 
-        public void Dispose()
-        {
-            this.setup.Reset();
-        }
-
         [Fact]
         public void WhenNoCommands_ThenDisplaysError()
         {
@@ -32,26 +30,37 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayErrorForMissingCommand();
         }
 
-        private static string GetSolutionDirectory(string path, string solutionDirectoryName)
+        [Fact]
+        public void WhenInfoAndNotCollectingUsage_ThenWontMeasure()
         {
-            solutionDirectoryName.GuardAgainstNull(nameof(solutionDirectoryName));
+            this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --collect-usage:false");
 
-            var currentDirectory = path;
-            while (true)
-            {
-                var parentDirectory = Directory.GetParent(currentDirectory!);
-                if (parentDirectory.NotExists())
-                {
-                    throw new Exception(
-                        $"Could not find the solution directory called: {solutionDirectoryName} in: {path}");
-                }
-                if (parentDirectory.Name.EqualsIgnoreCase(solutionDirectoryName))
-                {
-                    return parentDirectory.FullName;
-                }
+            var metadata = new CliAssemblyMetadata();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
+                    metadata.RuntimeVersion, false));
+            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeFalse();
+        }
 
-                currentDirectory = parentDirectory.FullName;
-            }
+        [Fact]
+        public void WhenInfoAndCollectingUsage_ThenMeasuresWithUserId()
+        {
+            this.setup.RunCommand($"{CommandLineApi.InfoCommandName}");
+
+            var metadata = new CliAssemblyMetadata();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
+                    metadata.RuntimeVersion, true));
+            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeTrue();
+            this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
+                measurement.EventName == "use" && measurement.UserId.HasValue());
+        }
+
+        public void Dispose()
+        {
+            this.setup.Reset();
         }
 #if TESTINGONLY
 
@@ -262,6 +271,29 @@ namespace CLI.IntegrationTests
                     : ExceptionMessages.CommandLineApi_UnexpectedError.Substitute(
                         $"{message}");
         }
+
+        private static string GetSolutionDirectory(string path, string solutionDirectoryName)
+        {
+            solutionDirectoryName.GuardAgainstNull(nameof(solutionDirectoryName));
+
+            var currentDirectory = path;
+            while (true)
+            {
+                var parentDirectory = Directory.GetParent(currentDirectory!);
+                if (parentDirectory.NotExists())
+                {
+                    throw new Exception(
+                        $"Could not find the solution directory called: {solutionDirectoryName} in: {path}");
+                }
+                if (parentDirectory.Name.EqualsIgnoreCase(solutionDirectoryName))
+                {
+                    return parentDirectory.FullName;
+                }
+
+                currentDirectory = parentDirectory.FullName;
+            }
+        }
+
 #endif
     }
 }

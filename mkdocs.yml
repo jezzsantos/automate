@@ -58,7 +58,7 @@ nav:
           - 'Installation': 'installation.md'
           - 'Using Toolkits': 'runtime.md'
           - 'Making Toolkits': 'authoring.md'
-          - 'Additional Commands': 'cli.md'
+          - 'Additional Options': 'clioptions.md'
       - 'IDE Plugin':
           - 'Installation': 'installation.md'
           - 'Using Toolkits': 'runtime-plugin.md'

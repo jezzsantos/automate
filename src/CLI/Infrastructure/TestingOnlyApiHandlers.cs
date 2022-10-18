@@ -34,7 +34,10 @@ namespace Automate.CLI.Infrastructure
 
             internal static void Succeed(string message, string value)
             {
-                Output(message, value);
+                if (message.HasValue())
+                {
+                    Output(message, value);
+                }
                 Output(OutputMessages.CommandLine_Output_TestingOnly, JsonNode.Parse(new
                 {
                     AProperty1 = new

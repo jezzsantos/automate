@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Automate.Common.Extensions
@@ -48,9 +50,14 @@ namespace Automate.Common.Extensions
             recorder.Crash(CrashLevel.Recoverable, exception, messageTemplate, args);
         }
 
-        public static void Measure(this IRecorder recorder, string eventName)
+        public static void Count(this IRecorder recorder, string eventName)
         {
-            recorder.Measure(eventName, new Dictionary<string, string>());
+            recorder.Count(eventName, new Dictionary<string, string>());
+        }
+
+        public static string AnonymiseMeasure(this string identifier)
+        {
+            return Encoding.UTF8.GetString(MD5.HashData(Encoding.UTF8.GetBytes(identifier)));
         }
     }
 }

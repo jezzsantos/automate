@@ -514,6 +514,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {Command} (v{RuntimeVersion}) with, usage:{CollectUsage}.
+        /// </summary>
+        internal static string CommandLine_Output_Info {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolkit for pattern: &apos;{Name}&apos; (v.{Version}) has been installed and is ready to use with command:
         ///`automate run toolkit &lt;PatternName&gt; --name &quot;DraftName&quot;`.
         /// </summary>

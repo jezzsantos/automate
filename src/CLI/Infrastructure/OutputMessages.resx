@@ -24,6 +24,9 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="CommandLine_Output_Info" xml:space="preserve">
+        <value>{Command} (v{RuntimeVersion}) with, usage:{CollectUsage}</value>
+    </data>
     <data name="CommandLine_Output_Preamble_NoPatternSelected" xml:space="preserve">
         <value>No Pattern is being edited. You must first run one of these commands:
 `automate create pattern &lt;Name&gt;` to create a new pattern, or

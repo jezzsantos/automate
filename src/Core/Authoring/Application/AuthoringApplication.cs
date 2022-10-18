@@ -15,19 +15,21 @@ namespace Automate.Authoring.Application
 {
     public class AuthoringApplication
     {
-        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IApplicationExecutor applicationExecutor;
+        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
         private readonly IPatternPathResolver patternResolver;
+        private readonly IRecorder recorder;
         private readonly IPatternStore store;
         private readonly ITextTemplatingEngine textTemplatingEngine;
 
-        public AuthoringApplication(IPatternStore store, IFilePathResolver fileResolver,
+        public AuthoringApplication(IRecorder recorder, IPatternStore store, IFilePathResolver fileResolver,
             IPatternPathResolver patternResolver, IPatternToolkitPackager packager,
             ITextTemplatingEngine textTemplatingEngine, IApplicationExecutor applicationExecutor,
             IAssemblyMetadata assemblyMetadata)
         {
+            recorder.GuardAgainstNull(nameof(recorder));
             store.GuardAgainstNull(nameof(store));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
             patternResolver.GuardAgainstNull(nameof(patternResolver));
@@ -35,6 +37,7 @@ namespace Automate.Authoring.Application
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
             applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
             assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
+            this.recorder = recorder;
             this.store = store;
             this.fileResolver = fileResolver;
             this.patternResolver = patternResolver;
@@ -60,9 +63,10 @@ namespace Automate.Authoring.Application
             name.GuardAgainstNullOrEmpty(nameof(name));
 
             var pattern = new PatternDefinition(name, displayName, description);
-            this.store.Create(pattern);
+            var created = this.store.Create(pattern);
+            this.recorder.CountPatternCreated(created);
 
-            return pattern;
+            return created;
         }
 
         public PatternDefinition UpdatePattern(string name, string displayName, string description)

@@ -89,3 +89,11 @@ If you receive an error running any command, you can view extra information abou
     This feature is only really useful to the developers of the automate project
 
 To view more details about the error, add the: `--debug` option
+
+## Collecting Usage Data
+
+To understand how people are using this tool (so that we can improve it) we collect information about the use of the tool.
+
+You can opt-out of collecting this data by using the `--collect-usage:false` option.
+
+The intention of, and what is and is not collected about your usage, is described in far more detail in our [Privacy Statement](privacy.md)

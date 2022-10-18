@@ -56,7 +56,7 @@ namespace Core.UnitTests.Authoring.Application
             var metadata = new Mock<IAssemblyMetadata>();
             
             this.application =
-                new AuthoringApplication(this.store, this.filePathResolver.Object,
+                new AuthoringApplication(Mock.Of<IRecorder>(), this.store, this.filePathResolver.Object,
                     this.patternPathResolver.Object,
                     this.builder.Object, this.textTemplatingEngine.Object, applicationExecutor.Object, metadata.Object);
         }

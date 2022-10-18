@@ -11,7 +11,8 @@ using Automate.Runtime.Infrastructure;
 
 namespace Automate.Common.Infrastructure
 {
-    internal class MemoryRepository : IPatternRepository, IToolkitRepository, IDraftRepository, ILocalStateRepository
+    internal class MemoryRepository : IPatternRepository, IToolkitRepository, IDraftRepository, ILocalStateRepository,
+        IMachineRepository
     {
         public const string InMemoryLocation = "in-memory";
 
@@ -22,7 +23,8 @@ namespace Automate.Common.Infrastructure
 
         // ReSharper disable once CollectionNeverUpdated.Local
         private readonly Dictionary<string, ToolkitDefinition> inMemoryToolkits = new();
-        private LocalState inMemoryState = new();
+        private LocalState inMemoryLocalState = new();
+        private MachineState inMemoryMachineState = new();
 
         public string DraftLocation => InMemoryLocation;
 
@@ -71,12 +73,12 @@ namespace Automate.Common.Infrastructure
 
         public void SaveLocalState(LocalState state)
         {
-            this.inMemoryState = state;
+            this.inMemoryLocalState = state;
         }
 
         public LocalState GetLocalState()
         {
-            return this.inMemoryState;
+            return this.inMemoryLocalState;
         }
 
         public string PatternLocation => InMemoryLocation;
@@ -108,12 +110,23 @@ namespace Automate.Common.Infrastructure
             this.inMemoryPatterns[pattern.Id] = pattern;
         }
 
+        public MachineState GetMachineState()
+        {
+            return this.inMemoryMachineState;
+        }
+
+        public void SaveMachineState(MachineState state)
+        {
+            this.inMemoryMachineState = state;
+        }
+
         public void DestroyAll()
         {
             this.inMemoryPatterns.Clear();
             this.inMemoryToolkits.Clear();
             this.inMemoryDrafts.Clear();
-            this.inMemoryState = new LocalState();
+            this.inMemoryLocalState = new LocalState();
+            this.inMemoryMachineState = new MachineState();
         }
 
         public PatternDefinition FindPatternByName(string name)

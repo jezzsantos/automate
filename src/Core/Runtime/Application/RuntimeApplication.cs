@@ -18,15 +18,17 @@ namespace Automate.Runtime.Application
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
+        private readonly IRecorder recorder;
         private readonly IToolkitStore toolkitStore;
 
-        public RuntimeApplication(IToolkitStore toolkitStore, IDraftStore draftStore,
+        public RuntimeApplication(IRecorder recorder, IToolkitStore toolkitStore, IDraftStore draftStore,
             IFilePathResolver fileResolver,
             IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver,
             IAutomationExecutor automationExecutor,
             IAssemblyMetadata assemblyMetadata
         )
         {
+            recorder.GuardAgainstNull(nameof(recorder));
             toolkitStore.GuardAgainstNull(nameof(toolkitStore));
             draftStore.GuardAgainstNull(nameof(draftStore));
             fileResolver.GuardAgainstNull(nameof(fileResolver));
@@ -34,6 +36,7 @@ namespace Automate.Runtime.Application
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             automationExecutor.GuardAgainstNull(nameof(automationExecutor));
             assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
+            this.recorder = recorder;
             this.toolkitStore = toolkitStore;
             this.draftStore = draftStore;
             this.fileResolver = fileResolver;
@@ -61,6 +64,7 @@ namespace Automate.Runtime.Application
             var toolkit = this.packager.UnPack(this.assemblyMetadata, installer);
 
             this.toolkitStore.Import(toolkit);
+            this.recorder.CountToolkitInstalled(toolkit);
 
             return toolkit;
         }
@@ -84,8 +88,10 @@ namespace Automate.Runtime.Application
             toolkit.VerifyRuntimeCompatibility(this.assemblyMetadata);
 
             var draft = new DraftDefinition(toolkit, draftName);
+            var created = this.draftStore.Create(draft);
+            this.recorder.CountDraftCreated(created);
 
-            return this.draftStore.Create(draft);
+            return created;
         }
 
         public List<(ToolkitDefinition Toolkit, DraftDefinition Draft)> ListCreatedDrafts()

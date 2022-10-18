@@ -16,6 +16,13 @@ namespace Automate.CLI.Extensions
             return command;
         }
 
+        public static Command AsHidden(this Command command)
+        {
+            command.IsHidden = true;
+
+            return command;
+        }
+
         public static Command WithAlias(this Command command, string alias)
         {
             command.AddAlias(alias);

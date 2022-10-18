@@ -7,16 +7,30 @@ namespace Automate.Common
     public interface IRecorder : IMetricReporter, ICrashReporter
     {
         void Trace(LogLevel level, string messageTemplate, params object[] args);
+
+        new void DisableUsageCollection();
+
+        new void SetUserId(string id);
+
+        string GetUserId();
     }
 
     public interface ICrashReporter
     {
         void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
+
+        void DisableUsageCollection();
+
+        void SetUserId(string id);
     }
 
     public interface IMetricReporter
     {
-        void Measure(string eventName, Dictionary<string, string> context = null);
+        void Count(string eventName, Dictionary<string, string> context = null);
+
+        void DisableUsageCollection();
+
+        void SetUserId(string id);
     }
 
     public enum CrashLevel
