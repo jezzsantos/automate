@@ -1,7 +1,8 @@
-      ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
-      ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
-      ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
-
+<pre class="logo-font">
+  ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
+  ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
+  ┴ ┴└─┘ ┴ └─┘┴ ┴┴ ┴ ┴ └─┘
+</pre>
 ![Concept](https://github.com/jezzsantos/automate/raw/main/docs/Images/Concept.png)
 
 # What problem does it solve?

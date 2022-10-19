@@ -15,6 +15,13 @@
     background-color: hsla(151, 100%, 45%, 1);
 }
 
+.logo-font {
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 17px !important;
+    background-color: hsla(215, 8%, 47%, 0.4);
+}
+
 [data-md-color-scheme="slate"] {
     --md-code-bg-color: hsla(215, 8%, 47%, 0.4);
     --md-code-fg-color: hsl(234, 76%, 95%);
