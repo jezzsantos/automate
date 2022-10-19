@@ -72,20 +72,17 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>InfrastructureMessages.resx</DependentUpon>
         </Compile>
-        <Compile Remove="ClassLibrary1\Class1.cs"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
     <ItemGroup>
-        <None Remove="appsettings.json"/>
-        <Content Include="appsettings.json">
+        <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="appsettings.local.json"/>
-        <Content Include="appsettings.local.json">
+        </None>
+        <None Update="appsettings.local.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        </None>
     </ItemGroup>
 
     <!-- Install the dotnet tool locally (but only in Release) -->

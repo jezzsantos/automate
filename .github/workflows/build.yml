@@ -4,6 +4,9 @@ on: [ push, pull_request ]
 
 env:
   IS_CI_BUILD: 'true'
+  SOLUTION_PATH: 'src/Automate.sln'
+  TESTINGONLY_BUILD_CONFIGURATION: 'Debug'
+  RELEASE_BUILD_CONFIGURATION: 'Release'
 
 jobs:
   build-test:
@@ -16,13 +19,15 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore src/Automate.sln
-      - name: Build
-        run: dotnet build src/Automate.sln --no-restore
+        run: dotnet restore "${{env.SOLUTION_PATH}}"
+      - name: Build for Release
+        run: dotnet build "${{env.SOLUTION_PATH}}" --no-restore --configuration ${{env.RELEASE_BUILD_CONFIGURATION}}
+      - name: Build for Testing
+        run: dotnet build "${{env.SOLUTION_PATH}}" --no-restore --configuration ${{env.TESTINGONLY_BUILD_CONFIGURATION}}
       - name: Unit Test
-        run: dotnet test --filter Category=Unit src/Automate.sln --no-build --verbosity normal
+        run: dotnet test --filter Category=Unit "${{env.SOLUTION_PATH}}" --no-build --verbosity normal
       - name: Integration Test
-        run: dotnet test --filter Category=Integration src/Automate.sln --no-build --verbosity normal
+        run: dotnet test --filter Category=Integration "${{env.SOLUTION_PATH}}" --no-build --verbosity normal
   publish-docs:
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
