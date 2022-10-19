@@ -514,6 +514,15 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to More help online: https://jezzsantos.github.io/automate/.
+        /// </summary>
+        internal static string CommandLine_Output_HelpLink {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_HelpLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {Command} (v{RuntimeVersion}) with, usage:{CollectUsage}.
         /// </summary>
         internal static string CommandLine_Output_Info {

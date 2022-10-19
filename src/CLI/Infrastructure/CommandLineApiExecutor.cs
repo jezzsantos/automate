@@ -44,7 +44,12 @@ namespace Automate.CLI.Infrastructure
                     context.HelpBuilder.CustomizeLayout(_ =>
                     {
                         return HelpBuilder.Default.GetLayout()
-                            .Prepend(_ => { WriteBanner(); });
+                            .Prepend(_ => { WriteBanner(); })
+                            .Append(__ =>
+                            {
+                                __.Output.WriteLine();
+                                __.Output.WriteLine(OutputMessages.CommandLine_Output_HelpLink);
+                            });
                     });
                 })
                 .Build();

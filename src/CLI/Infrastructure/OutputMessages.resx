@@ -24,6 +24,9 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="CommandLine_Output_HelpLink" xml:space="preserve">
+        <value>More help online: https://jezzsantos.github.io/automate/</value>
+    </data>
     <data name="CommandLine_Output_Info" xml:space="preserve">
         <value>{Command} (v{RuntimeVersion}) with, usage:{CollectUsage}</value>
     </data>
