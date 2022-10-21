@@ -14,36 +14,28 @@ namespace Core.UnitTests.Common.Infrastructure
         public MachineStoreSpec()
         {
             this.repository = new MemoryRepository();
-            this.store = new MachineStore(this.repository);
+            this.store = new MachineStore(this.repository, () => "anewid");
             this.repository.DestroyAll();
         }
 
         [Fact]
-        public void WhenConstructed_ThenAssigned()
-        {
-            this.store.GetInstallationId().Should().BeNull();
-        }
-
-        [Fact]
-        public void WhenGetInstallationIdAndExists_ThenReturns()
+        public void WhenGetOrCreateInstallationIdAndExists_ThenReturns()
         {
             var state = new MachineState();
             state.SetInstallationId("aninstallationid");
             this.repository.SaveMachineState(state);
 
-            var result = this.store.GetInstallationId();
+            var result = this.store.GetOrCreateInstallationId();
 
             result.Should().Be("aninstallationid");
         }
 
         [Fact]
-        public void WhenGetInstallationIdAfterSet_ThenReturns()
+        public void WhenGetOrCreateAndNotExists_ThenCreatesAndReturns()
         {
-            this.store.SetInstallationId("aninstallationid");
+            var result = this.store.GetOrCreateInstallationId();
 
-            var result = this.store.GetInstallationId();
-
-            result.Should().Be("aninstallationid");
+            result.Should().Be("anewid");
         }
     }
 }

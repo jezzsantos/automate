@@ -56,14 +56,12 @@ namespace Automate.CLI.Infrastructure
 
             var parseResult = parser.Parse(args);
 
-            var allowUsageCollection = IsUsageCollection(rootCommand, parseResult);
+            var allowUsageCollection = IsOptionEnabled(parseResult, CollectUsageEnabledOption);
             if (allowUsageCollection)
             {
-                recorder.SetUserId(EnsureUsageCollectionId(container.Resolve<IMachineStore>()));
-            }
-            else
-            {
-                recorder.DisableUsageCollection();
+                var machineId = container.Resolve<IMachineStore>().GetOrCreateInstallationId();
+                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption) ?? Recorder.CreateSessionId();
+                recorder.EnableReporting(machineId, sessionId);
             }
             recorder.CountUsage();
 
@@ -221,35 +219,6 @@ namespace Automate.CLI.Infrastructure
                 context.Console.Error.WriteLine();
                 context.Console.WriteError(errorMessage);
             }
-
-            string EnsureUsageCollectionId(IMachineStore machineStore)
-            {
-                var userId = machineStore.GetInstallationId();
-                if (userId.NotExists())
-                {
-                    userId = CreateUserId();
-                    machineStore.SetInstallationId(userId);
-                }
-
-                return userId;
-            }
-
-            string CreateUserId()
-            {
-                return Guid.NewGuid().ToString("D");
-            }
-
-            bool IsUsageCollection(Command command, ParseResult pr)
-            {
-                var option = command.Options.FirstOrDefault(opt =>
-                    opt.Name.EqualsOrdinal(CollectUsageOption));
-                if (option.NotExists())
-                {
-                    return true;
-                }
-                var value = pr.GetValueForOption(option);
-                return value.ToBool();
-            }
         }
 
         private static AuthoringApplication CreateAuthoringApplication(IDependencyContainer container)
@@ -346,12 +315,33 @@ namespace Automate.CLI.Infrastructure
             return IsMatchingCommand(parsedCommandLine, matches);
         }
 
-        private static bool IsOptionEnabled(ParseResult parsedCommandLine, string optionName)
+        private static bool IsOptionEnabled(ParseResult parsedCommandLine, string optionName, bool defaultValue = false)
         {
-            var option = parsedCommandLine.Parser.Configuration.RootCommand.Options.FirstOrDefault(opt =>
-                opt.Name == optionName);
-            return option.Exists()
-                   && (bool)parsedCommandLine.FindResultFor(option)!.GetValueOrDefault()!;
+            var option = parsedCommandLine.Parser.Configuration.RootCommand.Options
+                .FirstOrDefault(opt => opt.Name.EqualsOrdinal(optionName));
+            if (option.NotExists())
+            {
+                return defaultValue;
+            }
+
+            return (bool)parsedCommandLine.FindResultFor(option)!.GetValueOrDefault()!;
+        }
+
+        private static string GetOptionValue(ParseResult parsedCommandLine, string optionName)
+        {
+            var option = parsedCommandLine.Parser.Configuration.RootCommand.Options
+                .FirstOrDefault(opt => opt.Name.EqualsOrdinal(optionName));
+            if (option.NotExists())
+            {
+                return null;
+            }
+
+            var value = parsedCommandLine.FindResultFor(option)!
+                .GetValueOrDefault()!;
+
+            return value.Exists()
+                ? value.ToString()
+                : null;
         }
 
         private static bool IsMatchingCommand(ParseResult parsedCommandLine, List<CommandLineCommands> matches)

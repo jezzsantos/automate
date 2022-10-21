@@ -10,15 +10,17 @@ namespace Automate.CLI.Infrastructure
             internal static void Info(bool collectUsage, bool outputStructured)
             {
                 var metadata = GetMetadata();
-                var recorder = GetRecorder();
                 if (outputStructured)
                 {
+                    var recorder = GetRecorder();
+                    var reportingIds = recorder.GetReportingIds();
                     Output(OutputMessages.CommandLine_Output_Info, metadata.ProductName,
                         metadata.RuntimeVersion.ToString(),
                         new
                         {
                             IsEnabled = collectUsage,
-                            UserId = recorder.GetUserId()
+                            reportingIds.MachineId,
+                            reportingIds.SessionId
                         });
                 }
                 else

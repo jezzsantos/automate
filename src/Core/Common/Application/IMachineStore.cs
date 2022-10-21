@@ -2,7 +2,7 @@
 {
     public interface IMachineStore
     {
-        string GetInstallationId();
+        string GetOrCreateInstallationId();
 
         void SetInstallationId(string installationId);
     }

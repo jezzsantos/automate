@@ -10,13 +10,13 @@ namespace Automate.CLI.Infrastructure
     public class ApplicationInsightsMetricReporter : IMetricReporter, IDisposable
     {
         private readonly TelemetryClient client;
-        private bool usageCollectionEnabled;
+        private bool reportingEnabled;
 
         public ApplicationInsightsMetricReporter(TelemetryClient client)
         {
             client.GuardAgainstNull(nameof(client));
             this.client = client;
-            this.usageCollectionEnabled = true;
+            this.reportingEnabled = false;
         }
 
         public void Dispose()
@@ -29,23 +29,17 @@ namespace Automate.CLI.Infrastructure
 
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
-            if (this.usageCollectionEnabled)
+            if (this.reportingEnabled)
             {
-                if (this.client.Exists())
-                {
-                    this.client.TrackEvent(eventName.ToLower(), context);
-                }
+                this.client.TrackEvent(eventName.ToLower(), context);
             }
         }
 
-        public void DisableUsageCollection()
+        public void EnableReporting(string machineId, string sessionId)
         {
-            this.usageCollectionEnabled = false;
-        }
-
-        public void SetUserId(string id)
-        {
-            this.client.Context.User.Id = id;
+            this.reportingEnabled = true;
+            this.client.Context.User.Id = machineId;
+            this.client.Context.Session.Id = sessionId;
         }
     }
 }

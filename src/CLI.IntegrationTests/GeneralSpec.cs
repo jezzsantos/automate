@@ -40,7 +40,7 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
                     metadata.RuntimeVersion, false));
-            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeFalse();
+            this.setup.Recordings.IsReportingEnabled.Should().BeFalse();
         }
 
         [Fact]
@@ -53,9 +53,9 @@ namespace CLI.IntegrationTests
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
                     metadata.RuntimeVersion, true));
-            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeTrue();
+            this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
-                measurement.EventName == "use" && measurement.UserId.HasValue());
+                measurement.EventName == "use" && measurement.MachineId.HasValue() && measurement.SessionId.HasValue());
         }
 
         public void Dispose()

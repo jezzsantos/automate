@@ -51,11 +51,11 @@ namespace CLI.IntegrationTests
             }.ToJson();
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
-            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeFalse();
+            this.setup.Recordings.IsReportingEnabled.Should().BeFalse();
         }
 
         [Fact]
-        public void WhenInfoAndCollectingUsage_ThenMeasuresWithUserId()
+        public void WhenInfoAndCollectingUsage_ThenMeasuresAndReturnsInfo()
         {
             this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --output-structured");
 
@@ -71,7 +71,8 @@ namespace CLI.IntegrationTests
                         "CollectUsage", new Dictionary<string, object>
                         {
                             { "IsEnabled", true },
-                            { "UserId", this.setup.Recordings.UserId }
+                            { "MachineId", this.setup.Recordings.MachineId },
+                            { "SessionId", this.setup.Recordings.SessionId }
                         }
                     }
                 }
@@ -87,9 +88,49 @@ namespace CLI.IntegrationTests
             }.ToJson();
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
-            this.setup.Recordings.IsUsageCollectionEnabled.Should().BeTrue();
+            this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
-                measurement.EventName == "use" && measurement.UserId.HasValue());
+                measurement.EventName == "use" && measurement.MachineId.HasValue() && measurement.SessionId.HasValue());
+        }
+
+        [Fact]
+        public void WhenInfoAndCollectingUsageWithSessionId_ThenMeasuresReturnsInfo()
+        {
+            this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --usage-session asessionid --output-structured");
+
+            var metadata = new CliAssemblyMetadata();
+            var info = new StructuredMessage
+            {
+                Message = OutputMessages.CommandLine_Output_Info,
+                Values = new Dictionary<string, object>
+                {
+                    { "Command", metadata.ProductName },
+                    { "RuntimeVersion", metadata.RuntimeVersion.ToString() },
+                    {
+                        "CollectUsage", new Dictionary<string, object>
+                        {
+                            { "IsEnabled", true },
+                            { "MachineId", this.setup.Recordings.MachineId },
+                            { "SessionId", "asessionid" }
+                        }
+                    }
+                }
+            };
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    info
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+            this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
+            this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
+                measurement.EventName == "use" && measurement.MachineId.HasValue() &&
+                measurement.SessionId == "asessionid");
         }
 
         public void Dispose()

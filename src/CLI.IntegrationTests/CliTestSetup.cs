@@ -247,24 +247,19 @@ namespace CLI.IntegrationTests
             Recordings.Reset();
         }
 
+        public void EnableReporting(string machineId, string sessionId)
+        {
+            Recordings.EnableReporting(machineId, sessionId);
+        }
+
+        public (string MachineId, string SessionId) GetReportingIds()
+        {
+            return Recordings.GetReportingIds();
+        }
+
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
-            Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.UserId));
-        }
-
-        public void DisableUsageCollection()
-        {
-            Recordings.IsUsageCollectionEnabled = false;
-        }
-
-        void IRecorder.SetUserId(string id)
-        {
-            Recordings.UserId = id;
-        }
-
-        public string GetUserId()
-        {
-            return Recordings.UserId;
+            Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.MachineId, Recordings.SessionId));
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
@@ -276,16 +271,6 @@ namespace CLI.IntegrationTests
         {
             Recordings.Traces.Add(new TestTrace(level, messageTemplate, args));
         }
-
-        void ICrashReporter.SetUserId(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IMetricReporter.SetUserId(string id)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
@@ -294,21 +279,36 @@ namespace CLI.IntegrationTests
     {
         public List<TestMeasurement> Measurements { get; } = new();
 
-        public bool IsUsageCollectionEnabled { get; set; } = true;
+        public bool IsReportingEnabled { get; set; }
 
         public List<TestCrash> Crashes { get; } = new();
 
         public List<TestTrace> Traces { get; } = new();
 
-        public string UserId { get; set; }
+        public string MachineId { get; set; }
+
+        public string SessionId { get; set; }
 
         public void Reset()
         {
-            UserId = null;
-            IsUsageCollectionEnabled = true;
+            MachineId = null;
+            SessionId = null;
+            IsReportingEnabled = false;
             Measurements.Clear();
             Crashes.Clear();
             Traces.Clear();
+        }
+
+        public void EnableReporting(string machineId, string sessionId)
+        {
+            IsReportingEnabled = true;
+            MachineId = machineId;
+            SessionId = sessionId;
+        }
+
+        public (string MachineId, string SessionId) GetReportingIds()
+        {
+            return (MachineId, SessionId);
         }
     }
 
@@ -353,14 +353,17 @@ namespace CLI.IntegrationTests
 
     public class TestMeasurement
     {
-        public TestMeasurement(string eventName, string userId)
+        public TestMeasurement(string eventName, string machineId, string sessionId)
         {
             EventName = eventName;
-            UserId = userId;
+            MachineId = machineId;
+            SessionId = sessionId;
         }
 
         public string EventName { get; }
 
-        public string UserId { get; }
+        public string MachineId { get; }
+
+        public string SessionId { get; }
     }
 }

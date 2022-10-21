@@ -11,43 +11,37 @@ namespace Automate.CLI.Infrastructure
     public class ApplicationInsightsCrashReporter : ICrashReporter, IDisposable
     {
         private readonly TelemetryClient client;
-        private bool usageCollectionEnabled;
+        private bool reportingEnabled;
 
         public ApplicationInsightsCrashReporter(TelemetryClient client)
         {
             client.GuardAgainstNull(nameof(client));
             this.client = client;
-            this.usageCollectionEnabled = true;
+            this.reportingEnabled = false;
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
         {
-            if (this.usageCollectionEnabled)
+            if (this.reportingEnabled)
             {
-                if (this.client.Exists())
-                {
-                    var properties = args?
-                        .Select(arg => arg.ToString())
-                        .SafeJoin(", ");
+                var properties = args?
+                    .Select(arg => arg.ToString())
+                    .SafeJoin(", ");
 
-                    this.client.TrackException(exception, new Dictionary<string, string>
-                    {
-                        { "Level", level.ToString() },
-                        { "Message_Template", messageTemplate },
-                        { "Message_Properties", properties }
-                    });
-                }
+                this.client.TrackException(exception, new Dictionary<string, string>
+                {
+                    { "Level", level.ToString() },
+                    { "Message_Template", messageTemplate },
+                    { "Message_Properties", properties }
+                });
             }
         }
 
-        public void DisableUsageCollection()
+        public void EnableReporting(string machineId, string sessionId)
         {
-            this.usageCollectionEnabled = false;
-        }
-
-        public void SetUserId(string id)
-        {
-            this.client.Context.User.Id = id;
+            this.reportingEnabled = true;
+            this.client.Context.User.Id = machineId;
+            this.client.Context.Session.Id = sessionId;
         }
 
         public void Dispose()

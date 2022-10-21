@@ -8,29 +8,23 @@ namespace Automate.Common
     {
         void Trace(LogLevel level, string messageTemplate, params object[] args);
 
-        new void DisableUsageCollection();
+        new void EnableReporting(string machineId, string sessionId);
 
-        new void SetUserId(string id);
-
-        string GetUserId();
+        (string MachineId, string SessionId) GetReportingIds();
     }
 
     public interface ICrashReporter
     {
         void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
 
-        void DisableUsageCollection();
-
-        void SetUserId(string id);
+        void EnableReporting(string machineId, string sessionId);
     }
 
     public interface IMetricReporter
     {
         void Count(string eventName, Dictionary<string, string> context = null);
 
-        void DisableUsageCollection();
-
-        void SetUserId(string id);
+        void EnableReporting(string machineId, string sessionId);
     }
 
     public enum CrashLevel

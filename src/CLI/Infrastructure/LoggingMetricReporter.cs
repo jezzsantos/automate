@@ -8,35 +8,35 @@ namespace Automate.CLI.Infrastructure
     public class LoggingMetricReporter : IMetricReporter
     {
         private readonly ILogger logger;
-        private bool usageCollectionEnabled;
-        private string userId;
+        private string machineId;
+        private bool reportingEnabled;
+        private string sessionId;
 
         public LoggingMetricReporter(ILogger logger)
         {
             logger.GuardAgainstNull(nameof(logger));
             this.logger = logger;
-            this.usageCollectionEnabled = true;
+            this.reportingEnabled = false;
+            this.machineId = null;
+            this.sessionId = null;
         }
 
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
-            if (this.usageCollectionEnabled)
+            if (this.reportingEnabled)
             {
                 this.logger.Log(LogLevel.Information,
-                    "Measured event: '{EventName}' for '{TrackingId}', with context: {Context}",
-                    eventName, this.userId,
+                    "Measured event: '{EventName}' for '{MachineId}:{SessionId}', with context: {Context}",
+                    eventName, this.machineId, this.sessionId,
                     context.ToJson());
             }
         }
 
-        public void DisableUsageCollection()
+        public void EnableReporting(string machineId, string sessionId)
         {
-            this.usageCollectionEnabled = false;
-        }
-
-        public void SetUserId(string id)
-        {
-            this.userId = id;
+            this.reportingEnabled = true;
+            this.machineId = machineId;
+            this.sessionId = sessionId;
         }
     }
 }

@@ -52,6 +52,10 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>VersionChanges.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Common\LoggingMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>LoggingMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -84,6 +88,11 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>VersionChanges.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Common\LoggingMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>LoggingMessages.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

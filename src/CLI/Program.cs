@@ -176,7 +176,6 @@ namespace Automate.CLI
             var telemetryClient = new TelemetryClient(configuration);
             telemetryClient.Context.Component.Version = assemblyMetadata.RuntimeVersion.ToString();
             telemetryClient.Context.GlobalProperties["Application"] = assemblyMetadata.ProductName;
-            telemetryClient.Context.Session.Id = Guid.NewGuid().ToString("N");
             telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
             services.AddSingleton(telemetryClient);
 

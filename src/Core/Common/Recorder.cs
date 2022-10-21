@@ -10,7 +10,9 @@ namespace Automate.Common
         private readonly ICrashReporter crasher;
         private readonly ILogger logger;
         private readonly IMetricReporter measurer;
-        private string userId;
+        private bool isReportingEnabled;
+        private string machineId;
+        private string sessionId;
 
         public Recorder(ILogger logger, ICrashReporter crasher, IMetricReporter measurer)
         {
@@ -20,6 +22,14 @@ namespace Automate.Common
             this.logger = logger;
             this.crasher = crasher;
             this.measurer = measurer;
+            this.isReportingEnabled = false;
+            this.machineId = null;
+            this.sessionId = null;
+        }
+
+        public static string CreateSessionId()
+        {
+            return $"cls_{Guid.NewGuid():N}";
         }
 
         public void Dispose()
@@ -28,37 +38,44 @@ namespace Automate.Common
             (this.measurer as IDisposable)?.Dispose();
         }
 
+        public void EnableReporting(string machineId, string sessionId)
+        {
+            this.isReportingEnabled = true;
+            this.machineId = machineId;
+            this.sessionId = sessionId;
+            this.measurer.EnableReporting(machineId, sessionId);
+            this.crasher.EnableReporting(machineId, sessionId);
+        }
+
+        public (string MachineId, string SessionId) GetReportingIds()
+        {
+            return (this.machineId, this.sessionId);
+        }
+
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
-            Trace(LogLevel.Information, "Measured event: {Event}", eventName);
-            this.measurer.Count(eventName, context);
-        }
-
-        public void DisableUsageCollection()
-        {
-            this.measurer.DisableUsageCollection();
-            this.crasher.DisableUsageCollection();
-        }
-
-        public void SetUserId(string id)
-        {
-            this.userId = id;
-            this.measurer.SetUserId(id);
-            this.crasher.SetUserId(id);
-        }
-
-        public string GetUserId()
-        {
-            return this.userId;
+            if (this.isReportingEnabled)
+            {
+                var cleaned = eventName
+                    .Replace(" ", string.Empty)
+                    .ToLowerInvariant();
+                var formatted = $"cli_{cleaned}";
+                Trace(LogLevel.Information, LoggingMessages.Recorder_Measure, formatted);
+                this.measurer.Count(formatted, context);
+            }
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
         {
-            if (this.logger.IsEnabled(LogLevel.Error))
+            if (this.isReportingEnabled)
             {
-                this.logger.Log(LogLevel.Error, exception, $"Crashed: {messageTemplate}", args);
+                if (this.logger.IsEnabled(LogLevel.Error))
+                {
+                    this.logger.Log(LogLevel.Error, exception,
+                        LoggingMessages.Recorder_Crash.Substitute(messageTemplate), args);
+                }
+                this.crasher.Crash(level, exception, messageTemplate, args);
             }
-            this.crasher.Crash(level, exception, messageTemplate, args);
         }
 
         public void Trace(LogLevel level, string messageTemplate, params object[] args)
