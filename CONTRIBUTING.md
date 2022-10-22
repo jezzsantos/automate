@@ -145,6 +145,9 @@ We recommend using JetBrains Rider to develop this codebase.
 * Clone the repo locally
 * Ensure that you have `.NET6.0` installed on your system. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 * Open the `src/Automate.sln` solution
+* Create a new `appsettings.local.json` configuration file in the CLI project, to reflect you own versions of settings in `appsettings.json`.
+
+>  Make sure NOT to add this file (`appsettings.local.json`) to source control.
 
 ## Building the code
 
@@ -155,13 +158,13 @@ There are 2 flavors of build configuration: `Debug` and `Release`, these are ver
 
 * `Debug` includes symbols for debugging, `Release` does not
 
-* `Debug` includes a conditional compilation variable `#if...#endif`called `TESTINGONLY` that is used to include code specifically for testing purposes only - not for publishing. This code is removed by the compiler in the `Release` flavor.
+* `Debug` includes a conditional compilation variable `#if...#endif`called `TESTINGONLY` that is used to include code specifically for testing purposes only - not for publishing. (Code surrounded by `#if TESTINGONLY` is removed by the compiler in the `Release` flavor).
 
 * `Release` includes an additional MSBUILD target that installs the NuGet packages locally on your machine.
 
   > Since the CLI interface is a NuGet tool, you might want it installed (and kept up to date) on your machine for use in other projects or for manual testing.
 
-> The `Release` build flavor must pass to submit changes to the codebase
+> The `Release` build flavor must pass in GitHub to submit changes to the codebase
 
 ## Testing the code
 
@@ -200,17 +203,25 @@ Wait until the latest build goes green, at which point:
 
 ### Local Release
 
+Should you wish to build and install the dotnet tool on your local machine.
+
 Either:
 
-1. Build the solution in `Release` build configuration.
+1. Update your `appsettings.local.json` with the necessary runtime configuration.
+1. Build the solution the in `Release` build configuration.
 
-> In the 'Release' configuration the dotnet tool is built, packed, and installed.
+> In the 'Release' build configuration the dotnet tool is built, packed, and installed. (see the CLI.csproj file for MSBUILD custom targets)
+>
+> Make sure not to commit changes to `appsettings.json` that should not be in source control
 
 OR:
 
-1. Package the nuget: `dotnet pack --configuration Release /p:Version=x.y.z CLI/CLI.csproj`
-2. Uninstall existing tool: `dotnet tool uninstall automate --global`
-3. Install the local tool: `dotnet tool install automate --global --add-source CLI\nupkg --version x.y.z`
+1. Manually update the `appsettings.json` with the necessary runtime configuration settings.
+2. Build and package the nuget: `dotnet pack --configuration Release /p:Version=x.y.z CLI/CLI.csproj`
+3. Uninstall existing tool: `dotnet tool uninstall automate --global`
+4. Install the local tool: `dotnet tool install automate --global --add-source CLI\nupkg --version x.y.z`
+
+> Make sure not to commit changes to `appsettings.json` that should not be in source control
 
 ### Public Release
 

@@ -9,6 +9,7 @@ on:
 env:
   IS_CI_BUILD: 'true'
   SOLUTION_PATH: 'src/Automate.sln'
+  CLIPROJECT_DIR: 'src/CLI'
   CLIPROJECT_PATH: 'src/CLI/CLI.csproj'
   BUILD_CONFIGURATION: 'Release'
   OUTPUT_FILENAME: "automate"
@@ -36,7 +37,7 @@ jobs:
       - name: App Settings Variable Substitution
         uses: microsoft/variable-substitution@v1
         with:
-          files: '${{env.OUTPUT_DIR}}/appsettings.json'
+          files: '${{env.CLIPROJECT_DIR}}/appsettings.json'
         env:
           ApplicationInsights.ConnectionString: ${{APPLICATIONINSIGHTS_CONNECTIONSTRING}}
       - name: Build
