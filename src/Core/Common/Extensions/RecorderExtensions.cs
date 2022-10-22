@@ -55,7 +55,7 @@ namespace Automate.Common.Extensions
             recorder.Count(eventName, new Dictionary<string, string>());
         }
 
-        public static string AnonymiseMeasure(this string identifier)
+        public static string AnonymiseIdentifier(this string identifier)
         {
             return Encoding.UTF8.GetString(MD5.HashData(Encoding.UTF8.GetBytes(identifier)));
         }

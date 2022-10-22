@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Nodes;
 using Automate.Authoring.Domain;
+using Automate.CLI.Extensions;
 using Automate.Common.Extensions;
 using JetBrains.Annotations;
 
@@ -14,6 +15,7 @@ namespace Automate.CLI.Infrastructure
         {
             internal static void ListEverything(bool outputStructured)
             {
+                Recorder.CountAll();
                 ListPatterns(outputStructured);
                 RuntimeApiHandlers.ListToolkits(outputStructured);
                 RuntimeApiHandlers.ListDrafts(outputStructured);

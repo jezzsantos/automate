@@ -43,7 +43,7 @@ namespace Automate.CLI.Infrastructure
                         Output(OutputMessages.CommandLine_Output_InstalledToolkitsListed,
                             JsonNode.Parse(toolkits.Select(toolkit =>
                             {
-                                var compatibility = new StructuredToolkitCompatibilityInfo(toolkit, GetMetadata());
+                                var compatibility = new StructuredToolkitCompatibilityInfo(toolkit, Metadata);
                                 return new
                                 {
                                     toolkit.Id,
@@ -80,7 +80,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ViewDraft(bool todo, bool outputStructured)
             {
-                var (configuration, pattern, validation) = runtime.GetDraftConfiguration(todo, todo, outputStructured);
+                var (configuration, pattern, validation) = runtime.ViewCurrentDraft(todo, todo, outputStructured);
 
                 var draftId = runtime.CurrentDraftId;
                 var draftName = runtime.CurrentDraftName;
@@ -126,7 +126,7 @@ namespace Automate.CLI.Infrastructure
                             JsonNode.Parse(pairs.Select(pair =>
                             {
                                 var compatibility = new StructuredToolkitCompatibilityInfo(pair.Draft, pair.Toolkit,
-                                    GetMetadata());
+                                    Metadata);
                                 return new
                                 {
                                     DraftId = pair.Draft.Id,
@@ -247,7 +247,7 @@ namespace Automate.CLI.Infrastructure
 
             internal static void ValidateDraft(string on, bool outputStructured)
             {
-                var results = runtime.Validate(on);
+                var results = runtime.DraftValidate(on);
 
                 var draftId = runtime.CurrentDraftId;
                 var draftName = runtime.CurrentDraftName;

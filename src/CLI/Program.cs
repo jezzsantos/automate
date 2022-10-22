@@ -165,7 +165,7 @@ namespace Automate.CLI
 
             var channel = new ServerTelemetryChannel();
             channel.StorageFolder = GetStoragePath();
-            channel.MaxBacklogSize = 10 * 1000; // (default 1,000,000)
+            //channel.MaxBacklogSize = 10 * 1000; // (default 1,000,000)
             channel.MaxTelemetryBufferCapacity = 1; // nothing stored in memory, send immediately to disk (default 500)
             channel.MaxTelemetryBufferDelay = TimeSpan.FromMilliseconds(1); // (default 30secs)
 

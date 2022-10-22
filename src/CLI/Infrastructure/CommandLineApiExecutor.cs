@@ -138,7 +138,10 @@ namespace Automate.CLI.Infrastructure
                     WriteUnstructuredOutput();
                     WriteUnstructuredError(context, errorMessage);
                 }
-                recorder.CountUsageException(errorMessage);
+                if (IsUnhandledException(ex))
+                {
+                    recorder.CountUsageException(errorMessage);
+                }
             }
 
             StructuredOutput CreateStructuredOutput()
@@ -218,6 +221,11 @@ namespace Automate.CLI.Infrastructure
             {
                 context.Console.Error.WriteLine();
                 context.Console.WriteError(errorMessage);
+            }
+
+            bool IsUnhandledException(Exception ex)
+            {
+                return !(ex is AutomateException);
             }
         }
 

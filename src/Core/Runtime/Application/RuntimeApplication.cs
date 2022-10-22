@@ -64,14 +64,59 @@ namespace Automate.Runtime.Application
             var toolkit = this.packager.UnPack(this.assemblyMetadata, installer);
 
             this.toolkitStore.Import(toolkit);
-            this.recorder.CountToolkitInstalled(toolkit);
 
+            this.recorder.CountToolkitInstalled(toolkit);
             return toolkit;
         }
 
         public List<ToolkitDefinition> ListInstalledToolkits()
         {
+            this.recorder.CountToolkitsListed();
             return this.toolkitStore.ListAll();
+        }
+
+        public ToolkitDefinition ViewCurrentToolkit()
+        {
+            var toolkit = EnsureCurrentToolkitExists();
+
+            this.recorder.CountToolkitViewed(toolkit);
+            return toolkit;
+        }
+
+        public List<(ToolkitDefinition Toolkit, DraftDefinition Draft)> ListCreatedDrafts()
+        {
+            var drafts = this.draftStore.ListAll();
+
+            this.recorder.CountDraftsListed();
+            return drafts
+                .Select(draft => (this.toolkitStore.FindById(draft.Toolkit.Id), draft))
+                .ToList();
+        }
+
+        public (LazyDraftItemDictionary Configuration, PatternDefinition Pattern, ValidationResults Validation)
+            ViewCurrentDraft(bool includePattern, bool includeValidationResults, bool includeSchema)
+        {
+            var draft = EnsureCurrentDraftExists();
+
+            var validation = includeValidationResults
+                ? DraftValidate(null)
+                : ValidationResults.None;
+
+            var schema = includePattern
+                ? draft.Toolkit.Pattern
+                : null;
+
+            this.recorder.CountDraftViewed(draft);
+            return (draft.GetConfiguration(includeSchema), schema, validation);
+        }
+
+        public void SwitchCurrentDraft(string draftId)
+        {
+            draftId.GuardAgainstNullOrEmpty(nameof(draftId));
+
+            var draft = this.draftStore.ChangeCurrent(draftId);
+            this.toolkitStore.ChangeCurrent(draft.Toolkit.Id);
+            this.recorder.CountDraftSwitched(draft);
         }
 
         public DraftDefinition CreateDraft(string toolkitName, string draftName)
@@ -89,26 +134,9 @@ namespace Automate.Runtime.Application
 
             var draft = new DraftDefinition(toolkit, draftName);
             var created = this.draftStore.Create(draft);
+
             this.recorder.CountDraftCreated(created);
-
             return created;
-        }
-
-        public List<(ToolkitDefinition Toolkit, DraftDefinition Draft)> ListCreatedDrafts()
-        {
-            var drafts = this.draftStore.ListAll();
-
-            return drafts
-                .Select(draft => (this.toolkitStore.FindById(draft.Toolkit.Id), draft))
-                .ToList();
-        }
-
-        public void SwitchCurrentDraft(string draftId)
-        {
-            draftId.GuardAgainstNullOrEmpty(nameof(draftId));
-
-            var draft = this.draftStore.ChangeCurrent(draftId);
-            this.toolkitStore.ChangeCurrent(draft.Toolkit.Id);
         }
 
         public (LazyDraftItemDictionary Configuration, DraftItem Item) ConfigureDraft(string addElementExpression,
@@ -159,6 +187,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountDraftConfigured(draft, target);
             return (configuration, target);
         }
 
@@ -173,6 +202,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountDraftElementReset(draft, target);
             return target;
         }
 
@@ -187,6 +217,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountDraftCollectionCleared(draft, target);
             return target;
         }
 
@@ -206,36 +237,15 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountDraftItemDeleted(draft, target);
             return target;
         }
 
-        public (LazyDraftItemDictionary Configuration, PatternDefinition Pattern, ValidationResults Validation)
-            GetDraftConfiguration(bool includePattern, bool includeValidationResults, bool includeSchema)
+        public ValidationResults DraftValidate(string itemExpression)
         {
             var draft = EnsureCurrentDraftExists();
 
-            var validation = includeValidationResults
-                ? Validate(null)
-                : ValidationResults.None;
-
-            var schema = includePattern
-                ? draft.Toolkit.Pattern
-                : null;
-
-            return (draft.GetConfiguration(includeSchema), schema, validation);
-        }
-
-        public ToolkitDefinition ViewCurrentToolkit()
-        {
-            var toolkit = EnsureCurrentToolkitExists();
-
-            return toolkit;
-        }
-
-        public ValidationResults Validate(string itemExpression)
-        {
-            var draft = EnsureCurrentDraftExists();
-
+            this.recorder.CountDraftValidated(draft);
             return draft.Validate(this.draftPathResolver, itemExpression);
         }
 
@@ -253,6 +263,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountLaunchPointExecuted(draft);
             return result;
         }
 
@@ -274,6 +285,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
+            this.recorder.CountDraftUpgraded(draft);
             return result;
         }
 
@@ -283,6 +295,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.DeleteById(draft.Id);
 
+            this.recorder.CountDraftDeleted(draft);
             return draft;
         }
 

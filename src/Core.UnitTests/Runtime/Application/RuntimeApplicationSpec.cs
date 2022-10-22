@@ -519,7 +519,7 @@ namespace Core.UnitTests.Runtime.Application
             public void WhenGetDraftConfigurationAndCurrentDraftNotExists_ThenThrows()
             {
                 this.application
-                    .Invoking(x => x.GetDraftConfiguration(false, false, false))
+                    .Invoking(x => x.ViewCurrentDraft(false, false, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
@@ -532,7 +532,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.toolkitStore.Import(new ToolkitDefinition(this.pattern, "0.2.0".ToSemVersion()));
 
                 this.application
-                    .Invoking(x => x.GetDraftConfiguration(false, false, false))
+                    .Invoking(x => x.ViewCurrentDraft(false, false, false))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.RuntimeApplication_Incompatible_ToolkitAheadOfDraft.Substitute(draft.Name,
@@ -562,7 +562,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 this.draftStore.Save(draft);
 
-                var result = this.application.GetDraftConfiguration(false, false, false);
+                var result = this.application.ViewCurrentDraft(false, false, false);
 
                 result.Pattern.Should().BeNull();
                 result.Validation.Should().BeEquivalentTo(ValidationResults.None);
@@ -607,7 +607,7 @@ namespace Core.UnitTests.Runtime.Application
 
                 this.draftStore.Save(draft);
 
-                var result = this.application.GetDraftConfiguration(true, true, false);
+                var result = this.application.ViewCurrentDraft(true, true, false);
 
                 result.Pattern.Should().Be(this.pattern);
                 result.Validation.Results.Should().BeEmpty();
@@ -634,7 +634,7 @@ namespace Core.UnitTests.Runtime.Application
             public void WhenValidateDraftAndDraftNotExist_ThenThrows()
             {
                 this.application
-                    .Invoking(x => x.Validate(null))
+                    .Invoking(x => x.DraftValidate(null))
                     .Should().Throw<AutomateException>()
                     .WithMessage(ExceptionMessages.RuntimeApplication_NoCurrentDraft);
             }
@@ -647,7 +647,7 @@ namespace Core.UnitTests.Runtime.Application
                     .Returns((DraftItem)null);
 
                 this.application
-                    .Invoking(x => x.Validate("anelementexpression"))
+                    .Invoking(x => x.DraftValidate("anelementexpression"))
                     .Should().Throw<AutomateException>()
                     .WithMessage(
                         ExceptionMessages.DraftDefinition_ItemExpressionNotFound.Substitute("apatternname",
@@ -670,7 +670,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                     .Returns(draft.Model.Properties["anelementname1"]);
 
-                var result = this.application.Validate("{anelementname}");
+                var result = this.application.DraftValidate("{anelementname}");
 
                 result.Results.Count.Should().Be(1);
                 result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&
@@ -698,7 +698,7 @@ namespace Core.UnitTests.Runtime.Application
                 this.draftPathResolver.Setup(spr => spr.ResolveItem(It.IsAny<DraftDefinition>(), It.IsAny<string>()))
                     .Returns(draft.Model);
 
-                var result = this.application.Validate(null);
+                var result = this.application.DraftValidate(null);
 
                 result.Results.Count.Should().Be(2);
                 result.Results.Should().Contain(r => r.Context.Path == "{apatternname.anelementname1}" &&

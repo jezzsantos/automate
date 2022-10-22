@@ -11,15 +11,13 @@ namespace Automate.CLI.Infrastructure
         internal abstract class HandlerBase
         {
             private static List<OutputMessage> messages;
-            private static IAssemblyMetadata metadata;
-            private static IRecorder recorder;
 
             internal static void Initialise(List<OutputMessage> messages, IRecorder recorder,
                 IAssemblyMetadata metadata)
             {
                 HandlerBase.messages = messages;
-                HandlerBase.recorder = recorder;
-                HandlerBase.metadata = metadata;
+                Recorder = recorder;
+                Metadata = metadata;
             }
 
             protected static void Output(string messageTemplate, params object[] args)
@@ -32,15 +30,9 @@ namespace Automate.CLI.Infrastructure
                 messages.Add(new OutputMessage(OutputMessageLevel.Warning, messageTemplate, args));
             }
 
-            protected static IAssemblyMetadata GetMetadata()
-            {
-                return metadata;
-            }
+            protected static IAssemblyMetadata Metadata { get; private set; }
 
-            protected static IRecorder GetRecorder()
-            {
-                return recorder;
-            }
+            protected static IRecorder Recorder { get; private set; }
         }
     }
 }
