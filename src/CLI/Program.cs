@@ -38,8 +38,10 @@ namespace Automate.CLI
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(builder =>
                 {
+                    var assembly = typeof(Program).Assembly;
+                    var ns = typeof(Program).Namespace;
                     builder
-                        .AddJsonFile("appsettings.json", false, false)
+                        .AddJsonStream(assembly.GetManifestResourceStream($"{ns}.appsettings.json"))
                         .AddJsonFile("appsettings.local.json", true, false);
                 })
                 .ConfigureLogging((context, logging) =>
