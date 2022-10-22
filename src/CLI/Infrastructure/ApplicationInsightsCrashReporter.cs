@@ -40,6 +40,8 @@ namespace Automate.CLI.Infrastructure
         public void EnableReporting(string machineId, string sessionId)
         {
             this.reportingEnabled = true;
+            this.client.Context.Cloud.RoleInstance = machineId;
+            this.client.Context.Device.Id = machineId;
             this.client.Context.User.Id = machineId;
             this.client.Context.Session.Id = sessionId;
         }

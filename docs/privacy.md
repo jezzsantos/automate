@@ -13,10 +13,11 @@ This Privacy Statement explains our practices regarding the collection, use, and
 
 We collect only directly from our software tools running on your computer, including information about your:
 
-* Computer and network details (Your IP address, your operating system)
+* Computer details (Your operating system)
+* Network details (Your ISP's city and country)
 * A random generated unique identifier for each tool
     * Created once per computer that you install the software on
-* Monikers of the features in the tools being used
+* Monikers for each of the features of the tools being used
 * Identifiers from data that these tools have created
     * We use those identifiers only for correlation purposes between uses of these tools. 
     * Any identifiers that are collected are obscured from their original values (using MD5 cryptographic hashing - where the obscured values cannot be reverse engineered back to original identifiers).

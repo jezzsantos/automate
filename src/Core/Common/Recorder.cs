@@ -52,6 +52,18 @@ namespace Automate.Common
             return (this.machineId, this.sessionId);
         }
 
+        public void BeginOperation(string messageTemplate, params object[] args)
+        {
+            Trace(LogLevel.Information, messageTemplate, args);
+            this.measurer.BeginOperation(messageTemplate, args);
+        }
+
+        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        {
+            Trace(LogLevel.Information, messageTemplate, args);
+            this.measurer.EndOperation(success, messageTemplate, args);
+        }
+
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
             var cleaned = eventName

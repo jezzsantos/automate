@@ -14,11 +14,6 @@ namespace Automate.CLI.Extensions
             });
         }
 
-        public static void CountUsage(this IRecorder recorder)
-        {
-            recorder.Count("use");
-        }
-
         public static void CountUsageException(this IRecorder recorder, string errorMessage)
         {
             recorder.Count("exception", new Dictionary<string, string>

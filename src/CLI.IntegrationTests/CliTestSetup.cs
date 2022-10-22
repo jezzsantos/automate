@@ -258,6 +258,14 @@ namespace CLI.IntegrationTests
             return Recordings.GetReportingIds();
         }
 
+        public void BeginOperation(string messageTemplate, params object[] args)
+        {
+        }
+
+        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        {
+        }
+
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
             Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.MachineId, Recordings.SessionId));

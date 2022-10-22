@@ -13,6 +13,13 @@ namespace Automate.Common
         (string MachineId, string SessionId) GetReportingIds();
     }
 
+    public interface IOperationReporter
+    {
+        void BeginOperation(string messageTemplate, params object[] args);
+
+        void EndOperation(bool success, string messageTemplate, params object[] args);
+    }
+
     public interface ICrashReporter
     {
         void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
@@ -20,7 +27,7 @@ namespace Automate.Common
         void EnableReporting(string machineId, string sessionId);
     }
 
-    public interface IMetricReporter
+    public interface IMetricReporter : IOperationReporter
     {
         void Count(string eventName, Dictionary<string, string> context = null);
 

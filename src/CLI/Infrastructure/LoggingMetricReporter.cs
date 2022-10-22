@@ -38,5 +38,15 @@ namespace Automate.CLI.Infrastructure
             this.machineId = machineId;
             this.sessionId = sessionId;
         }
+
+        public void BeginOperation(string messageTemplate, params object[] args)
+        {
+            this.logger.Log(LogLevel.Information, null, messageTemplate, args);
+        }
+
+        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        {
+            this.logger.Log(LogLevel.Information, null, messageTemplate, args);
+        }
     }
 }

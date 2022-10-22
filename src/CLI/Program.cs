@@ -72,7 +72,7 @@ namespace Automate.CLI
             using (var host = CreateHostBuilder(args).Build())
             {
                 var recorder = host.Services.GetRequiredService<IRecorder>();
-                recorder.TraceInformation("Starting up CLI");
+                recorder.BeginOperation("Starting CLI");
 
                 host.Start();
 
@@ -81,16 +81,12 @@ namespace Automate.CLI
 #if !TESTINGONLY
                 var telemetryClient = host.Services.GetRequiredService<TelemetryClient>();
 #endif
-                int result;
+                var result = 0;
                 try
                 {
-                    recorder.TraceInformation("Running CLI");
-
                     result = CommandLineApi.Execute(container, args);
                     lifetime.StopApplication();
                     host.WaitForShutdownAsync().GetAwaiter().GetResult();
-
-                    recorder.TraceInformation("Ran CLI");
                 }
                 catch (Exception ex)
                 {
@@ -98,13 +94,14 @@ namespace Automate.CLI
                     Console.Error.WriteLine(ex.Message);
                     result = 1;
                 }
-#if !TESTINGONLY
                 finally
                 {
+                    recorder.EndOperation(result == 0, "Shutting down CLI");
+#if !TESTINGONLY
                     FlushTelemetry(recorder, telemetryClient);
-                }
 #endif
-                recorder.TraceInformation("Shutting down CLI");
+                }
+
                 return result;
             }
         }
@@ -166,7 +163,7 @@ namespace Automate.CLI
 #if !TESTINGONLY
         private static void FlushTelemetry(IRecorder recorder, TelemetryClient telemetryClient)
         {
-            recorder.TraceInformation("Flushing all usage telemetry");
+            recorder.TraceDebug("Flushing any usage telemetry");
             telemetryClient.FlushAsync(CancellationToken.None)
                 .GetAwaiter().GetResult(); //We use the Async version here since it should block until all telemetry is transmitted
         }
@@ -177,12 +174,9 @@ namespace Automate.CLI
 
             var channel = new ServerTelemetryChannel();
             channel.StorageFolder = GetStoragePath();
-            //channel.MaxBacklogSize = 10 * 1000; // (default 1,000,000)
-            channel.MaxTelemetryBufferCapacity = 1; // nothing stored in memory, send immediately to disk (default 500)
+            channel.MaxTelemetryBufferCapacity = 1; // send immediately to disk (default 500)
             channel.MaxTelemetryBufferDelay = TimeSpan.FromMilliseconds(1); // (default 30secs)
-            channel.MaxTransmissionSenderCapacity = 100; // blast 100 at a time to cloud (default 10)
-            // channel.MaxTransmissionStorageCapacity = 10 * 1000 * 1000; //store as much as needed 10MB (default 52,428,800)
-            // channel.MaxTransmissionBufferCapacity = 2; // nothing stored in memory, send to disk? (default 5,242,880)
+            channel.MaxTransmissionSenderCapacity = 100; // (default 10)
             var configuration = TelemetryConfiguration.CreateDefault();
             configuration.ConnectionString = connectionString;
             channel.Initialize(configuration);
@@ -190,9 +184,9 @@ namespace Automate.CLI
 
             var telemetryClient = new TelemetryClient(configuration);
             telemetryClient.Context.Component.Version = assemblyMetadata.RuntimeVersion.ToString();
-            telemetryClient.Context.GlobalProperties["Application"] = assemblyMetadata.ProductName;
+            telemetryClient.Context.Cloud.RoleName = $"{assemblyMetadata.ProductName} CLI";
             telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
-
+                
             return telemetryClient;
             
             string GetStoragePath()

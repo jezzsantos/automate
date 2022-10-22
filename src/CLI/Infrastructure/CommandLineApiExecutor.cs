@@ -27,16 +27,10 @@ namespace Automate.CLI.Infrastructure
         public static int Execute(IDependencyContainer container, string[] args)
         {
             var recorder = container.Resolve<IRecorder>();
-            authoring = CreateAuthoringApplication(container);
-            runtime = CreateRuntimeApplication(container);
 
             var outputMessages = new List<OutputMessage>();
             var contextualMessages = new List<ContextualMessage>();
-            HandlerBase.Initialise(outputMessages, recorder,
-                container.Resolve<IAssemblyMetadata>());
-
-            var rootCommand = DefineCommands();
-            var parser = new CommandLineBuilder(rootCommand)
+            var commandLine = new CommandLineBuilder(DefineCommands())
                 .UseDefaults()
                 .UseExceptionHandler((ex, context) => { HandleException(context, ex); })
                 .UseHelp(context =>
@@ -54,20 +48,25 @@ namespace Automate.CLI.Infrastructure
                 })
                 .Build();
 
-            var parseResult = parser.Parse(args);
+            var parseResult = commandLine.Parse(args);
 
             var allowUsageCollection = IsOptionEnabled(parseResult, CollectUsageEnabledOption);
             if (allowUsageCollection)
             {
                 var machineId = container.Resolve<IMachineStore>().GetOrCreateInstallationId();
-                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption) ?? Recorder.CreateSessionId();
+                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption) ??
+                                Recorder.CreateSessionId();
                 recorder.EnableReporting(machineId, sessionId);
             }
             else
             {
                 recorder.TraceInformation("Usage collection is disabled");
             }
-            recorder.CountUsage();
+
+            authoring = CreateAuthoringApplication(container);
+            runtime = CreateRuntimeApplication(container);
+            HandlerBase.Initialise(outputMessages, recorder,
+                container.Resolve<IAssemblyMetadata>());
 
             if (IsAuthoringCommand(parseResult))
             {
@@ -106,7 +105,7 @@ namespace Automate.CLI.Infrastructure
                 contextualMessages.Add(new ContextualMessage(OutputMessages.CommandLine_Output_Preamble_TestingOnly));
             }
 
-            var result = parser.Invoke(args);
+            var result = commandLine.Invoke(args);
 
             if (IsStructuredOutput(parseResult))
             {

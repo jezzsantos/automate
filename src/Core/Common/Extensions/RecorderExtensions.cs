@@ -57,7 +57,7 @@ namespace Automate.Common.Extensions
 
         public static string AnonymiseIdentifier(this string identifier)
         {
-            return Encoding.UTF8.GetString(MD5.HashData(Encoding.UTF8.GetBytes(identifier)));
+            return Convert.ToBase64String(MD5.HashData(Encoding.UTF8.GetBytes(identifier)));
         }
     }
 }
