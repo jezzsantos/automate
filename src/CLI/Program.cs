@@ -29,7 +29,6 @@ namespace Automate.CLI
     internal class Program
     {
 #if !TESTINGONLY
-        private static readonly TimeSpan TelemetryDeliveryWindow = TimeSpan.FromSeconds(2);
         private const string AppInsightsConnectionStringSetting = "ApplicationInsights:ConnectionString";
 #endif
 
@@ -70,7 +69,9 @@ namespace Automate.CLI
 
                 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
                 var container = host.Services.GetRequiredService<IDependencyContainer>();
-
+#if !TESTINGONLY
+                var telemetryClient = host.Services.GetRequiredService<TelemetryClient>();
+#endif
                 try
                 {
                     recorder.TraceInformation("Running CLI");
@@ -91,7 +92,7 @@ namespace Automate.CLI
 #if !TESTINGONLY
                 finally
                 {
-                    DelayToSendTelemetry(recorder);
+                    FlushTelemetry(recorder, telemetryClient);
                 }
 #endif
             }
@@ -150,10 +151,11 @@ namespace Automate.CLI
         }
 
 #if !TESTINGONLY
-        private static void DelayToSendTelemetry(IRecorder recorder)
+        private static void FlushTelemetry(IRecorder recorder, TelemetryClient telemetryClient)
         {
-            recorder.TraceInformation("Delaying for telemetry delivery");
-            Thread.Sleep(TelemetryDeliveryWindow);
+            recorder.TraceInformation("Flushing all telemetry");
+            telemetryClient.FlushAsync(CancellationToken.None)
+                .GetAwaiter().GetResult(); //We use the Async version here since it should block until all telemetry is transmitted
         }
 
         private static void RegisterApplicationInsightsTelemetryClient(IConfiguration settings,
