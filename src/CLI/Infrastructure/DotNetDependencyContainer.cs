@@ -7,21 +7,16 @@ namespace Automate.CLI.Infrastructure
 {
     public class DotNetDependencyContainer : IDependencyContainer
     {
-        private readonly IServiceCollection services;
-        private IServiceProvider serviceProvider;
+        private readonly IServiceProvider serviceProvider;
 
-        public DotNetDependencyContainer(IServiceCollection services)
+        public DotNetDependencyContainer(IServiceProvider serviceProvider)
         {
-            this.services = services;
+            serviceProvider.GuardAgainstNull(nameof(serviceProvider));
+            this.serviceProvider = serviceProvider;
         }
 
         public TService Resolve<TService>()
         {
-            if (this.serviceProvider.NotExists())
-            {
-                this.serviceProvider = this.services.BuildServiceProvider();
-            }
-
             return this.serviceProvider.GetRequiredService<TService>();
         }
     }

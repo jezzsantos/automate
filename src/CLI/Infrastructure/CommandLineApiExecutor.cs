@@ -32,7 +32,7 @@ namespace Automate.CLI.Infrastructure
 
             var outputMessages = new List<OutputMessage>();
             var contextualMessages = new List<ContextualMessage>();
-            HandlerBase.Initialise(outputMessages, container.Resolve<IRecorder>(),
+            HandlerBase.Initialise(outputMessages, recorder,
                 container.Resolve<IAssemblyMetadata>());
 
             var rootCommand = DefineCommands();
@@ -62,6 +62,10 @@ namespace Automate.CLI.Infrastructure
                 var machineId = container.Resolve<IMachineStore>().GetOrCreateInstallationId();
                 var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption) ?? Recorder.CreateSessionId();
                 recorder.EnableReporting(machineId, sessionId);
+            }
+            else
+            {
+                recorder.TraceInformation("Usage collection is disabled");
             }
             recorder.CountUsage();
 

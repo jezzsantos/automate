@@ -46,11 +46,18 @@ namespace Automate.CLI
                 .ConfigureLogging((context, logging) =>
                 {
                     logging.ClearProviders();
-                    logging.AddFile(context.Configuration.GetSection("Logging"));
+                    logging.AddFile("automate/automate.log", options =>
+                    {
+                        options.Append = true;
+                        options.MinLevel = context.Configuration
+                            .GetValue<string>("Logging:RollingFile:LogLevel:Default")
+                            .ToEnumOrDefault(LogLevel.Information);
+                        options.MaxRollingFiles = 1;
+                        options.FileSizeLimitBytes = 10 * 1000 * 1000;
+                    });
 #if TESTINGONLY
                     logging.AddConsole();
 #else
-
                     //We only want to send unhandled exceptions, crash reports, and events to AI
                     logging.AddApplicationInsights();
 #endif
@@ -65,31 +72,31 @@ namespace Automate.CLI
             using (var host = CreateHostBuilder(args).Build())
             {
                 var recorder = host.Services.GetRequiredService<IRecorder>();
-                recorder.TraceInformation("Starting up CLI host");
+                recorder.TraceInformation("Starting up CLI");
 
                 host.Start();
 
                 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
-                var container = host.Services.GetRequiredService<IDependencyContainer>();
+                var container = new DotNetDependencyContainer(host.Services);
 #if !TESTINGONLY
                 var telemetryClient = host.Services.GetRequiredService<TelemetryClient>();
 #endif
+                int result;
                 try
                 {
                     recorder.TraceInformation("Running CLI");
 
-                    var result = CommandLineApi.Execute(container, args);
+                    result = CommandLineApi.Execute(container, args);
                     lifetime.StopApplication();
                     host.WaitForShutdownAsync().GetAwaiter().GetResult();
 
-                    recorder.TraceInformation("Shutting down CLI host");
-                    return result;
+                    recorder.TraceInformation("Ran CLI");
                 }
                 catch (Exception ex)
                 {
-                    recorder.CrashFatal(ex, "CLI failed to run");
+                    recorder.CrashFatal(ex, "CLI run failed");
                     Console.Error.WriteLine(ex.Message);
-                    return 1;
+                    result = 1;
                 }
 #if !TESTINGONLY
                 finally
@@ -97,6 +104,8 @@ namespace Automate.CLI
                     FlushTelemetry(recorder, telemetryClient);
                 }
 #endif
+                recorder.TraceInformation("Shutting down CLI");
+                return result;
             }
         }
 
@@ -106,7 +115,8 @@ namespace Automate.CLI
             var currentDirectory = Environment.CurrentDirectory;
             var assemblyMetadata = new CliAssemblyMetadata();
 #if !TESTINGONLY
-            RegisterApplicationInsightsTelemetryClient(settings, services, assemblyMetadata);
+            var telemetryClient = CreateApplicationInsightsTelemetryClient(settings, assemblyMetadata);
+            services.AddSingleton(telemetryClient);
 #endif
             services.AddSingleton(c => CreateRecorder(c, "automate-cli"));
             services.AddSingleton(c => new LocalMachineUserRepository(assemblyMetadata.InstallationPath,
@@ -134,20 +144,21 @@ namespace Automate.CLI
             services.AddSingleton<IAutomationExecutor, AutomationExecutor>();
             services.AddSingleton<IPersistableFactory, AutomatePersistableFactory>();
             services.AddSingleton<IAssemblyMetadata>(assemblyMetadata);
-
-            services.AddSingleton<IDependencyContainer>(new DotNetDependencyContainer(services));
         }
 
         private static IRecorder CreateRecorder(IServiceProvider services, string categoryName)
         {
             var logger = new DotNetCoreLogger(services.GetRequiredService<ILoggerFactory>(), categoryName);
+#if !TESTINGONLY
+            var telemetryClient = services.GetRequiredService<TelemetryClient>();
+#endif
             var recorder = new Recorder(logger,
 #if TESTINGONLY
                 new LoggingCrashReporter(logger),
                 new LoggingMetricReporter(logger));
 #else
-                new ApplicationInsightsCrashReporter(services.GetRequiredService<TelemetryClient>()),
-                new ApplicationInsightsMetricReporter(services.GetRequiredService<TelemetryClient>()));
+                new ApplicationInsightsCrashReporter(telemetryClient),
+                new ApplicationInsightsMetricReporter(telemetryClient));
 #endif
             return recorder;
         }
@@ -160,8 +171,7 @@ namespace Automate.CLI
                 .GetAwaiter().GetResult(); //We use the Async version here since it should block until all telemetry is transmitted
         }
 
-        private static void RegisterApplicationInsightsTelemetryClient(IConfiguration settings,
-            IServiceCollection services, CliAssemblyMetadata assemblyMetadata)
+        private static TelemetryClient CreateApplicationInsightsTelemetryClient(IConfiguration settings, IAssemblyMetadata assemblyMetadata)
         {
             var connectionString = settings.GetValue<string>(AppInsightsConnectionStringSetting, null);
 
@@ -182,8 +192,9 @@ namespace Automate.CLI
             telemetryClient.Context.Component.Version = assemblyMetadata.RuntimeVersion.ToString();
             telemetryClient.Context.GlobalProperties["Application"] = assemblyMetadata.ProductName;
             telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
-            services.AddSingleton(telemetryClient);
 
+            return telemetryClient;
+            
             string GetStoragePath()
             {
                 var path = Path.Combine(assemblyMetadata.InstallationPath, Path.Combine("automate", "usage-cache"));

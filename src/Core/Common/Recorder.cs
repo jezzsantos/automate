@@ -54,35 +54,36 @@ namespace Automate.Common
 
         public void Count(string eventName, Dictionary<string, string> context = null)
         {
+            var cleaned = eventName
+                .Replace(" ", string.Empty)
+                .ToLowerInvariant();
+            var formatted = $"cli_{cleaned}";
+            Trace(LogLevel.Information, LoggingMessages.Recorder_Measure, formatted);
             if (this.isReportingEnabled)
             {
-                var cleaned = eventName
-                    .Replace(" ", string.Empty)
-                    .ToLowerInvariant();
-                var formatted = $"cli_{cleaned}";
-                Trace(LogLevel.Information, LoggingMessages.Recorder_Measure, formatted);
                 this.measurer.Count(formatted, context);
             }
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
         {
+            Trace(LogLevel.Error, exception, LoggingMessages.Recorder_Crash.Substitute(messageTemplate), args);
             if (this.isReportingEnabled)
             {
-                if (this.logger.IsEnabled(LogLevel.Error))
-                {
-                    this.logger.Log(LogLevel.Error, exception,
-                        LoggingMessages.Recorder_Crash.Substitute(messageTemplate), args);
-                }
                 this.crasher.Crash(level, exception, messageTemplate, args);
             }
         }
 
         public void Trace(LogLevel level, string messageTemplate, params object[] args)
         {
+            Trace(level, null, messageTemplate, args);
+        }
+
+        private void Trace(LogLevel level, Exception exception, string messageTemplate, params object[] args)
+        {
             if (this.logger.IsEnabled(level))
             {
-                this.logger.Log(level, messageTemplate, args);
+                this.logger.Log(level, exception, messageTemplate, args);
             }
         }
     }

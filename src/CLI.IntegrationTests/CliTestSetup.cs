@@ -40,8 +40,9 @@ namespace CLI.IntegrationTests
             Program.PopulateContainerForLocalMachineAndCurrentDirectory(null, services);
             this.testRecorder = new TestRecorder();
             services.AddSingleton<IRecorder>(this.testRecorder);
-            this.container = new DotNetDependencyContainer(services);
-            this.repository = this.container.Resolve<LocalMachineFileRepository>();
+            var serviceProvider = services.BuildServiceProvider();
+            this.container = new DotNetDependencyContainer(serviceProvider);
+            this.repository = serviceProvider.GetRequiredService<LocalMachineFileRepository>();
         }
 
         public StandardResult Value { get; private set; }
@@ -275,6 +276,7 @@ namespace CLI.IntegrationTests
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Recordings
     {
         public List<TestMeasurement> Measurements { get; } = new();

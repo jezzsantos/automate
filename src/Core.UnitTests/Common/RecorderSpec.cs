@@ -46,7 +46,7 @@ namespace Core.UnitTests.Common
         }
 
         [Fact]
-        public void WhenConstructedAndCount_ThenDoesNotCountNorTrace()
+        public void WhenConstructedAndCount_ThenDoesNotCountButTraces()
         {
             this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
@@ -54,20 +54,23 @@ namespace Core.UnitTests.Common
             this.recorder.Count("aneventname");
 
             this.measurer.Verify(m => m.Count(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
-            VerifyLogWasNeverCalled(this.logger);
+            VerifyLogWasCalled(this.logger, LogLevel.Information, null, LoggingMessages.Recorder_Measure,
+                "cli_aneventname");
         }
 
         [Fact]
-        public void WhenConstructedAndCrash_ThenDoesNotCrashNorTrace()
+        public void WhenConstructedAndCrash_ThenDoesNotCrashButTraces()
         {
             this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
+            var exception = new Exception("amessage");
 
-            this.recorder.Crash(CrashLevel.Fatal, new Exception("amessage"), "amessagetemplate");
+            this.recorder.Crash(CrashLevel.Fatal, exception, "amessagetemplate");
 
             this.crasher.Verify(c => c.Crash(It.IsAny<CrashLevel>(), It.IsAny<Exception>(), It.IsAny<string>()),
                 Times.Never);
-            VerifyLogWasNeverCalled(this.logger);
+            VerifyLogWasCalled(this.logger, LogLevel.Error, exception,
+                LoggingMessages.Recorder_Crash.Substitute("amessagetemplate"), null);
         }
 
         [Fact]
