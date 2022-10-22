@@ -29,7 +29,7 @@ namespace Automate.Common
 
         public static string CreateSessionId()
         {
-            return $"cls_{Guid.NewGuid():N}";
+            return $"cli_{Guid.NewGuid():N}";
         }
 
         public void Dispose()
