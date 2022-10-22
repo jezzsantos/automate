@@ -523,7 +523,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {Command} (v{RuntimeVersion}) with, usage:{CollectUsage}.
+        ///   Looks up a localized string similar to {Command} ({Location}, v{RuntimeVersion}) with, usage:{CollectUsage}.
         /// </summary>
         internal static string CommandLine_Output_Info {
             get {

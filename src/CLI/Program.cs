@@ -50,7 +50,9 @@ namespace Automate.CLI
 #if TESTINGONLY
                     logging.AddConsole();
 #else
-                    //We are not sending Traces to AI, only crash reports and events
+
+                    //We only want to send unhandled exceptions, crash reports, and events to AI
+                    logging.AddApplicationInsights();
 #endif
                 })
                 .ConfigureServices((context, services) =>
@@ -153,7 +155,7 @@ namespace Automate.CLI
 #if !TESTINGONLY
         private static void FlushTelemetry(IRecorder recorder, TelemetryClient telemetryClient)
         {
-            recorder.TraceInformation("Flushing all telemetry");
+            recorder.TraceInformation("Flushing all usage telemetry");
             telemetryClient.FlushAsync(CancellationToken.None)
                 .GetAwaiter().GetResult(); //We use the Async version here since it should block until all telemetry is transmitted
         }
@@ -168,8 +170,7 @@ namespace Automate.CLI
             //channel.MaxBacklogSize = 10 * 1000; // (default 1,000,000)
             channel.MaxTelemetryBufferCapacity = 1; // nothing stored in memory, send immediately to disk (default 500)
             channel.MaxTelemetryBufferDelay = TimeSpan.FromMilliseconds(1); // (default 30secs)
-
-            // channel.MaxTransmissionSenderCapacity = 100; // blast 100 at a time to cloud (default 10)
+            channel.MaxTransmissionSenderCapacity = 100; // blast 100 at a time to cloud (default 10)
             // channel.MaxTransmissionStorageCapacity = 10 * 1000 * 1000; //store as much as needed 10MB (default 52,428,800)
             // channel.MaxTransmissionBufferCapacity = 2; // nothing stored in memory, send to disk? (default 5,242,880)
             var configuration = TelemetryConfiguration.CreateDefault();

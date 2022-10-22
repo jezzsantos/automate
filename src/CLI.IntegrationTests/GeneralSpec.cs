@@ -39,6 +39,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
+                    metadata.InstallationPath,
                     metadata.RuntimeVersion, false));
             this.setup.Recordings.IsReportingEnabled.Should().BeFalse();
         }
@@ -52,6 +53,7 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
+                    metadata.InstallationPath,
                     metadata.RuntimeVersion, true));
             this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>

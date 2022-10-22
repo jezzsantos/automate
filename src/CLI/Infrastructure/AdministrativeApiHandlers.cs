@@ -15,7 +15,7 @@ namespace Automate.CLI.Infrastructure
                 if (outputStructured)
                 {
                     var reportingIds = Recorder.GetReportingIds();
-                    Output(OutputMessages.CommandLine_Output_Info, metadata.ProductName,
+                    Output(OutputMessages.CommandLine_Output_Info, metadata.ProductName, metadata.InstallationPath,
                         metadata.RuntimeVersion.ToString(),
                         new
                         {
@@ -26,7 +26,7 @@ namespace Automate.CLI.Infrastructure
                 }
                 else
                 {
-                    Output(OutputMessages.CommandLine_Output_Info, metadata.ProductName,
+                    Output(OutputMessages.CommandLine_Output_Info, metadata.ProductName, metadata.InstallationPath,
                         metadata.RuntimeVersion.ToString(),
                         collectUsage);
                 }

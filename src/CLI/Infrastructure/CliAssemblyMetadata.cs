@@ -30,11 +30,7 @@ namespace Automate.CLI.Infrastructure
         {
             get
             {
-                var assembly = Assembly.GetEntryAssembly();
-                if (assembly.NotExists())
-                {
-                    throw new InvalidOperationException("Assembly cannot be determined");
-                }
+                var assembly = Assembly.GetExecutingAssembly();
                 var location = assembly.GetName().CodeBase;
                 if (location.NotExists())
                 {

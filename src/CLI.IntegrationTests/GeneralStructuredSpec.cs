@@ -31,6 +31,7 @@ namespace CLI.IntegrationTests
                 Values = new Dictionary<string, object>
                 {
                     { "Command", metadata.ProductName },
+                    { "Location", metadata.InstallationPath },
                     { "RuntimeVersion", metadata.RuntimeVersion.ToString() },
                     {
                         "CollectUsage", new Dictionary<string, object>
@@ -66,6 +67,7 @@ namespace CLI.IntegrationTests
                 Values = new Dictionary<string, object>
                 {
                     { "Command", metadata.ProductName },
+                    { "Location", metadata.InstallationPath },
                     { "RuntimeVersion", metadata.RuntimeVersion.ToString() },
                     {
                         "CollectUsage", new Dictionary<string, object>
@@ -105,6 +107,7 @@ namespace CLI.IntegrationTests
                 Values = new Dictionary<string, object>
                 {
                     { "Command", metadata.ProductName },
+                    { "Location", metadata.InstallationPath },
                     { "RuntimeVersion", metadata.RuntimeVersion.ToString() },
                     {
                         "CollectUsage", new Dictionary<string, object>
