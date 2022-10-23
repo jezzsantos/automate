@@ -56,8 +56,10 @@ namespace CLI.IntegrationTests
                     metadata.InstallationPath,
                     metadata.RuntimeVersion, true));
             this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
+            this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
-                measurement.EventName == "use" && measurement.MachineId.HasValue() && measurement.SessionId.HasValue());
+                measurement.EventName == "info" && measurement.MachineId.HasValue() &&
+                measurement.SessionId == "asessionid");
         }
 
         public void Dispose()

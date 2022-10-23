@@ -4,34 +4,39 @@ using Microsoft.Extensions.Logging;
 
 namespace Automate.Common
 {
-    public interface IRecorder : IMetricReporter, ICrashReporter
+    public interface IRecorder
     {
         void Trace(LogLevel level, string messageTemplate, params object[] args);
 
-        new void EnableReporting(string machineId, string sessionId);
+        void EnableReporting(string machineId, string sessionId);
 
         (string MachineId, string SessionId) GetReportingIds();
-    }
 
-    public interface IOperationReporter
-    {
-        void BeginOperation(string messageTemplate, params object[] args);
+        void StartSession(string messageTemplate, params object[] args);
 
-        void EndOperation(bool success, string messageTemplate, params object[] args);
+        void EndSession(bool success, string messageTemplate, params object[] args);
+
+        void MeasureEvent(string eventName, Dictionary<string, string> context = null);
+
+        void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
     }
 
     public interface ICrashReporter
     {
-        void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
-
         void EnableReporting(string machineId, string sessionId);
+
+        void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
     }
 
-    public interface IMetricReporter : IOperationReporter
+    public interface IMeasurementReporter
     {
-        void Count(string eventName, Dictionary<string, string> context = null);
-
         void EnableReporting(string machineId, string sessionId);
+
+        void MeasureEvent(string eventName, Dictionary<string, string> context = null);
+
+        void MeasureStartSession(string messageTemplate, params object[] args);
+
+        void MeasureEndSession(bool success, string messageTemplate, params object[] args);
     }
 
     public enum CrashLevel

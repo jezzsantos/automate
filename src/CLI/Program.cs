@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Automate.Authoring.Application;
 using Automate.Authoring.Infrastructure;
 using Automate.CLI.Infrastructure;
@@ -16,11 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 #if !TESTINGONLY
-using System.IO;
-using System.Threading;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 #endif
 
 namespace Automate.CLI
@@ -28,9 +25,9 @@ namespace Automate.CLI
     [UsedImplicitly]
     internal class Program
     {
-#if !TESTINGONLY
-        private const string AppInsightsConnectionStringSetting = "ApplicationInsights:ConnectionString";
-#endif
+        private const string LoggingCategory = "automate-cli";
+        private const string RollingLogFileLevelSettingName = "Logging:RollingFile:LogLevel:Default";
+        private static readonly string LocalLogFilePath = Path.Combine("automate", "automate.log");
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
@@ -46,11 +43,11 @@ namespace Automate.CLI
                 .ConfigureLogging((context, logging) =>
                 {
                     logging.ClearProviders();
-                    logging.AddFile("automate/automate.log", options =>
+                    logging.AddFile(LocalLogFilePath, options =>
                     {
                         options.Append = true;
                         options.MinLevel = context.Configuration
-                            .GetValue<string>("Logging:RollingFile:LogLevel:Default")
+                            .GetValue<string>(RollingLogFileLevelSettingName)
                             .ToEnumOrDefault(LogLevel.Information);
                         options.MaxRollingFiles = 1;
                         options.FileSizeLimitBytes = 10 * 1000 * 1000;
@@ -58,7 +55,7 @@ namespace Automate.CLI
 #if TESTINGONLY
                     logging.AddConsole();
 #else
-                    //We only want to send unhandled exceptions, crash reports, and events to AI
+                    //We actually only want to send unhandled exceptions, crash reports, and events to AI, not logs
                     logging.AddApplicationInsights();
 #endif
                 })
@@ -72,15 +69,12 @@ namespace Automate.CLI
             using (var host = CreateHostBuilder(args).Build())
             {
                 var recorder = host.Services.GetRequiredService<IRecorder>();
-                recorder.BeginOperation("Starting CLI");
+                recorder.StartSession(LoggingMessages.Program_StartSession);
 
                 host.Start();
 
                 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
                 var container = new DotNetDependencyContainer(host.Services);
-#if !TESTINGONLY
-                var telemetryClient = host.Services.GetRequiredService<TelemetryClient>();
-#endif
                 var result = 0;
                 try
                 {
@@ -90,16 +84,13 @@ namespace Automate.CLI
                 }
                 catch (Exception ex)
                 {
-                    recorder.CrashFatal(ex, "CLI run failed");
+                    recorder.CrashFatal(ex, LoggingMessages.Program_Exception);
                     Console.Error.WriteLine(ex.Message);
                     result = 1;
                 }
                 finally
                 {
-                    recorder.EndOperation(result == 0, "Shutting down CLI");
-#if !TESTINGONLY
-                    FlushTelemetry(recorder, telemetryClient);
-#endif
+                    recorder.EndSession(result == 0, LoggingMessages.Program_EndSession);
                 }
 
                 return result;
@@ -112,10 +103,9 @@ namespace Automate.CLI
             var currentDirectory = Environment.CurrentDirectory;
             var assemblyMetadata = new CliAssemblyMetadata();
 #if !TESTINGONLY
-            var telemetryClient = CreateApplicationInsightsTelemetryClient(settings, assemblyMetadata);
-            services.AddSingleton(telemetryClient);
+            services.RegisterApplicationInsightsClient(settings, assemblyMetadata);
 #endif
-            services.AddSingleton(c => CreateRecorder(c, "automate-cli"));
+            services.AddSingleton(c => CreateRecorder(c, LoggingCategory));
             services.AddSingleton(c => new LocalMachineUserRepository(assemblyMetadata.InstallationPath,
                 c.GetRequiredService<IFileSystemReaderWriter>(),
                 c.GetRequiredService<IPersistableFactory>()));
@@ -152,54 +142,12 @@ namespace Automate.CLI
             var recorder = new Recorder(logger,
 #if TESTINGONLY
                 new LoggingCrashReporter(logger),
-                new LoggingMetricReporter(logger));
+                new LoggingMeasurementReporter(logger));
 #else
                 new ApplicationInsightsCrashReporter(telemetryClient),
-                new ApplicationInsightsMetricReporter(telemetryClient));
+                new ApplicationInsightsMeasurementReporter(telemetryClient, logger));
 #endif
             return recorder;
         }
-
-#if !TESTINGONLY
-        private static void FlushTelemetry(IRecorder recorder, TelemetryClient telemetryClient)
-        {
-            recorder.TraceDebug("Flushing any usage telemetry");
-            telemetryClient.FlushAsync(CancellationToken.None)
-                .GetAwaiter().GetResult(); //We use the Async version here since it should block until all telemetry is transmitted
-        }
-
-        private static TelemetryClient CreateApplicationInsightsTelemetryClient(IConfiguration settings, IAssemblyMetadata assemblyMetadata)
-        {
-            var connectionString = settings.GetValue<string>(AppInsightsConnectionStringSetting, null);
-
-            var channel = new ServerTelemetryChannel();
-            channel.StorageFolder = GetStoragePath();
-            channel.MaxTelemetryBufferCapacity = 1; // send immediately to disk (default 500)
-            channel.MaxTelemetryBufferDelay = TimeSpan.FromMilliseconds(1); // (default 30secs)
-            channel.MaxTransmissionSenderCapacity = 100; // (default 10)
-            var configuration = TelemetryConfiguration.CreateDefault();
-            configuration.ConnectionString = connectionString;
-            channel.Initialize(configuration);
-            configuration.TelemetryChannel = channel;
-
-            var telemetryClient = new TelemetryClient(configuration);
-            telemetryClient.Context.Component.Version = assemblyMetadata.RuntimeVersion.ToString();
-            telemetryClient.Context.Cloud.RoleName = $"{assemblyMetadata.ProductName} CLI";
-            telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
-                
-            return telemetryClient;
-            
-            string GetStoragePath()
-            {
-                var path = Path.Combine(assemblyMetadata.InstallationPath, Path.Combine("automate", "usage-cache"));
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-#endif
     }
 }

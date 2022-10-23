@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Automate.Common.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +10,11 @@ namespace Automate.Common
     {
         private readonly ICrashReporter crasher;
         private readonly ILogger logger;
-        private readonly IMetricReporter measurer;
+        private readonly IMeasurementReporter measurer;
         private bool isReportingEnabled;
-        private string machineId;
-        private string sessionId;
+        private (string MachineId, string SessionId) reportingIds;
 
-        public Recorder(ILogger logger, ICrashReporter crasher, IMetricReporter measurer)
+        public Recorder(ILogger logger, ICrashReporter crasher, IMeasurementReporter measurer)
         {
             logger.GuardAgainstNull(nameof(logger));
             crasher.GuardAgainstNull(nameof(crasher));
@@ -23,15 +23,10 @@ namespace Automate.Common
             this.crasher = crasher;
             this.measurer = measurer;
             this.isReportingEnabled = false;
-            this.machineId = null;
-            this.sessionId = null;
+            this.reportingIds = default;
         }
 
-        public static string CreateSessionId()
-        {
-            return $"cli_{Guid.NewGuid():N}";
-        }
-
+        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
         public void Dispose()
         {
             (this.crasher as IDisposable)?.Dispose();
@@ -40,31 +35,32 @@ namespace Automate.Common
 
         public void EnableReporting(string machineId, string sessionId)
         {
+            machineId.GuardAgainstNullOrEmpty(nameof(machineId));
+
             this.isReportingEnabled = true;
-            this.machineId = machineId;
-            this.sessionId = sessionId;
+            this.reportingIds = (machineId, sessionId ?? CreateSessionId());
             this.measurer.EnableReporting(machineId, sessionId);
             this.crasher.EnableReporting(machineId, sessionId);
         }
 
         public (string MachineId, string SessionId) GetReportingIds()
         {
-            return (this.machineId, this.sessionId);
+            return this.reportingIds;
         }
 
-        public void BeginOperation(string messageTemplate, params object[] args)
+        public void StartSession(string messageTemplate, params object[] args)
         {
             Trace(LogLevel.Information, messageTemplate, args);
-            this.measurer.BeginOperation(messageTemplate, args);
+            this.measurer.MeasureStartSession(messageTemplate, args);
         }
 
-        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        public void EndSession(bool success, string messageTemplate, params object[] args)
         {
             Trace(LogLevel.Information, messageTemplate, args);
-            this.measurer.EndOperation(success, messageTemplate, args);
+            this.measurer.MeasureEndSession(success, messageTemplate, args);
         }
 
-        public void Count(string eventName, Dictionary<string, string> context = null)
+        public void MeasureEvent(string eventName, Dictionary<string, string> context = null)
         {
             var cleaned = eventName
                 .Replace(" ", string.Empty)
@@ -73,7 +69,7 @@ namespace Automate.Common
             Trace(LogLevel.Information, LoggingMessages.Recorder_Measure, formatted);
             if (this.isReportingEnabled)
             {
-                this.measurer.Count(formatted, context);
+                this.measurer.MeasureEvent(formatted, context);
             }
         }
 
@@ -97,6 +93,11 @@ namespace Automate.Common
             {
                 this.logger.Log(level, exception, messageTemplate, args);
             }
+        }
+
+        private static string CreateSessionId()
+        {
+            return $"cli_{Guid.NewGuid():N}";
         }
     }
 }

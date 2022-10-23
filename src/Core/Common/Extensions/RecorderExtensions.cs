@@ -52,7 +52,7 @@ namespace Automate.Common.Extensions
 
         public static void Count(this IRecorder recorder, string eventName)
         {
-            recorder.Count(eventName, new Dictionary<string, string>());
+            recorder.MeasureEvent(eventName, new Dictionary<string, string>());
         }
 
         public static string AnonymiseIdentifier(this string identifier)

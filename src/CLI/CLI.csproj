@@ -57,6 +57,10 @@
         </EmbeddedResource>
         <EmbeddedResource Include="appsettings.json">
         </EmbeddedResource>
+        <EmbeddedResource Update="LoggingMessages.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>LoggingMessages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Infrastructure\OutputMessages.Designer.cs">
@@ -73,6 +77,11 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>InfrastructureMessages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="LoggingMessages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>LoggingMessages.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>

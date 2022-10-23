@@ -5,6 +5,7 @@ using System.Linq;
 using Automate.Common;
 using Automate.Common.Extensions;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Automate.CLI.Infrastructure
 {
@@ -20,23 +21,6 @@ namespace Automate.CLI.Infrastructure
             this.reportingEnabled = false;
         }
 
-        public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
-        {
-            if (this.reportingEnabled)
-            {
-                var properties = args?
-                    .Select(arg => arg.ToString())
-                    .SafeJoin(", ");
-
-                this.client.TrackException(exception, new Dictionary<string, string>
-                {
-                    { "Level", level.ToString() },
-                    { "Message_Template", messageTemplate },
-                    { "Message_Properties", properties }
-                });
-            }
-        }
-
         public void EnableReporting(string machineId, string sessionId)
         {
             this.reportingEnabled = true;
@@ -44,6 +28,31 @@ namespace Automate.CLI.Infrastructure
             this.client.Context.Device.Id = machineId;
             this.client.Context.User.Id = machineId;
             this.client.Context.Session.Id = sessionId;
+        }
+
+        public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
+        {
+            if (this.reportingEnabled)
+            {
+                var argsString = args?
+                    .Select(arg => arg.ToString())
+                    .SafeJoin(", ");
+
+                var tracking = new ExceptionTelemetry(exception)
+                {
+                    SeverityLevel = level == CrashLevel.Fatal
+                        ? SeverityLevel.Critical
+                        : SeverityLevel.Error,
+                    Message = messageTemplate.SubstituteTemplate(args),
+                    Properties =
+                    {
+                        { "Message_Template", messageTemplate },
+                        { "Message_Arguments", argsString }
+                    }
+                };
+
+                this.client.TrackException(tracking);
+            }
         }
 
         public void Dispose()

@@ -258,15 +258,17 @@ namespace CLI.IntegrationTests
             return Recordings.GetReportingIds();
         }
 
-        public void BeginOperation(string messageTemplate, params object[] args)
+        public void StartSession(string messageTemplate, params object[] args)
         {
+            Recordings.StartSession(messageTemplate, args);
         }
 
-        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        public void EndSession(bool success, string messageTemplate, params object[] args)
         {
+            Recordings.EndSession(success, messageTemplate, args);
         }
 
-        public void Count(string eventName, Dictionary<string, string> context = null)
+        public void MeasureEvent(string eventName, Dictionary<string, string> context = null)
         {
             Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.MachineId, Recordings.SessionId));
         }
@@ -287,6 +289,8 @@ namespace CLI.IntegrationTests
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Recordings
     {
+        public TestSession Session { get; private set; }
+
         public List<TestMeasurement> Measurements { get; } = new();
 
         public bool IsReportingEnabled { get; set; }
@@ -313,12 +317,47 @@ namespace CLI.IntegrationTests
         {
             IsReportingEnabled = true;
             MachineId = machineId;
-            SessionId = sessionId;
+            SessionId = sessionId ?? "asessionid";
         }
 
         public (string MachineId, string SessionId) GetReportingIds()
         {
             return (MachineId, SessionId);
+        }
+
+        public void StartSession(string messageTemplate, object[] args)
+        {
+            Session = new TestSession(messageTemplate, args);
+        }
+
+        public void EndSession(bool success, string messageTemplate, object[] args)
+        {
+            if (Session.Exists())
+            {
+                Session.End(success, messageTemplate, args);
+            }
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class TestSession
+    {
+        public TestSession(string messageTemplate, object[] args)
+        {
+            StartMessage = messageTemplate.SubstituteTemplate(args);
+        }
+
+        public bool Success { get; private set; }
+
+        public string StartMessage { get; }
+
+        public string EndMessage { get; private set; }
+
+        public void End(bool success, string messageTemplate, object[] args)
+        {
+            EndMessage = messageTemplate.SubstituteTemplate(args);
+            Success = success;
         }
     }
 

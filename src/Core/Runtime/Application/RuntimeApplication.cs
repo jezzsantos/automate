@@ -65,13 +65,13 @@ namespace Automate.Runtime.Application
 
             this.toolkitStore.Import(toolkit);
 
-            this.recorder.CountToolkitInstalled(toolkit);
+            this.recorder.MeasureToolkitInstalled(toolkit);
             return toolkit;
         }
 
         public List<ToolkitDefinition> ListInstalledToolkits()
         {
-            this.recorder.CountToolkitsListed();
+            this.recorder.MeasureToolkitsListed();
             return this.toolkitStore.ListAll();
         }
 
@@ -79,7 +79,7 @@ namespace Automate.Runtime.Application
         {
             var toolkit = EnsureCurrentToolkitExists();
 
-            this.recorder.CountToolkitViewed(toolkit);
+            this.recorder.MeasureToolkitViewed(toolkit);
             return toolkit;
         }
 
@@ -87,7 +87,7 @@ namespace Automate.Runtime.Application
         {
             var drafts = this.draftStore.ListAll();
 
-            this.recorder.CountDraftsListed();
+            this.recorder.MeasureDraftsListed();
             return drafts
                 .Select(draft => (this.toolkitStore.FindById(draft.Toolkit.Id), draft))
                 .ToList();
@@ -106,7 +106,7 @@ namespace Automate.Runtime.Application
                 ? draft.Toolkit.Pattern
                 : null;
 
-            this.recorder.CountDraftViewed(draft);
+            this.recorder.MeasureDraftViewed(draft);
             return (draft.GetConfiguration(includeSchema), schema, validation);
         }
 
@@ -116,7 +116,7 @@ namespace Automate.Runtime.Application
 
             var draft = this.draftStore.ChangeCurrent(draftId);
             this.toolkitStore.ChangeCurrent(draft.Toolkit.Id);
-            this.recorder.CountDraftSwitched(draft);
+            this.recorder.MeasureDraftSwitched(draft);
         }
 
         public DraftDefinition CreateDraft(string toolkitName, string draftName)
@@ -135,7 +135,7 @@ namespace Automate.Runtime.Application
             var draft = new DraftDefinition(toolkit, draftName);
             var created = this.draftStore.Create(draft);
 
-            this.recorder.CountDraftCreated(created);
+            this.recorder.MeasureDraftCreated(created);
             return created;
         }
 
@@ -187,7 +187,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountDraftConfigured(draft, target);
+            this.recorder.MeasureDraftConfigured(draft, target);
             return (configuration, target);
         }
 
@@ -202,7 +202,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountDraftElementReset(draft, target);
+            this.recorder.MeasureDraftElementReset(draft, target);
             return target;
         }
 
@@ -217,7 +217,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountDraftCollectionCleared(draft, target);
+            this.recorder.MeasureDraftCollectionCleared(draft, target);
             return target;
         }
 
@@ -237,7 +237,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountDraftItemDeleted(draft, target);
+            this.recorder.MeasureDraftItemDeleted(draft, target);
             return target;
         }
 
@@ -245,7 +245,7 @@ namespace Automate.Runtime.Application
         {
             var draft = EnsureCurrentDraftExists();
 
-            this.recorder.CountDraftValidated(draft);
+            this.recorder.MeasureDraftValidated(draft);
             return draft.Validate(this.draftPathResolver, itemExpression);
         }
 
@@ -263,7 +263,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountLaunchPointExecuted(draft);
+            this.recorder.MeasureLaunchPointExecuted(draft);
             return result;
         }
 
@@ -285,7 +285,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.Save(draft);
 
-            this.recorder.CountDraftUpgraded(draft);
+            this.recorder.MeasureDraftUpgraded(draft);
             return result;
         }
 
@@ -295,7 +295,7 @@ namespace Automate.Runtime.Application
 
             this.draftStore.DeleteById(draft.Id);
 
-            this.recorder.CountDraftDeleted(draft);
+            this.recorder.MeasureDraftDeleted(draft);
             return draft;
         }
 

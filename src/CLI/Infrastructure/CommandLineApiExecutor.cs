@@ -9,7 +9,6 @@ using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Automate.Authoring.Application;
-using Automate.CLI.Extensions;
 using Automate.Common;
 using Automate.Common.Application;
 using Automate.Common.Domain;
@@ -54,8 +53,7 @@ namespace Automate.CLI.Infrastructure
             if (allowUsageCollection)
             {
                 var machineId = container.Resolve<IMachineStore>().GetOrCreateInstallationId();
-                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption) ??
-                                Recorder.CreateSessionId();
+                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption);
                 recorder.EnableReporting(machineId, sessionId);
             }
             else
@@ -141,9 +139,9 @@ namespace Automate.CLI.Infrastructure
                     WriteUnstructuredOutput();
                     WriteUnstructuredError(context, errorMessage);
                 }
-                if (IsUnhandledException(ex))
+                if (IsUnexpectedException(ex))
                 {
-                    recorder.CountUsageException(errorMessage);
+                    recorder.CrashRecoverable(ex, errorMessage);
                 }
             }
 
@@ -226,7 +224,7 @@ namespace Automate.CLI.Infrastructure
                 context.Console.WriteError(errorMessage);
             }
 
-            bool IsUnhandledException(Exception ex)
+            bool IsUnexpectedException(Exception ex)
             {
                 return !(ex is AutomateException);
             }

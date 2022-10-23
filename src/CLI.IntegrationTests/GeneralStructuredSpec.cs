@@ -91,8 +91,10 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
             this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
+            this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
-                measurement.EventName == "use" && measurement.MachineId.HasValue() && measurement.SessionId.HasValue());
+                measurement.EventName == "info" && measurement.MachineId.HasValue() &&
+                measurement.SessionId == "asessionid");
         }
 
         [Fact]
@@ -131,9 +133,10 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should().DisplayOutput(structuredOutput);
             this.setup.Recordings.IsReportingEnabled.Should().BeTrue();
+            this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
-                measurement.EventName == "use" && measurement.MachineId.HasValue() &&
-                measurement.SessionId == "asessionid");
+                measurement.EventName == "info" && measurement.MachineId.HasValue() &&
+                measurement.SessionId.HasValue());
         }
 
         public void Dispose()

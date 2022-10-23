@@ -16,14 +16,14 @@ namespace Core.UnitTests.Common
     {
         private readonly Mock<ICrashReporter> crasher;
         private readonly Mock<ILogger> logger;
-        private readonly Mock<IMetricReporter> measurer;
+        private readonly Mock<IMeasurementReporter> measurer;
         private readonly Recorder recorder;
 
         public RecorderSpec()
         {
             this.logger = new Mock<ILogger>();
             this.crasher = new Mock<ICrashReporter>();
-            this.measurer = new Mock<IMetricReporter>();
+            this.measurer = new Mock<IMeasurementReporter>();
             this.recorder = new Recorder(this.logger.Object, this.crasher.Object, this.measurer.Object);
         }
 
@@ -35,42 +35,25 @@ namespace Core.UnitTests.Common
         }
 
         [Fact]
-        public void WhenConstructed_ThenDoesTrace()
+        public void WhenEnableReportingAndSessionIdIsNull_ThenReturnsGeneratedSession()
         {
-            this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
-                .Returns(true);
+            this.recorder.EnableReporting("amachineid", null);
 
-            this.recorder.Trace(LogLevel.Information, "amessagetemplate");
+            var result = this.recorder.GetReportingIds();
 
-            VerifyLogWasCalled(this.logger, LogLevel.Information, null, "amessagetemplate");
+            result.MachineId.Should().Be("amachineid");
+            result.SessionId.Should().NotBeNull();
         }
 
         [Fact]
-        public void WhenConstructedAndCount_ThenDoesNotCountButTraces()
+        public void WhenEnableReporting_ThenReturnsReportingIds()
         {
-            this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
-                .Returns(true);
+            this.recorder.EnableReporting("amachineid", "asessionid");
 
-            this.recorder.Count("aneventname");
+            var result = this.recorder.GetReportingIds();
 
-            this.measurer.Verify(m => m.Count(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
-            VerifyLogWasCalled(this.logger, LogLevel.Information, null, LoggingMessages.Recorder_Measure,
-                "cli_aneventname");
-        }
-
-        [Fact]
-        public void WhenConstructedAndCrash_ThenDoesNotCrashButTraces()
-        {
-            this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
-                .Returns(true);
-            var exception = new Exception("amessage");
-
-            this.recorder.Crash(CrashLevel.Fatal, exception, "amessagetemplate");
-
-            this.crasher.Verify(c => c.Crash(It.IsAny<CrashLevel>(), It.IsAny<Exception>(), It.IsAny<string>()),
-                Times.Never);
-            VerifyLogWasCalled(this.logger, LogLevel.Error, exception,
-                LoggingMessages.Recorder_Crash.Substitute("amessagetemplate"), null);
+            result.MachineId.Should().Be("amachineid");
+            result.SessionId.Should().Be("asessionid");
         }
 
         [Fact]
@@ -96,17 +79,46 @@ namespace Core.UnitTests.Common
         }
 
         [Fact]
+        public void WhenCount_ThenDoesNotCountButTraces()
+        {
+            this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
+                .Returns(true);
+
+            this.recorder.MeasureEvent("aneventname");
+
+            this.measurer.Verify(m => m.MeasureEvent(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()),
+                Times.Never);
+            VerifyLogWasCalled(this.logger, LogLevel.Information, null, LoggingMessages.Recorder_Measure,
+                "cli_aneventname");
+        }
+
+        [Fact]
         public void WhenCountAndReportingEnabled_ThenReportsAndTraces()
         {
             this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
             this.recorder.EnableReporting("amachineid", "asessionid");
 
-            this.recorder.Count("AN Event Name");
+            this.recorder.MeasureEvent("AN Event Name");
 
-            this.measurer.Verify(m => m.Count("cli_aneventname", null));
+            this.measurer.Verify(m => m.MeasureEvent("cli_aneventname", null));
             VerifyLogWasCalled(this.logger, LogLevel.Information, null, LoggingMessages.Recorder_Measure,
                 "cli_aneventname");
+        }
+
+        [Fact]
+        public void WhenCrash_ThenDoesNotCrashButTraces()
+        {
+            this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
+                .Returns(true);
+            var exception = new Exception("amessage");
+
+            this.recorder.Crash(CrashLevel.Fatal, exception, "amessagetemplate");
+
+            this.crasher.Verify(c => c.Crash(It.IsAny<CrashLevel>(), It.IsAny<Exception>(), It.IsAny<string>()),
+                Times.Never);
+            VerifyLogWasCalled(this.logger, LogLevel.Error, exception,
+                LoggingMessages.Recorder_Crash.Substitute("amessagetemplate"), null);
         }
 
         [Fact]

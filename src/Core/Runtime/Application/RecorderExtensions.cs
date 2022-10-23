@@ -8,37 +8,37 @@ namespace Automate.Runtime.Application
 {
     public static class RecorderExtensions
     {
-        public static void CountToolkitInstalled(this IRecorder recorder, ToolkitDefinition toolkit)
+        public static void MeasureToolkitInstalled(this IRecorder recorder, ToolkitDefinition toolkit)
         {
-            recorder.Count("toolkit.installed", new Dictionary<string, string>
+            recorder.MeasureEvent("toolkit.installed", new Dictionary<string, string>
             {
                 { "ToolkitId", toolkit.Id.AnonymiseIdentifier() },
                 { "RuntimeVersion", toolkit.RuntimeVersion }
             });
         }
 
-        public static void CountToolkitsListed(this IRecorder recorder)
+        public static void MeasureToolkitsListed(this IRecorder recorder)
         {
-            recorder.Count("toolkits.listed");
+            recorder.MeasureEvent("toolkits.listed");
         }
 
-        public static void CountToolkitViewed(this IRecorder recorder, ToolkitDefinition toolkit)
+        public static void MeasureToolkitViewed(this IRecorder recorder, ToolkitDefinition toolkit)
         {
-            recorder.Count("toolkit.viewed", new Dictionary<string, string>
+            recorder.MeasureEvent("toolkit.viewed", new Dictionary<string, string>
             {
                 { "ToolkitId", toolkit.Id.AnonymiseIdentifier() },
                 { "RuntimeVersion", toolkit.RuntimeVersion }
             });
         }
 
-        public static void CountDraftsListed(this IRecorder recorder)
+        public static void MeasureDraftsListed(this IRecorder recorder)
         {
-            recorder.Count("drafts.listed");
+            recorder.MeasureEvent("drafts.listed");
         }
 
-        public static void CountDraftViewed(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftViewed(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.viewed", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.viewed", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -46,9 +46,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftCreated(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftCreated(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.created", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.created", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -56,9 +56,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftSwitched(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftSwitched(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.switched", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.switched", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -66,9 +66,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftConfigured(this IRecorder recorder, DraftDefinition draft, DraftItem target)
+        public static void MeasureDraftConfigured(this IRecorder recorder, DraftDefinition draft, DraftItem target)
         {
-            recorder.Count("draft.configured", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.configured", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -76,9 +76,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftElementReset(this IRecorder recorder, DraftDefinition draft, DraftItem target)
+        public static void MeasureDraftElementReset(this IRecorder recorder, DraftDefinition draft, DraftItem target)
         {
-            recorder.Count("draft.element.reset", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.element.reset", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -86,9 +86,10 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftCollectionCleared(this IRecorder recorder, DraftDefinition draft, DraftItem target)
+        public static void MeasureDraftCollectionCleared(this IRecorder recorder, DraftDefinition draft,
+            DraftItem target)
         {
-            recorder.Count("draft.collection.cleared", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.collection.cleared", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -96,9 +97,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftItemDeleted(this IRecorder recorder, DraftDefinition draft, DraftItem target)
+        public static void MeasureDraftItemDeleted(this IRecorder recorder, DraftDefinition draft, DraftItem target)
         {
-            recorder.Count("draft.item.deleted", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.item.deleted", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -106,9 +107,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftValidated(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftValidated(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.validated", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.validated", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -116,9 +117,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftUpgraded(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftUpgraded(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.upgraded", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.upgraded", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -126,9 +127,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountDraftDeleted(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureDraftDeleted(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.deleted", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.deleted", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },
@@ -136,9 +137,9 @@ namespace Automate.Runtime.Application
             });
         }
 
-        public static void CountLaunchPointExecuted(this IRecorder recorder, DraftDefinition draft)
+        public static void MeasureLaunchPointExecuted(this IRecorder recorder, DraftDefinition draft)
         {
-            recorder.Count("draft.launchpoint.executed", new Dictionary<string, string>
+            recorder.MeasureEvent("draft.launchpoint.executed", new Dictionary<string, string>
             {
                 { "DraftId", draft.Id.AnonymiseIdentifier() },
                 { "ToolkitId", draft.Toolkit.Id.AnonymiseIdentifier() },

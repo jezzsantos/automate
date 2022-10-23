@@ -10,7 +10,7 @@ namespace Automate.CLI.Infrastructure
         {
             internal static void Info(bool collectUsage, string usageSession, bool outputStructured)
             {
-                Recorder.CountInfo(collectUsage, usageSession);
+                Recorder.MeasureInfo(collectUsage, usageSession);
                 var metadata = Metadata;
                 if (outputStructured)
                 {

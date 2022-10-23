@@ -15,7 +15,7 @@ namespace Automate.CLI.Infrastructure
         {
             internal static void ListEverything(bool outputStructured)
             {
-                Recorder.CountAll();
+                Recorder.MeasureListAll();
                 ListPatterns(outputStructured);
                 RuntimeApiHandlers.ListToolkits(outputStructured);
                 RuntimeApiHandlers.ListDrafts(outputStructured);

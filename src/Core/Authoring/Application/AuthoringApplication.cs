@@ -57,7 +57,7 @@ namespace Automate.Authoring.Application
         {
             var pattern = EnsureCurrentPatternExists();
 
-            this.recorder.CountPatternViewed(this.store.GetCurrent());
+            this.recorder.MeasurePatternViewed(this.store.GetCurrent());
             return pattern;
         }
 
@@ -68,7 +68,7 @@ namespace Automate.Authoring.Application
             var pattern = new PatternDefinition(name, displayName, description);
             var created = this.store.Create(pattern);
 
-            this.recorder.CountPatternCreated(created);
+            this.recorder.MeasurePatternCreated(created);
             return created;
         }
 
@@ -82,7 +82,7 @@ namespace Automate.Authoring.Application
 
             this.store.Save(pattern);
 
-            this.recorder.CountPatternUpdated(pattern);
+            this.recorder.MeasurePatternUpdated(pattern);
             return pattern;
         }
 
@@ -93,13 +93,13 @@ namespace Automate.Authoring.Application
             var current = this.store.FindById(id);
             var pattern = this.store.ChangeCurrent(current.Id);
 
-            this.recorder.CountPatternSwitched(pattern);
+            this.recorder.MeasurePatternSwitched(pattern);
             return pattern;
         }
 
         public List<PatternDefinition> ListPatterns()
         {
-            this.recorder.CountPatternsListed();
+            this.recorder.MeasurePatternsListed();
             return this.store.ListAll();
         }
 
@@ -114,7 +114,7 @@ namespace Automate.Authoring.Application
             var attribute = target.AddAttribute(name, type, isRequired, defaultValue, choices);
             this.store.Save(pattern);
 
-            this.recorder.CountAttributeAdded(pattern, attribute);
+            this.recorder.MeasureAttributeAdded(pattern, attribute);
             return (target, attribute);
         }
 
@@ -129,7 +129,7 @@ namespace Automate.Authoring.Application
             var attribute = target.UpdateAttribute(attributeName, name, type, isRequired, defaultValue, choices);
             this.store.Save(pattern);
 
-            this.recorder.CountAttributeUpdated(pattern, attribute);
+            this.recorder.MeasureAttributeUpdated(pattern, attribute);
             return (target, attribute);
         }
 
@@ -143,7 +143,7 @@ namespace Automate.Authoring.Application
             var attribute = target.DeleteAttribute(name);
             this.store.Save(pattern);
 
-            this.recorder.CountAttributeDeleted(pattern, attribute);
+            this.recorder.MeasureAttributeDeleted(pattern, attribute);
             return (target, attribute);
         }
 
@@ -158,7 +158,7 @@ namespace Automate.Authoring.Application
             var element = target.AddElement(name, cardinality, autoCreate, displayName, description);
             this.store.Save(pattern);
 
-            this.recorder.CountElementAdded(pattern, element);
+            this.recorder.MeasureElementAdded(pattern, element);
             return (target, element);
         }
 
@@ -173,7 +173,7 @@ namespace Automate.Authoring.Application
             var element = target.UpdateElement(elementName, name, isRequired, autoCreate, displayName, description);
             this.store.Save(pattern);
 
-            this.recorder.CountElementUpdated(pattern, element);
+            this.recorder.MeasureElementUpdated(pattern, element);
             return (target, element);
         }
 
@@ -187,7 +187,7 @@ namespace Automate.Authoring.Application
             var element = target.DeleteElement(name);
             this.store.Save(pattern);
 
-            this.recorder.CountElementDeleted(pattern, element);
+            this.recorder.MeasureElementDeleted(pattern, element);
             return (target, element);
         }
 
@@ -217,7 +217,7 @@ namespace Automate.Authoring.Application
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
             var location = this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
-            this.recorder.CountCodeTemplateAdded(pattern, codeTemplate);
+            this.recorder.MeasureCodeTemplateAdded(pattern, codeTemplate);
             return (target, new UploadedCodeTemplate(codeTemplate, location));
         }
 
@@ -253,7 +253,7 @@ namespace Automate.Authoring.Application
             var command = target.AddCodeTemplateCommand(commandName, codeTemplate.Name, isOneOff, targetPath);
             this.store.Save(pattern);
 
-            this.recorder.CountCodeTemplateWithCommandAdded(pattern, command, codeTemplate);
+            this.recorder.MeasureCodeTemplateWithCommandAdded(pattern, command, codeTemplate);
             return (target, new UploadedCodeTemplate(codeTemplate, location), command);
         }
 
@@ -281,7 +281,7 @@ namespace Automate.Authoring.Application
                         .Substitute(editorPath, result.Error));
             }
 
-            this.recorder.CountCodeTemplateEdited(pattern, codeTemplate);
+            this.recorder.MeasureCodeTemplateEdited(pattern, codeTemplate);
             return (target, codeTemplate, location);
         }
 
@@ -298,7 +298,7 @@ namespace Automate.Authoring.Application
 
             this.store.DeleteCodeTemplate(pattern, codeTemplate);
 
-            this.recorder.CountCodeTemplateDeleted(pattern, codeTemplate);
+            this.recorder.MeasureCodeTemplateDeleted(pattern, codeTemplate);
             return (target, codeTemplate);
         }
 
@@ -307,7 +307,7 @@ namespace Automate.Authoring.Application
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            this.recorder.CountCodeTemplatesListed(pattern);
+            this.recorder.MeasureCodeTemplatesListed(pattern);
             return target.CodeTemplates.ToListSafe();
         }
 
@@ -325,7 +325,7 @@ namespace Automate.Authoring.Application
                 var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, targetPath);
                 this.store.Save(pattern);
 
-                this.recorder.CountCodeTemplateCommandAdded(pattern, command);
+                this.recorder.MeasureCodeTemplateCommandAdded(pattern, command);
                 return (target, command);
             }
             catch (AutomateException ex)
@@ -355,7 +355,7 @@ namespace Automate.Authoring.Application
             var command = target.UpdateCodeTemplateCommand(commandName, name, isOneOff, filePath);
             this.store.Save(pattern);
 
-            this.recorder.CountCodeTemplateCommandUpdated(pattern, command);
+            this.recorder.MeasureCodeTemplateCommandUpdated(pattern, command);
             return (target, command);
         }
 
@@ -385,7 +385,7 @@ namespace Automate.Authoring.Application
             var command = target.UpdateCliCommand(commandName, name, applicationName, arguments);
             this.store.Save(pattern);
 
-            this.recorder.CountCliCommandAdded(pattern, command);
+            this.recorder.MeasureCliCommandAdded(pattern, command);
             return (target, command);
         }
 
@@ -399,7 +399,7 @@ namespace Automate.Authoring.Application
             var command = target.DeleteAutomation(commandName);
             this.store.Save(pattern);
 
-            this.recorder.CountCommandDeleted(pattern, command);
+            this.recorder.MeasureCommandDeleted(pattern, command);
             return (target, command);
         }
 
@@ -417,7 +417,7 @@ namespace Automate.Authoring.Application
             var launchPoint = target.AddCommandLaunchPoint(name, commandIds, source);
             this.store.Save(pattern);
 
-            this.recorder.CountLaunchPointAdded(pattern, launchPoint);
+            this.recorder.MeasureLaunchPointAdded(pattern, launchPoint);
             return (target, launchPoint);
         }
 
@@ -437,7 +437,7 @@ namespace Automate.Authoring.Application
             var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
             this.store.Save(pattern);
 
-            this.recorder.CountLaunchPointUpdated(pattern, launchPoint);
+            this.recorder.MeasureLaunchPointUpdated(pattern, launchPoint);
             return (target, launchPoint);
         }
 
@@ -452,7 +452,7 @@ namespace Automate.Authoring.Application
             var launchPoint = target.DeleteAutomation(launchPointName);
             this.store.Save(pattern);
 
-            this.recorder.CountLaunchPointDeleted(pattern, launchPoint);
+            this.recorder.MeasureLaunchPointDeleted(pattern, launchPoint);
             return (target, launchPoint);
         }
 
@@ -480,7 +480,7 @@ namespace Automate.Authoring.Application
             {
                 var importedData = ImportData(this.fileResolver, rootPath, importedRelativeFilePath);
                 var importedOutput = GenerateImportedCode(importedData);
-                this.recorder.CountCodeTemplateTestedWithImport(pattern, codeTemplate);
+                this.recorder.MeasureCodeTemplateTestedWithImport(pattern, codeTemplate);
                 return new CodeTemplateTest(codeTemplate, importedOutput);
             }
 
@@ -493,10 +493,10 @@ namespace Automate.Authoring.Application
                 var generatedDataForExport = GenerateTestData(false);
                 exportedFilePath =
                     ExportResult(this.fileResolver, generatedDataForExport, rootPath, exportedRelativeFilePath);
-                this.recorder.CountCodeTemplateTestedWithExport(pattern, codeTemplate);
+                this.recorder.MeasureCodeTemplateTestedWithExport(pattern, codeTemplate);
             }
 
-            this.recorder.CountCodeTemplateTested(pattern, codeTemplate);
+            this.recorder.MeasureCodeTemplateTested(pattern, codeTemplate);
             return new CodeTemplateTest(codeTemplate, output, exportedFilePath);
 
             string GenerateImportedCode(Dictionary<string, object> data)

@@ -5,26 +5,18 @@ namespace Automate.CLI.Extensions
 {
     public static class RecorderExtensions
     {
-        public static void CountInfo(this IRecorder recorder, bool collectUsage, string usageSession)
+        public static void MeasureInfo(this IRecorder recorder, bool collectUsage, string usageSession)
         {
-            recorder.Count("info", new Dictionary<string, string>
+            recorder.MeasureEvent("info", new Dictionary<string, string>
             {
                 { "AllowCollection", collectUsage.ToString() },
                 { "SessionId", usageSession }
             });
         }
 
-        public static void CountUsageException(this IRecorder recorder, string errorMessage)
+        public static void MeasureListAll(this IRecorder recorder)
         {
-            recorder.Count("exception", new Dictionary<string, string>
-            {
-                { "Error", errorMessage }
-            });
-        }
-
-        public static void CountAll(this IRecorder recorder)
-        {
-            recorder.Count("all-list");
+            recorder.MeasureEvent("all-list");
         }
     }
 }

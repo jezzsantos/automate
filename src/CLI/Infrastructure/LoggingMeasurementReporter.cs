@@ -5,14 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Automate.CLI.Infrastructure
 {
-    public class LoggingMetricReporter : IMetricReporter
+    public class LoggingMeasurementReporter : IMeasurementReporter
     {
         private readonly ILogger logger;
         private string machineId;
         private bool reportingEnabled;
         private string sessionId;
 
-        public LoggingMetricReporter(ILogger logger)
+        public LoggingMeasurementReporter(ILogger logger)
         {
             logger.GuardAgainstNull(nameof(logger));
             this.logger = logger;
@@ -21,7 +21,14 @@ namespace Automate.CLI.Infrastructure
             this.sessionId = null;
         }
 
-        public void Count(string eventName, Dictionary<string, string> context = null)
+        public void EnableReporting(string machineId, string sessionId)
+        {
+            this.reportingEnabled = true;
+            this.machineId = machineId;
+            this.sessionId = sessionId;
+        }
+
+        public void MeasureEvent(string eventName, Dictionary<string, string> context = null)
         {
             if (this.reportingEnabled)
             {
@@ -32,19 +39,12 @@ namespace Automate.CLI.Infrastructure
             }
         }
 
-        public void EnableReporting(string machineId, string sessionId)
-        {
-            this.reportingEnabled = true;
-            this.machineId = machineId;
-            this.sessionId = sessionId;
-        }
-
-        public void BeginOperation(string messageTemplate, params object[] args)
+        public void MeasureStartSession(string messageTemplate, params object[] args)
         {
             this.logger.Log(LogLevel.Information, null, messageTemplate, args);
         }
 
-        public void EndOperation(bool success, string messageTemplate, params object[] args)
+        public void MeasureEndSession(bool success, string messageTemplate, params object[] args)
         {
             this.logger.Log(LogLevel.Information, null, messageTemplate, args);
         }
