@@ -53,12 +53,12 @@ namespace Automate.CLI.Infrastructure
             if (allowUsageCollection)
             {
                 var machineId = container.Resolve<IMachineStore>().GetOrCreateInstallationId();
-                var sessionId = GetOptionValue(parseResult, CollectUsageSessionOption);
-                recorder.EnableReporting(machineId, sessionId);
+                var correlationId = GetOptionValue(parseResult, CollectUsageCorrelationOption);
+                recorder.EnableReporting(machineId, correlationId);
             }
             else
             {
-                recorder.TraceInformation("Usage collection is disabled");
+                recorder.TraceInformation(LoggingMessages.CommandLineApi_UsageDisabled);
             }
 
             authoring = CreateAuthoringApplication(container);

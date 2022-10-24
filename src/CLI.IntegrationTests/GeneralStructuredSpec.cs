@@ -74,7 +74,7 @@ namespace CLI.IntegrationTests
                         {
                             { "IsEnabled", true },
                             { "MachineId", this.setup.Recordings.MachineId },
-                            { "SessionId", this.setup.Recordings.SessionId }
+                            { "CorrelationId", this.setup.Recordings.CorrelationId }
                         }
                     }
                 }
@@ -94,13 +94,14 @@ namespace CLI.IntegrationTests
             this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
                 measurement.EventName == "info" && measurement.MachineId.HasValue() &&
-                measurement.SessionId == "asessionid");
+                measurement.CorrelationId == "acorrelationid");
         }
 
         [Fact]
-        public void WhenInfoAndCollectingUsageWithSessionId_ThenMeasuresReturnsInfo()
+        public void WhenInfoAndCollectingUsageWithCorrelationId_ThenMeasuresReturnsInfo()
         {
-            this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --usage-session asessionid --output-structured");
+            this.setup.RunCommand(
+                $"{CommandLineApi.InfoCommandName} --usage-correlation acorrelationid --output-structured");
 
             var metadata = new CliAssemblyMetadata();
             var info = new StructuredMessage
@@ -116,7 +117,7 @@ namespace CLI.IntegrationTests
                         {
                             { "IsEnabled", true },
                             { "MachineId", this.setup.Recordings.MachineId },
-                            { "SessionId", "asessionid" }
+                            { "CorrelationId", "acorrelationid" }
                         }
                     }
                 }
@@ -136,7 +137,7 @@ namespace CLI.IntegrationTests
             this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
                 measurement.EventName == "info" && measurement.MachineId.HasValue() &&
-                measurement.SessionId.HasValue());
+                measurement.CorrelationId == "acorrelationid");
         }
 
         public void Dispose()

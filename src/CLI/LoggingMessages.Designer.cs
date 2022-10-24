@@ -60,6 +60,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;Usage collection is disabled&quot;.
+        /// </summary>
+        internal static string CommandLineApi_UsageDisabled {
+            get {
+                return ResourceManager.GetString("CommandLineApi_UsageDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shutting down CLI.
         /// </summary>
         internal static string Program_EndSession {

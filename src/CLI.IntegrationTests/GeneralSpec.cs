@@ -59,7 +59,7 @@ namespace CLI.IntegrationTests
             this.setup.Recordings.Session.Should().BeNull();
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
                 measurement.EventName == "info" && measurement.MachineId.HasValue() &&
-                measurement.SessionId == "asessionid");
+                measurement.CorrelationId == "acorrelationid");
         }
 
         public void Dispose()

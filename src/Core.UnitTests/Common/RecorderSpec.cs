@@ -14,46 +14,52 @@ namespace Core.UnitTests.Common
     [Trait("Category", "Unit")]
     public class RecorderSpec
     {
-        private readonly Mock<ICrashReporter> crasher;
         private readonly Mock<ILogger> logger;
+        private readonly Mock<ISessionReporter> sessioner;
+        private readonly Mock<ICrashReporter> crasher;
         private readonly Mock<IMeasurementReporter> measurer;
         private readonly Recorder recorder;
 
         public RecorderSpec()
         {
             this.logger = new Mock<ILogger>();
+            this.sessioner = new Mock<ISessionReporter>();
             this.crasher = new Mock<ICrashReporter>();
             this.measurer = new Mock<IMeasurementReporter>();
-            this.recorder = new Recorder(this.logger.Object, this.crasher.Object, this.measurer.Object);
+            this.recorder = new Recorder(this.logger.Object, this.sessioner.Object, this.crasher.Object,
+                this.measurer.Object);
         }
 
         [Fact]
         public void WhenConstructed_ThenAssigned()
         {
             this.recorder.GetReportingIds().MachineId.Should().BeNull();
-            this.recorder.GetReportingIds().SessionId.Should().BeNull();
+            this.recorder.GetReportingIds().CorrelationId.Should().BeNull();
         }
 
         [Fact]
-        public void WhenEnableReportingAndSessionIdIsNull_ThenReturnsGeneratedSession()
+        public void WhenEnableReportingAndOperationIdIsNull_ThenReturnsNull()
         {
             this.recorder.EnableReporting("amachineid", null);
 
             var result = this.recorder.GetReportingIds();
 
             result.MachineId.Should().Be("amachineid");
-            result.SessionId.Should().NotBeNull();
+            result.CorrelationId.Should().BeNull();
         }
 
         [Fact]
         public void WhenEnableReporting_ThenReturnsReportingIds()
         {
-            this.recorder.EnableReporting("amachineid", "asessionid");
+            this.recorder.EnableReporting("amachineid", "acorrelationid");
 
             var result = this.recorder.GetReportingIds();
 
             result.MachineId.Should().Be("amachineid");
-            result.SessionId.Should().Be("asessionid");
+            result.CorrelationId.Should().Be("acorrelationid");
+            this.sessioner.Verify(s => s.EnableReporting("amachineid", "acorrelationid"));
+            this.crasher.Verify(s => s.EnableReporting("amachineid", "acorrelationid"));
+            this.measurer.Verify(s => s.EnableReporting("amachineid", "acorrelationid"));
         }
 
         [Fact]
@@ -97,7 +103,7 @@ namespace Core.UnitTests.Common
         {
             this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
-            this.recorder.EnableReporting("amachineid", "asessionid");
+            this.recorder.EnableReporting("amachineid", "acorrelationid");
 
             this.recorder.MeasureEvent("AN Event Name");
 
@@ -126,7 +132,7 @@ namespace Core.UnitTests.Common
         {
             this.logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
-            this.recorder.EnableReporting("amachineid", "asessionid");
+            this.recorder.EnableReporting("amachineid", "acorrelationid");
             var exception = new Exception("amessage");
 
             this.recorder.Crash(CrashLevel.Fatal, exception, "amessagetemplate");

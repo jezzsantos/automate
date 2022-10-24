@@ -3,22 +3,19 @@ using Automate.Common;
 using Automate.Common.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Recording
 {
     public class LoggingCrashReporter : ICrashReporter
     {
         private readonly ILogger logger;
-        private string machineId;
         private bool reportingEnabled;
-        private string sessionId;
-
+        private (string MachineId, string CorrelationId) reportingIds;
         public LoggingCrashReporter(ILogger logger)
         {
             logger.GuardAgainstNull(nameof(logger));
             this.logger = logger;
             this.reportingEnabled = false;
-            this.machineId = null;
-            this.sessionId = null;
+            this.reportingIds = default;
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
@@ -26,16 +23,15 @@ namespace Automate.CLI.Infrastructure
             if (this.reportingEnabled)
             {
                 this.logger.Log(LogLevel.Error,
-                    $"Crashed: for '{this.machineId}:{this.sessionId}' with message {messageTemplate}, and exception: {exception}",
+                    $"Crashed: for '{this.reportingIds.MachineId}:{this.reportingIds.CorrelationId}' with message {messageTemplate}, and exception: {exception}",
                     args);
             }
         }
 
-        public void EnableReporting(string machineId, string sessionId)
+        public void EnableReporting(string machineId, string correlationId)
         {
             this.reportingEnabled = true;
-            this.machineId = machineId;
-            this.sessionId = sessionId;
+            this.reportingIds = (machineId, correlationId);
         }
     }
 }

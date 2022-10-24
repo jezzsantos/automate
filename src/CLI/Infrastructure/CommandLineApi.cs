@@ -30,7 +30,7 @@ namespace Automate.CLI.Infrastructure
         private const string ToolkitsSubCommandName = "toolkits";
         private const string PatternsSubCommandName = "patterns";
         private const string CollectUsageEnabledOption = "collect-usage";
-        private const string CollectUsageSessionOption = "usage-session";
+        private const string CollectUsageCorrelationOption = "usage-correlation";
 
         private static RootCommand DefineCommands()
         {
@@ -504,8 +504,8 @@ namespace Automate.CLI.Infrastructure
                 "Allow collection of usage data",
                 typeof(bool), () => true,
                 ArgumentArity.ZeroOrOne));
-            command.AddGlobalOption(new Option($"--{CollectUsageSessionOption}",
-                "Session ID to be used in collection of usage data",
+            command.AddGlobalOption(new Option($"--{CollectUsageCorrelationOption}",
+                "Request ID to be used in collection of usage data",
                 typeof(string), () => null,
                 ArgumentArity.ZeroOrOne));
             command.AddGlobalOption(new Option($"--{StructuredOutputOption}",

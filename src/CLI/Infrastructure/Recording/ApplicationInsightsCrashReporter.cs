@@ -1,33 +1,28 @@
-﻿#if !TESTINGONLY
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using Automate.Common;
 using Automate.Common.Extensions;
-using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Recording
 {
-    public class ApplicationInsightsCrashReporter : ICrashReporter, IDisposable
+    public class ApplicationInsightsCrashReporter : ICrashReporter
     {
-        private readonly TelemetryClient client;
+        private readonly ITelemetryClient client;
         private bool reportingEnabled;
 
-        public ApplicationInsightsCrashReporter(TelemetryClient client)
+        public ApplicationInsightsCrashReporter(ITelemetryClient client)
         {
             client.GuardAgainstNull(nameof(client));
             this.client = client;
             this.reportingEnabled = false;
         }
 
-        public void EnableReporting(string machineId, string sessionId)
+        public void EnableReporting(string machineId, string correlationId)
         {
+            machineId.GuardAgainstNull(nameof(machineId));
+
             this.reportingEnabled = true;
-            this.client.Context.Cloud.RoleInstance = machineId;
-            this.client.Context.Device.Id = machineId;
-            this.client.Context.User.Id = machineId;
-            this.client.Context.Session.Id = sessionId;
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
@@ -38,7 +33,7 @@ namespace Automate.CLI.Infrastructure
                     .Select(arg => arg.ToString())
                     .SafeJoin(", ");
 
-                var tracking = new ExceptionTelemetry(exception)
+                var telemetry = new ExceptionTelemetry(exception)
                 {
                     SeverityLevel = level == CrashLevel.Fatal
                         ? SeverityLevel.Critical
@@ -50,18 +45,10 @@ namespace Automate.CLI.Infrastructure
                         { "Message_Arguments", argsString }
                     }
                 };
+                telemetry.Context.Operation.ParentId = this.client.GetOperationId();
 
-                this.client.TrackException(tracking);
-            }
-        }
-
-        public void Dispose()
-        {
-            if (this.client.Exists())
-            {
-                this.client.Flush();
+                this.client.TrackException(telemetry);
             }
         }
     }
 }
-#endif

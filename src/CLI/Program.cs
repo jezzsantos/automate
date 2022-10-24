@@ -3,6 +3,7 @@ using System.IO;
 using Automate.Authoring.Application;
 using Automate.Authoring.Infrastructure;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Recording;
 using Automate.Common;
 using Automate.Common.Application;
 using Automate.Common.Domain;
@@ -16,9 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-#if !TESTINGONLY
-using Microsoft.ApplicationInsights;
-#endif
 
 namespace Automate.CLI
 {
@@ -103,7 +101,7 @@ namespace Automate.CLI
             var currentDirectory = Environment.CurrentDirectory;
             var assemblyMetadata = new CliAssemblyMetadata();
 #if !TESTINGONLY
-            services.RegisterApplicationInsightsClient(settings, assemblyMetadata);
+            services.AddSingleton<ITelemetryClient>(new ApplicationInsightsTelemetryClient(settings, assemblyMetadata));
 #endif
             services.AddSingleton(c => CreateRecorder(c, LoggingCategory));
             services.AddSingleton(c => new LocalMachineUserRepository(assemblyMetadata.InstallationPath,
@@ -137,15 +135,17 @@ namespace Automate.CLI
         {
             var logger = new DotNetCoreLogger(services.GetRequiredService<ILoggerFactory>(), categoryName);
 #if !TESTINGONLY
-            var telemetryClient = services.GetRequiredService<TelemetryClient>();
+            var telemetryClient = services.GetRequiredService<ITelemetryClient>();
 #endif
             var recorder = new Recorder(logger,
 #if TESTINGONLY
+                new LoggingSessionReporter(logger),
                 new LoggingCrashReporter(logger),
                 new LoggingMeasurementReporter(logger));
 #else
+                new ApplicationInsightsSessionReporter(logger, telemetryClient),
                 new ApplicationInsightsCrashReporter(telemetryClient),
-                new ApplicationInsightsMeasurementReporter(telemetryClient, logger));
+                new ApplicationInsightsMeasurementReporter(telemetryClient));
 #endif
             return recorder;
         }

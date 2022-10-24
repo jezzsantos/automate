@@ -248,12 +248,12 @@ namespace CLI.IntegrationTests
             Recordings.Reset();
         }
 
-        public void EnableReporting(string machineId, string sessionId)
+        public void EnableReporting(string machineId, string correlationId)
         {
-            Recordings.EnableReporting(machineId, sessionId);
+            Recordings.EnableReporting(machineId, correlationId);
         }
 
-        public (string MachineId, string SessionId) GetReportingIds()
+        public (string MachineId, string CorrelationId) GetReportingIds()
         {
             return Recordings.GetReportingIds();
         }
@@ -270,7 +270,7 @@ namespace CLI.IntegrationTests
 
         public void MeasureEvent(string eventName, Dictionary<string, string> context = null)
         {
-            Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.MachineId, Recordings.SessionId));
+            Recordings.Measurements.Add(new TestMeasurement(eventName, Recordings.MachineId, Recordings.CorrelationId));
         }
 
         public void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args)
@@ -301,28 +301,28 @@ namespace CLI.IntegrationTests
 
         public string MachineId { get; set; }
 
-        public string SessionId { get; set; }
+        public string CorrelationId { get; set; }
 
         public void Reset()
         {
             MachineId = null;
-            SessionId = null;
+            CorrelationId = null;
             IsReportingEnabled = false;
             Measurements.Clear();
             Crashes.Clear();
             Traces.Clear();
         }
 
-        public void EnableReporting(string machineId, string sessionId)
+        public void EnableReporting(string machineId, string correlationId)
         {
             IsReportingEnabled = true;
             MachineId = machineId;
-            SessionId = sessionId ?? "asessionid";
+            CorrelationId = correlationId ?? "acorrelationid";
         }
 
-        public (string MachineId, string SessionId) GetReportingIds()
+        public (string MachineId, string CorrelationId) GetReportingIds()
         {
-            return (MachineId, SessionId);
+            return (MachineId, CorrelationId);
         }
 
         public void StartSession(string messageTemplate, object[] args)
@@ -402,17 +402,17 @@ namespace CLI.IntegrationTests
 
     public class TestMeasurement
     {
-        public TestMeasurement(string eventName, string machineId, string sessionId)
+        public TestMeasurement(string eventName, string machineId, string correlationId)
         {
             EventName = eventName;
             MachineId = machineId;
-            SessionId = sessionId;
+            CorrelationId = correlationId;
         }
 
         public string EventName { get; }
 
         public string MachineId { get; }
 
-        public string SessionId { get; }
+        public string CorrelationId { get; }
     }
 }

@@ -35,4 +35,7 @@
     <data name="Program_FlushTelemetry" xml:space="preserve">
         <value>Flushing any usage telemetry</value>
     </data>
+    <data name="CommandLineApi_UsageDisabled" xml:space="preserve">
+        <value>"Usage collection is disabled"</value>
+    </data>
 </root>

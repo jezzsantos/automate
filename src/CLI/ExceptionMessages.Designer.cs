@@ -60,6 +60,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expected to start the session before enabling reporting.
+        /// </summary>
+        internal static string ApplicationInsightsSessionReporter_ExpectEnableReportingAfterSessionStart {
+            get {
+                return ResourceManager.GetString("ApplicationInsightsSessionReporter_ExpectEnableReportingAfterSessionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown type of automation: {0}.
         /// </summary>
         internal static string AutomationService_UnknownAutomationType {

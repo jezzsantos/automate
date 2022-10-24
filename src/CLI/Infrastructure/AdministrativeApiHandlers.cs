@@ -8,9 +8,9 @@ namespace Automate.CLI.Infrastructure
         [UsedImplicitly]
         internal class AdministrativeApiHandlers : HandlerBase
         {
-            internal static void Info(bool collectUsage, string usageSession, bool outputStructured)
+            internal static void Info(bool collectUsage, string usageCorrelation, bool outputStructured)
             {
-                Recorder.MeasureInfo(collectUsage, usageSession);
+                Recorder.MeasureInfo(collectUsage, usageCorrelation);
                 var metadata = Metadata;
                 if (outputStructured)
                 {
@@ -21,7 +21,7 @@ namespace Automate.CLI.Infrastructure
                         {
                             IsEnabled = collectUsage,
                             reportingIds.MachineId,
-                            reportingIds.SessionId
+                            reportingIds.CorrelationId
                         });
                 }
                 else

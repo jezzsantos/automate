@@ -8,9 +8,9 @@ namespace Automate.Common
     {
         void Trace(LogLevel level, string messageTemplate, params object[] args);
 
-        void EnableReporting(string machineId, string sessionId);
+        void EnableReporting(string machineId, string correlationId);
 
-        (string MachineId, string SessionId) GetReportingIds();
+        (string MachineId, string CorrelationId) GetReportingIds();
 
         void StartSession(string messageTemplate, params object[] args);
 
@@ -21,22 +21,27 @@ namespace Automate.Common
         void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
     }
 
+    public interface ISessionReporter
+    {
+        void EnableReporting(string machineId, string correlationId);
+
+        void MeasureStartSession(string messageTemplate, params object[] args);
+
+        void MeasureEndSession(bool success, string messageTemplate, params object[] args);
+    }
+
     public interface ICrashReporter
     {
-        void EnableReporting(string machineId, string sessionId);
+        void EnableReporting(string machineId, string correlationId);
 
         void Crash(CrashLevel level, Exception exception, string messageTemplate, params object[] args);
     }
 
     public interface IMeasurementReporter
     {
-        void EnableReporting(string machineId, string sessionId);
+        void EnableReporting(string machineId, string correlationId);
 
         void MeasureEvent(string eventName, Dictionary<string, string> context = null);
-
-        void MeasureStartSession(string messageTemplate, params object[] args);
-
-        void MeasureEndSession(bool success, string messageTemplate, params object[] args);
     }
 
     public enum CrashLevel
