@@ -30,11 +30,10 @@ namespace Automate.CLI.Infrastructure
         {
             get
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var location = assembly.GetName().CodeBase;
-                if (location.NotExists())
+                var location = AppContext.BaseDirectory;
+                if (location.HasNoValue())
                 {
-                    throw new InvalidOperationException("Assembly is not running in from a location on disk");
+                    throw new InvalidOperationException(ExceptionMessages.CliAssemblyMetadata_InstallationPathNotExist);
                 }
 
                 var uri = new Uri(location);

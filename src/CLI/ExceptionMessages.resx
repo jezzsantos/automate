@@ -54,4 +54,7 @@
     <data name="ApplicationInsightsSessionReporter_ExpectEnableReportingAfterSessionStart" xml:space="preserve">
         <value>Expected to start the session before enabling reporting</value>
     </data>
+    <data name="CliAssemblyMetadata_InstallationPathNotExist" xml:space="preserve">
+        <value>Assembly is not running in from a location on disk</value>
+    </data>
 </root>

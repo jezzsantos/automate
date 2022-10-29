@@ -78,6 +78,15 @@ namespace Automate.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assembly is not running in from a location on disk.
+        /// </summary>
+        internal static string CliAssemblyMetadata_InstallationPathNotExist {
+            get {
+                return ResourceManager.GetString("CliAssemblyMetadata_InstallationPathNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command is misconfigured. A CodeTemplate with ID: &apos;{0}&apos; could not be found on any element in this draft.
         /// </summary>
         internal static string CodeTemplateCommand_TemplateNotExists {

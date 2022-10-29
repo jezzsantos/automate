@@ -39,14 +39,14 @@ jobs:
         with:
           files: '${{env.CLIPROJECT_DIR}}/appsettings.json'
         env:
-          ApplicationInsights.ConnectionString: ${{APPLICATIONINSIGHTS_CONNECTIONSTRING}}
+          ApplicationInsights.ConnectionString: ${{env.APPLICATIONINSIGHTS_CONNECTIONSTRING}}
       - name: Build
         run: dotnet build "${{env.SOLUTION_PATH}}" --no-restore --configuration ${{env.BUILD_CONFIGURATION}}
       - name: Create Publish folder
         run: mkdir "${{env.PUBLISH_DIR}}"
       - name: Package (MacOS)
         run: |
-          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime osx-x64 "${{env.CLIPROJECT_PATH}}"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime osx-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/osx-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.OSX-x64"
       - name: Upload Package (MacOS)
         uses: actions/upload-artifact@v2
@@ -56,7 +56,7 @@ jobs:
           if-no-files-found: error
       - name: Package (LinuxOS)
         run: |
-          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime linux-x64 "${{env.CLIPROJECT_PATH}}"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime linux-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/linux-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64"
       - name: Upload Package (LinuxOS)
         uses: actions/upload-artifact@v2
@@ -66,7 +66,7 @@ jobs:
           if-no-files-found: error
       - name: Package (Windows)
         run: |
-          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true --self-contained true --runtime win-x64 "${{env.CLIPROJECT_PATH}}"
+          dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime win-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/win-x64/publish/${{env.OUTPUT_FILENAME}}.exe" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Win-x64.exe"
       - name: Upload Package (Windows)
         uses: actions/upload-artifact@v2
