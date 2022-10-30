@@ -16,7 +16,7 @@ using Automate.Common.Extensions;
 using Automate.Runtime.Application;
 using Automate.Runtime.Domain;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Api
 {
     internal static partial class CommandLineApi
     {

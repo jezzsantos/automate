@@ -1,5 +1,6 @@
 using System;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
@@ -254,9 +255,9 @@ namespace CLI.IntegrationTests
                 : 32;
             var throwingMethodLocation =
                 Path.GetFullPath(Path.Combine(solutionDirectory,
-                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/{nameof(CommandLineApi.TestingOnlyApiHandlers)}.cs"));
+                    $@"{nameof(Automate.CLI)}/{nameof(Automate.CLI.Infrastructure)}/{nameof(Automate.CLI.Infrastructure.Api)}/{nameof(CommandLineApi.TestingOnlyApiHandlers)}.cs"));
             var throwingMethodName =
-                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyApiHandlers)}.{nameof(CommandLineApi.TestingOnlyApiHandlers.Fail)}";
+                $"{nameof(Automate)}.{nameof(Automate.CLI)}.{nameof(Automate.CLI.Infrastructure)}.{nameof(Automate.CLI.Infrastructure.Api)}.{nameof(CommandLineApi)}.{nameof(CommandLineApi.TestingOnlyApiHandlers)}.{nameof(CommandLineApi.TestingOnlyApiHandlers.Fail)}";
             var throwingMethodSignature = "String message, Boolean nested";
 
             return hasInnerException

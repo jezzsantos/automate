@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;

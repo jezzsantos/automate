@@ -8,7 +8,7 @@ using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
 using JetBrains.Annotations;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Api
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     internal partial class CommandLineApi

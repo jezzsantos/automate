@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common.Extensions;
 using Xunit;
 

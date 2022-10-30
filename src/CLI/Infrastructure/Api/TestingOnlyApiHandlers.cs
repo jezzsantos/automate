@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 using Automate.Common.Extensions;
 using JetBrains.Annotations;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Api
 {
     internal partial class CommandLineApi
     {

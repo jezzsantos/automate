@@ -3,6 +3,7 @@ using System.IO;
 using Automate.Authoring.Application;
 using Automate.Authoring.Infrastructure;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.CLI.Infrastructure.Recording;
 using Automate.Common;
 using Automate.Common.Application;

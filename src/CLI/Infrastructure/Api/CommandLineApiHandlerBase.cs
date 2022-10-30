@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Automate.Common;
 using Automate.Common.Domain;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Api
 {
     internal partial class CommandLineApi
     {

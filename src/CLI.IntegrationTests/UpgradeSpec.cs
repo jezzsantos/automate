@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common;
 using Automate.Common.Extensions;
 using Automate.Runtime.Domain;

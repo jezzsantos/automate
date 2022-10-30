@@ -1,12 +1,12 @@
 ﻿using System;
 using Automate.CLI;
-using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common;
 using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 
-namespace CLI.UnitTests.Infrastructure
+namespace CLI.UnitTests.Infrastructure.Api
 {
     [Trait("Category", "Unit")]
     public class CommandLineExtensionsSpec

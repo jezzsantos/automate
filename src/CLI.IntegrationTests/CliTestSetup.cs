@@ -9,6 +9,7 @@ using Automate.Authoring.Infrastructure;
 using Automate.CLI;
 using Automate.CLI.Extensions;
 using Automate.CLI.Infrastructure;
+using Automate.CLI.Infrastructure.Api;
 using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;

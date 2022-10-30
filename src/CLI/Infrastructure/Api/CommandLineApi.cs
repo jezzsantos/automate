@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using Automate.CLI.Extensions;
 
-namespace Automate.CLI.Infrastructure
+namespace Automate.CLI.Infrastructure.Api
 {
     internal static partial class CommandLineApi
     {
@@ -505,7 +505,7 @@ namespace Automate.CLI.Infrastructure
                 typeof(bool), () => true,
                 ArgumentArity.ZeroOrOne));
             command.AddGlobalOption(new Option($"--{CollectUsageCorrelationOption}",
-                "Request ID to be used in collection of usage data",
+                "Correlation ID to be used in structuring usage data",
                 typeof(string), () => null,
                 ArgumentArity.ZeroOrOne));
             command.AddGlobalOption(new Option($"--{StructuredOutputOption}",
