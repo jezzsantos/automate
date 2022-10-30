@@ -59,7 +59,7 @@ Yes
 
 You can see the kind of data we collect. 
 
-These are open source tools. You can see what is collected in each of the calls (in the code) to the [`IMetricReporter.Count()`](https://github.com/jezzsantos/automate/blob/main/src/Core/Common/IRecorder.cs) method. There are several calls throughout the codebase. In each of these calls, you can see what is collected and how it is obscured to comply with this privacy policy. 
+These are open source tools, so you can see for yourself what is collected in each of the calls (in the code) to the [`IMeasurementReporter.Count()`](https://github.com/jezzsantos/automate/blob/main/src/Core/Common/IRecorder.cs) method. There are several calls throughout the codebase. In each of these calls, you can see what is collected and how it is obscured to comply with this privacy policy. 
 
 No
 

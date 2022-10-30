@@ -94,6 +94,35 @@ To view more details about the error, add the: `--debug` option
 
 To understand how people are using this tool (so that we can improve it) we collect information about the use of the tool.
 
-You can opt-out of collecting this data by using the `--collect-usage:false` option.
+### Disabling
 
-The intention of, and what is and is not collected about your usage, is described in far more detail in our [Privacy Statement](privacy.md)
+You can opt-out of collecting usage data by using the `--collect-usage:false` option.
+
+!!! important
+    The intention of, and what is and is not collected about your usage, is described in far more detail in our [Privacy Statement](privacy.md)
+
+### Correlation
+
+As part of our strategy for collecting usage data (for analytics) we support the ability for a consumer of the CLI (eg. a plugin) to provide correlation information to better describe end to end successive usages of the CLI.
+
+To provide a correlation ID:
+``` batch
+automate *any* --usage-correlation "<CORRELATIONID>"
+```
+
+- The `<CORRELATIONID>` is a 3 part identifier, where the three parts are: `<SESSIONID>`, `<OPERATIONID>` and `<PARENTOPERATIONID>` separated by the `|` character.
+    - `<SESSIONID>` correlates all telemetry emitted across several successive calls to the CLI, the scope of this logical session is defined by the consumer.
+    - `<OPERATIONID>` correlates all telemetry emitted across several successive calls to the CLI, the scope of this logical operation is defined by the consumer.
+    - `<PARENTOPERATIONID>` provides a parent identifier to the top level logical operation created in the CLI.
+
+!!! example
+    ``` batch
+    automate create pattern "APatternName" --usage-correlation "a_session_id|an_operation_id|a_parent_operation_id"
+    ```
+
+!!! info
+    If the `--usage-correlation` option is not defined, the CLI will fabricate its own session identifier, and fabricate its own logical operation identifier, which it will use as a parent identifier to the operation scope that it creates every command.
+
+    If the `--usage-correlation` option is defined as a single part identifier, the CLI will assume that identifier is a session identifier, and fabricate its own logical operation identifier, which it will use as a parent identifier to the operation scope that it creates every command.
+    
+    If the `--usage-correlation` option is defined as a three part identifier (as described above), the CLI will use the session identifier, and the operation identifier to correlate all its telemetry. It will use the parent operation identifier as a parent identifier to the operation scope that it creates every command.

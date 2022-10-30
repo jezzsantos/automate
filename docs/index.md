@@ -7,26 +7,36 @@
 
 # What problem does it solve?
 
-Often, for many software teams (including individuals with varying degrees of expertise from novice to expert) a Tech Lead/Lead Dev/Tech Consultant will at some point see the need to make some key technical decisions about how things need to get done in that codebase.
+In just about all long-lived software products/projects there will become a need to make some key decisions about how things should get done in that codebase. Structure and patterns emerge, and are repeated and evolve as things change over time - we learn.
 
-Architecturally, structurally or in the details of the implementation - all these decisions are constraints on the codebase. Keeping things small, well defined, and consistent is often the key to managing complexity over time. So that contributors to this codebase can have a single, unified and simpler understanding of the codebase -> A reasonable, shared mental model of the codebase, so that everyone touching it can move freely across the codebase and not fear changing any part of it.
+Given that, with all long-lived codebases, people come and go all the time, and everyone has developed their own ways of writing code to solve problems. On your next codebase, you wish there had better be some structure, patterns, or rules to follow, or else chaos reigns as individuals do their own thing their own way. Staying consistent in a team of developers is a major goal in any collaboration.
 
-Being able to construct codebases in this way is earned over the years of doing similar things in other codebases over and over again. As this is done, patterns emerge and they are adapted and improved for each codebase where they are applied. No two codebases are the same, but the patterns are often very similar indeed. Often improving over time as those that define and refine them learn more each time they are applied from the context of the current codebase.
+### Managing Complexity in Codebases
 
-The primary challenge a Tech Lead/Lead Dev/Tech Consultant has: is communicating this knowledge in a form that can be learnt, reused and adapted by others for the current codebase. Learning by doing is key, but learning from experienced people through demonstration is a more effective way that we can avoid repeating the same expensive mistakes from the past.
+Architecture, structure, and the patterns in the fine details of the implementation - are all constraints on a codebase. Keeping things small, well-defined, and consistent is critical to managing complexity over time as the code grows and dependencies are added. Contributors to a codebase must have a single, unified and simpler understanding of the codebase -> a shared "mental model" of the codebase so that everyone touching it can move freely across the codebase, know where things go, and NOT fear changing any part of it.
 
-One of the main challenges in codebases (for a whole team) is that others in the codebase will naturally re-invent unfamiliar or more novel code patterns because they lack the knowledge that other team members have, or they are unaware that the other team members already possess this kind of knowledge. Teams are also fluid over time, with members coming and going. So the learning process is continuous and relentless.
+Being able to lay down codebases in this way is a skill earned over the years of doing similar things in other codebases over and over again. As that is done, patterns emerge and they are adapted and improved on each successive codebase where they are applied. No two codebases are the same, but the patterns are often very similar indeed. Often improving over time as those that define and refine them learn more each time they are applied from the context of the current codebase.
 
-Another more common challenge here is not knowing how to solve certain problems in the codebase nor where to put that stuff in the codebase. This results in solutions being peppered around the codebase as workarounds are introduced, and pilled on top of each other.
+### Sharing Know-How
 
-All these issues contribute to creating a big-ball-of-mud over time, which becomes un-navigable for a team as time moves forward.
+The primary challenge a Tech Lead/Lead Dev/Tech Consultant has is communicating their hard-earned knowledge in a portable form that can be learned, reused, and adapted by others for the current codebase and context.
 
-### The call to action
+Learning by doing is key, but learning directly from experienced people through tools (demonstration in code) is far more effective at avoiding repeating the same expensive mistakes that were learned in the past.
 
-A Tech Lead/Lead Dev/Tech Consultant needs to remain vigilant to ensure that established patterns and architectures are not violated because of a lack of knowledge from team members in the same codebase. Whilst, they also need to adapt to the software as it evolves, and as new constraints are defined.
+One of the main challenges in codebases (for teams) is that without direction, others in the codebase will naturally re-invent unfamiliar or novel code patterns because they lack the knowledge that other team members may have. They are likely unaware that the others before them already possess this kind of knowledge. They just don't know where to look for it.
 
-Today's, languages and development tools (IDEs) are so *general purpose* that they cannot be used to help define or enforce constraints on the programmer (in different ways in different codebases) and thus they cannot prevent the programmer (or warn them) when they are working around specific constraints to that codebase.
+These kinds of problems are common. Left unchecked, codebases become too complex too fast, and that slows down progress over time working within them, some times progress grinds to a halt.
 
-Codebase-specific tools, fit for purpose, must be used to define and enforce these constraints. But more importantly, those tools must adapt to the changing and evolving codebase as it changes over time.
+### Developer Tooling Today
 
-Tech Lead/Lead Dev/Tech Consultant could use a little help with defining their own codebase-specific constraints and have adaptable tools that communicate and enforce those constraints.
+Today's, languages and development tools (IDEs) are so fantastically powerful, but they are also very general-purpose tools. Beyond code formatting/linting tools, they cannot be easily configured to help define or enforce necessary constraints on the programmer, in ways that make sense to a specific codebase. Thus they are not effective at preventing the programmer when they start working around specific constraints defined for that codebase. If anything, they make it too easy for the programmer to do that. 
+
+Consider how easy it is to add a reference to a component/symbol/type across a codebase, regardless of the fact that this new dependency (that was now created) may violate the intended architecture, patterns, and rules of the codebase. 
+
+Codebase-specific developer tools are fit for this purpose, but building those tools is too difficult for most to embark on doing it when they need them. What is needed is a platform that makes that trivial to build those tools that can be applied easily to a codebase, and reused in other codebases.
+
+But more importantly, those codebase-specific tools must evolve and adapt to the changing and evolving codebase, and change in lockstep with it.
+
+Automate is this platform.
+
+Tech Lead/Lead Dev/Tech Consultants can use quite a bit of help with defining their own codebase-specific constraints and have adaptable tools that communicate and enforce those constraints for their teams.

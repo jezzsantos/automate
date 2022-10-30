@@ -29,7 +29,7 @@ To install a toolkit yourself:
 2. Then, you will need to have downloaded a `*.toolkit` file to somewhere on your local machine.
     * For example: A toolkit file like `AToolkit_0.1.0.toolkit`, could be located on your desktop or downloads folder.
 3. In the tool bar of the tool window, click the `Install Toolkit` button
-4. Select the toolkit from file on your computer. e.g. `C:\mydesktop\AToolkit_0.1.0.toolkit`
+4. Select the toolkit file on your computer. e.g. `C:\mydesktop\AToolkit_0.1.0.toolkit`
 
 !!! info
     The toolkit will be installed, and it will become the 'active' toolkit for subsequent use.
