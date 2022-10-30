@@ -9,17 +9,17 @@ If `dotnet.exe` is already installed on your machine, simply run:
 ```
 
 !!! info
-    The automate tool above is dependent on having the `dotnet.exe` development tools (.NET 6.0 or higher) installed on your machine. All versions of the CLI are on [nuget.org](https://www.nuget.org/packages/automate)
+    The automate CLI above is dependent on having the `dotnet.exe` development tools (.NET 6.0 or higher) already installed on your machine. [Installing dotnet](https://learn.microsoft.com/en-us/dotnet/core/install/). All versions of the automate CLI can be found on [nuget.org](https://www.nuget.org/packages/automate)
 
 ---
 
-If you don't have `dotnet.exe` installed on your machine, install the CLI manually:
+If you don't have `dotnet.exe` installed on your machine, or you don't want to install `dotnet.exe`, you can just install the automate CLI manually:
 
 On Windows:
 
 1. Download the file `automate-Win-x64.exe` to your machine, from: [Releases](https://github.com/jezzsantos/automate/releases)
-2. Remove "protection" for the downloaded file. Open the 'Properties' of the downloaded file and uncheck the 'Unblock' setting.
-3. Copy and rename (to: `automate.exe`) the file to somewhere on your local machine. For example: `%USERPROFILE%\AppData\Local\Programs\automate.exe`
+2. Remove "protection" for the downloaded file, by viewing the 'Properties' of the downloaded file in File Explorer and uncheck the 'Unblock' setting.
+3. Copy and rename (to: `automate.exe`) the file to somewhere on your local machine. Recommend: `%USERPROFILE%\AppData\Local\Programs\automate.exe`
 4. Edit your environment variables on Windows and add the folder `%USERPROFILE%\AppData\Local\Programs` to the `Path` variable.
 
 On MacOS:
@@ -70,7 +70,7 @@ Install the plugin within Rider itself, from: `File | Settings | Plugins | Marke
     This plugin relies on the automate CLI to be installed to run. Furthermore, each version of the plugin will require a specific version of the automate CLI to be installed. 
 
     Version (v1.0.4 and later) of the plugin will automatically install and upgrade the version of the automate CLI that is required by the plugin. Prior versions (less than v1.0.4) of the plugin will require you to manually install the automate CLI first.
-
+    
     By default, the plugin is configured to point to the default install location of the automate CLI (as a dotnet tool). 
 
 !!! tip
