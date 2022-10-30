@@ -158,7 +158,7 @@ namespace Core.UnitTests.Runtime.Infrastructure
 
             result.Should().BeNull();
         }
-        
+
         [Fact]
         public void WhenResolveAndDescendantElementExpressionNotMaterialised_ThenReturnsNull()
         {

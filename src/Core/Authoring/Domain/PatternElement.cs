@@ -56,6 +56,8 @@ namespace Automate.Authoring.Domain
 
         public string Description { get; protected set; }
 
+        public string EditPath => GetEditPath();
+
         public virtual PersistableProperties Dehydrate()
         {
             var properties = new PersistableProperties();
@@ -773,21 +775,6 @@ namespace Automate.Authoring.Domain
 
         public string Name { get; protected set; }
 
-        public string EditPath => GetEditPath();
-
-        private string GetEditPath()
-        {
-            var path = GetAncestorPath(this);
-            return $"{{{path}}}";
-
-            string GetAncestorPath(PatternElement element)
-            {
-                return element.Parent.Exists()
-                    ? $"{GetAncestorPath(element.Parent)}.{element.Name}"
-                    : $"{element.Name}";
-            }
-        }
-
         public IReadOnlyList<Element> Elements => this.elements;
 
         public IReadOnlyList<Attribute> Attributes => this.attributes;
@@ -893,6 +880,19 @@ namespace Automate.Authoring.Domain
             visitor.VisitElementsExit(Elements);
 
             return !abort;
+        }
+
+        private string GetEditPath()
+        {
+            var path = GetAncestorPath(this);
+            return $"{{{path}}}";
+
+            string GetAncestorPath(PatternElement element)
+            {
+                return element.Parent.Exists()
+                    ? $"{GetAncestorPath(element.Parent)}.{element.Name}"
+                    : $"{element.Name}";
+            }
         }
 
         private void RemoveLaunchPointReferences(string automationId)

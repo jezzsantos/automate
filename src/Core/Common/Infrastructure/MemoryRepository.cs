@@ -81,6 +81,16 @@ namespace Automate.Common.Infrastructure
             return this.inMemoryLocalState;
         }
 
+        public MachineState GetMachineState()
+        {
+            return this.inMemoryMachineState;
+        }
+
+        public void SaveMachineState(MachineState state)
+        {
+            this.inMemoryMachineState = state;
+        }
+
         public string PatternLocation => InMemoryLocation;
 
         public void NewPattern(PatternDefinition pattern)
@@ -108,16 +118,6 @@ namespace Automate.Common.Infrastructure
         public void UpsertPattern(PatternDefinition pattern)
         {
             this.inMemoryPatterns[pattern.Id] = pattern;
-        }
-
-        public MachineState GetMachineState()
-        {
-            return this.inMemoryMachineState;
-        }
-
-        public void SaveMachineState(MachineState state)
-        {
-            this.inMemoryMachineState = state;
         }
 
         public void DestroyAll()

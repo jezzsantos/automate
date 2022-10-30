@@ -8,8 +8,8 @@ namespace Core.UnitTests.Common.Infrastructure
     [Trait("Category", "Unit")]
     public class MachineStoreSpec
     {
-        private readonly MachineStore store;
         private readonly MemoryRepository repository;
+        private readonly MachineStore store;
 
         public MachineStoreSpec()
         {

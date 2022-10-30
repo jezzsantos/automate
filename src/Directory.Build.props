@@ -20,7 +20,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
 
         <VersionPrefix>1.0.7</VersionPrefix>
-        <VersionSuffix/>
+        <VersionSuffix />
         <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
         <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
         <InformationalVersion>$(PackageVersion)</InformationalVersion>

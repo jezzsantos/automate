@@ -12,9 +12,9 @@ namespace Automate.CLI.Infrastructure.Recording
         internal const string SessionOperationName = "cli-operation-session";
         private readonly ITelemetryClient client;
         private readonly ILogger logger;
+        private string operationId;
         private string parentOperationId;
         private bool reportingEnabled;
-        private string operationId;
 
         public ApplicationInsightsSessionReporter(ILogger logger, ITelemetryClient client)
         {
@@ -28,6 +28,13 @@ namespace Automate.CLI.Infrastructure.Recording
         }
 
         internal RequestTelemetry Telemetry { get; private set; }
+
+#if TESTINGONLY
+        public void ResetTelemetry()
+        {
+            Telemetry = null;
+        }
+#endif
 
         public void Dispose()
         {
@@ -120,12 +127,5 @@ namespace Automate.CLI.Infrastructure.Recording
 
             return (parts[0], parts[1], parts[2]);
         }
-
-#if TESTINGONLY
-        public void ResetTelemetry()
-        {
-            Telemetry = null;
-        }
-#endif
     }
 }

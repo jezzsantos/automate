@@ -23,11 +23,6 @@ namespace CLI.IntegrationTests
             this.setup.ResetRepository();
         }
 
-        public void Dispose()
-        {
-            this.setup.Reset();
-        }
-        
         [Fact]
         public void WhenListAllAndNone_ThenDisplaysNone()
         {
@@ -101,7 +96,7 @@ namespace CLI.IntegrationTests
                     OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
                         $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
-        
+
         [Fact]
         public void WhenCreateAndNoCommands_ThenDisplaysError()
         {
@@ -1241,12 +1236,16 @@ namespace CLI.IntegrationTests
                         exportedFile));
         }
 
+        public void Dispose()
+        {
+            this.setup.Reset();
+        }
+
         private void ModifyCodeTemplateContent(CodeTemplate codeTemplate, string content)
         {
             var codeTemplateLocation =
                 this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
             File.WriteAllText(codeTemplateLocation, content);
         }
-
     }
 }

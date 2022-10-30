@@ -51,7 +51,7 @@ namespace Core.UnitTests.Runtime.Domain
             pattern.AddElement(collection1);
             pattern.AddElement(element2);
             pattern.AddElement(collection2);
-            
+
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
 
             draft.Name.Should().Match("apatternname???");
@@ -114,7 +114,7 @@ namespace Core.UnitTests.Runtime.Domain
             element1.AddAttribute(attribute4);
             element1.AddElement(element2);
             pattern.AddElement(element1);
-            
+
             var draft = new DraftDefinition(new ToolkitDefinition(pattern));
             draft.Model.Properties["anelementname1"].Materialise();
             draft.Model.Properties["anelementname1"].Properties["anelementname2"].Materialise();
@@ -548,6 +548,5 @@ namespace Core.UnitTests.Runtime.Domain
             result.Should().Be(draftItem3);
         }
 #endif
-
     }
 }

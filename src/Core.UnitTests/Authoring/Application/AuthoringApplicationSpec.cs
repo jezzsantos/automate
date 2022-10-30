@@ -54,7 +54,7 @@ namespace Core.UnitTests.Authoring.Application
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
             var metadata = new Mock<IAssemblyMetadata>();
-            
+
             this.application =
                 new AuthoringApplication(Mock.Of<IRecorder>(), this.store, this.filePathResolver.Object,
                     this.patternPathResolver.Object,
@@ -806,7 +806,7 @@ namespace Core.UnitTests.Authoring.Application
 
             this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<IAssemblyMetadata>(), It.IsAny<PatternDefinition>(),
                 It.Is<VersionInstruction>(vi =>
-                vi.Instruction == "2.0.0")));
+                    vi.Instruction == "2.0.0")));
             toolkit.ExportedLocation.Should().Be("abuildlocation");
             toolkit.Toolkit.PatternName.Should().Be("apatternname");
             toolkit.Toolkit.Version.Should().Be("2.0.0");

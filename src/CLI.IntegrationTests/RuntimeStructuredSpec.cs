@@ -611,7 +611,7 @@ namespace CLI.IntegrationTests
                     }
                 }
             };
-            
+
             var structuredOutput = new StructuredOutput
             {
                 Info = new List<string>

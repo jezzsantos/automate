@@ -286,7 +286,7 @@ namespace Automate.CLI.Infrastructure.Api
                 Output(OutputMessages.CommandLine_Output_DraftDeleted,
                     draft.Name, draft.Id);
             }
-            
+
             internal static void ExecuteLaunchPoint(string name, string on, bool outputStructured)
             {
                 var execution = runtime.ExecuteLaunchPoint(name, on);

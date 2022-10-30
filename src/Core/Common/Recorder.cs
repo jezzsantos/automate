@@ -8,10 +8,10 @@ namespace Automate.Common
 {
     public class Recorder : IRecorder, IDisposable
     {
-        private readonly ILogger logger;
-        private readonly ISessionReporter sessioner;
         private readonly ICrashReporter crasher;
+        private readonly ILogger logger;
         private readonly IMeasurementReporter measurer;
+        private readonly ISessionReporter sessioner;
         private bool isReportingEnabled;
         private (string MachineId, string CorrelationId) reportingIds;
 
@@ -100,6 +100,5 @@ namespace Automate.Common
                 this.logger.Log(level, exception, messageTemplate, args);
             }
         }
-
     }
 }

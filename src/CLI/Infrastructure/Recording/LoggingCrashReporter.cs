@@ -10,6 +10,7 @@ namespace Automate.CLI.Infrastructure.Recording
         private readonly ILogger logger;
         private bool reportingEnabled;
         private (string MachineId, string CorrelationId) reportingIds;
+
         public LoggingCrashReporter(ILogger logger)
         {
             logger.GuardAgainstNull(nameof(logger));

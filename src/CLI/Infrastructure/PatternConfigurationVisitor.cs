@@ -142,7 +142,7 @@ namespace Automate.CLI.Infrastructure
             {
                 return true;
             }
-            
+
             if (this.format == OutputFormat.Json)
             {
                 PrintInline("{");
@@ -194,7 +194,7 @@ namespace Automate.CLI.Infrastructure
             {
                 return true;
             }
-            
+
             if (this.format == OutputFormat.Text)
             {
                 if (this.options is VisitorConfigurationOptions.Detailed

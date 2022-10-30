@@ -12,6 +12,10 @@ namespace Automate.CLI.Infrastructure.Api
         {
             private static List<OutputMessage> messages;
 
+            protected static IAssemblyMetadata Metadata { get; private set; }
+
+            protected static IRecorder Recorder { get; private set; }
+
             internal static void Initialise(List<OutputMessage> messages, IRecorder recorder,
                 IAssemblyMetadata metadata)
             {
@@ -29,10 +33,6 @@ namespace Automate.CLI.Infrastructure.Api
             {
                 messages.Add(new OutputMessage(OutputMessageLevel.Warning, messageTemplate, args));
             }
-
-            protected static IAssemblyMetadata Metadata { get; private set; }
-
-            protected static IRecorder Recorder { get; private set; }
         }
     }
 }

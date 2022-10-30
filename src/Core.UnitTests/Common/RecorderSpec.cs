@@ -14,11 +14,11 @@ namespace Core.UnitTests.Common
     [Trait("Category", "Unit")]
     public class RecorderSpec
     {
-        private readonly Mock<ILogger> logger;
-        private readonly Mock<ISessionReporter> sessioner;
         private readonly Mock<ICrashReporter> crasher;
+        private readonly Mock<ILogger> logger;
         private readonly Mock<IMeasurementReporter> measurer;
         private readonly Recorder recorder;
+        private readonly Mock<ISessionReporter> sessioner;
 
         public RecorderSpec()
         {

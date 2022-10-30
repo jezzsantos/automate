@@ -10,8 +10,8 @@ namespace CLI.UnitTests.Infrastructure.Recording
     [Trait("Category", "Unit")]
     public class ApplicationInsightsCrashReporterSpec
     {
-        private readonly Mock<ITelemetryClient> telemetryClient;
         private readonly ApplicationInsightsCrashReporter reporter;
+        private readonly Mock<ITelemetryClient> telemetryClient;
 
         public ApplicationInsightsCrashReporterSpec()
         {

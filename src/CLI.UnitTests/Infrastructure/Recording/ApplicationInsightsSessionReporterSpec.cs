@@ -38,7 +38,7 @@ namespace CLI.UnitTests.Infrastructure.Recording
         {
             this.reporter.MeasureStartSession("amessagetemplate");
             this.telemetryClient.Reset();
-            
+
             this.reporter.EnableReporting("amachineid", null);
 
             this.telemetryClient.Verify(tc => tc.SetRoleInstance("amachineid"));
@@ -53,7 +53,7 @@ namespace CLI.UnitTests.Infrastructure.Recording
         {
             this.reporter.MeasureStartSession("amessagetemplate");
             this.telemetryClient.Reset();
-            
+
             this.reporter.EnableReporting("amachineid", "avalue");
 
             this.telemetryClient.Verify(tc => tc.SetRoleInstance("amachineid"));
