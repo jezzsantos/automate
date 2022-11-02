@@ -47,6 +47,10 @@
     <data name="CommandLine_Output_PatternUpdated" xml:space="preserve">
         <value>The Pattern: '{Name}' was updated</value>
     </data>
+    <data name="CommandLine_Output_PatternUpdated_ForStructured" xml:space="preserve">
+        <value>Pattern '{Name}' (ID: '{PatternId}', v{Version}) is defined as:
+{Schema}</value>
+    </data>
     <data name="CommandLine_Output_NoEditablePatterns" xml:space="preserve">
         <value>There are no editable Patterns yet. Use this command to create one:
 `automate create pattern &lt;PatternName&gt;`</value>

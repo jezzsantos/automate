@@ -74,8 +74,6 @@ namespace Automate.Authoring.Application
 
         public PatternDefinition UpdatePattern(string name, string displayName, string description)
         {
-            name.GuardAgainstNullOrEmpty(nameof(name));
-
             var pattern = EnsureCurrentPatternExists();
 
             pattern.RenameAndDescribe(name, displayName, description);

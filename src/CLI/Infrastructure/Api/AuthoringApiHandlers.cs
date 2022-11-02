@@ -43,10 +43,25 @@ namespace Automate.CLI.Infrastructure.Api
                 }
             }
 
-            internal static void UpdatePattern(string name, string displayedAs, string describedAs)
+            internal static void UpdatePattern(string name, string displayedAs, string describedAs,
+                bool outputStructured)
             {
                 var pattern = authoring.UpdatePattern(name, displayedAs, describedAs);
-                Output(OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
+
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternUpdated_ForStructured, pattern.Name, pattern.Id,
+                        new
+                        {
+                            pattern.ToolkitVersion.Current,
+                            pattern.ToolkitVersion.Next,
+                            Change = pattern.ToolkitVersion.LastChanges.ToString()
+                        }, FormatPatternSchema(true, pattern, false));
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_PatternUpdated, pattern.Name);
+                }
             }
 
             internal static void SwitchPattern(string id, bool outputStructured)

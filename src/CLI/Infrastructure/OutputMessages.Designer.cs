@@ -656,6 +656,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pattern &apos;{Name}&apos; (ID: &apos;{PatternId}&apos;, v{Version}) is defined as:
+        ///{Schema}.
+        /// </summary>
+        internal static string CommandLine_Output_PatternUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_PatternUpdated_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Draft: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) is now being configured.
         /// </summary>
         internal static string CommandLine_Output_Preamble_CurrentDraftInUse {

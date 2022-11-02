@@ -428,6 +428,59 @@ namespace CLI.IntegrationTests
         }
 
         [Fact]
+        public void WhenUpdatePattern_ThenDisplaysSchema()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand($"{CommandLineApi.EditCommandName} update-pattern --output-structured");
+
+            var pattern = this.setup.Pattern;
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_PatternUpdated_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "APattern" },
+                            { "PatternId", pattern.Id },
+                            {
+                                "Version", new Dictionary<string, object>
+                                {
+                                    { "Current", "0.0.0" },
+                                    { "Next", "0.1.0" },
+                                    { "Change", VersionChange.NoChange.ToString() }
+                                }
+                            },
+                            {
+                                "Schema", new Dictionary<string, object>
+                                {
+                                    { "Id", pattern.Id },
+                                    { "EditPath", "{APattern}" },
+                                    { "Name", "APattern" },
+                                    { "DisplayName", "APattern" },
+                                    { "Description", "" },
+                                    { "CodeTemplates", Array.Empty<object>() },
+                                    { "Automation", Array.Empty<object>() },
+                                    { "Attributes", Array.Empty<object>() },
+                                    { "Elements", Array.Empty<object>() }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
         public void WhenAddAttribute_ThenAddsAttribute()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
