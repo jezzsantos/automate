@@ -47,7 +47,7 @@ namespace Automate.Common.Infrastructure
 
         private static string CreateMachineId()
         {
-            return $"mid_{Guid.NewGuid():N}";
+            return $"cli_uid_{Guid.NewGuid():N}";
         }
     }
 }
