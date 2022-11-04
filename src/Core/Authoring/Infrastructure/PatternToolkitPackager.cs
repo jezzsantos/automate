@@ -22,7 +22,7 @@ namespace Automate.Authoring.Infrastructure
             this.toolkitStore = toolkitStore;
         }
 
-        public ToolkitPackage PackAndExport(IAssemblyMetadata metadata, PatternDefinition pattern,
+        public ToolkitPackage PackAndExport(IRuntimeMetadata metadata, PatternDefinition pattern,
             VersionInstruction instruction)
         {
             var (version, toolkit) = Pack(metadata, pattern, instruction,
@@ -34,7 +34,7 @@ namespace Automate.Authoring.Infrastructure
             return new ToolkitPackage(toolkit, exportedLocation, version.Message);
         }
 
-        public ToolkitDefinition UnPack(IAssemblyMetadata metadata, IFile installer)
+        public ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer)
         {
             metadata.GuardAgainstNull(nameof(metadata));
             installer.GuardAgainstNull(nameof(installer));
@@ -46,7 +46,7 @@ namespace Automate.Authoring.Infrastructure
             return toolkit;
         }
 
-        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(IAssemblyMetadata metadata,
+        internal static (VersionUpdateResult Version, ToolkitDefinition Toolkit) Pack(IRuntimeMetadata metadata,
             PatternDefinition pattern, VersionInstruction instruction,
             Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getContent)
         {
@@ -61,7 +61,7 @@ namespace Automate.Authoring.Infrastructure
             return (version, toolkit);
         }
 
-        private ToolkitDefinition UnpackToolkit(IAssemblyMetadata metadata, IFile installer)
+        private ToolkitDefinition UnpackToolkit(IRuntimeMetadata metadata, IFile installer)
         {
             var contents = installer.GetContents();
 

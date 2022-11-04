@@ -102,7 +102,7 @@ namespace Automate.Authoring.Domain
             Version = latestToolkit.Pattern.ToolkitVersion.Current;
         }
 
-        public void VerifyRuntimeCompatibility(IAssemblyMetadata metadata)
+        public void VerifyRuntimeCompatibility(IRuntimeMetadata metadata)
         {
             metadata.GuardAgainstNull(nameof(metadata));
             VerifyRuntimeCompatibility(this, metadata);
@@ -110,7 +110,7 @@ namespace Automate.Authoring.Domain
 
         public string Id { get; }
 
-        internal static void VerifyRuntimeCompatibility(ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+        internal static void VerifyRuntimeCompatibility(ToolkitDefinition toolkit, IRuntimeMetadata metadata)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));

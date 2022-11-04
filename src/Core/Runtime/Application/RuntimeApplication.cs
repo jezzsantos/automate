@@ -12,20 +12,18 @@ namespace Automate.Runtime.Application
 {
     public class RuntimeApplication
     {
-        private readonly IAssemblyMetadata assemblyMetadata;
         private readonly IAutomationExecutor automationExecutor;
         private readonly IDraftPathResolver draftPathResolver;
         private readonly IDraftStore draftStore;
         private readonly IFilePathResolver fileResolver;
+        private readonly IRuntimeMetadata metadata;
         private readonly IPatternToolkitPackager packager;
         private readonly IRecorder recorder;
         private readonly IToolkitStore toolkitStore;
 
         public RuntimeApplication(IRecorder recorder, IToolkitStore toolkitStore, IDraftStore draftStore,
-            IFilePathResolver fileResolver,
-            IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver,
-            IAutomationExecutor automationExecutor,
-            IAssemblyMetadata assemblyMetadata
+            IFilePathResolver fileResolver, IPatternToolkitPackager packager, IDraftPathResolver draftPathResolver,
+            IAutomationExecutor automationExecutor, IRuntimeMetadata metadata
         )
         {
             recorder.GuardAgainstNull(nameof(recorder));
@@ -35,7 +33,7 @@ namespace Automate.Runtime.Application
             packager.GuardAgainstNull(nameof(packager));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             automationExecutor.GuardAgainstNull(nameof(automationExecutor));
-            assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
+            metadata.GuardAgainstNull(nameof(metadata));
             this.recorder = recorder;
             this.toolkitStore = toolkitStore;
             this.draftStore = draftStore;
@@ -43,7 +41,7 @@ namespace Automate.Runtime.Application
             this.packager = packager;
             this.draftPathResolver = draftPathResolver;
             this.automationExecutor = automationExecutor;
-            this.assemblyMetadata = assemblyMetadata;
+            this.metadata = metadata;
         }
 
         public string CurrentDraftId => this.draftStore.GetCurrent()?.Id;
@@ -61,7 +59,7 @@ namespace Automate.Runtime.Application
             }
 
             var installer = this.fileResolver.GetFileAtPath(installerLocation);
-            var toolkit = this.packager.UnPack(this.assemblyMetadata, installer);
+            var toolkit = this.packager.UnPack(this.metadata, installer);
 
             this.toolkitStore.Import(toolkit);
 
@@ -130,7 +128,7 @@ namespace Automate.Runtime.Application
                     ExceptionMessages.RuntimeApplication_ToolkitNotFound.Substitute(toolkitName));
             }
 
-            toolkit.VerifyRuntimeCompatibility(this.assemblyMetadata);
+            toolkit.VerifyRuntimeCompatibility(this.metadata);
 
             var draft = new DraftDefinition(toolkit, draftName);
             var created = this.draftStore.Create(draft);
@@ -390,7 +388,7 @@ namespace Automate.Runtime.Application
                         draft.Toolkit.Version, toolkit.Version));
             }
 
-            toolkit.VerifyRuntimeCompatibility(this.assemblyMetadata);
+            toolkit.VerifyRuntimeCompatibility(this.metadata);
 
             return draft;
         }

@@ -283,7 +283,7 @@ namespace Automate.CLI.Infrastructure.Api
 
             internal static void AddCodeTemplate(string filepath, string name, string asChildOf)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var currentDirectory = Metadata.CurrentExecutionPath;
                 var (parent, template) = authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
                 Output(OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
                     template.Template.Id,
@@ -293,7 +293,7 @@ namespace Automate.CLI.Infrastructure.Api
             internal static void AddCodeTemplateWithCommand(string filepath, string name, bool isOneOff,
                 string targetPath, string asChildOf)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var currentDirectory = Metadata.CurrentExecutionPath;
                 var (parent, template, command) = authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
                     name, isOneOff, targetPath, asChildOf);
                 Output(OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
@@ -319,7 +319,7 @@ namespace Automate.CLI.Infrastructure.Api
             internal static void TestCodeTemplate(string templateName, string asChildOf, string importData,
                 string exportData)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var currentDirectory = Metadata.CurrentExecutionPath;
                 var test =
                     authoring.TestCodeTemplate(templateName, asChildOf, currentDirectory, importData, exportData);
                 if (exportData.HasValue())
@@ -362,7 +362,7 @@ namespace Automate.CLI.Infrastructure.Api
             internal static void TestCodeTemplateCommand(string commandName, string asChildOf, string importData,
                 string exportData)
             {
-                var currentDirectory = Environment.CurrentDirectory;
+                var currentDirectory = Metadata.CurrentExecutionPath;
                 var test = authoring.TestCodeTemplateCommand(commandName, asChildOf, currentDirectory, importData,
                     exportData);
                 if (exportData.HasValue())

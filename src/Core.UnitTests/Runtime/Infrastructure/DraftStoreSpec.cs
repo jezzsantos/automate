@@ -88,7 +88,7 @@ namespace Core.UnitTests.Runtime.Infrastructure
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.DraftStore_NotFoundAtLocationWithId.Substitute("anid",
-                        this.repository.PatternLocation));
+                        this.repository.PatternsLocation));
         }
 
         [Fact]

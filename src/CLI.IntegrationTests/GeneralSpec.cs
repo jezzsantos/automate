@@ -36,7 +36,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --collect-usage:false");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,
@@ -50,7 +50,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{CommandLineApi.InfoCommandName}");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(OutputMessages.CommandLine_Output_Info.SubstituteTemplate(metadata.ProductName,

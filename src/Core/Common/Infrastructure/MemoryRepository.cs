@@ -26,7 +26,11 @@ namespace Automate.Common.Infrastructure
         private LocalState inMemoryLocalState = new();
         private MachineState inMemoryMachineState = new();
 
-        public string DraftLocation => InMemoryLocation;
+        public string PatternsLocation => InMemoryLocation;
+
+        public string ToolkitsLocation => InMemoryLocation;
+
+        public string DraftsLocation => InMemoryLocation;
 
         public void NewDraft(DraftDefinition draft)
         {
@@ -90,8 +94,6 @@ namespace Automate.Common.Infrastructure
         {
             this.inMemoryMachineState = state;
         }
-
-        public string PatternLocation => InMemoryLocation;
 
         public void NewPattern(PatternDefinition pattern)
         {
@@ -185,8 +187,6 @@ namespace Automate.Common.Infrastructure
             return this.inMemoryToolkits
                 .FirstOrDefault(p => p.Value.PatternName == name).Value;
         }
-
-        public string ToolkitLocation => InMemoryLocation;
 
         public ToolkitDefinition GetToolkit(string id)
         {

@@ -6,7 +6,7 @@ namespace Automate.Authoring.Infrastructure
 {
     public interface IPatternRepository
     {
-        string PatternLocation { get; }
+        string PatternsLocation { get; }
 
         void NewPattern(PatternDefinition pattern);
 

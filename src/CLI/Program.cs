@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Automate.Authoring.Application;
 using Automate.Authoring.Infrastructure;
 using Automate.CLI.Infrastructure;
@@ -26,7 +25,7 @@ namespace Automate.CLI
     {
         private const string LoggingCategory = "automate-cli";
         private const string RollingLogFileLevelSettingName = "Logging:RollingFile:LogLevel:Default";
-        private static readonly string LocalLogFilePath = Path.Combine("automate", "automate.log");
+        internal static readonly string LocalLogFilename = "automate.log";
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
@@ -42,7 +41,10 @@ namespace Automate.CLI
                 .ConfigureLogging((context, logging) =>
                 {
                     logging.ClearProviders();
-                    logging.AddFile(LocalLogFilePath, options =>
+
+                    var loggingFileName =
+                        GetLoggingFilename(new CliRuntimeMetadata(), new SystemIoFileSystemReaderWriter());
+                    logging.AddFile(loggingFileName, options =>
                     {
                         options.Append = true;
                         options.MinLevel = context.Configuration
@@ -99,17 +101,22 @@ namespace Automate.CLI
         internal static void PopulateContainerForLocalMachineAndCurrentDirectory(IConfiguration settings,
             IServiceCollection services)
         {
-            var currentDirectory = Environment.CurrentDirectory;
-            var assemblyMetadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
+            services.AddSingleton<IRuntimeMetadata>(metadata);
+            var readerWriter = new SystemIoFileSystemReaderWriter();
+            services.AddSingleton<IFileSystemReaderWriter>(readerWriter);
+
 #if !TESTINGONLY
-            services.AddSingleton<ITelemetryClient>(new ApplicationInsightsTelemetryClient(settings, assemblyMetadata));
+            services.AddSingleton<ITelemetryClient>(
+                new ApplicationInsightsTelemetryClient(settings, metadata, readerWriter));
 #endif
             services.AddSingleton(c => CreateRecorder(c, LoggingCategory));
-            services.AddSingleton(c => new LocalMachineUserRepository(assemblyMetadata.InstallationPath,
+            services.AddSingleton(c => new LocalMachineUserRepository(metadata.UserDataPath,
                 c.GetRequiredService<IFileSystemReaderWriter>(),
                 c.GetRequiredService<IPersistableFactory>()));
             services.AddSingleton(c =>
-                new LocalMachineFileRepository(currentDirectory, c.GetRequiredService<IFileSystemReaderWriter>(),
+                new LocalMachineFileRepository(metadata.LocalStateDataPath,
+                    c.GetRequiredService<IFileSystemReaderWriter>(),
                     c.GetRequiredService<IPersistableFactory>()));
             services.AddSingleton<IMachineRepository>(c => c.GetRequiredService<LocalMachineUserRepository>());
             services.AddSingleton<IPatternRepository>(c => c.GetRequiredService<LocalMachineFileRepository>());
@@ -126,10 +133,8 @@ namespace Automate.CLI
             services.AddSingleton<IPatternToolkitPackager, PatternToolkitPackager>();
             services.AddSingleton<ITextTemplatingEngine, TextTemplatingEngine>();
             services.AddSingleton<IApplicationExecutor, ApplicationExecutor>();
-            services.AddSingleton<IFileSystemReaderWriter, SystemIoFileSystemReaderWriter>();
             services.AddSingleton<IAutomationExecutor, AutomationExecutor>();
             services.AddSingleton<IPersistableFactory, AutomatePersistableFactory>();
-            services.AddSingleton<IAssemblyMetadata>(assemblyMetadata);
         }
 
         private static IRecorder CreateRecorder(IServiceProvider services, string categoryName)
@@ -149,6 +154,14 @@ namespace Automate.CLI
                 new ApplicationInsightsMeasurementReporter(telemetryClient));
 #endif
             return recorder;
+        }
+
+        private static string GetLoggingFilename(IRuntimeMetadata metadata, IFileSystemReaderWriter readerWriter)
+        {
+            var machineFilename = readerWriter.MakeAbsolutePath(metadata.UserDataPath, LocalLogFilename);
+            readerWriter.EnsureFileDirectoryExists(machineFilename);
+
+            return machineFilename;
         }
     }
 }

@@ -7,23 +7,23 @@ namespace Automate.CLI.Infrastructure
 {
     public class LocalMachineUserRepository : IMachineRepository
     {
-        private const string StatePersistencePath = "automate";
         private const string StateFilename = "MachineState.json";
         private readonly IFileSystemReaderWriter fileSystem;
-        private readonly string installDirectory;
+        private readonly string persistenceDirectory;
         private readonly IPersistableFactory persistableFactory;
 
-        public LocalMachineUserRepository(string installDirectory, IFileSystemReaderWriter fileSystem,
+        public LocalMachineUserRepository(string persistenceDirectory, IFileSystemReaderWriter fileSystem,
             IPersistableFactory persistableFactory)
         {
-            installDirectory.GuardAgainstNullOrEmpty(nameof(installDirectory));
+            persistenceDirectory.GuardAgainstNullOrEmpty(nameof(persistenceDirectory));
             fileSystem.GuardAgainstNull(nameof(fileSystem));
             persistableFactory.GuardAgainstNull(nameof(persistableFactory));
-            this.installDirectory = installDirectory;
+            this.persistenceDirectory = persistenceDirectory;
             this.fileSystem = fileSystem;
             this.persistableFactory = persistableFactory;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public string Location => CreateDirectoryForState();
 
         public void DestroyAll()
@@ -65,12 +65,12 @@ namespace Automate.CLI.Infrastructure
 
         private string CreateDirectoryForState()
         {
-            return this.fileSystem.MakePath(this.installDirectory, StatePersistencePath);
+            return this.fileSystem.MakeAbsolutePath(this.persistenceDirectory);
         }
 
         private string CreateFilenameForState()
         {
-            return this.fileSystem.MakePath(CreateDirectoryForState(), StateFilename);
+            return this.fileSystem.MakeAbsolutePath(CreateDirectoryForState(), StateFilename);
         }
 
         private void EnsurePathExists(string filename)

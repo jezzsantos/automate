@@ -82,7 +82,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute("anid",
-                        this.repository.PatternLocation));
+                        this.repository.PatternsLocation));
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Core.UnitTests.Authoring.Infrastructure
                 .Should().Throw<AutomateException>()
                 .WithMessage(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute("anid",
-                        this.repository.PatternLocation));
+                        this.repository.PatternsLocation));
         }
 
         [Fact]

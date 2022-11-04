@@ -8,23 +8,24 @@ namespace Automate.CLI.Infrastructure
     internal class LocalMachineFileLocalStateRepository : ILocalStateRepository
     {
         private const string StateFilename = "LocalState.json";
-        private readonly string currentDirectory;
         private readonly IFileSystemReaderWriter fileSystem;
+        private readonly string localStatePath;
         private readonly IPersistableFactory persistableFactory;
 
-        public LocalMachineFileLocalStateRepository(string currentDirectory, IFileSystemReaderWriter fileSystem,
+        public LocalMachineFileLocalStateRepository(string localStatePath, IFileSystemReaderWriter fileSystem,
             IPersistableFactory persistableFactory)
         {
-            currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
+            localStatePath.GuardAgainstNullOrEmpty(nameof(localStatePath));
             fileSystem.GuardAgainstNull(nameof(fileSystem));
             persistableFactory.GuardAgainstNull(nameof(persistableFactory));
-            this.currentDirectory = currentDirectory;
+            this.localStatePath = localStatePath;
             this.fileSystem = fileSystem;
             this.persistableFactory = persistableFactory;
         }
 
-        public string Location =>
-            this.fileSystem.MakePath(this.currentDirectory, InfrastructureConstants.RootPersistencePath);
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once ConvertToAutoProperty
+        internal string LocalStateLocation => this.localStatePath;
 
         public LocalState GetLocalState()
         {
@@ -48,7 +49,7 @@ namespace Automate.CLI.Infrastructure
 
         public void DestroyAll()
         {
-            if (this.fileSystem.DirectoryExists(Location))
+            if (this.fileSystem.DirectoryExists(LocalStateLocation))
             {
                 var stateFilename = CreateFilenameForState();
                 this.fileSystem.Delete(stateFilename);
@@ -65,7 +66,7 @@ namespace Automate.CLI.Infrastructure
 
         private string CreateFilenameForState()
         {
-            return this.fileSystem.MakePath(InfrastructureConstants.RootPersistencePath, StateFilename);
+            return this.fileSystem.MakeAbsolutePath(LocalStateLocation, StateFilename);
         }
 
         private void EnsurePathExists(string filename)

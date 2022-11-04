@@ -168,7 +168,7 @@ namespace Automate.Authoring.Domain
             return visitor.VisitPatternExit(this);
         }
 
-        public void SyncChanges(IAssemblyMetadata metadata,
+        public void SyncChanges(IRuntimeMetadata metadata,
             Func<PatternDefinition, CodeTemplate, CodeTemplateContent> getTemplateContent)
         {
             SyncRuntimeChanges(metadata);
@@ -204,7 +204,7 @@ namespace Automate.Authoring.Domain
             return ValidationResults.None;
         }
 
-        internal void SyncRuntimeChanges(IAssemblyMetadata metadata)
+        internal void SyncRuntimeChanges(IRuntimeMetadata metadata)
         {
             if (RuntimeVersion.HasNoValue()) //introduced at 1.0.5
             {

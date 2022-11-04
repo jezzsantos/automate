@@ -56,7 +56,7 @@ namespace CLI.IntegrationTests
 
         internal LocalState LocalState => this.repository.GetLocalState();
 
-        public string PatternStoreLocation => this.repository.PatternLocation;
+        public string PatternStoreLocation => this.repository.PatternsLocation;
 
         internal DraftDefinition Draft => Drafts.FirstOrDefault();
 

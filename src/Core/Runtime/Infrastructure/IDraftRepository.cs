@@ -5,7 +5,7 @@ namespace Automate.Runtime.Infrastructure
 {
     public interface IDraftRepository
     {
-        string DraftLocation { get; }
+        string DraftsLocation { get; }
 
         void NewDraft(DraftDefinition draft);
 

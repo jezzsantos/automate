@@ -5,7 +5,7 @@ namespace Automate.Authoring.Infrastructure
 {
     public interface IToolkitRepository
     {
-        string ToolkitLocation { get; }
+        string ToolkitsLocation { get; }
 
         string ExportToolkit(ToolkitDefinition toolkit);
 

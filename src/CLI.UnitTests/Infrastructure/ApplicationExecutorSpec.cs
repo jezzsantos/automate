@@ -15,7 +15,7 @@ namespace CLI.UnitTests.Infrastructure
 
         public ApplicationExecutorSpec()
         {
-            this.executor = new ApplicationExecutor();
+            this.executor = new ApplicationExecutor(new CliRuntimeMetadata());
             this.testApplicationName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
                 "../../../../../tools/TestApp/TestApp.exe"));
         }

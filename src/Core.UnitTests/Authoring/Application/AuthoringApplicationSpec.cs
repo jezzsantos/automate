@@ -53,7 +53,7 @@ namespace Core.UnitTests.Authoring.Application
             var repo = new MemoryRepository();
             this.store = new PatternStore(repo, repo);
             this.builder = new Mock<IPatternToolkitPackager>();
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
 
             this.application =
                 new AuthoringApplication(Mock.Of<IRecorder>(), this.store, this.filePathResolver.Object,
@@ -796,15 +796,15 @@ namespace Core.UnitTests.Authoring.Application
         public void WhenPackageToolkit_ThenPackagesToolkit()
         {
             this.application.CreateNewPattern("apatternname", null, null);
-            this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<IAssemblyMetadata>(), It.IsAny<PatternDefinition>(),
+            this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<IRuntimeMetadata>(), It.IsAny<PatternDefinition>(),
                     It.IsAny<VersionInstruction>()))
-                .Returns((IAssemblyMetadata metadata, PatternDefinition pattern, VersionInstruction version) =>
+                .Returns((IRuntimeMetadata metadata, PatternDefinition pattern, VersionInstruction version) =>
                     new ToolkitPackage(new ToolkitDefinition(pattern, version.Instruction.ToSemVersion()),
                         "abuildlocation", null));
 
             var toolkit = this.application.BuildAndExportToolkit("2.0.0", false);
 
-            this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<IAssemblyMetadata>(), It.IsAny<PatternDefinition>(),
+            this.builder.Verify(bdr => bdr.PackAndExport(It.IsAny<IRuntimeMetadata>(), It.IsAny<PatternDefinition>(),
                 It.Is<VersionInstruction>(vi =>
                     vi.Instruction == "2.0.0")));
             toolkit.ExportedLocation.Should().Be("abuildlocation");

@@ -394,7 +394,7 @@ namespace Automate.CLI.Infrastructure.Api
 
             private class StructuredToolkitCompatibilityInfo
             {
-                public StructuredToolkitCompatibilityInfo(ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+                public StructuredToolkitCompatibilityInfo(ToolkitDefinition toolkit, IRuntimeMetadata metadata)
                 {
                     DraftCompatibility = null;
                     Toolkit = new StructuredToolkitVersionInfo(toolkit.Version, toolkit.Version);
@@ -404,7 +404,7 @@ namespace Automate.CLI.Infrastructure.Api
                 }
 
                 public StructuredToolkitCompatibilityInfo(DraftDefinition draft, ToolkitDefinition toolkit,
-                    IAssemblyMetadata metadata)
+                    IRuntimeMetadata metadata)
                 {
                     DraftCompatibility = draft.GetCompatibility(toolkit);
                     Toolkit = new StructuredToolkitVersionInfo(draft.Toolkit.Version, toolkit.Version);

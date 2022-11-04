@@ -52,7 +52,7 @@ namespace Automate.Authoring.Infrastructure
             {
                 throw new AutomateException(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute(id,
-                        this.patternRepository.PatternLocation));
+                        this.patternRepository.PatternsLocation));
             }
 
             return pattern;
@@ -82,7 +82,7 @@ namespace Automate.Authoring.Infrastructure
             {
                 throw new AutomateException(
                     ExceptionMessages.PatternStore_NotFoundAtLocationWithId.Substitute(id,
-                        this.patternRepository.PatternLocation));
+                        this.patternRepository.PatternsLocation));
             }
 
             var state = this.localStateRepository.GetLocalState();

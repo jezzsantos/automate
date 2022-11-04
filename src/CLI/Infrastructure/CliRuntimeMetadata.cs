@@ -7,8 +7,11 @@ using Semver;
 
 namespace Automate.CLI.Infrastructure
 {
-    public class CliAssemblyMetadata : IAssemblyMetadata
+    public class CliRuntimeMetadata : IRuntimeMetadata
     {
+        internal const string RootPersistencePath = "automate";
+        internal const string DotNetToolsInstallationPath = "%USERPROFILE%/.dotnet/tools";
+
         public SemVersion RuntimeVersion
         {
             get
@@ -39,6 +42,24 @@ namespace Automate.CLI.Infrastructure
                 var uri = new Uri(location);
                 return new FileInfo(uri.AbsolutePath).Directory!.FullName;
             }
+        }
+
+        public string CurrentExecutionPath => Environment.CurrentDirectory;
+
+        public string UserDataPath =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                RootPersistencePath);
+
+        public string LocalStateDataPath => CalculateLocalStatePath(CurrentExecutionPath);
+
+        internal static string CalculateLocalStatePath(string currentDirectory)
+        {
+            var currentDirectoryPath = Path.GetFullPath(currentDirectory);
+            var dotnetToolsPath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(DotNetToolsInstallationPath));
+
+            return currentDirectoryPath.EqualsIgnoreCase(dotnetToolsPath)
+                ? Path.Combine(dotnetToolsPath, $"_{RootPersistencePath}")
+                : Path.Combine(currentDirectoryPath, RootPersistencePath);
         }
     }
 }

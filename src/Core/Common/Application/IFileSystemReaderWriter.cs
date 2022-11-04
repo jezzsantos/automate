@@ -20,6 +20,8 @@ namespace Automate.Common.Application
 
         void DeleteAllDirectoryFiles(string absolutePath, string pattern);
 
+        void EnsureDirectoryExists(string absolutePath);
+
         void EnsureFileDirectoryExists(string absolutePath);
     }
 
@@ -35,7 +37,9 @@ namespace Automate.Common.Application
 
         IEnumerable<FileSystemDirectory> GetSubDirectories(string absolutePath);
 
-        string MakePath(string directory, string filename);
+        string MakeAbsolutePath(string directory);
+
+        string MakeAbsolutePath(string directory, string filename);
 
         FileSystemFile GetContent(string path);
     }

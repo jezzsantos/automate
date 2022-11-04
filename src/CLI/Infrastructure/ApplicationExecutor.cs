@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Automate.Runtime.Application;
 
@@ -7,7 +8,14 @@ namespace Automate.CLI.Infrastructure
 {
     public class ApplicationExecutor : IApplicationExecutor
     {
+        private readonly IRuntimeMetadata metadata;
         internal static readonly TimeSpan HangTime = TimeSpan.FromSeconds(5);
+
+        public ApplicationExecutor(IRuntimeMetadata metadata)
+        {
+            metadata.GuardAgainstNull(nameof(metadata));
+            this.metadata = metadata;
+        }
 
         public ApplicationExecutionProcessResult RunApplicationProcess(bool awaitForExit, string applicationName,
             string arguments)
@@ -28,7 +36,7 @@ namespace Automate.CLI.Infrastructure
                     Arguments = args,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
-                    WorkingDirectory = Environment.CurrentDirectory
+                    WorkingDirectory = this.metadata.CurrentExecutionPath
                 });
                 if (process.NotExists())
                 {

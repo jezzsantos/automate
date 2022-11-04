@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Automate.Authoring.Application;
 using Automate.Authoring.Domain;
@@ -22,41 +21,39 @@ namespace Automate.CLI.Infrastructure
         private const string DraftDefinitionFilename = "Draft.json";
         private const string CodeTemplateDirectoryName = "CodeTemplates";
         private const string ToolkitInstallerFileExtension = ".toolkit";
-        private static readonly string PatternDirectoryPath =
-            Path.Combine(InfrastructureConstants.RootPersistencePath, "patterns");
-        private static readonly string ToolkitDirectoryPath =
-            Path.Combine(InfrastructureConstants.RootPersistencePath, "toolkits");
-        private static readonly string DraftDirectoryPath =
-            Path.Combine(InfrastructureConstants.RootPersistencePath, "drafts");
-        private readonly string currentDirectory;
+        private const string PatternDirectoryPath = "patterns";
+        private const string ToolkitDirectoryPath = "toolkits";
+        private const string DraftDirectoryPath = "drafts";
+        private readonly string localStatePath;
         private readonly IFileSystemReaderWriter fileSystem;
         private readonly ILocalStateRepository localStateRepository;
         private readonly IPersistableFactory persistableFactory;
 
-        public LocalMachineFileRepository(string currentDirectory, IFileSystemReaderWriter fileSystem,
-            IPersistableFactory persistableFactory) : this(
-            currentDirectory,
-            fileSystem,
-            new LocalMachineFileLocalStateRepository(currentDirectory, fileSystem, persistableFactory),
+        public LocalMachineFileRepository(string localStatePath, IFileSystemReaderWriter fileSystem,
+            IPersistableFactory persistableFactory) : this(localStatePath, fileSystem,
+            new LocalMachineFileLocalStateRepository(localStatePath, fileSystem, persistableFactory),
             persistableFactory)
         {
         }
 
-        private LocalMachineFileRepository(string currentDirectory, IFileSystemReaderWriter fileSystem,
-            ILocalStateRepository localStateRepository,
-            IPersistableFactory persistableFactory)
+        private LocalMachineFileRepository(string localStatePath, IFileSystemReaderWriter fileSystem,
+            ILocalStateRepository localStateRepository, IPersistableFactory persistableFactory)
         {
-            currentDirectory.GuardAgainstNullOrEmpty(nameof(currentDirectory));
+            localStatePath.GuardAgainstNullOrEmpty(nameof(localStatePath));
             fileSystem.GuardAgainstNull(nameof(fileSystem));
             localStateRepository.GuardAgainstNull(nameof(localStateRepository));
             persistableFactory.GuardAgainstNull(nameof(persistableFactory));
-            this.currentDirectory = currentDirectory;
+            this.localStatePath = localStatePath;
             this.fileSystem = fileSystem;
             this.localStateRepository = localStateRepository;
             this.persistableFactory = persistableFactory;
         }
 
-        public string DraftLocation => this.fileSystem.MakePath(this.currentDirectory, DraftDirectoryPath);
+        public string PatternsLocation => this.fileSystem.MakeAbsolutePath(this.localStatePath, PatternDirectoryPath);
+
+        public string ToolkitsLocation => this.fileSystem.MakeAbsolutePath(this.localStatePath, ToolkitDirectoryPath);
+
+        public string DraftsLocation => this.fileSystem.MakeAbsolutePath(this.localStatePath, DraftDirectoryPath);
 
         public void NewDraft(DraftDefinition draft)
         {
@@ -86,12 +83,12 @@ namespace Automate.CLI.Infrastructure
 
         public List<DraftDefinition> ListDrafts()
         {
-            if (!this.fileSystem.DirectoryExists(DraftLocation))
+            if (!this.fileSystem.DirectoryExists(DraftsLocation))
             {
                 return new List<DraftDefinition>();
             }
 
-            return this.fileSystem.GetSubDirectories(DraftLocation)
+            return this.fileSystem.GetSubDirectories(DraftsLocation)
                 .Select(directory => directory.Name)
                 .Select(GetDraft)
                 .OrderBy(p => p.Name)
@@ -128,8 +125,6 @@ namespace Automate.CLI.Infrastructure
             return this.localStateRepository.GetLocalState();
         }
 
-        public string PatternLocation => this.fileSystem.MakePath(this.currentDirectory, PatternDirectoryPath);
-
         public void NewPattern(PatternDefinition pattern)
         {
             UpsertPattern(pattern);
@@ -150,12 +145,12 @@ namespace Automate.CLI.Infrastructure
 
         public List<PatternDefinition> ListPatterns()
         {
-            if (!this.fileSystem.DirectoryExists(PatternLocation))
+            if (!this.fileSystem.DirectoryExists(PatternsLocation))
             {
                 return new List<PatternDefinition>();
             }
 
-            return this.fileSystem.GetSubDirectories(PatternLocation)
+            return this.fileSystem.GetSubDirectories(PatternsLocation)
                 .Select(directory => directory.Name)
                 .Select(GetPattern)
                 .OrderBy(p => p.Name)
@@ -218,21 +213,21 @@ namespace Automate.CLI.Infrastructure
 
         public void DestroyAll()
         {
-            if (this.fileSystem.DirectoryExists(PatternLocation))
+            if (this.fileSystem.DirectoryExists(PatternsLocation))
             {
-                this.fileSystem.GetSubDirectories(PatternLocation)
+                this.fileSystem.GetSubDirectories(PatternsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
             }
-            if (this.fileSystem.DirectoryExists(ToolkitLocation))
+            if (this.fileSystem.DirectoryExists(ToolkitsLocation))
             {
-                this.fileSystem.GetSubDirectories(ToolkitLocation)
+                this.fileSystem.GetSubDirectories(ToolkitsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
             }
-            if (this.fileSystem.DirectoryExists(DraftLocation))
+            if (this.fileSystem.DirectoryExists(DraftsLocation))
             {
-                this.fileSystem.GetSubDirectories(DraftLocation)
+                this.fileSystem.GetSubDirectories(DraftsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
             }
@@ -245,12 +240,12 @@ namespace Automate.CLI.Infrastructure
 
         public List<ToolkitDefinition> ListToolkits()
         {
-            if (!this.fileSystem.DirectoryExists(ToolkitLocation))
+            if (!this.fileSystem.DirectoryExists(ToolkitsLocation))
             {
                 return new List<ToolkitDefinition>();
             }
 
-            return this.fileSystem.GetSubDirectories(ToolkitLocation)
+            return this.fileSystem.GetSubDirectories(ToolkitsLocation)
                 .Select(directory => directory.Name)
                 .Select(GetToolkit)
                 .OrderBy(p => p.PatternName)
@@ -276,8 +271,6 @@ namespace Automate.CLI.Infrastructure
             var contents = toolkit.ToJson(this.persistableFactory);
             this.fileSystem.Write(contents, filename);
         }
-
-        public string ToolkitLocation => this.fileSystem.MakePath(this.currentDirectory, ToolkitDirectoryPath);
 
         public ToolkitDefinition FindToolkitById(string id)
         {
@@ -312,22 +305,21 @@ namespace Automate.CLI.Infrastructure
         private string CreateFilenameForPatternById(string id)
         {
             var location = CreatePathForPattern(id);
-            return this.fileSystem.MakePath(location, PatternDefinitionFilename);
+            return this.fileSystem.MakeAbsolutePath(location, PatternDefinitionFilename);
         }
 
         private string CreatePathForPattern(string id)
         {
-            return this.fileSystem.MakePath(PatternLocation, id);
+            return this.fileSystem.MakeAbsolutePath(PatternsLocation, id);
         }
 
         private string CreateFilenameForCodeTemplate(string id, string codeTemplateId, string fileExtension)
         {
             var patternLocation = CreatePathForPattern(id);
-            var templateLocation = this.fileSystem.MakePath(patternLocation, CodeTemplateDirectoryName);
+            var templateLocation = this.fileSystem.MakeAbsolutePath(patternLocation, CodeTemplateDirectoryName);
             var templateFilename = $"{codeTemplateId}{(fileExtension.StartsWith(".") ? "" : ".")}{fileExtension}";
 
-            return this.fileSystem.MakePath(this.currentDirectory,
-                this.fileSystem.MakePath(templateLocation, templateFilename));
+            return this.fileSystem.MakeAbsolutePath(templateLocation, templateFilename);
         }
 
         private string CreateFilenameForExportedToolkit(string name, string version)
@@ -335,7 +327,7 @@ namespace Automate.CLI.Infrastructure
             var filename = $"{name}_{version}{ToolkitInstallerFileExtension}";
             var directory = GetExportedToolkitDirectory();
 
-            return this.fileSystem.MakePath(directory, filename);
+            return this.fileSystem.MakeAbsolutePath(directory, filename);
         }
 
         private static string GetExportedToolkitDirectory()
@@ -346,23 +338,23 @@ namespace Automate.CLI.Infrastructure
         private string CreateFilenameForImportedToolkitById(string id)
         {
             var location = CreatePathForToolkit(id);
-            return this.fileSystem.MakePath(location, ToolkitDefinitionFilename);
+            return this.fileSystem.MakeAbsolutePath(location, ToolkitDefinitionFilename);
         }
 
         private string CreatePathForToolkit(string id)
         {
-            return this.fileSystem.MakePath(ToolkitLocation, id);
+            return this.fileSystem.MakeAbsolutePath(ToolkitsLocation, id);
         }
 
         private string CreateFilenameForDraftById(string id)
         {
             var location = CreatePathForDraft(id);
-            return this.fileSystem.MakePath(location, DraftDefinitionFilename);
+            return this.fileSystem.MakeAbsolutePath(location, DraftDefinitionFilename);
         }
 
         private string CreatePathForDraft(string id)
         {
-            return this.fileSystem.MakePath(DraftLocation, id);
+            return this.fileSystem.MakeAbsolutePath(DraftsLocation, id);
         }
     }
 }

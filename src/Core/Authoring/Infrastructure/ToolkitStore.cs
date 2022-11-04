@@ -52,7 +52,7 @@ namespace Automate.Authoring.Infrastructure
             {
                 throw new AutomateException(
                     ExceptionMessages.ToolkitStore_NotFoundAtLocationWithId.Substitute(id,
-                        this.toolkitRepository.ToolkitLocation));
+                        this.toolkitRepository.ToolkitsLocation));
             }
 
             var state = this.localStateRepository.GetLocalState();

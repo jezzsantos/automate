@@ -189,7 +189,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndPreReleaseAndToolkitVersionIsNonExistent_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.3.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0.0");
@@ -207,7 +207,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndPreReleaseAndRuntimeVersionIsBreaking_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.2.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.1.0-preview");
@@ -223,7 +223,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndPreReleaseAndRuntimeVersionIsNonBreaking_ThenSucceeds()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.1.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.1.1-preview");
@@ -234,7 +234,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndPreReleaseAndToolkitVersionIsNonBreaking_ThenSucceeds()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.1.1-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.1.0-preview");
@@ -246,7 +246,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void
             WhenVerifyRuntimeCompatibilityAndPreReleaseAndToolkitVersionIsBreaking_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.1.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.2.0-preview");
@@ -261,7 +261,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndToolkitPreReleaseAndToolkitVersionIsBackInPreview_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.1.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0.0-preview");
@@ -276,7 +276,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndToolkitPreReleaseAndToolkitVersionIsAheadInPreview_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.1.0-preview");
@@ -291,7 +291,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndRuntimePreReleaseAndRuntimeVersionIsAheadInPreview_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.1.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.0.0");
@@ -306,7 +306,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndRuntimePreReleaseAndInstalledRuntimeIsBackInPreview_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0-preview".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.1.0");
@@ -321,7 +321,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndRuntimeVersionIsBreaking_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.1.0");
@@ -336,7 +336,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndToolkitVersionIsBreaking_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "2.0.0");
@@ -351,7 +351,7 @@ namespace Core.UnitTests.Authoring.Domain
         [Fact]
         public void WhenVerifyRuntimeCompatibilityAndRuntimeVersionIsNonBreaking_ThenSucceeds()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("0.2.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "0.1.0");
@@ -363,7 +363,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void
             WhenVerifyRuntimeCompatibilityAndToolkitVersionIsNonBreaking_ThenThrows()
         {
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(md => md.ProductName).Returns("aproductname");
             metadata.Setup(md => md.RuntimeVersion).Returns("1.0.0".ToSemVersion);
             var toolkit = new ToolkitDefinition(new PatternDefinition("apatternname"), "1.1.0");
@@ -374,7 +374,7 @@ namespace Core.UnitTests.Authoring.Domain
         private static ToolkitDefinition MakeDetachedToolkit(PatternDefinition oldPattern,
             Dictionary<string, byte[]> codeTemplateFiles = null)
         {
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var (_, toolkit) =
                 PatternToolkitPackager.Pack(metadata, oldPattern, new VersionInstruction(), GetTemplateContent());
 

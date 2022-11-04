@@ -82,7 +82,7 @@ namespace Automate.Runtime.Infrastructure
             {
                 throw new AutomateException(
                     ExceptionMessages.DraftStore_NotFoundAtLocationWithId.Substitute(id,
-                        this.draftRepository.DraftLocation));
+                        this.draftRepository.DraftsLocation));
             }
 
             var state = this.localStateRepository.GetLocalState();

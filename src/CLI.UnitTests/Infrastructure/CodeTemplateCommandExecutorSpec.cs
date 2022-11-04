@@ -5,6 +5,7 @@ using Automate.CLI;
 using Automate.CLI.Infrastructure;
 using Automate.Common;
 using Automate.Common.Application;
+using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
 using FluentAssertions;
@@ -34,7 +35,7 @@ namespace CLI.UnitTests.Infrastructure
 
                 new CodeTemplateCommandExecutor(Mock.Of<IFilePathResolver>(), Mock.Of<IFileSystemReaderWriter>(),
                         Mock.Of<IDraftPathResolver>(),
-                        Mock.Of<ITextTemplatingEngine>())
+                        Mock.Of<ITextTemplatingEngine>(), Mock.Of<IRuntimeMetadata>())
                     .Invoking(x => x.Execute(command, executionResult))
                     .Should().Throw<AutomateException>()
                     .WithMessage(ExceptionMessages.CodeTemplateCommand_TemplateNotExists.Substitute("acodetemplateid"));
@@ -62,11 +63,12 @@ namespace CLI.UnitTests.Infrastructure
                     .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns((string _, string expr, DraftItem _) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
+                var metadata = new Mock<IRuntimeMetadata>();
 
                 this.command = new CodeTemplateCommand("aname", "acodetemplateid", false, "~/afilepath.cs");
                 this.executor = new CodeTemplateCommandExecutor(filePathResolver.Object,
                     this.fileSystem.Object,
-                    draftPathResolver.Object, this.textTemplateEngine.Object);
+                    draftPathResolver.Object, this.textTemplateEngine.Object, metadata.Object);
             }
 
             [Fact]
@@ -330,12 +332,13 @@ namespace CLI.UnitTests.Infrastructure
                     .Setup(spr => spr.ResolveExpression(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DraftItem>()))
                     .Returns((string _, string expr, DraftItem _) => expr);
                 this.textTemplateEngine = new Mock<ITextTemplatingEngine>();
+                var metadata = new Mock<IRuntimeMetadata>();
 
                 this.command = new CodeTemplateCommand("acommandname", "acodetemplateid", true, "~/afilepath.cs");
                 this.executor = new CodeTemplateCommandExecutor(filePathResolver.Object,
                     this.fileSystem.Object,
                     draftPathResolver.Object,
-                    this.textTemplateEngine.Object);
+                    this.textTemplateEngine.Object, metadata.Object);
             }
 
             [Fact]

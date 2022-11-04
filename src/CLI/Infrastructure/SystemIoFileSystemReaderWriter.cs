@@ -69,6 +69,16 @@ namespace Automate.CLI.Infrastructure
             }
         }
 
+        public void EnsureDirectoryExists(string absolutePath)
+        {
+            absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
+
+            if (!Directory.Exists(absolutePath))
+            {
+                Directory.CreateDirectory(absolutePath!);
+            }
+        }
+
         public void EnsureFileDirectoryExists(string absolutePath)
         {
             absolutePath.GuardAgainstNullOrEmpty(nameof(absolutePath));
@@ -112,11 +122,17 @@ namespace Automate.CLI.Infrastructure
                 .Select(fullPath => new FileSystemDirectory(new DirectoryInfo(fullPath).Name, fullPath));
         }
 
-        public string MakePath(string directory, string filename)
+        public string MakeAbsolutePath(string directory)
+        {
+            directory.GuardAgainstNullOrEmpty(nameof(directory));
+            return Path.GetFullPath(directory);
+        }
+
+        public string MakeAbsolutePath(string directory, string filename)
         {
             directory.GuardAgainstNullOrEmpty(nameof(directory));
             filename.GuardAgainstNullOrEmpty(nameof(filename));
-            return Path.Combine(directory, filename);
+            return Path.Combine(MakeAbsolutePath(directory), filename);
         }
 
         public FileSystemFile GetContent(string absolutePath)

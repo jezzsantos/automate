@@ -5,9 +5,9 @@ namespace Automate.Authoring.Application
 {
     public interface IPatternToolkitPackager
     {
-        ToolkitPackage PackAndExport(IAssemblyMetadata metadata, PatternDefinition pattern,
+        ToolkitPackage PackAndExport(IRuntimeMetadata metadata, PatternDefinition pattern,
             VersionInstruction instruction);
 
-        ToolkitDefinition UnPack(IAssemblyMetadata metadata, IFile installer);
+        ToolkitDefinition UnPack(IRuntimeMetadata metadata, IFile installer);
     }
 }

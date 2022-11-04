@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
+using Automate.Common.Application;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using Microsoft.ApplicationInsights;
@@ -15,11 +15,12 @@ namespace Automate.CLI.Infrastructure.Recording
     {
         private const string AppInsightsConnectionSettingName = "ApplicationInsights:ConnectionString";
         private const string ApplicationInsightsMapNameFormat = "{0} CLI";
-        private static readonly string LocalTelemetryCachePath = Path.Combine("automate", "usage-cache");
+        private const string LocalTelemetryCachePath = "usage-cache";
         private readonly TelemetryClient client;
 
-        public ApplicationInsightsTelemetryClient(IConfiguration settings, CliAssemblyMetadata assemblyMetadata) : this(
-            CreateClient(settings, assemblyMetadata))
+        public ApplicationInsightsTelemetryClient(IConfiguration settings, IRuntimeMetadata metadata,
+            IFileSystemReaderWriter readerWriter) : this(
+            CreateClient(settings, metadata, readerWriter))
         {
         }
 
@@ -82,7 +83,7 @@ namespace Automate.CLI.Infrastructure.Recording
         }
 
         private static TelemetryClient CreateClient(IConfiguration settings,
-            IAssemblyMetadata assemblyMetadata)
+            IRuntimeMetadata metadata, IFileSystemReaderWriter readerWriter)
         {
             var connectionString = settings.GetValue<string>(AppInsightsConnectionSettingName, null);
 
@@ -97,27 +98,24 @@ namespace Automate.CLI.Infrastructure.Recording
             configuration.TelemetryChannel = channel;
 
             var telemetryClient = new TelemetryClient(configuration);
-            telemetryClient.Context.Component.Version = assemblyMetadata.RuntimeVersion.ToString();
-            telemetryClient.Context.Cloud.RoleName = CreateCloudRoleName(assemblyMetadata);
+            telemetryClient.Context.Component.Version = metadata.RuntimeVersion.ToString();
+            telemetryClient.Context.Cloud.RoleName = CreateCloudRoleName(metadata);
             telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
 
             return telemetryClient;
 
             string GetStoragePath()
             {
-                var path = Path.Combine(assemblyMetadata.InstallationPath, LocalTelemetryCachePath);
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                var path = readerWriter.MakeAbsolutePath(metadata.UserDataPath, LocalTelemetryCachePath);
+                readerWriter.EnsureDirectoryExists(path);
 
                 return path;
             }
         }
 
-        private static string CreateCloudRoleName(IAssemblyMetadata assemblyMetadata)
+        private static string CreateCloudRoleName(IRuntimeMetadata metadata)
         {
-            return string.Format(ApplicationInsightsMapNameFormat, assemblyMetadata.ProductName);
+            return string.Format(ApplicationInsightsMapNameFormat, metadata.ProductName);
         }
     }
 }

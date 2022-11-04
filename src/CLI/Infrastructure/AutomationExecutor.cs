@@ -19,23 +19,26 @@ namespace Automate.CLI.Infrastructure
         private readonly IFilePathResolver filePathResolver;
         private readonly IFileSystemReaderWriter fileSystem;
         private readonly ITextTemplatingEngine textTemplatingEngine;
+        private readonly IRuntimeMetadata metadata;
 
         public AutomationExecutor(IFilePathResolver filePathResolver,
             IFileSystemReaderWriter fileSystem,
             IDraftPathResolver draftPathResolver,
             ITextTemplatingEngine textTemplatingEngine,
-            IApplicationExecutor applicationExecutor)
+            IApplicationExecutor applicationExecutor, IRuntimeMetadata metadata)
         {
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
             fileSystem.GuardAgainstNull(nameof(fileSystem));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
             applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
+            metadata.GuardAgainstNull(nameof(metadata));
             this.filePathResolver = filePathResolver;
             this.fileSystem = fileSystem;
             this.draftPathResolver = draftPathResolver;
             this.textTemplatingEngine = textTemplatingEngine;
             this.applicationExecutor = applicationExecutor;
+            this.metadata = metadata;
         }
 
         public void Execute(CommandExecutionResult result)
@@ -49,7 +52,7 @@ namespace Automate.CLI.Infrastructure
             {
                 case AutomationType.CodeTemplateCommand:
                     new CodeTemplateCommandExecutor(this.filePathResolver, this.fileSystem, this.draftPathResolver,
-                            this.textTemplatingEngine)
+                            this.textTemplatingEngine, this.metadata)
                         .Execute(automation as CodeTemplateCommand, result);
                     break;
 
@@ -83,22 +86,25 @@ namespace Automate.CLI.Infrastructure
         private readonly IFilePathResolver filePathResolver;
         private readonly IFileSystemReaderWriter fileSystem;
         private readonly ITextTemplatingEngine textTemplatingEngine;
+        private readonly IRuntimeMetadata metadata;
 
         internal CodeTemplateCommandExecutor(
             IFilePathResolver filePathResolver,
             IFileSystemReaderWriter fileSystem,
             IDraftPathResolver draftPathResolver,
-            ITextTemplatingEngine textTemplatingEngine)
+            ITextTemplatingEngine textTemplatingEngine,
+            IRuntimeMetadata metadata)
         {
             filePathResolver.GuardAgainstNull(nameof(filePathResolver));
             fileSystem.GuardAgainstNull(nameof(fileSystem));
             draftPathResolver.GuardAgainstNull(nameof(draftPathResolver));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
-
+            metadata.GuardAgainstNull(nameof(metadata));
             this.filePathResolver = filePathResolver;
             this.fileSystem = fileSystem;
             this.draftPathResolver = draftPathResolver;
             this.textTemplatingEngine = textTemplatingEngine;
+            this.metadata = metadata;
         }
 
         public void Execute(CodeTemplateCommand command, CommandExecutionResult result)
@@ -120,7 +126,7 @@ namespace Automate.CLI.Infrastructure
                 InfrastructureMessages.CodeTemplateCommand_FilePathExpression_Description.Substitute(command.FilePath),
                 command.FilePath, result.ExecutableContext.Item);
             var destinationFullPath = destinationFilePath.StartsWith(CurrentDirectoryPrefix)
-                ? this.filePathResolver.CreatePath(Environment.CurrentDirectory,
+                ? this.filePathResolver.CreatePath(this.metadata.CurrentExecutionPath,
                     destinationFilePath.TrimStart(CurrentDirectoryPrefix).TrimStart('\\', '/'))
                 : destinationFilePath;
             var destinationFileExists = this.fileSystem.FileExists(destinationFullPath);

@@ -16,7 +16,7 @@ namespace Automate.Authoring.Application
     public class AuthoringApplication
     {
         private readonly IApplicationExecutor applicationExecutor;
-        private readonly IAssemblyMetadata assemblyMetadata;
+        private readonly IRuntimeMetadata metadata;
         private readonly IFilePathResolver fileResolver;
         private readonly IPatternToolkitPackager packager;
         private readonly IPatternPathResolver patternResolver;
@@ -27,7 +27,7 @@ namespace Automate.Authoring.Application
         public AuthoringApplication(IRecorder recorder, IPatternStore store, IFilePathResolver fileResolver,
             IPatternPathResolver patternResolver, IPatternToolkitPackager packager,
             ITextTemplatingEngine textTemplatingEngine, IApplicationExecutor applicationExecutor,
-            IAssemblyMetadata assemblyMetadata)
+            IRuntimeMetadata metadata)
         {
             recorder.GuardAgainstNull(nameof(recorder));
             store.GuardAgainstNull(nameof(store));
@@ -36,7 +36,7 @@ namespace Automate.Authoring.Application
             packager.GuardAgainstNull(nameof(packager));
             textTemplatingEngine.GuardAgainstNull(nameof(textTemplatingEngine));
             applicationExecutor.GuardAgainstNull(nameof(applicationExecutor));
-            assemblyMetadata.GuardAgainstNull(nameof(assemblyMetadata));
+            metadata.GuardAgainstNull(nameof(metadata));
             this.recorder = recorder;
             this.store = store;
             this.fileResolver = fileResolver;
@@ -44,7 +44,7 @@ namespace Automate.Authoring.Application
             this.packager = packager;
             this.textTemplatingEngine = textTemplatingEngine;
             this.applicationExecutor = applicationExecutor;
-            this.assemblyMetadata = assemblyMetadata;
+            this.metadata = metadata;
         }
 
         public string CurrentPatternId => this.store.GetCurrent()?.Id;
@@ -610,7 +610,7 @@ namespace Automate.Authoring.Application
         {
             var pattern = EnsureCurrentPatternExists();
 
-            return this.packager.PackAndExport(this.assemblyMetadata, pattern,
+            return this.packager.PackAndExport(this.metadata, pattern,
                 new VersionInstruction(versionInstruction, forceVersion));
         }
 

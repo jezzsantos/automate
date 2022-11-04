@@ -6,7 +6,7 @@ namespace Automate.Authoring.Domain
     public static class ToolkitDefinitionExtensions
     {
         public static ToolkitRuntimeVersionCompatibility GetCompatibility(this ToolkitDefinition toolkit,
-            IAssemblyMetadata metadata)
+            IRuntimeMetadata metadata)
         {
             if (toolkit.IsMachineAheadOfToolkit(metadata))
             {
@@ -20,7 +20,7 @@ namespace Automate.Authoring.Domain
             return ToolkitRuntimeVersionCompatibility.Compatible;
         }
 
-        private static bool IsMachineAheadOfToolkit(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+        private static bool IsMachineAheadOfToolkit(this ToolkitDefinition toolkit, IRuntimeMetadata metadata)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));
@@ -44,7 +44,7 @@ namespace Automate.Authoring.Domain
             return machineRuntimeVersion.Major > toolkitRuntimeVersion.Major;
         }
 
-        private static bool IsToolkitAheadOfMachine(this ToolkitDefinition toolkit, IAssemblyMetadata metadata)
+        private static bool IsToolkitAheadOfMachine(this ToolkitDefinition toolkit, IRuntimeMetadata metadata)
         {
             toolkit.GuardAgainstNull(nameof(toolkit));
             metadata.GuardAgainstNull(nameof(metadata));

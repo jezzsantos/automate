@@ -96,7 +96,7 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/BeforeFirstVersionSupportingRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var runtimeVersion = metadata.RuntimeVersion;
             var runtimeName = metadata.ProductName;
             this.setup.Should()
@@ -110,7 +110,7 @@ namespace CLI.IntegrationTests
             var location = GetFilePathInOutput("Assets/Toolkits/OlderRuntimeVersion.toolkit");
             this.setup.RunCommand($"{CommandLineApi.InstallCommandName} toolkit {location}");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var runtimeVersion = metadata.RuntimeVersion;
             var runtimeName = metadata.ProductName;
             this.setup.Should()

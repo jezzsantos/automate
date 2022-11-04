@@ -25,7 +25,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --collect-usage:false --output-structured");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var info = new StructuredMessage
             {
                 Message = OutputMessages.CommandLine_Output_Info,
@@ -61,7 +61,7 @@ namespace CLI.IntegrationTests
         {
             this.setup.RunCommand($"{CommandLineApi.InfoCommandName} --output-structured");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var info = new StructuredMessage
             {
                 Message = OutputMessages.CommandLine_Output_Info,
@@ -104,7 +104,7 @@ namespace CLI.IntegrationTests
             this.setup.RunCommand(
                 $"{CommandLineApi.InfoCommandName} --usage-correlation acorrelationid --output-structured");
 
-            var metadata = new CliAssemblyMetadata();
+            var metadata = new CliRuntimeMetadata();
             var info = new StructuredMessage
             {
                 Message = OutputMessages.CommandLine_Output_Info,

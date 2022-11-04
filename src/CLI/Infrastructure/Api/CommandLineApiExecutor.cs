@@ -64,7 +64,7 @@ namespace Automate.CLI.Infrastructure.Api
             authoring = CreateAuthoringApplication(container);
             runtime = CreateRuntimeApplication(container);
             HandlerBase.Initialise(outputMessages, recorder,
-                container.Resolve<IAssemblyMetadata>());
+                container.Resolve<IRuntimeMetadata>());
 
             if (IsAuthoringCommand(parseResult))
             {
@@ -236,7 +236,7 @@ namespace Automate.CLI.Infrastructure.Api
                 container.Resolve<IPatternStore>(), container.Resolve<IFilePathResolver>(),
                 container.Resolve<IPatternPathResolver>(), container.Resolve<IPatternToolkitPackager>(),
                 container.Resolve<ITextTemplatingEngine>(), container.Resolve<IApplicationExecutor>(),
-                container.Resolve<IAssemblyMetadata>());
+                container.Resolve<IRuntimeMetadata>());
         }
 
         private static RuntimeApplication CreateRuntimeApplication(IDependencyContainer container)
@@ -245,7 +245,7 @@ namespace Automate.CLI.Infrastructure.Api
                 container.Resolve<IToolkitStore>(), container.Resolve<IDraftStore>(),
                 container.Resolve<IFilePathResolver>(), container.Resolve<IPatternToolkitPackager>(),
                 container.Resolve<IDraftPathResolver>(), container.Resolve<IAutomationExecutor>(),
-                container.Resolve<IAssemblyMetadata>());
+                container.Resolve<IRuntimeMetadata>());
         }
 
         private static void WriteBanner()

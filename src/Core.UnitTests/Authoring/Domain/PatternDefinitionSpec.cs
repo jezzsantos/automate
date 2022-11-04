@@ -266,7 +266,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void WhenSyncRuntimeChangesAndNoRuntimeVersion_ThenDoesNothing()
         {
             var installedMachineVersion = MachineConstants.GetRuntimeVersion();
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(m => m.RuntimeVersion)
                 .Returns(installedMachineVersion.NextMajor());
 #if TESTINGONLY
@@ -283,7 +283,7 @@ namespace Core.UnitTests.Authoring.Domain
         public void WhenSyncRuntimeChangesAndRuntimeVersionSameAsMachine_ThenDoesNothing()
         {
             var installedMachineVersion = MachineConstants.GetRuntimeVersion();
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(m => m.RuntimeVersion)
                 .Returns(installedMachineVersion);
 
@@ -299,7 +299,7 @@ namespace Core.UnitTests.Authoring.Domain
         {
             var installedMachineVersion = MachineConstants.GetRuntimeVersion();
             var nextMinor = installedMachineVersion.NextMinor();
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(m => m.RuntimeVersion)
                 .Returns(nextMinor);
 
@@ -315,7 +315,7 @@ namespace Core.UnitTests.Authoring.Domain
         {
             var installedMachineVersion = MachineConstants.GetRuntimeVersion();
             var nextMajor = installedMachineVersion.NextMajor();
-            var metadata = new Mock<IAssemblyMetadata>();
+            var metadata = new Mock<IRuntimeMetadata>();
             metadata.Setup(m => m.RuntimeVersion)
                 .Returns(nextMajor);
 
