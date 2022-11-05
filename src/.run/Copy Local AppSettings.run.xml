@@ -1,8 +1,0 @@
-﻿<component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Copy Local AppSettings" type="PowerShellRunType" factoryName="PowerShell"
-                   scriptUrl="CLI/UpdateAppSettings.ps1" workingDirectory="$SolutionDir$"
-                   executablePath="$PROJECT_DIR$/../../../../../WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe">
-        <envs />
-        <method v="2" />
-    </configuration>
-</component>
