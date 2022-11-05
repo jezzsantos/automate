@@ -18,7 +18,7 @@ namespace CLI.UnitTests.Infrastructure
             var result = CliRuntimeMetadata.CalculateLocalStatePath(dotnetToolsPath);
 
             result.Should().Be(Path.Combine(Path.GetFullPath(dotnetToolsPath),
-                $"_{CliRuntimeMetadata.RootPersistencePath}"));
+                $"_{CliRuntimeMetadata.LocalSubDirectoryDataPath}"));
         }
 
         [Fact]
@@ -26,7 +26,8 @@ namespace CLI.UnitTests.Infrastructure
         {
             var result = CliRuntimeMetadata.CalculateLocalStatePath(Environment.CurrentDirectory);
 
-            result.Should().Be(Path.Combine(Environment.CurrentDirectory, CliRuntimeMetadata.RootPersistencePath));
+            result.Should()
+                .Be(Path.Combine(Environment.CurrentDirectory, CliRuntimeMetadata.LocalSubDirectoryDataPath));
         }
     }
 }

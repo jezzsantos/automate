@@ -9,8 +9,9 @@ namespace Automate.CLI.Infrastructure
 {
     public class CliRuntimeMetadata : IRuntimeMetadata
     {
-        internal const string RootPersistencePath = "automate";
-        internal const string DotNetToolsInstallationPath = "%USERPROFILE%/.dotnet/tools";
+        internal const string LocalSubDirectoryDataPath = "automate";
+        internal static readonly string DotNetToolsInstallationPath =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".dotnet/tools");
 
         public SemVersion RuntimeVersion
         {
@@ -48,18 +49,18 @@ namespace Automate.CLI.Infrastructure
 
         public string UserDataPath =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                RootPersistencePath);
+                LocalSubDirectoryDataPath);
 
         public string LocalStateDataPath => CalculateLocalStatePath(CurrentExecutionPath);
 
         internal static string CalculateLocalStatePath(string currentDirectory)
         {
             var currentDirectoryPath = Path.GetFullPath(currentDirectory);
-            var dotnetToolsPath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(DotNetToolsInstallationPath));
+            var dotnetToolsPath = Path.GetFullPath(DotNetToolsInstallationPath);
 
             return currentDirectoryPath.EqualsIgnoreCase(dotnetToolsPath)
-                ? Path.Combine(dotnetToolsPath, $"_{RootPersistencePath}")
-                : Path.Combine(currentDirectoryPath, RootPersistencePath);
+                ? Path.Combine(dotnetToolsPath, $"_{LocalSubDirectoryDataPath}")
+                : Path.Combine(currentDirectoryPath, LocalSubDirectoryDataPath);
         }
     }
 }
