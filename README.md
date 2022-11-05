@@ -1,7 +1,6 @@
 [![Build and Test](https://github.com/jezzsantos/automate/actions/workflows/build.yml/badge.svg)](https://github.com/jezzsantos/automate/actions/workflows/build.yml)
 __[![Nuget Tool](https://img.shields.io/nuget/v/automate?style=plastic&label=nuget)](https://www.nuget.org/packages/automate)
 __[![Discord](https://img.shields.io/badge/automate-%237289DA.svg?style=plastic&logo=discord&logoColor=white)](https://discord.gg/uN8vxaGxRT)
-__![Presence](https://dcbadge.vercel.app/api/shield/984584859009814608?style=plastic)
 
       ┌─┐┬ ┬┌┬┐┌─┐┌┬┐┌─┐┌┬┐┌─┐
       ├─┤│ │ │ │ ││││├─┤ │ ├┤ 
