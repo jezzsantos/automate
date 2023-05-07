@@ -16,9 +16,9 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryType>GitHub</RepositoryType>
         <Company>$(Authors)</Company>
-        <Copyright>Copyright 2022</Copyright>
+        <Copyright>Copyright 2023</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <VersionPrefix>1.1.0</VersionPrefix>
+        <VersionPrefix>1.2.0</VersionPrefix>
         <VersionSuffix />
         <PackageVersion>$(VersionPrefix)$(VersionSuffix)</PackageVersion>
         <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
