@@ -126,10 +126,20 @@ namespace Automate.Authoring.Application
             });
         }
 
-        public static void MeasureCodeTemplateEdited(this IRecorder recorder, PatternDefinition pattern,
+        public static void MeasureCodeTemplateContentEdited(this IRecorder recorder, PatternDefinition pattern,
             CodeTemplate codeTemplate)
         {
             recorder.MeasureEvent("pattern.codetemplate.edited", new Dictionary<string, string>
+            {
+                { "PatternId", pattern.Id.AnonymiseIdentifier() },
+                { "CodeTemplateId", codeTemplate.Id.AnonymiseIdentifier() }
+            });
+        }
+
+        public static void MeasureCodeTemplateContentViewed(this IRecorder recorder, PatternDefinition pattern,
+            CodeTemplate codeTemplate)
+        {
+            recorder.MeasureEvent("pattern.codetemplate.viewed", new Dictionary<string, string>
             {
                 { "PatternId", pattern.Id.AnonymiseIdentifier() },
                 { "CodeTemplateId", codeTemplate.Id.AnonymiseIdentifier() }

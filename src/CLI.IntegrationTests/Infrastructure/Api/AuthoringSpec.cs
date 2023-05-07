@@ -10,7 +10,7 @@ using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 
-namespace CLI.IntegrationTests
+namespace CLI.IntegrationTests.Infrastructure.Api
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class AuthoringSpec : IDisposable
@@ -630,8 +630,32 @@ namespace CLI.IntegrationTests
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_CodeTemplatedEdited.SubstituteTemplate(codeTemplate.Name,
+                    OutputMessages.CommandLine_Output_CodeTemplateContentEdited.SubstituteTemplate(codeTemplate.Name,
                         codeTemplate.Id, this.setup.Pattern.Id, testApplicationName, codeTemplateLocation));
+        }
+
+        [Fact]
+        public void WhenViewCodeTemplate_ThenViewsTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            var codeTemplate = this.setup.Pattern.CodeTemplates.First();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ViewCommandName} codetemplate \"ATemplateName\"");
+
+            var codeTemplateLocation =
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
+            var content =
+                File.ReadAllText(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,
+                    "Assets/CodeTemplates/code1.code")));
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_CodeTemplateContentViewed.SubstituteTemplate(codeTemplate.Name,
+                        codeTemplate.Id, this.setup.Pattern.Id, codeTemplateLocation, content));
         }
 
         [Fact]

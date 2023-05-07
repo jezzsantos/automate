@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Automate.Authoring.Domain;
 using Automate.Authoring.Infrastructure;
@@ -16,8 +17,8 @@ namespace Automate.Authoring.Application
     public class AuthoringApplication
     {
         private readonly IApplicationExecutor applicationExecutor;
-        private readonly IRuntimeMetadata metadata;
         private readonly IFilePathResolver fileResolver;
+        private readonly IRuntimeMetadata metadata;
         private readonly IPatternToolkitPackager packager;
         private readonly IPatternPathResolver patternResolver;
         private readonly IRecorder recorder;
@@ -279,8 +280,24 @@ namespace Automate.Authoring.Application
                         .Substitute(editorPath, result.Error));
             }
 
-            this.recorder.MeasureCodeTemplateEdited(pattern, codeTemplate);
+            this.recorder.MeasureCodeTemplateContentEdited(pattern, codeTemplate);
             return (target, codeTemplate, location);
+        }
+
+        public (IPatternElement Parent, CodeTemplate Template, string Location, string content) ViewCodeTemplate(
+            string templateName, string parentExpression)
+        {
+            templateName.GuardAgainstNullOrEmpty(nameof(templateName));
+
+            var pattern = EnsureCurrentPatternExists();
+            var target = ResolveTargetElement(pattern, parentExpression);
+
+            var codeTemplate = target.FindCodeTemplateByName(templateName);
+            var location = this.store.GetCodeTemplateLocation(pattern, codeTemplate);
+            var content = File.ReadAllText(location);
+
+            this.recorder.MeasureCodeTemplateContentViewed(pattern, codeTemplate);
+            return (target, codeTemplate, location, content);
         }
 
         public (IPatternElement Parent, CodeTemplate Template) DeleteCodeTemplate(string templateName,

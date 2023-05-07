@@ -306,7 +306,7 @@ namespace Automate.CLI.Infrastructure.Api
             internal static void EditCodeTemplate(string templateName, string with, string args, string asChildOf)
             {
                 var (parent, template, location) = authoring.EditCodeTemplate(templateName, with, args, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CodeTemplatedEdited, template.Name, template.Id,
+                Output(OutputMessages.CommandLine_Output_CodeTemplateContentEdited, template.Name, template.Id,
                     parent.Id, with, location);
             }
 
@@ -338,6 +338,13 @@ namespace Automate.CLI.Infrastructure.Api
                 Output(OutputMessages.CommandLine_Output_CodeTemplateTested,
                     templateName,
                     test.Template.Id, test.Output);
+            }
+
+            internal static void ViewCodeTemplate(string templateName, string asChildOf, bool outputStructured)
+            {
+                var (parent, template, location, content) = authoring.ViewCodeTemplate(templateName, asChildOf);
+                Output(OutputMessages.CommandLine_Output_CodeTemplateContentViewed, template.Name, template.Id,
+                    parent.Id, location, content);
             }
 
             internal static void AddCodeTemplateCommand(string codeTemplateName, string name, bool isOneOff,

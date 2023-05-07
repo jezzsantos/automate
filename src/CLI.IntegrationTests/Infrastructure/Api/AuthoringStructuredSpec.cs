@@ -7,7 +7,7 @@ using Automate.CLI.Infrastructure.Api;
 using Automate.Common.Extensions;
 using Xunit;
 
-namespace CLI.IntegrationTests
+namespace CLI.IntegrationTests.Infrastructure.Api
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class AuthoringStructuredSpec : IDisposable

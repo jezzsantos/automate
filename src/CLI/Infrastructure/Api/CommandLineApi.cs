@@ -193,7 +193,7 @@ namespace Automate.CLI.Infrastructure.Api
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCodeTemplateWithCommand)),
-                new Command("codetemplate", "Edits a code template in an editor")
+                new Command("codetemplate", "Edits the content of a code template with the specified editor program")
                 {
                     new Argument("TemplateName", "The name of the code template"),
                     new Option("--with", "Name of or full path to an application to edit the code template",
@@ -426,6 +426,12 @@ namespace Automate.CLI.Infrastructure.Api
                     new Option("--all", "Include additional configuration, like automation and code templates",
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ViewPattern)),
+                new Command("codetemplate", "View the template path and the content of a code template")
+                {
+                    new Argument("TemplateName", "The name of the code template"),
+                    new Option("--aschildof", "The expression of the element/collection of the code template",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne)
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ViewCodeTemplate)),
                 new Command(ToolkitSubCommandName, "View the configuration of the current toolkit")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",

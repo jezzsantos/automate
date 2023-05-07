@@ -371,19 +371,40 @@ automate edit add-codetemplate "<FILEPATH>" --aschildof "{<ANEXPRESSION>}"
     automate edit add-codetemplate "C:/projects/src/afilename.ext" --name "ATemplateName" --aschildof "{AnElementName}"
     ```
 
-### Editing code templates
+### Viewing code template content
+
+To view the contents of an existing code template:
+``` batch
+automate view codetemplate "<TEMPLATENAME>" --aschildof "{<ANEXPRESSION>}"
+```
+
+- The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
+
+- The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are deleting the code template from the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
+
+!!! example
+    On the pattern (On Windows):
+    ``` batch
+    automate view codetemplate "ATemplateName"
+    ```
+    On an element (On Windows):
+    ``` batch
+    automate view codetemplate "ATemplateName" --aschildof "{AnElementName}"
+    ```
+
+### Editing code template content
 
 !!! abstract "Concept"
     Once a code template has been added to a pattern it will then need to be annotated with [Templating Expressions](reference.md#templating-expressions). The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).
 
 To edit the contents of an existing code template:
 ``` batch
-automate edit codetemplate "<TEMPLATENAME>" --with "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
+automate edit codetemplate "<TEMPLATENAME>" --with "<EDITORNAME>" --aschildof "{<ANEXPRESSION>}"
 ```
 
 - The `TEMPLATENAME` is the name of an existing code template on the `--aschildof` element/collection.
 
-- The `--with "<APPLICATIONNAME>"` is either the name of an editor application (i.e. notepad.exe), or it is the absolute path to the editor application. This application is expected to take, as the first argument, the absolute path to the code template (on disk).
+- The `--with "<EDITORNAME>"` is either the name of an editor application (i.e. notepad.exe), or it is the absolute path to the editor application. The specified program is expected to take, as its first argument, the absolute path to the code template (on disk).
 
 - The `--args` is an optional set of arguments to pass the application. These arguments will be added to the application before the absolute path to the code template (on disk).
 

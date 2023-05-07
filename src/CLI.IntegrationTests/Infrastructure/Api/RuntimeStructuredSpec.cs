@@ -10,7 +10,7 @@ using Automate.Common.Extensions;
 using Automate.Runtime.Domain;
 using Xunit;
 
-namespace CLI.IntegrationTests
+namespace CLI.IntegrationTests.Infrastructure.Api
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class RuntimeStructuredSpec : IDisposable

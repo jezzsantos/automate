@@ -62,7 +62,7 @@
     <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
         <value>Added Code Template: '{Name}' (ID: '{Id}') to element '{ParentId}', from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
     </data>
-    <data name="CommandLine_Output_CodeTemplatedEdited" xml:space="preserve">
+    <data name="CommandLine_Output_CodeTemplateContentEdited" xml:space="preserve">
         <value>Editing Code Template: '{Name}' (ID: '{Id}') on element '{ParentId}', with '{ApplicationPath}' from '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateDeleted" xml:space="preserve">
@@ -80,6 +80,10 @@
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandTested" xml:space="preserve">
         <value>Code Template Command '{Name}' (ID: '{CommandId}') target path resolves to:
+{Output}</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateContentViewed" xml:space="preserve">
+        <value>Viewing Code Template: '{Name}' (ID: '{Id}') on element '{ParentId}', for '{EditorPath}':
 {Output}</value>
     </data>
     <data name="CommandLine_Output_TextTemplatingExpressionReference" xml:space="preserve">

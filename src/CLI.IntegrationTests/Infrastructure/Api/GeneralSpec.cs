@@ -1,16 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using Automate.CLI;
 using Automate.CLI.Infrastructure;
 using Automate.CLI.Infrastructure.Api;
 using Automate.Common.Extensions;
 using FluentAssertions;
 using Xunit;
-#if TESTINGONLY
-using System.Collections.Generic;
-using System.IO;
-using Automate.CLI;
-#endif
 
-namespace CLI.IntegrationTests
+namespace CLI.IntegrationTests.Infrastructure.Api
 {
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class GeneralSpec : IDisposable

@@ -188,20 +188,30 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, with &apos;{ApplicationPath}&apos; from &apos;{EditorPath}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateContentEdited {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateContentEdited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viewing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, for &apos;{EditorPath}&apos;:
+        ///{Output}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateContentViewed {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateContentViewed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to element &apos;{ParentId}&apos;, from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplatedAdded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CodeTemplatedAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, with &apos;{ApplicationPath}&apos; from &apos;{EditorPath}&apos;.
-        /// </summary>
-        internal static string CommandLine_Output_CodeTemplatedEdited {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CodeTemplatedEdited", resourceCulture);
             }
         }
         
