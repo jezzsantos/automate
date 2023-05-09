@@ -33,7 +33,6 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             var pattern = this.setup.Pattern;
             var toolkit = this.setup.Toolkit;
             var draft = this.setup.Draft;
-
             var structuredOutput = new StructuredOutput
             {
                 Info = new List<string>(),
@@ -164,7 +163,6 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
             this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
             this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
-
             this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --install --asversion 2.0.0");
 
             this.setup.RunCommand($"{CommandLineApi.ListCommandName} all --output-structured");
@@ -172,7 +170,6 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             var pattern = this.setup.Pattern;
             var toolkit = this.setup.Toolkit;
             var draft = this.setup.Draft;
-
             var structuredOutput = new StructuredOutput
             {
                 Info = new List<string>(),
@@ -484,6 +481,7 @@ namespace CLI.IntegrationTests.Infrastructure.Api
         public void WhenAddAttribute_ThenAddsAttribute()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-attribute AProperty --isrequired true --defaultvalueis achoice2 --isoneof \"achoice1;achoice2;achoice3\"  --output-structured");
 
@@ -558,6 +556,7 @@ namespace CLI.IntegrationTests.Infrastructure.Api
         public void WhenAddElement_ThenAddsElement()
         {
             this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
             this.setup.RunCommand(
                 $"{CommandLineApi.EditCommandName} add-element AnElement --describedas adescription --output-structured");
 
@@ -624,6 +623,418 @@ namespace CLI.IntegrationTests.Infrastructure.Api
                             { "AutoCreate", false },
                             { "Cardinality", ElementCardinality.One.ToString() },
                             { "IsCollection", false }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenViewCodeTemplate_ThenViewsCodeTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.ViewCommandName} codetemplate \"ATemplateName\"  --output-structured");
+
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var codeTemplateLocation =
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>(),
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CodeTemplateContentViewed,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", codeTemplate.Name },
+                            { "TemplateId", codeTemplate.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "OriginalFilePath", codeTemplate.Metadata.OriginalFilePath },
+                            { "OriginalFileExtension", codeTemplate.Metadata.OriginalFileExtension },
+                            { "EditorPath", codeTemplateLocation },
+                            { "Output", "some code" }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplate_ThenAddsCodeTemplate()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName --output-structured");
+
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var codeTemplateLocation =
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CodeTemplateAdded_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", codeTemplate.Name },
+                            { "TemplateId", codeTemplate.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "OriginalFilePath", codeTemplate.Metadata.OriginalFilePath },
+                            { "OriginalFileExtension", codeTemplate.Metadata.OriginalFileExtension },
+                            { "EditorPath", codeTemplateLocation }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateWithCommand_ThenAddsCodeTemplateAndCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-with-command \"Assets/CodeTemplates/code1.code\" --targetpath ~/afilepath --name ATemplateName --output-structured");
+
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var codeTemplateLocation =
+                this.setup.PatternStore.GetCodeTemplateLocation(this.setup.Pattern, codeTemplate.Id, "code");
+            var command = this.setup.Pattern.Automation.Single();
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages
+                            .CommandLine_Output_CodeTemplateWithCommandAdded_CodeTemplate_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "CodeTemplate", new Dictionary<string, object>
+                                {
+                                    { "Name", codeTemplate.Name },
+                                    { "TemplateId", codeTemplate.Id },
+                                    { "ParentId", this.setup.Pattern.Id },
+                                    { "OriginalFilePath", codeTemplate.Metadata.OriginalFilePath },
+                                    { "OriginalFileExtension", codeTemplate.Metadata.OriginalFileExtension },
+                                    { "EditorPath", codeTemplateLocation }
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CodeTemplateWithCommandAdded_Command_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            {
+                                "Command", new Dictionary<string, object>
+                                {
+                                    { "Name", command.Name },
+                                    { "CommandId", command.Id },
+                                    { "ParentId", this.setup.Pattern.Id },
+                                    { "Type", command.Type.ToString() },
+                                    {
+                                        "Metadata", new Dictionary<string, object>
+                                        {
+                                            { "CodeTemplateId", codeTemplate.Id },
+                                            { "IsOneOff", false },
+                                            { "FilePath", "~/afilepath" }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenAddCodeTemplateCommand_ThenAddsCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath --isoneoff --name ACommandName --output-structured");
+
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var command = this.setup.Pattern.Automation.Single();
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandAdded_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", command.Name },
+                            { "CommandId", command.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", command.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "CodeTemplateId", codeTemplate.Id },
+                                    { "IsOneOff", true },
+                                    { "FilePath", "~/afilepath" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenUpdateCodeTemplateCommand_ThenUpdatesCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate \"Assets/CodeTemplates/code1.code\" --name ATemplateName");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-codetemplate-command \"ATemplateName\" --targetpath ~/afilepath --isoneoff --name ACommandName --output-structured");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-codetemplate-command \"ACommandName\" --targetpath ~/anewfilepath --isoneoff:false --name \"ANewCommandName\" --output-structured");
+
+            var codeTemplate = this.setup.Pattern.CodeTemplates.Single();
+            var command = this.setup.Pattern.Automation.Single();
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandUpdated_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "ANewCommandName" },
+                            { "CommandId", command.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", command.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "CodeTemplateId", codeTemplate.Id },
+                                    { "IsOneOff", false },
+                                    { "FilePath", "~/anewfilepath" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenAddCliCommand_ThenAddsCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"anapplicationname\" --arguments \"anarg1 anarg2 anarg3\" --output-structured");
+
+            var command = this.setup.Pattern.Automation.Single();
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandAdded_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", command.Name },
+                            { "CommandId", command.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", command.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "ApplicationName", "anapplicationname" },
+                                    { "Arguments", "anarg1 anarg2 anarg3" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenUpdateCliCommand_ThenUpdatesCommand()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"anapplicationname\" --arguments \"anarg1 anarg2 anarg3\" --output-structured");
+            var command = this.setup.Pattern.Automation.Single();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-cli-command \"{command.Name}\" --app \"anewapplicationname\" --arguments \"anarg4 anarg5 anarg6\" --name \"ANewCommandName\" --output-structured");
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_CommandUpdated_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "ANewCommandName" },
+                            { "CommandId", command.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", command.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "ApplicationName", "anewapplicationname" },
+                                    { "Arguments", "anarg4 anarg5 anarg6" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenAddLaunchPoint_ThenAddsLaunchPoint()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"anapplicationname\" --arguments \"anarg1 anarg2 anarg3\"");
+            var command = this.setup.Pattern.Automation.Single();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint \"{command.Id}\" --output-structured");
+
+            var launchPoint = this.setup.Pattern.Automation.Last();
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_LaunchPointAdded_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", launchPoint.Name },
+                            { "LaunchPointId", launchPoint.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", launchPoint.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "CommandIds", command.Id }
+                                }
+                            }
+                        }
+                    }
+                }
+            }.ToJson();
+            this.setup.Should().DisplayNoError();
+            this.setup.Should().DisplayOutput(structuredOutput);
+        }
+
+        [Fact]
+        public void WhenUpdateLaunchPoint_ThenUpdatesLaunchPoint()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"anapplicationname\" --arguments \"anarg1 anarg2 anarg3\"");
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-cli-command \"anapplicationname\" --arguments \"anarg1 anarg2 anarg3\"");
+            var command1 = this.setup.Pattern.Automation.First();
+            var command2 = this.setup.Pattern.Automation.Last();
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} add-command-launchpoint \"{command1.Id}\" --output-structured");
+            var launchPoint = this.setup.Pattern.Automation.Last();
+
+            this.setup.RunCommand(
+                $"{CommandLineApi.EditCommandName} update-command-launchpoint \"{launchPoint.Name}\" --add \"{command2.Id}\" --remove \"{command1.Id}\"  --name \"ANewLaunchPointName\" --output-structured");
+
+            var structuredOutput = new StructuredOutput
+            {
+                Info = new List<string>
+                {
+                    $"Information: {OutputMessages.CommandLine_Output_Preamble_CurrentPatternInUse.SubstituteTemplate("APattern", "0.0.0")}"
+                },
+                Output = new List<StructuredMessage>
+                {
+                    new()
+                    {
+                        Message = OutputMessages.CommandLine_Output_LaunchPointUpdated_ForStructured,
+                        Values = new Dictionary<string, object>
+                        {
+                            { "Name", "ANewLaunchPointName" },
+                            { "LaunchPointId", launchPoint.Id },
+                            { "ParentId", this.setup.Pattern.Id },
+                            { "Type", launchPoint.Type.ToString() },
+                            {
+                                "Metadata", new Dictionary<string, object>
+                                {
+                                    { "CommandIds", command2.Id }
+                                }
+                            }
                         }
                     }
                 }

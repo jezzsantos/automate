@@ -168,6 +168,15 @@ namespace Automate.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This launch point cannot be left without any commands.
+        /// </summary>
+        internal static string CommandLaunchPoint_NoCommandIds {
+            get {
+                return ResourceManager.GetString("CommandLaunchPoint_NoCommandIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumerator is before or after the collection.
         /// </summary>
         internal static string DictionaryEntryEnumerator_OutOfRange {

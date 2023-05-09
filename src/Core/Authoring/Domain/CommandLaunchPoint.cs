@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 
@@ -32,7 +33,7 @@ namespace Automate.Authoring.Domain
         }
 
         public IReadOnlyList<string> CommandIds => this.automation
-            .Metadata[nameof(CommandIds)].ToString()
+            .Metadata.GetValueOrDefault(nameof(CommandIds), string.Empty).ToString()
             .SafeSplit(CommandIdDelimiter).ToList();
 
         public static CommandLaunchPoint FromAutomation(Automation automation)
@@ -57,11 +58,46 @@ namespace Automate.Authoring.Domain
             var updated = new List<string>(CommandIds);
             commandIds.ForEach(commandId =>
             {
-                if (!CommandIds.Contains(commandId))
+                if (!updated.Contains(commandId))
                 {
                     updated.Add(commandId);
                 }
             });
+            this.automation.UpdateMetadata(nameof(CommandIds), updated.Join(CommandIdDelimiter));
+        }
+
+        public void ChangeCommandIds(List<string> commandIdsToAdd, List<string> commandIdsToRemove)
+        {
+            commandIdsToAdd.GuardAgainstNull(nameof(commandIdsToAdd));
+            commandIdsToRemove.GuardAgainstNull(nameof(commandIdsToRemove));
+
+            if (commandIdsToAdd.HasNone()
+                && commandIdsToRemove.HasNone())
+            {
+                return;
+            }
+
+            var updated = new List<string>(CommandIds);
+            commandIdsToRemove.ForEach(commandId =>
+            {
+                if (updated.Contains(commandId))
+                {
+                    updated.Remove(commandId);
+                }
+            });
+            commandIdsToAdd.ForEach(commandId =>
+            {
+                if (!updated.Contains(commandId))
+                {
+                    updated.Add(commandId);
+                }
+            });
+
+            if (updated.Count == 0)
+            {
+                throw new AutomateException(ExceptionMessages.CommandLaunchPoint_NoCommandIds);
+            }
+
             this.automation.UpdateMetadata(nameof(CommandIds), updated.Join(CommandIdDelimiter));
         }
 
@@ -70,7 +106,7 @@ namespace Automate.Authoring.Domain
             commandId.GuardAgainstNullOrEmpty(nameof(commandId));
 
             var updated = new List<string>(CommandIds);
-            if (CommandIds.Contains(commandId))
+            if (updated.Contains(commandId))
             {
                 updated.Remove(commandId);
             }

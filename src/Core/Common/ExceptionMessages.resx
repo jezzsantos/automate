@@ -102,6 +102,9 @@
     <data name="PatternElement_UnknownPath" xml:space="preserve">
         <value>This element does not have a path</value>
     </data>
+    <data name="CommandLaunchPoint_NoCommandIds" xml:space="preserve">
+        <value>This launch point cannot be left without any commands</value>
+    </data>
     <data name="AuthoringApplication_NoCurrentPattern" xml:space="preserve">
         <value>Pattern does not yet exist</value>
     </data>

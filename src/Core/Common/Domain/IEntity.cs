@@ -55,9 +55,9 @@ namespace Automate.Common.Domain
 
         CodeTemplate DeleteCodeTemplate(string name, bool includeReferencingAutomation);
 
-        Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string targetPath);
+        Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string filePath);
 
-        Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string targetPath);
+        Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath);
 
         public void DeleteCodeTemplateCommand(string id, bool includeReferencingAutomation);
 
@@ -71,8 +71,8 @@ namespace Automate.Common.Domain
 
         Automation AddCommandLaunchPoint(string name, List<string> commandIds, IPatternElement sourceElement);
 
-        Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
-            IPatternElement sourceElement);
+        Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> addCommandIds,
+            List<string> removeCommandIds, IPatternElement sourceElement);
 
         public void DeleteCommandLaunchPoint(string id);
 

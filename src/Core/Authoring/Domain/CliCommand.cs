@@ -26,9 +26,11 @@ namespace Automate.Authoring.Domain
             this.automation = automation;
         }
 
-        public string ApplicationName => this.automation.Metadata[nameof(ApplicationName)].ToString();
+        public string ApplicationName => this.automation.Metadata
+            .GetValueOrDefault(nameof(ApplicationName), string.Empty)?.ToString();
 
-        public string Arguments => this.automation.Metadata[nameof(Arguments)]?.ToString();
+        public string Arguments =>
+            this.automation.Metadata.GetValueOrDefault(nameof(Arguments), string.Empty)?.ToString();
 
         public static CliCommand FromAutomation(Automation automation)
         {

@@ -59,17 +59,23 @@
         <value>Editable patterns:
 {Patterns}</value>
     </data>
-    <data name="CommandLine_Output_CodeTemplatedAdded" xml:space="preserve">
-        <value>Added Code Template: '{Name}' (ID: '{Id}') to element '{ParentId}', from: '{FilePath}'. Contents can be edited in: '{EditorPath}'</value>
+    <data name="CommandLine_Output_CodeTemplateAdded" xml:space="preserve">
+        <value>Added Code Template: '{Name}' (ID: '{TemplateId}') to element '{ParentId}', from: '{OriginalFilePath}'. Contents can be edited in: '{EditorPath}'</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateAdded_ForStructured" xml:space="preserve">
+        <value>Added Code Template: '{Name}' (ID: '{TemplateId}') to element '{ParentId}', from: '{OriginalFilePath}' with extension '{OriginalFileExtension}'. Contents can be edited in: '{EditorPath}'</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateWithCommandAdded_CodeTemplate_ForStructured" xml:space="preserve">
+        <value>Added Code Template: {CodeTemplate}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateContentEdited" xml:space="preserve">
-        <value>Editing Code Template: '{Name}' (ID: '{Id}') on element '{ParentId}', with '{ApplicationPath}' from '{EditorPath}'</value>
+        <value>Editing Code Template: '{Name}' (ID: '{TemplateId}') on element '{ParentId}', with '{ApplicationPath}' from '{EditorPath}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateDeleted" xml:space="preserve">
-        <value>Deleted Code Template: '{Name}' (ID: '{Id}') from element '{ParentId}'</value>
+        <value>Deleted Code Template: '{Name}' (ID: '{TemplateId}') from element '{ParentId}'</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTested" xml:space="preserve">
-        <value>Code Template '{Name}' (ID: '{Id}') outputs:
+        <value>Code Template '{Name}' (ID: '{TemplateId}') outputs:
 {Output}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateTestImported" xml:space="preserve">
@@ -83,7 +89,7 @@
 {Output}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateContentViewed" xml:space="preserve">
-        <value>Viewing Code Template: '{Name}' (ID: '{Id}') on element '{ParentId}', for '{EditorPath}':
+        <value>Viewing Code Template: '{Name}' (ID: '{TemplateId}') on element '{ParentId}', originally: '{OriginalFilePath}' with extension: '{OriginalFileExtension}', with content from '{EditorPath}':
 {Output}</value>
     </data>
     <data name="CommandLine_Output_TextTemplatingExpressionReference" xml:space="preserve">
@@ -149,28 +155,43 @@
         <value>Deleted Collection: '{Name}' (ID: '{ElementId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandAdded" xml:space="preserve">
-        <value>Added Code Template Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}'</value>
+        <value>Added Code Template Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}', successfully</value>
+    </data>
+    <data name="CommandLine_Output_CommandAdded_ForStructured" xml:space="preserve">
+        <value>Added Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}', successfully, with: type {Type}, and metadata {Metadata}</value>
+    </data>
+    <data name="CommandLine_Output_CodeTemplateWithCommandAdded_Command_ForStructured" xml:space="preserve">
+        <value>Added Code Template Command: {Command}</value>
+    </data>
+    <data name="CommandLine_Output_CommandUpdated_ForStructured" xml:space="preserve">
+        <value>Updated Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}', successfully, with: type {Type}, and metadata {Metadata}</value>
     </data>
     <data name="CommandLine_Output_CodeTemplateCommandUpdated" xml:space="preserve">
-        <value>Updated Code Template Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', with path: {FilePath}, and OneOff: {OneOff}</value>
+        <value>Updated Code Template Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', successfully, with path: {FilePath}, and OneOff: {OneOff}</value>
     </data>
     <data name="CommandLine_Output_CliCommandAdded" xml:space="preserve">
-        <value>Added CLI Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}'</value>
+        <value>Added CLI Command: '{Name}' (ID: '{CommandId}') to element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_CliCommandUpdated" xml:space="preserve">
-        <value>Updated CLI Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', with app: {ApplicationName}, and Arguments: {Arguments}</value>
+        <value>Updated CLI Command '{Name}' (ID: '{CommandId}') on element '{ParentId}', successfully, with app: {ApplicationName}, and Arguments: {Arguments}</value>
     </data>
     <data name="CommandLine_Output_CommandDeleted" xml:space="preserve">
-        <value>Deleted Command: '{Name}' (ID: '{CommandId}') from element '{ParentId}'</value>
+        <value>Deleted Command: '{Name}' (ID: '{CommandId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_LaunchPointAdded" xml:space="preserve">
-        <value>Added Launch Point '{Name}' (ID: '{LaunchPointId}') to element '{ParentId}', for commands: {Commands}</value>
+        <value>Added Launch Point '{Name}' (ID: '{LaunchPointId}') to element '{ParentId}', successfully, for commands: {CommandIds}</value>
+    </data>
+    <data name="CommandLine_Output_LaunchPointAdded_ForStructured" xml:space="preserve">
+        <value>Added Launch Point '{Name}' (ID: '{LaunchPointId}') to element '{ParentId}', successfully, with: type {Type}, and metadata {Metadata}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointUpdated" xml:space="preserve">
-        <value>Updated Launch Point '{Name}' (ID: '{LaunchPointId}') on element '{ParentId}', with commands: {Commands}</value>
+        <value>Updated Launch Point '{Name}' (ID: '{LaunchPointId}') on element '{ParentId}', successfully, with commands: {CommandIds}</value>
+    </data>
+    <data name="CommandLine_Output_LaunchPointUpdated_ForStructured" xml:space="preserve">
+        <value>Updated Launch Point '{Name}' (ID: '{LaunchPointId}') on element '{ParentId}', successfully, with: type {Type}, and metadata {Metadata}</value>
     </data>
     <data name="CommandLine_Output_LaunchPointDeleted" xml:space="preserve">
-        <value>Deleted Launch Point '{Name}' (ID: '{LaunchPointId}') from element '{ParentId}'</value>
+        <value>Deleted Launch Point '{Name}' (ID: '{LaunchPointId}') from element '{ParentId}', successfully</value>
     </data>
     <data name="CommandLine_Output_BuiltToolkit" xml:space="preserve">
         <value>Toolkit for pattern: '{Name}' has been built (v.{Version}), and is ready to be installed with command:

@@ -124,7 +124,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added CLI Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added CLI Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CliCommandAdded {
             get {
@@ -133,7 +133,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated CLI Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, with app: {ApplicationName}, and Arguments: {Arguments}.
+        ///   Looks up a localized string similar to Updated CLI Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, successfully, with app: {ApplicationName}, and Arguments: {Arguments}.
         /// </summary>
         internal static string CommandLine_Output_CliCommandUpdated {
             get {
@@ -142,7 +142,25 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) to element &apos;{ParentId}&apos;, from: &apos;{OriginalFilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateAdded {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) to element &apos;{ParentId}&apos;, from: &apos;{OriginalFilePath}&apos; with extension &apos;{OriginalFileExtension}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added Code Template Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandAdded {
             get {
@@ -179,7 +197,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, with path: {FilePath}, and OneOff: {OneOff}.
+        ///   Looks up a localized string similar to Updated Code Template Command &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) on element &apos;{ParentId}&apos;, successfully, with path: {FilePath}, and OneOff: {OneOff}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateCommandUpdated {
             get {
@@ -188,7 +206,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, with &apos;{ApplicationPath}&apos; from &apos;{EditorPath}&apos;.
+        ///   Looks up a localized string similar to Editing Code Template: &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) on element &apos;{ParentId}&apos;, with &apos;{ApplicationPath}&apos; from &apos;{EditorPath}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateContentEdited {
             get {
@@ -197,7 +215,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Viewing Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) on element &apos;{ParentId}&apos;, for &apos;{EditorPath}&apos;:
+        ///   Looks up a localized string similar to Viewing Code Template: &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) on element &apos;{ParentId}&apos;, originally: &apos;{OriginalFilePath}&apos; with extension: &apos;{OriginalFileExtension}&apos;, with content from &apos;{EditorPath}&apos;:
         ///{Output}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateContentViewed {
@@ -207,16 +225,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) to element &apos;{ParentId}&apos;, from: &apos;{FilePath}&apos;. Contents can be edited in: &apos;{EditorPath}&apos;.
-        /// </summary>
-        internal static string CommandLine_Output_CodeTemplatedAdded {
-            get {
-                return ResourceManager.GetString("CommandLine_Output_CodeTemplatedAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{Id}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Deleted Code Template: &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) from element &apos;{ParentId}&apos;.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateDeleted {
             get {
@@ -225,7 +234,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; (ID: &apos;{Id}&apos;) outputs:
+        ///   Looks up a localized string similar to Code Template &apos;{Name}&apos; (ID: &apos;{TemplateId}&apos;) outputs:
         ///{Output}.
         /// </summary>
         internal static string CommandLine_Output_CodeTemplateTested {
@@ -249,6 +258,24 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_CodeTemplateTestImported {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CodeTemplateTestImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added Code Template: {CodeTemplate}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateWithCommandAdded_CodeTemplate_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateWithCommandAdded_CodeTemplate_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added Code Template Command: {Command}.
+        /// </summary>
+        internal static string CommandLine_Output_CodeTemplateWithCommandAdded_Command_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CodeTemplateWithCommandAdded_Command_ForStructured", resourceCulture);
             }
         }
         
@@ -298,7 +325,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: type {Type}, and metadata {Metadata}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) from element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_CommandDeleted {
             get {
@@ -333,6 +369,15 @@ namespace Automate.CLI.Infrastructure {
         internal static string CommandLine_Output_CommandExecutionSucceeded {
             get {
                 return ResourceManager.GetString("CommandLine_Output_CommandExecutionSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Command: &apos;{Name}&apos; (ID: &apos;{CommandId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: type {Type}, and metadata {Metadata}.
+        /// </summary>
+        internal static string CommandLine_Output_CommandUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_CommandUpdated_ForStructured", resourceCulture);
             }
         }
         
@@ -562,7 +607,7 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) to element &apos;{ParentId}&apos;, for commands: {Commands}.
+        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) to element &apos;{ParentId}&apos;, successfully, for commands: {CommandIds}.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointAdded {
             get {
@@ -571,7 +616,16 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) from element &apos;{ParentId}&apos;.
+        ///   Looks up a localized string similar to Added Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) to element &apos;{ParentId}&apos;, successfully, with: type {Type}, and metadata {Metadata}.
+        /// </summary>
+        internal static string CommandLine_Output_LaunchPointAdded_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_LaunchPointAdded_ForStructured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) from element &apos;{ParentId}&apos;, successfully.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointDeleted {
             get {
@@ -580,11 +634,20 @@ namespace Automate.CLI.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) on element &apos;{ParentId}&apos;, with commands: {Commands}.
+        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) on element &apos;{ParentId}&apos;, successfully, with commands: {CommandIds}.
         /// </summary>
         internal static string CommandLine_Output_LaunchPointUpdated {
             get {
                 return ResourceManager.GetString("CommandLine_Output_LaunchPointUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated Launch Point &apos;{Name}&apos; (ID: &apos;{LaunchPointId}&apos;) on element &apos;{ParentId}&apos;, successfully, with: type {Type}, and metadata {Metadata}.
+        /// </summary>
+        internal static string CommandLine_Output_LaunchPointUpdated_ForStructured {
+            get {
+                return ResourceManager.GetString("CommandLine_Output_LaunchPointUpdated_ForStructured", resourceCulture);
             }
         }
         

@@ -221,12 +221,13 @@ namespace Automate.Authoring.Application
         }
 
         public (IPatternElement Parent, UploadedCodeTemplate Template, Automation Command) AddCodeTemplateWithCommand(
-            string rootPath, string relativeFilePath, string name, bool isOneOff, string targetPath,
+            string rootPath, string relativeFilePath, string codeTemplateName, string commandName, bool isOneOff,
+            string filePath,
             string parentExpression)
         {
             rootPath.GuardAgainstNullOrEmpty(nameof(rootPath));
             relativeFilePath.GuardAgainstNullOrEmpty(nameof(relativeFilePath));
-            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
+            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
 
             var pattern = EnsureCurrentPatternExists();
 
@@ -241,22 +242,21 @@ namespace Automate.Authoring.Application
 
             var target = ResolveTargetElement(pattern, parentExpression);
 
-            var codeTemplate = target.AddCodeTemplate(name, fullPath, extension);
+            var codeTemplate = target.AddCodeTemplate(codeTemplateName, fullPath, extension);
             this.store.Save(pattern);
 
             var sourceFile = this.fileResolver.GetFileAtPath(fullPath);
             var location = this.store.UploadCodeTemplate(pattern, codeTemplate.Id, sourceFile);
 
-            var count = target.Automation.Count + 1;
-            var commandName = $"{name}Command{count}";
-            var command = target.AddCodeTemplateCommand(commandName, codeTemplate.Name, isOneOff, targetPath);
+            var command = target.AddCodeTemplateCommand(commandName, codeTemplate.Name, isOneOff, filePath);
             this.store.Save(pattern);
 
             this.recorder.MeasureCodeTemplateWithCommandAdded(pattern, command, codeTemplate);
             return (target, new UploadedCodeTemplate(codeTemplate, location), command);
         }
 
-        public (IPatternElement Parent, CodeTemplate Template, string Location) EditCodeTemplate(string templateName,
+        public (IPatternElement Parent, CodeTemplate Template, string Location) EditCodeTemplateContent(
+            string templateName,
             string editorPath, string arguments,
             string parentExpression)
         {
@@ -284,7 +284,7 @@ namespace Automate.Authoring.Application
             return (target, codeTemplate, location);
         }
 
-        public (IPatternElement Parent, CodeTemplate Template, string Location, string content) ViewCodeTemplate(
+        public (IPatternElement Parent, CodeTemplate Template, string Location, string content) ViewCodeTemplateContent(
             string templateName, string parentExpression)
         {
             templateName.GuardAgainstNullOrEmpty(nameof(templateName));
@@ -327,17 +327,17 @@ namespace Automate.Authoring.Application
         }
 
         public (IPatternElement Parent, Automation Command) AddCodeTemplateCommand(string templateName, string name,
-            bool isOneOff, string targetPath, string parentExpression)
+            bool isOneOff, string filePath, string parentExpression)
         {
             templateName.GuardAgainstNullOrEmpty(nameof(templateName));
-            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
+            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
 
             try
             {
-                var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, targetPath);
+                var command = target.AddCodeTemplateCommand(name, templateName, isOneOff, filePath);
                 this.store.Save(pattern);
 
                 this.recorder.MeasureCodeTemplateCommandAdded(pattern, command);
@@ -437,11 +437,12 @@ namespace Automate.Authoring.Application
         }
 
         public (IPatternElement Parent, Automation LaunchPoint) UpdateCommandLaunchPoint(string launchPointName,
-            string name, List<string> commandIds,
+            string name, List<string> addCommandIds, List<string> removeCommandIds,
             string sourceExpression, string parentExpression)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
-            commandIds.GuardAgainstNull(nameof(commandIds));
+            addCommandIds.GuardAgainstNull(nameof(addCommandIds));
+            removeCommandIds.GuardAgainstNull(nameof(removeCommandIds));
 
             var pattern = EnsureCurrentPatternExists();
             var target = ResolveTargetElement(pattern, parentExpression);
@@ -449,7 +450,8 @@ namespace Automate.Authoring.Application
                 ? ResolveTargetElement(pattern, sourceExpression)
                 : target;
 
-            var launchPoint = target.UpdateCommandLaunchPoint(launchPointName, name, commandIds, source);
+            var launchPoint =
+                target.UpdateCommandLaunchPoint(launchPointName, name, addCommandIds, removeCommandIds, source);
             this.store.Save(pattern);
 
             this.recorder.MeasureLaunchPointUpdated(pattern, launchPoint);

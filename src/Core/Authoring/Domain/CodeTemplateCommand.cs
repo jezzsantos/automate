@@ -9,17 +9,17 @@ namespace Automate.Authoring.Domain
         private readonly Automation automation;
 
         public CodeTemplateCommand(string name, string codeTemplateId, bool isOneOff,
-            string targetPath) : this(new Automation(name, AutomationType.CodeTemplateCommand,
+            string filePath) : this(new Automation(name, AutomationType.CodeTemplateCommand,
             new Dictionary<string, object>
             {
                 { nameof(CodeTemplateId), codeTemplateId },
                 { nameof(IsOneOff), isOneOff },
-                { nameof(FilePath), targetPath }
+                { nameof(FilePath), filePath }
             }))
         {
             codeTemplateId.GuardAgainstNullOrEmpty(nameof(codeTemplateId));
-            targetPath.GuardAgainstNullOrEmpty(nameof(targetPath));
-            targetPath.GuardAgainstInvalid(Validations.IsRuntimeFilePath, nameof(targetPath),
+            filePath.GuardAgainstNullOrEmpty(nameof(filePath));
+            filePath.GuardAgainstInvalid(Validations.IsRuntimeFilePath, nameof(filePath),
                 ValidationMessages.Automation_InvalidFilePath);
         }
 
@@ -29,11 +29,12 @@ namespace Automate.Authoring.Domain
             this.automation = automation;
         }
 
-        public string CodeTemplateId => this.automation.Metadata[nameof(CodeTemplateId)].ToString();
+        public string CodeTemplateId =>
+            this.automation.Metadata.GetValueOrDefault(nameof(CodeTemplateId), string.Empty).ToString();
 
-        public string FilePath => this.automation.Metadata[nameof(FilePath)].ToString();
+        public string FilePath => this.automation.Metadata.GetValueOrDefault(nameof(FilePath), string.Empty).ToString();
 
-        public bool IsOneOff => this.automation.Metadata[nameof(IsOneOff)].ToString().ToBool();
+        public bool IsOneOff => this.automation.Metadata.GetValueOrDefault(nameof(IsOneOff), false).ToString().ToBool();
 
         public static CodeTemplateCommand FromAutomation(Automation automation)
         {

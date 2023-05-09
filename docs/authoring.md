@@ -524,14 +524,17 @@ automate edit add-codetemplate-with-command "<FILEPATH>" --targetpath "<TARGETPA
 
 - The `--name` is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.
 
+- The `--commandname` optionally defines a new name for the command. If no name is specified, an automatic name is assigned to this command.
+
+
 !!! example
     To the pattern:
     ``` batch
-    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff
+    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --commandname "ACommandName" --targetpath "~/apath/afilename.ext" --isoneoff
     ```
     To an element: 
     ``` batch
-    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
+    automate edit add-codetemplate-with-command "C:/projects/src/afilename.ext" --name "ATemplateName" --commandname "ACommandName" --targetpath "~/apath/afilename.ext" --isoneoff --aschildof "{AnElementName}"
     ```
 
 ### Update code template commands
@@ -549,7 +552,7 @@ automate edit update-codetemplate-command "<COMMANDNAME>" --aschildof "{<ANEXPRE
 
 - The `--isoneoff` optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed.
 
-- The `--name` optionally defines a new name for the command.
+- The `--name` optionally defines a new name for the command. If no name is specified, an automatic name is assigned to this command.
 
 !!! example
     Of the pattern:
@@ -609,7 +612,7 @@ automate edit add-cli-command "<APPLICATIONNAME>" --aschildof "{<ANEXPRESSION>}"
 
 - The `--arguments <ARGUMENTS>` optionally defines the arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain [Templating Expressions](reference.md#templating-expressions) (relative to the element/collection of the value of `--aschildof`), which will be resolved when the command is applied.
 
-- The `--name` optionally defines a name for the command. If none is given, a default name will be derived for the command.
+- The `--name` optionally defines a name for the command. If no name is specified, an automatic name is assigned to this command.
 
 !!! example
     To the pattern:
@@ -722,16 +725,25 @@ automate edit update-command-launchpoint "<LAUNCHPOINTNAME>" --add "<COMMANDIDEN
 
 - The `--aschildof "{<ANEXPRESSION>}"` is only optional if you are updating a launch point on the root element. `<ANEXPRESSION>` is an [Expression](reference.md#pattern-expressions) to an existing element/collection in the pattern.
 
-- The `--add <COMMANDIDENTIFIERS>` optionally defines the new `;` delimited list of command identifiers (on the target element/collection) or it can be `*` to indicate that you want to add all the commands (on the `--from` element/collection). By using `*` you can update the list to add or remove any commands that have changed.
+- The `--add <COMMANDIDENTIFIERS>` optionally defines the new `;` delimited list of command identifiers (on the target element/collection) to add, or it can be `*` to indicate that you want to add all the commands (on the `--from` element/collection). By using `*` you can update the list to add or remove any commands that have changed.
 
+- The `--remove <COMMANDIDENTIFIERS>` optionally defines the new `;` delimited list of command identifiers (on the target element/collection) to remove, or it can be `*` to indicate that you want to remove all the commands (on the `--from` element/collection).
+ 
 - The `--from` optionally defines another element/collection in the pattern where the commands are located. If this is omitted, then it is assumed that the commands exist on the `--aschildof` element/collection.
 
 - The `--name` optionally defines a new name for the launch point.
+
+!!! warning
+    You cannot remove all the `<COMMANDIDENTIFIERS>` of a launch point, it must always have at least one. 
 
 !!! example
     Of the pattern, to re-add all commands on the pattern:
     ``` batch
     automate edit update-command-launchpoint "ALaunchPointName" --add "*" --name "ANewLaunchPointName"
+    ```
+    Of the pattern, to clear, and add only specific commands on the pattern:
+    ``` batch
+    automate edit update-command-launchpoint "ALaunchPointName" --remove "*" --add "<ACMDID>" --name "ANewLaunchPointName"
     ```
     Of an element, to re-add all commands from another element: 
     ``` batch

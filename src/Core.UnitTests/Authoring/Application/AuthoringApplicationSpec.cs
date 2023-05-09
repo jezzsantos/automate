@@ -157,15 +157,15 @@ namespace Core.UnitTests.Authoring.Application
             this.store.Create(new PatternDefinition("aname"));
 
             var result = this.application.AddCodeTemplateWithCommand("arootpath", "arelativepath", "atemplatename",
-                false, "atargetpath", null);
+                "acommandname", false, "afilepath", null);
 
             result.Template.Template.Name.Should().Be("atemplatename");
             result.Template.Template.Metadata.OriginalFilePath.Should().Be("afullpath");
             result.Template.Location.Should().Be(MemoryRepository.InMemoryLocation);
-            result.Command.Name.Should().Be("atemplatenameCommand1");
+            result.Command.Name.Should().Be("acommandname");
             result.Command.Type.Should().Be(AutomationType.CodeTemplateCommand);
             result.Command.Metadata[nameof(CodeTemplateCommand.IsOneOff)].Should().Be(false);
-            result.Command.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("atargetpath");
+            result.Command.Metadata[nameof(CodeTemplateCommand.FilePath)].Should().Be("afilepath");
             this.store.GetCurrent().CodeTemplates.Single().Name.Should().Be("atemplatename");
             this.store.GetCurrent().CodeTemplates.Single().Metadata.OriginalFilePath.Should().Be("afullpath");
         }
@@ -708,7 +708,8 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application
                 .Invoking(x =>
-                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" }, null, null))
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid" },
+                        new List<string>(), null, null))
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.AuthoringApplication_NoCurrentPattern);
         }
@@ -723,7 +724,8 @@ namespace Core.UnitTests.Authoring.Application
 
             this.application
                 .Invoking(x =>
-                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid1" }, null,
+                    x.UpdateCommandLaunchPoint("alaunchpointname", null, new List<string> { "acmdid1" },
+                        new List<string>(), null,
                         "anunknownparent"))
                 .Should().Throw<AutomateException>()
                 .WithMessage(
@@ -745,7 +747,7 @@ namespace Core.UnitTests.Authoring.Application
 
             var result =
                 this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",
-                    new List<string> { command1.Command.Id, command2.Command.Id }, null, null);
+                    new List<string> { command1.Command.Id, command2.Command.Id }, new List<string>(), null, null);
 
             var automation = this.store.GetCurrent().Automation.Last();
             automation.Name.Should().Be("anewname");
@@ -773,7 +775,7 @@ namespace Core.UnitTests.Authoring.Application
 
             var result =
                 this.application.UpdateCommandLaunchPoint(launchPoint.LaunchPoint.Name, "anewname",
-                    new List<string> { command1.Command.Id, command2.Command.Id }, null,
+                    new List<string> { command1.Command.Id, command2.Command.Id }, new List<string>(), null,
                     "{apatternname.anelementname}");
 
             var automation = this.store.GetCurrent().Elements.Single().Automation.Last();
@@ -798,7 +800,7 @@ namespace Core.UnitTests.Authoring.Application
             this.application.CreateNewPattern("apatternname", null, null);
             this.builder.Setup(bdr => bdr.PackAndExport(It.IsAny<IRuntimeMetadata>(), It.IsAny<PatternDefinition>(),
                     It.IsAny<VersionInstruction>()))
-                .Returns((IRuntimeMetadata metadata, PatternDefinition pattern, VersionInstruction version) =>
+                .Returns((IRuntimeMetadata _, PatternDefinition pattern, VersionInstruction version) =>
                     new ToolkitPackage(new ToolkitDefinition(pattern, version.Instruction.ToSemVersion()),
                         "abuildlocation", null));
 
@@ -1008,13 +1010,13 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
 
             var result = this.application.TestCodeTemplateCommand("acommandname", null, null, null, null);
 
             result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte =>
-                tte.Transform(It.IsAny<string>(), "atargetpath", It.IsAny<IDictionary>()));
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -1027,7 +1029,7 @@ namespace Core.UnitTests.Authoring.Application
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename",
                 "{apatternname.anelementname}");
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath",
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath",
                 "{apatternname.anelementname}");
 
             var result =
@@ -1036,7 +1038,7 @@ namespace Core.UnitTests.Authoring.Application
 
             result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte =>
-                tte.Transform(It.IsAny<string>(), "atargetpath", It.IsAny<IDictionary>()));
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -1049,7 +1051,7 @@ namespace Core.UnitTests.Authoring.Application
                 .Returns(this.application.GetCurrentPattern().Elements.Single);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename",
                 "{apatternname.acollectionname}");
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath",
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath",
                 "{apatternname.acollectionname}");
 
             var result =
@@ -1058,7 +1060,7 @@ namespace Core.UnitTests.Authoring.Application
 
             result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte =>
-                tte.Transform(It.IsAny<string>(), "atargetpath", It.IsAny<IDictionary>()));
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
         }
 
         [Fact]
@@ -1066,7 +1068,7 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(false);
 
@@ -1082,7 +1084,7 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
@@ -1099,7 +1101,7 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
             this.filePathResolver.Setup(pr => pr.ExistsAtPath(It.IsAny<string>()))
                 .Returns(true);
             this.filePathResolver.Setup(pr => pr.GetFileAtPath(It.IsAny<string>()))
@@ -1110,7 +1112,7 @@ namespace Core.UnitTests.Authoring.Application
                 this.application.TestCodeTemplateCommand("acommandname", null, "arootpath", "animportpath", null);
 
             result.Output.Should().Be("anoutput");
-            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "atargetpath",
+            this.textTemplatingEngine.Verify(tte => tte.Transform(It.IsAny<string>(), "afilepath",
                 It.Is<Dictionary<string, object>>(dic =>
                     (string)dic["aname"] == "avalue")));
         }
@@ -1120,7 +1122,7 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
             this.filePathResolver.Setup(pr => pr.CreateFileAtPath(It.IsAny<string>(), It.IsAny<byte[]>()))
                 .Throws(new FileNotFoundException("anerrormessage"));
 
@@ -1137,14 +1139,14 @@ namespace Core.UnitTests.Authoring.Application
         {
             this.application.CreateNewPattern("apatternname", null, null);
             this.application.AddCodeTemplate("arootpath", "arelativepath", "atemplatename", null);
-            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "atargetpath", null);
+            this.application.AddCodeTemplateCommand("atemplatename", "acommandname", false, "afilepath", null);
 
             var result =
                 this.application.TestCodeTemplateCommand("acommandname", null, "arootpath", null, "anexportpath");
 
             result.Output.Should().Be("anoutput");
             this.textTemplatingEngine.Verify(tte =>
-                tte.Transform(It.IsAny<string>(), "atargetpath", It.IsAny<IDictionary>()));
+                tte.Transform(It.IsAny<string>(), "afilepath", It.IsAny<IDictionary>()));
             this.filePathResolver.Verify(pr => pr.CreateFileAtPath("afullpath", It.IsAny<byte[]>()));
         }
     }

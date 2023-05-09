@@ -482,10 +482,10 @@ namespace Automate.Authoring.Domain
             return codeTemplate;
         }
 
-        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string targetPath)
+        public Automation AddCodeTemplateCommand(string name, string codeTemplateName, bool isOneOff, string filePath)
         {
             codeTemplateName.GuardAgainstNull(nameof(codeTemplateName));
-            targetPath.GuardAgainstNull(nameof(targetPath));
+            filePath.GuardAgainstNull(nameof(filePath));
 
             var codeTemplate = CodeTemplates.FirstOrDefault(ele => ele.Name.EqualsIgnoreCase(codeTemplateName));
             if (codeTemplate.NotExists())
@@ -501,14 +501,14 @@ namespace Automate.Authoring.Domain
                     ExceptionMessages.PatternElement_AutomationByNameExists.Substitute(commandName));
             }
 
-            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isOneOff, targetPath)
+            var automation = new CodeTemplateCommand(commandName, codeTemplate.Id, isOneOff, filePath)
                 .AsAutomation();
             AddAutomation(automation);
 
             return automation;
         }
 
-        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string targetPath)
+        public Automation UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff, string filePath)
         {
             var automation =
                 FindAutomationByName(this, commandName, auto => auto.Type == AutomationType.CodeTemplateCommand);
@@ -527,9 +527,9 @@ namespace Automate.Authoring.Domain
             {
                 command.ChangeOneOff(isOneOff.Value);
             }
-            if (targetPath.HasValue())
+            if (filePath.HasValue())
             {
-                command.ChangeFilePath(targetPath);
+                command.ChangeFilePath(filePath);
             }
 
             return command.AsAutomation();
@@ -665,31 +665,28 @@ namespace Automate.Authoring.Domain
             return automation;
         }
 
-        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> commandIds,
-            IPatternElement sourceElement)
+        public Automation UpdateCommandLaunchPoint(string launchPointName, string name, List<string> addCommandIds,
+            List<string> removeCommandIds, IPatternElement sourceElement)
         {
             launchPointName.GuardAgainstNullOrEmpty(nameof(launchPointName));
-            commandIds.GuardAgainstNull(nameof(commandIds));
+            addCommandIds.GuardAgainstNull(nameof(addCommandIds));
+            removeCommandIds.GuardAgainstNull(nameof(removeCommandIds));
             sourceElement.GuardAgainstNull(nameof(sourceElement));
 
-            if (commandIds.HasNone())
+            var launchables = GetAllLaunchableAutomation(sourceElement.Automation);
+            if (addCommandIds.Count == 1
+                && addCommandIds.First() == LaunchPointSelectionWildcard)
             {
-                throw new AutomateException(ExceptionMessages.PatternElement_NoCommandIds);
-            }
-            if (commandIds.Count == 1
-                && commandIds.First() == LaunchPointSelectionWildcard)
-            {
-                commandIds.Clear();
-                var launchables = GetAllLaunchableAutomation(sourceElement.Automation);
+                addCommandIds.Clear();
                 if (launchables.HasNone())
                 {
                     throw new AutomateException(ExceptionMessages.PatternElement_NoCommandsToLaunch);
                 }
-                commandIds.AddRange(launchables);
+                addCommandIds.AddRange(launchables);
             }
             else
             {
-                commandIds.ForEach(cmdId =>
+                addCommandIds.ForEach(cmdId =>
                 {
                     var command = Pattern.FindAutomation(cmdId, auto => auto.IsLaunchable);
                     if (command.NotExists())
@@ -698,6 +695,13 @@ namespace Automate.Authoring.Domain
                             ExceptionMessages.PatternElement_CommandIdNotFound.Substitute(cmdId));
                     }
                 });
+            }
+
+            if (removeCommandIds.Count == 1
+                && removeCommandIds.First() == LaunchPointSelectionWildcard)
+            {
+                removeCommandIds.Clear();
+                removeCommandIds.AddRange(launchables);
             }
 
             var automation = FindAutomationByName(this, launchPointName,
@@ -711,7 +715,7 @@ namespace Automate.Authoring.Domain
             }
 
             var launchPoint = CommandLaunchPoint.FromAutomation(automation);
-            launchPoint.AppendCommandIds(commandIds);
+            launchPoint.ChangeCommandIds(addCommandIds, removeCommandIds);
             if (name.HasValue())
             {
                 launchPoint.ChangeName(name);

@@ -600,12 +600,12 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             this.setup.Should().DisplayNoError();
             this.setup.Should()
                 .DisplayOutput(
-                    OutputMessages.CommandLine_Output_CodeTemplatedAdded.SubstituteTemplate("ATemplateName",
+                    OutputMessages.CommandLine_Output_CodeTemplateAdded.SubstituteTemplate("ATemplateName",
                         codeTemplate.Id, pattern.Id, codeTemplate.Metadata.OriginalFilePath, codeTemplateLocation));
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateCommandAdded.SubstituteTemplate(
-                        "ATemplateNameCommand1",
+                        "CodeTemplateCommand1",
                         this.setup.Pattern.Automation.Single().Id, pattern.Id));
             this.setup.Pattern.CodeTemplates.Should().ContainSingle(x => x.Name == "ATemplateName");
         }
@@ -655,7 +655,8 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             this.setup.Should()
                 .DisplayOutput(
                     OutputMessages.CommandLine_Output_CodeTemplateContentViewed.SubstituteTemplate(codeTemplate.Name,
-                        codeTemplate.Id, this.setup.Pattern.Id, codeTemplateLocation, content));
+                        codeTemplate.Id, this.setup.Pattern.Id, codeTemplate.Metadata.OriginalFilePath,
+                        codeTemplate.Metadata.OriginalFileExtension, codeTemplateLocation, content));
         }
 
         [Fact]

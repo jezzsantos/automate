@@ -190,6 +190,8 @@ namespace Automate.CLI.Infrastructure.Api
                         typeof(bool), () => false, ArgumentArity.ZeroOrOne),
                     new Option("--name", "A friendly name for the code template",
                         arity: ArgumentArity.ZeroOrOne),
+                    new Option("--commandname", "A friendly name for the command",
+                        arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to add the code template to",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
                 }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.AddCodeTemplateWithCommand)),
@@ -202,7 +204,7 @@ namespace Automate.CLI.Infrastructure.Api
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof", "The expression of the element/collection to edit the code template from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.EditCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.EditCodeTemplateContent)),
                 new Command("delete-codetemplate", "Deletes a code template from an element/collection in the pattern")
                 {
                     new Argument("TemplateName", "The name of the code template"),
@@ -288,8 +290,11 @@ namespace Automate.CLI.Infrastructure.Api
                     new Option("--name", "A new name for the launch point", typeof(string),
                         arity: ArgumentArity.ZeroOrOne),
                     new Option("--add",
-                        "A semi-colon delimited list of identifiers of the commands to add (from anywhere in the pattern), or '*' to add all commands on the from element/collection)",
-                        typeof(string), arity: ArgumentArity.ExactlyOne),
+                        "A semi-colon delimited list of identifiers (of commands) to add from anywhere in the whole pattern, or '*' to add all commands on the from element/collection)",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
+                    new Option("--remove",
+                        "A semi-colon delimited list of identifiers (of commands) to remove from anywhere in the whole pattern, or '*' to remove all commands on the from element/collection)",
+                        typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--from", "The expression of the element/collection to add commands from",
                         typeof(string), arity: ArgumentArity.ZeroOrOne),
                     new Option("--aschildof",
@@ -431,7 +436,7 @@ namespace Automate.CLI.Infrastructure.Api
                     new Argument("TemplateName", "The name of the code template"),
                     new Option("--aschildof", "The expression of the element/collection of the code template",
                         typeof(string), arity: ArgumentArity.ZeroOrOne)
-                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ViewCodeTemplate)),
+                }.WithHandler<AuthoringApiHandlers>(nameof(AuthoringApiHandlers.ViewCodeTemplateContent)),
                 new Command(ToolkitSubCommandName, "View the configuration of the current toolkit")
                 {
                     new Option("--all", "Include additional configuration, like automation and code templates",

@@ -281,31 +281,68 @@ namespace Automate.CLI.Infrastructure.Api
                     element.Id, parent.Id);
             }
 
-            internal static void AddCodeTemplate(string filepath, string name, string asChildOf)
+            internal static void AddCodeTemplate(string filepath, string name, string asChildOf, bool outputStructured)
             {
                 var currentDirectory = Metadata.CurrentExecutionPath;
                 var (parent, template) = authoring.AddCodeTemplate(currentDirectory, filepath, name, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
-                    template.Template.Id,
-                    parent.Id, template.Template.Metadata.OriginalFilePath, template.Location);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateAdded_ForStructured, template.Template.Name,
+                        template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
+                        template.Template.Metadata.OriginalFileExtension,
+                        template.Location);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateAdded, template.Template.Name,
+                        template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
+                        template.Location);
+                }
             }
 
-            internal static void AddCodeTemplateWithCommand(string filepath, string name, bool isOneOff,
-                string targetPath, string asChildOf)
+            internal static void AddCodeTemplateWithCommand(string filepath, string name, string commandName,
+                bool isOneOff, string targetPath, string asChildOf, bool outputStructured)
             {
                 var currentDirectory = Metadata.CurrentExecutionPath;
                 var (parent, template, command) = authoring.AddCodeTemplateWithCommand(currentDirectory, filepath,
-                    name, isOneOff, targetPath, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CodeTemplatedAdded, template.Template.Name,
-                    template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
-                    template.Location);
-                Output(OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
-                    command.Name, command.Id, parent.Id);
+                    name, commandName, isOneOff, targetPath, asChildOf);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateWithCommandAdded_CodeTemplate_ForStructured,
+                        JsonNode.Parse(new
+                        {
+                            template.Template.Name,
+                            TemplateId = template.Template.Id,
+                            ParentId = parent.Id,
+                            template.Template.Metadata.OriginalFilePath,
+                            template.Template.Metadata.OriginalFileExtension,
+                            EditorPath = template.Location
+                        }.ToJson()));
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateWithCommandAdded_Command_ForStructured,
+                        JsonNode.Parse(new
+                        {
+                            command.Name,
+                            CommandId = command.Id,
+                            ParentId = parent.Id,
+                            Type = command.Type.ToString(),
+                            command.Metadata
+                        }.ToJson()));
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateAdded, template.Template.Name,
+                        template.Template.Id, parent.Id, template.Template.Metadata.OriginalFilePath,
+                        template.Location);
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
+                        command.Name, command.Id, parent.Id);
+                }
             }
 
-            internal static void EditCodeTemplate(string templateName, string with, string args, string asChildOf)
+            internal static void EditCodeTemplateContent(string templateName, string with, string args,
+                string asChildOf)
             {
-                var (parent, template, location) = authoring.EditCodeTemplate(templateName, with, args, asChildOf);
+                var (parent, template, location) =
+                    authoring.EditCodeTemplateContent(templateName, with, args, asChildOf);
                 Output(OutputMessages.CommandLine_Output_CodeTemplateContentEdited, template.Name, template.Id,
                     parent.Id, with, location);
             }
@@ -340,30 +377,47 @@ namespace Automate.CLI.Infrastructure.Api
                     test.Template.Id, test.Output);
             }
 
-            internal static void ViewCodeTemplate(string templateName, string asChildOf, bool outputStructured)
+            internal static void ViewCodeTemplateContent(string templateName, string asChildOf)
             {
-                var (parent, template, location, content) = authoring.ViewCodeTemplate(templateName, asChildOf);
+                var (parent, template, location, content) = authoring.ViewCodeTemplateContent(templateName, asChildOf);
                 Output(OutputMessages.CommandLine_Output_CodeTemplateContentViewed, template.Name, template.Id,
-                    parent.Id, location, content);
+                    parent.Id, template.Metadata.OriginalFilePath, template.Metadata.OriginalFileExtension, location,
+                    content);
             }
 
             internal static void AddCodeTemplateCommand(string codeTemplateName, string name, bool isOneOff,
-                string targetPath, string asChildOf)
+                string targetPath, string asChildOf, bool outputStructured)
             {
                 var (parent, command) =
                     authoring.AddCodeTemplateCommand(codeTemplateName, name, isOneOff, targetPath, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
-                    command.Name, command.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CommandAdded_ForStructured,
+                        command.Name, command.Id, parent.Id, command.Type.ToString(), command.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateCommandAdded,
+                        command.Name, command.Id, parent.Id);
+                }
             }
 
             internal static void UpdateCodeTemplateCommand(string commandName, string name, bool? isOneOff,
-                string targetPath, string asChildOf)
+                string targetPath, string asChildOf, bool outputStructured)
             {
                 var (parent, command) =
                     authoring.UpdateCodeTemplateCommand(commandName, name, isOneOff, targetPath, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
-                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
-                    command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CommandUpdated_ForStructured,
+                        command.Name, command.Id, parent.Id, command.Type.ToString(), command.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CodeTemplateCommandUpdated,
+                        command.Name, command.Id, parent.Id, command.Metadata[nameof(CodeTemplateCommand.FilePath)],
+                        command.Metadata[nameof(CodeTemplateCommand.IsOneOff)]);
+                }
             }
 
             internal static void TestCodeTemplateCommand(string commandName, string asChildOf, string importData,
@@ -390,20 +444,36 @@ namespace Automate.CLI.Infrastructure.Api
             }
 
             internal static void AddCliCommand(string applicationName, string arguments, string name,
-                string asChildOf)
+                string asChildOf, bool outputStructured)
             {
                 var (parent, command) = authoring.AddCliCommand(applicationName, arguments, name, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CliCommandAdded,
-                    command.Name, command.Id, parent.Id);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CommandAdded_ForStructured,
+                        command.Name, command.Id, parent.Id, command.Type.ToString(), command.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CliCommandAdded,
+                        command.Name, command.Id, parent.Id);
+                }
             }
 
             internal static void UpdateCliCommand(string commandName, string app, string arguments,
-                string name, string asChildOf)
+                string name, string asChildOf, bool outputStructured)
             {
                 var (parent, command) = authoring.UpdateCliCommand(commandName, name, app, arguments, asChildOf);
-                Output(OutputMessages.CommandLine_Output_CliCommandUpdated,
-                    command.Name, command.Id, parent.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
-                    command.Metadata[nameof(CliCommand.Arguments)]);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_CommandUpdated_ForStructured,
+                        command.Name, command.Id, parent.Id, command.Type.ToString(), command.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_CliCommandUpdated,
+                        command.Name, command.Id, parent.Id, command.Metadata[nameof(CliCommand.ApplicationName)],
+                        command.Metadata[nameof(CliCommand.Arguments)]);
+                }
             }
 
             internal static void DeleteCommand(string commandName, string asChildOf)
@@ -414,26 +484,44 @@ namespace Automate.CLI.Infrastructure.Api
             }
 
             internal static void AddCommandLaunchPoint(string commandIdentifiers, string name, string from,
-                string asChildOf)
+                string asChildOf, bool outputStructured)
             {
                 var cmdIds = commandIdentifiers.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var (parent, launchPoint) = authoring.AddCommandLaunchPoint(name, cmdIds, from, asChildOf);
-                Output(OutputMessages.CommandLine_Output_LaunchPointAdded,
-                    launchPoint.Name, launchPoint.Id, parent.Id,
-                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_LaunchPointAdded_ForStructured,
+                        launchPoint.Name, launchPoint.Id, parent.Id, launchPoint.Type.ToString(), launchPoint.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_LaunchPointAdded,
+                        launchPoint.Name, launchPoint.Id, parent.Id,
+                        launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                }
             }
 
-            internal static void UpdateLaunchPoint(string launchPointName, string name, string add,
-                string from, string asChildOf)
+            internal static void UpdateLaunchPoint(string launchPointName, string name, string add, string remove,
+                string from, string asChildOf, bool outputStructured)
             {
-                var cmdIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
+                var addIds = add.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
+                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+                var removeIds = remove.SafeSplit(CommandLaunchPoint.CommandIdDelimiter,
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
                 var (parent, launchPoint) =
-                    authoring.UpdateCommandLaunchPoint(launchPointName, name, cmdIds, from, asChildOf);
-                Output(OutputMessages.CommandLine_Output_LaunchPointUpdated,
-                    launchPoint.Name, launchPoint.Id, parent.Id,
-                    launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                    authoring.UpdateCommandLaunchPoint(launchPointName, name, addIds, removeIds, from, asChildOf);
+                if (outputStructured)
+                {
+                    Output(OutputMessages.CommandLine_Output_LaunchPointUpdated_ForStructured,
+                        launchPoint.Name, launchPoint.Id, parent.Id, launchPoint.Type.ToString(), launchPoint.Metadata);
+                }
+                else
+                {
+                    Output(OutputMessages.CommandLine_Output_LaunchPointUpdated,
+                        launchPoint.Name, launchPoint.Id, parent.Id,
+                        launchPoint.Metadata[nameof(CommandLaunchPoint.CommandIds)]);
+                }
             }
 
             internal static void DeleteLaunchPoint(string launchPointName, string asChildOf)

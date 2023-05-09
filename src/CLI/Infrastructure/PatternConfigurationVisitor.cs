@@ -285,14 +285,9 @@ namespace Automate.CLI.Infrastructure
                     || (this.options == VisitorConfigurationOptions.OnlyLaunchPoints &&
                         automation.Safe().Any(auto => auto.IsLaunching())))
                 {
-                    if (this.options == VisitorConfigurationOptions.OnlyLaunchPoints)
-                    {
-                        PrintInline("\"LaunchPoints\":[");
-                    }
-                    else
-                    {
-                        PrintInline("\"Automation\":[");
-                    }
+                    PrintInline(this.options == VisitorConfigurationOptions.OnlyLaunchPoints
+                        ? "\"LaunchPoints\":["
+                        : "\"Automation\":[");
                 }
             }
             else if (this.format == OutputFormat.Text)
@@ -355,19 +350,20 @@ namespace Automate.CLI.Infrastructure
                     if (automation.Type == AutomationType.CodeTemplateCommand)
                     {
                         PrintInline(
-                            $"\"TemplateId\":\"{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]?.ToString())}\"," +
-                            $"\"{nameof(CodeTemplateCommand.IsOneOff)}\":{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()?.ToLowerInvariant())}," +
-                            $"\"TargetPath\":\"{JsonEscape(automation.Metadata[nameof(CodeTemplateCommand.FilePath)]?.ToString())}\"");
+                            $"\"{nameof(CodeTemplateCommand.CodeTemplateId)}\":\"{JsonEscape(automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.CodeTemplateId), string.Empty)?.ToString())}\"," +
+                            $"\"{nameof(CodeTemplateCommand.IsOneOff)}\":{JsonEscape(automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.IsOneOff), string.Empty).ToString()?.ToLowerInvariant())}," +
+                            $"\"{nameof(CodeTemplateCommand.FilePath)}\":\"{JsonEscape(automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.FilePath), string.Empty)?.ToString())}\"");
                     }
                     else if (automation.Type == AutomationType.CliCommand)
                     {
                         PrintInline(
-                            $"\"{nameof(CliCommand.ApplicationName)}\":\"{JsonEscape(automation.Metadata[nameof(CliCommand.ApplicationName)]?.ToString())}\"," +
-                            $"\"{nameof(CliCommand.Arguments)}\":\"{JsonEscape(automation.Metadata[nameof(CliCommand.Arguments)]?.ToString())}\"");
+                            $"\"{nameof(CliCommand.ApplicationName)}\":\"{JsonEscape(automation.Metadata.GetValueOrDefault(nameof(CliCommand.ApplicationName), string.Empty)?.ToString())}\"," +
+                            $"\"{nameof(CliCommand.Arguments)}\":\"{JsonEscape(automation.Metadata.GetValueOrDefault(nameof(CliCommand.Arguments), string.Empty)?.ToString())}\"");
                     }
                     else if (automation.Type == AutomationType.CommandLaunchPoint)
                     {
-                        var cmdIds = automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]
+                        var cmdIds = automation.Metadata
+                            .GetValueOrDefault(nameof(CommandLaunchPoint.CommandIds), string.Empty)
                             .ToString()
                             .SafeSplit(CommandLaunchPoint.CommandIdDelimiter)
                             .Select(id => $"\"{JsonEscape(id)}\"")
@@ -387,18 +383,20 @@ namespace Automate.CLI.Infrastructure
                         if (automation.Type == AutomationType.CodeTemplateCommand)
                         {
                             PrintInline(
-                                $" (template: {automation.Metadata[nameof(CodeTemplateCommand.CodeTemplateId)]}, {(automation.Metadata[nameof(CodeTemplateCommand.IsOneOff)].ToString()!.ToBool() ? "onceonly" : "always")}, path: {automation.Metadata[nameof(CodeTemplateCommand.FilePath)]})",
+                                $" (template: {automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.CodeTemplateId), string.Empty)}, {(automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.IsOneOff), string.Empty).ToString()!.ToBool() ? "onceonly" : "always")}, path: {automation.Metadata.GetValueOrDefault(nameof(CodeTemplateCommand.FilePath), string.Empty)})",
                                 true);
                         }
                         else if (automation.Type == AutomationType.CliCommand)
                         {
                             PrintInline(
-                                $" (app: {automation.Metadata[nameof(CliCommand.ApplicationName)]}, args: {automation.Metadata[nameof(CliCommand.Arguments)]})",
+                                $" (app: {automation.Metadata.GetValueOrDefault(nameof(CliCommand.ApplicationName), string.Empty)}, args: {automation.Metadata.GetValueOrDefault(nameof(CliCommand.Arguments), string.Empty)})",
                                 true);
                         }
                         else if (automation.Type == AutomationType.CommandLaunchPoint)
                         {
-                            PrintInline($" (ids: {automation.Metadata[nameof(CommandLaunchPoint.CommandIds)]})", true);
+                            PrintInline(
+                                $" (ids: {automation.Metadata.GetValueOrDefault(nameof(CommandLaunchPoint.CommandIds), string.Empty)})",
+                                true);
                         }
                         else
                         {

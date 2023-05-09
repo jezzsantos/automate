@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Automate.Authoring.Domain;
+using Automate.Common;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
 using FluentAssertions;
@@ -78,6 +79,53 @@ namespace Core.UnitTests.Authoring.Domain
 
             this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1",
                 "acmdid2", "acmdid3", "acmdid4");
+        }
+
+        [Fact]
+        public void WhenChangeCommandIdsWithNothingToAddOrRemove_ThenDoesNothing()
+        {
+            this.launchPoint.ChangeCommandIds(new List<string>(), new List<string>());
+
+            this.launchPoint.CommandIds.Should().ContainInOrder(this.launchPoint.CommandIds.First());
+        }
+
+        [Fact]
+        public void WhenChangeCommandIdsAndAddsOne_ThenAddsOne()
+        {
+            this.launchPoint.ChangeCommandIds(new List<string> { "acmdid1" }, new List<string>());
+
+            this.launchPoint.CommandIds.Should()
+                .ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1");
+        }
+
+        [Fact]
+        public void WhenChangeCommandIdsAndRemovesOne_ThenRemovesOne()
+        {
+            this.launchPoint.AppendCommandIds(new List<string> { "acmdid1", "acmdid2", "acmdid3" });
+
+            this.launchPoint.ChangeCommandIds(new List<string>(), new List<string> { "acmdid2" });
+
+            this.launchPoint.CommandIds.Should()
+                .ContainInOrder(this.launchPoint.CommandIds.First(), "acmdid1", "acmdid3");
+        }
+
+        [Fact]
+        public void WhenChangeCommandIdsAndAddsOneAndRemovesSame_ThenDoesNothing()
+        {
+            this.launchPoint.ChangeCommandIds(new List<string> { "acmdid1" }, new List<string> { "acmdid1" });
+
+            this.launchPoint.CommandIds.Should()
+                .ContainInOrder(this.launchPoint.CommandIds.First());
+        }
+
+        [Fact]
+        public void WhenChangeCommandIdsAndRemovesRemaining_ThenThrows()
+        {
+            this.launchPoint
+                .Invoking(x =>
+                    x.ChangeCommandIds(new List<string>(), new List<string> { this.launchPoint.CommandIds.First() }))
+                .Should().Throw<AutomateException>()
+                .WithMessage(ExceptionMessages.CommandLaunchPoint_NoCommandIds);
         }
     }
 }

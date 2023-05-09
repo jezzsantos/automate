@@ -12,13 +12,14 @@ using Automate.Common.Domain;
 
 namespace CLI.UnitTests.Infrastructure
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class PatternConfigurationVisitorSpec
     {
         private static void ConfigurePattern(PatternDefinition pattern)
         {
             pattern.AddCodeTemplate("acodetemplate1", "afilepath1", "anextension1");
             var command1 =
-                pattern.AddCodeTemplateCommand("acodetemplatecommand1", "acodetemplate1", true, "atargetpath1");
+                pattern.AddCodeTemplateCommand("acodetemplatecommand1", "acodetemplate1", true, "afilepath1");
             var command2 = pattern.AddCliCommand("aclicommand1", "anapplication1", "arguments1");
             pattern.AddCommandLaunchPoint("acommandlaunchpoint1", new List<string> { command1.Id, command2.Id },
                 pattern);
@@ -29,7 +30,7 @@ namespace CLI.UnitTests.Infrastructure
                 "adescription1");
             element1.AddCodeTemplate("acodetemplate2", "afilepath2", "anextension2");
             var command3 =
-                element1.AddCodeTemplateCommand("acodetemplatecommand2", "acodetemplate2", true, "atargetpath2");
+                element1.AddCodeTemplateCommand("acodetemplatecommand2", "acodetemplate2", true, "afilepath2");
             element1.AddCommandLaunchPoint("acommandlaunchpoint2", new List<string> { command3.Id }, element1);
             var collection = pattern.AddElement("acollectionname1", ElementCardinality.ZeroOrMany, true,
                 "adisplayname2", "adescription2");
@@ -38,7 +39,7 @@ namespace CLI.UnitTests.Infrastructure
                 "adescription2");
             element2.AddAttribute("anattributename3", null, true, "adefaultvalue3");
             var command4 =
-                collection.AddCodeTemplateCommand("acodetemplatecommand3", "acodetemplate3", true, "atargetpath3");
+                collection.AddCodeTemplateCommand("acodetemplatecommand3", "acodetemplate3", true, "afilepath3");
             collection.AddCommandLaunchPoint("acommandlaunchpoint3", new List<string> { command4.Id }, collection);
         }
 
@@ -108,7 +109,7 @@ namespace CLI.UnitTests.Infrastructure
                                    $"\t- CodeTemplates:{Environment.NewLine}" +
                                    $"\t\t- acodetemplate1 [{codeTemplate1.Id}] (original: afilepath1){Environment.NewLine}" +
                                    $"\t- Automation:{Environment.NewLine}" +
-                                   $"\t\t- acodetemplatecommand1 [{codeTemplateCommand1.Id}] (CodeTemplateCommand) (template: {codeTemplate1.Id}, onceonly, path: atargetpath1){Environment.NewLine}" +
+                                   $"\t\t- acodetemplatecommand1 [{codeTemplateCommand1.Id}] (CodeTemplateCommand) (template: {codeTemplate1.Id}, onceonly, path: afilepath1){Environment.NewLine}" +
                                    $"\t\t- aclicommand1 [{cliCommand1.Id}] (CliCommand) (app: anapplication1, args: arguments1){Environment.NewLine}" +
                                    $"\t\t- acommandlaunchpoint1 [{launchPoint1.Id}] (CommandLaunchPoint) (ids: {codeTemplateCommand1.Id};{cliCommand1.Id}){Environment.NewLine}" +
                                    $"\t- Attributes:{Environment.NewLine}" +
@@ -119,7 +120,7 @@ namespace CLI.UnitTests.Infrastructure
                                    $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
                                    $"\t\t\t\t- acodetemplate2 [{codeTemplate2.Id}] (original: afilepath2){Environment.NewLine}" +
                                    $"\t\t\t- Automation:{Environment.NewLine}" +
-                                   $"\t\t\t\t- acodetemplatecommand2 [{codeTemplateCommand2.Id}] (CodeTemplateCommand) (template: {codeTemplate2.Id}, onceonly, path: atargetpath2){Environment.NewLine}" +
+                                   $"\t\t\t\t- acodetemplatecommand2 [{codeTemplateCommand2.Id}] (CodeTemplateCommand) (template: {codeTemplate2.Id}, onceonly, path: afilepath2){Environment.NewLine}" +
                                    $"\t\t\t\t- acommandlaunchpoint2 [{launchPoint2.Id}] (CommandLaunchPoint) (ids: {codeTemplateCommand2.Id}){Environment.NewLine}" +
                                    $"\t\t\t- Elements:{Environment.NewLine}" +
                                    $"\t\t\t\t- anelementname2 [{element2.Id}] (element){Environment.NewLine}" +
@@ -129,7 +130,7 @@ namespace CLI.UnitTests.Infrastructure
                                    $"\t\t\t- CodeTemplates:{Environment.NewLine}" +
                                    $"\t\t\t\t- acodetemplate3 [{codeTemplate3.Id}] (original: afilepath3){Environment.NewLine}" +
                                    $"\t\t\t- Automation:{Environment.NewLine}" +
-                                   $"\t\t\t\t- acodetemplatecommand3 [{codeTemplateCommand3.Id}] (CodeTemplateCommand) (template: {codeTemplate3.Id}, onceonly, path: atargetpath3){Environment.NewLine}" +
+                                   $"\t\t\t\t- acodetemplatecommand3 [{codeTemplateCommand3.Id}] (CodeTemplateCommand) (template: {codeTemplate3.Id}, onceonly, path: afilepath3){Environment.NewLine}" +
                                    $"\t\t\t\t- acommandlaunchpoint3 [{launchPoint3.Id}] (CommandLaunchPoint) (ids: {codeTemplateCommand3.Id}){Environment.NewLine}"
                 );
             }
@@ -215,7 +216,7 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{codeTemplate1.Id}\",\"Name\":\"acodetemplate1\",\"OriginalFilePath\":\"afilepath1\",\"OriginalFileExtension\":\"anextension1\"}}" +
                         "]," +
                         "\"Automation\":[" +
-                        $"{{\"Id\":\"{codeTemplateCommand1.Id}\",\"Name\":\"acodetemplatecommand1\",\"Type\":\"CodeTemplateCommand\",\"TemplateId\":\"{codeTemplate1.Id}\",\"IsOneOff\":true,\"TargetPath\":\"atargetpath1\"}}," +
+                        $"{{\"Id\":\"{codeTemplateCommand1.Id}\",\"Name\":\"acodetemplatecommand1\",\"Type\":\"CodeTemplateCommand\",\"CodeTemplateId\":\"{codeTemplate1.Id}\",\"IsOneOff\":true,\"FilePath\":\"afilepath1\"}}," +
                         $"{{\"Id\":\"{cliCommand1.Id}\",\"Name\":\"aclicommand1\",\"Type\":\"CliCommand\",\"ApplicationName\":\"anapplication1\",\"Arguments\":\"arguments1\"}}," +
                         $"{{\"Id\":\"{launchPoint1.Id}\",\"Name\":\"acommandlaunchpoint1\",\"Type\":\"CommandLaunchPoint\",\"CommandIds\":[\"{codeTemplateCommand1.Id}\",\"{cliCommand1.Id}\"]}}" +
                         "]," +
@@ -229,7 +230,7 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{codeTemplate2.Id}\",\"Name\":\"acodetemplate2\",\"OriginalFilePath\":\"afilepath2\",\"OriginalFileExtension\":\"anextension2\"}}" +
                         "]," +
                         "\"Automation\":[" +
-                        $"{{\"Id\":\"{codeTemplateCommand2.Id}\",\"Name\":\"acodetemplatecommand2\",\"Type\":\"CodeTemplateCommand\",\"TemplateId\":\"{codeTemplate2.Id}\",\"IsOneOff\":true,\"TargetPath\":\"atargetpath2\"}}," +
+                        $"{{\"Id\":\"{codeTemplateCommand2.Id}\",\"Name\":\"acodetemplatecommand2\",\"Type\":\"CodeTemplateCommand\",\"CodeTemplateId\":\"{codeTemplate2.Id}\",\"IsOneOff\":true,\"FilePath\":\"afilepath2\"}}," +
                         $"{{\"Id\":\"{launchPoint2.Id}\",\"Name\":\"acommandlaunchpoint2\",\"Type\":\"CommandLaunchPoint\",\"CommandIds\":[\"{codeTemplateCommand2.Id}\"]}}" +
                         "]," +
                         "\"Attributes\":[]," +
@@ -249,7 +250,7 @@ namespace CLI.UnitTests.Infrastructure
                         $"{{\"Id\":\"{codeTemplate3.Id}\",\"Name\":\"acodetemplate3\",\"OriginalFilePath\":\"afilepath3\",\"OriginalFileExtension\":\"anextension3\"}}" +
                         "]," +
                         "\"Automation\":[" +
-                        $"{{\"Id\":\"{codeTemplateCommand3.Id}\",\"Name\":\"acodetemplatecommand3\",\"Type\":\"CodeTemplateCommand\",\"TemplateId\":\"{codeTemplate3.Id}\",\"IsOneOff\":true,\"TargetPath\":\"atargetpath3\"}}," +
+                        $"{{\"Id\":\"{codeTemplateCommand3.Id}\",\"Name\":\"acodetemplatecommand3\",\"Type\":\"CodeTemplateCommand\",\"CodeTemplateId\":\"{codeTemplate3.Id}\",\"IsOneOff\":true,\"FilePath\":\"afilepath3\"}}," +
                         $"{{\"Id\":\"{launchPoint3.Id}\",\"Name\":\"acommandlaunchpoint3\",\"Type\":\"CommandLaunchPoint\",\"CommandIds\":[\"{codeTemplateCommand3.Id}\"]}}" +
                         "]," +
                         "\"Attributes\":[]," +
