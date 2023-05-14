@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Automate.Common.Domain;
 using Automate.Common.Extensions;
+using Automate.Runtime.Domain;
 
 namespace Automate.Authoring.Domain
 {
@@ -11,10 +12,19 @@ namespace Automate.Authoring.Domain
     {
         private const string NameIdentifierExpression = @"[a-zA-Z0-9_\.\-]+";
         private const string DescriptiveNameExpression = @"[a-zA-Z0-9_\.\-]+";
+        private static readonly string[] ReservedNames = { nameof(DraftItem.Parent) };
 
         public static bool IsNameIdentifier(string value)
         {
-            return Regex.IsMatch(value, $@"^{NameIdentifierExpression}$");
+            var characterMatch = Regex.IsMatch(value, $@"^{NameIdentifierExpression}$");
+            var wordMatch = IsNotReservedName(value, ReservedNames);
+
+            return characterMatch && wordMatch;
+        }
+
+        public static bool IsNotReservedName(string value, string[] reservedNames)
+        {
+            return !reservedNames.Contains(value, StringComparer.OrdinalIgnoreCase);
         }
 
         public static bool IsDescriptiveName(string value)
@@ -73,10 +83,12 @@ namespace Automate.Authoring.Domain
 
         public static bool IsPropertyAssignment(string name, string value)
         {
-            var propertyNameExpression = $@"{NameIdentifierExpression}";
+            const string propertyNameExpression = $@"{NameIdentifierExpression}";
             const string propertyValueExpression = @"[\w\d \/\.\(\)]+";
+
             var isValidName = Regex.IsMatch(name, propertyNameExpression);
 
+            // ReSharper disable once SimplifyConditionalTernaryExpression
             var isValidValue = value.HasValue()
                 ? Regex.IsMatch(value, propertyValueExpression)
                 : true;

@@ -492,15 +492,6 @@ namespace Automate.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an attribute.
-        /// </summary>
-        internal static string PatternElement_AttributeNameReserved {
-            get {
-                return ResourceManager.GetString("PatternElement_AttributeNameReserved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Automation with name: &apos;{0}&apos; already exists. The name must be unique.
         /// </summary>
         internal static string PatternElement_AutomationByNameExists {
@@ -596,15 +587,6 @@ namespace Automate.Common {
         internal static string PatternElement_ElementByNameNotExists {
             get {
                 return ResourceManager.GetString("PatternElement_ElementByNameNotExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name: &apos;{0}&apos; is a reserved name, and cannot be used as a name for an element.
-        /// </summary>
-        internal static string PatternElement_ElementNameReserved {
-            get {
-                return ResourceManager.GetString("PatternElement_ElementNameReserved", resourceCulture);
             }
         }
         

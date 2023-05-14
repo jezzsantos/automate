@@ -9,6 +9,10 @@ namespace Automate.Authoring.Domain
 {
     public class Automation : IAutomation, IPersistable, IPatternVisitable
     {
+        private static readonly string[] ReservedAutomationNames =
+        {
+            nameof(INamedEntity.Id)
+        };
 #if TESTINGONLY
         private static int testTurn;
 #endif
@@ -20,6 +24,8 @@ namespace Automate.Authoring.Domain
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
+            name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedAutomationNames), nameof(name),
+                ValidationMessages.Automation_ReservedName);
             metadata.GuardAgainstNull(nameof(metadata));
 
             Id = IdGenerator.Create();

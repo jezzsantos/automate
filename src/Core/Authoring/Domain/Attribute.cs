@@ -27,6 +27,8 @@ namespace Automate.Authoring.Domain
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
+            name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedAttributeNames), nameof(name),
+                ValidationMessages.Attribute_ReservedName);
             if (dataType.HasValue())
             {
                 dataType.GuardAgainstInvalid(Validations.IsSupportedAttributeDataType, nameof(dataType),
@@ -173,6 +175,8 @@ namespace Automate.Authoring.Domain
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
+            name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedAttributeNames), nameof(name),
+                ValidationMessages.Attribute_ReservedName);
 
             if (name.NotEqualsOrdinal(Name))
             {

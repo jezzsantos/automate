@@ -9,6 +9,7 @@ namespace Automate.Authoring.Domain
 {
     public abstract class PatternElement : IPatternElement, IPatternVisitable
     {
+        public static readonly string[] ReservedElementNames = Attribute.ReservedAttributeNames;
         internal const string LaunchPointSelectionWildcard = "*";
         private readonly List<Attribute> attributes;
         private readonly List<Automation> automations;
@@ -21,6 +22,9 @@ namespace Automate.Authoring.Domain
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
+            name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedElementNames), nameof(name),
+                ValidationMessages.Element_ReservedName);
+
 
             Id = IdGenerator.Create();
             Name = name;
@@ -188,6 +192,8 @@ namespace Automate.Authoring.Domain
             {
                 value.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                     ValidationMessages.InvalidNameIdentifier);
+                name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedElementNames), nameof(name),
+                    ValidationMessages.Element_ReservedName);
                 if (value.NotEqualsOrdinal(Name))
                 {
                     Name = value;
@@ -223,11 +229,6 @@ namespace Automate.Authoring.Domain
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
-            if (AttributeNameIsReserved(name))
-            {
-                throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved.Substitute(name));
-            }
-
             if (AttributeExistsByName(this, name))
             {
                 throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExists.Substitute(name));
@@ -261,12 +262,6 @@ namespace Automate.Authoring.Domain
             {
                 if (name.NotEqualsIgnoreCase(attribute.Name))
                 {
-                    if (AttributeNameIsReserved(name))
-                    {
-                        throw new AutomateException(ExceptionMessages.PatternElement_AttributeNameReserved
-                            .Substitute(name));
-                    }
-
                     if (AttributeExistsByName(this, name))
                     {
                         throw new AutomateException(ExceptionMessages.PatternElement_AttributeByNameExists
@@ -326,11 +321,6 @@ namespace Automate.Authoring.Domain
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
 
-            if (ElementNameIsReserved(name))
-            {
-                throw new AutomateException(ExceptionMessages.PatternElement_ElementNameReserved.Substitute(name));
-            }
-
             if (ElementExistsByName(this, name))
             {
                 throw new AutomateException(ExceptionMessages.PatternElement_ElementByNameExists.Substitute(name));
@@ -364,12 +354,6 @@ namespace Automate.Authoring.Domain
             {
                 if (name.NotEqualsIgnoreCase(element.Name))
                 {
-                    if (ElementNameIsReserved(name))
-                    {
-                        throw new AutomateException(
-                            ExceptionMessages.PatternElement_ElementNameReserved.Substitute(name));
-                    }
-
                     if (ElementExistsByName(this, name))
                     {
                         throw new AutomateException(
@@ -929,16 +913,6 @@ namespace Automate.Authoring.Domain
         private static Attribute GetAttributeByName(IAttributeContainer element, string attributeName)
         {
             return element.Attributes.Safe().FirstOrDefault(attr => attr.Name.EqualsIgnoreCase(attributeName));
-        }
-
-        private static bool AttributeNameIsReserved(string attributeName)
-        {
-            return Attribute.ReservedAttributeNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
-        }
-
-        private static bool ElementNameIsReserved(string attributeName)
-        {
-            return Element.ReservedElementNames.Any(reserved => reserved.EqualsIgnoreCase(attributeName));
         }
 
         private static bool ElementExistsByName(IElementContainer element, string elementName)

@@ -7,11 +7,17 @@ namespace Automate.Authoring.Domain
 {
     public class CodeTemplate : INamedEntity, IPersistable, IPatternVisitable
     {
+        private static readonly string[] ReservedCodeTemplateNames =
+        {
+            nameof(INamedEntity.Id)
+        };
         public CodeTemplate(string name, string fullPath, string fileExtension)
         {
             name.GuardAgainstNullOrEmpty(nameof(name));
             name.GuardAgainstInvalid(Validations.IsNameIdentifier, nameof(name),
                 ValidationMessages.InvalidNameIdentifier);
+            name.GuardAgainstInvalid(x => Validations.IsNotReservedName(x, ReservedCodeTemplateNames), nameof(name),
+                ValidationMessages.CodeTemplate_ReservedName);
             fullPath.GuardAgainstNullOrEmpty(nameof(fullPath));
             fileExtension.GuardAgainstNullOrEmpty(nameof(fileExtension));
             Id = IdGenerator.Create();

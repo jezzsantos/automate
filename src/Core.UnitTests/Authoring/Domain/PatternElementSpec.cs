@@ -55,9 +55,9 @@ namespace Core.UnitTests.Authoring.Domain
         {
             this.element
                 .Invoking(x => x.AddAttribute(Attribute.ReservedAttributeNames[0], null))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.PatternElement_AttributeNameReserved.Substitute(
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessageLike(
+                    ValidationMessages.Attribute_ReservedName.Substitute(
                         Attribute.ReservedAttributeNames[0]));
         }
 
@@ -116,9 +116,9 @@ namespace Core.UnitTests.Authoring.Domain
 
             this.element
                 .Invoking(x => x.UpdateAttribute("anattributename", Attribute.ReservedAttributeNames.First()))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.PatternElement_AttributeNameReserved.Substitute(
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessageLike(
+                    ValidationMessages.Attribute_ReservedName.Substitute(
                         Attribute.ReservedAttributeNames.First()));
         }
 
@@ -202,11 +202,11 @@ namespace Core.UnitTests.Authoring.Domain
         public void WhenAddElementWithReservedName_ThenThrows()
         {
             this.element
-                .Invoking(x => x.AddElement(Element.ReservedElementNames[0]))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.PatternElement_ElementNameReserved.Substitute(
-                        Attribute.ReservedAttributeNames[0]));
+                .Invoking(x => x.AddElement(PatternElement.ReservedElementNames[0]))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessageLike(
+                    ValidationMessages.Element_ReservedName.Substitute(
+                        PatternElement.ReservedElementNames[0]));
         }
 
         [Fact]
@@ -238,11 +238,11 @@ namespace Core.UnitTests.Authoring.Domain
             this.element.AddElement("anelementname");
 
             this.element
-                .Invoking(x => x.UpdateElement("anelementname", Attribute.ReservedAttributeNames.First()))
-                .Should().Throw<AutomateException>()
-                .WithMessage(
-                    ExceptionMessages.PatternElement_ElementNameReserved.Substitute(
-                        Attribute.ReservedAttributeNames.First()));
+                .Invoking(x => x.UpdateElement("anelementname", PatternElement.ReservedElementNames.First()))
+                .Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessageLike(
+                    ValidationMessages.Element_ReservedName.Substitute(
+                        PatternElement.ReservedElementNames.First()));
         }
 
         [Fact]

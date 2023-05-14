@@ -27,9 +27,6 @@
     <data name="PatternElement_CodeTemplateByNameExists" xml:space="preserve">
         <value>A code template with name: '{0}' already exists. The name must be unique</value>
     </data>
-    <data name="PatternElement_AttributeNameReserved" xml:space="preserve">
-        <value>The name: '{0}' is a reserved name, and cannot be used as a name for an attribute</value>
-    </data>
     <data name="PatternElement_AttributeByNameExists" xml:space="preserve">
         <value>An attribute with name: '{0}' already exists. The name must be unique</value>
     </data>
@@ -41,9 +38,6 @@
     </data>
     <data name="AuthoringApplication_PathExpressionNotFound" xml:space="preserve">
         <value>The expression: '{0}' does not resolve to an element in this pattern</value>
-    </data>
-    <data name="PatternElement_ElementNameReserved" xml:space="preserve">
-        <value>The name: '{0}' is a reserved name, and cannot be used as a name for an element</value>
     </data>
     <data name="PatternElement_ElementByNameExists" xml:space="preserve">
         <value>An element with name: '{0}' already exists. The name must be unique</value>

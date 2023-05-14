@@ -10,6 +10,46 @@ namespace Core.UnitTests.Authoring.Domain
     public class ValidationsSpec
     {
         [Fact]
+        public void WhenIsNameIdentifierWithInvalidCharacters_ThenReturnsFalse()
+        {
+            var result = Validations.IsNameIdentifier("aninvalidname^");
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenIsNameIdentifierAndReservedName_ThenReturnsFalse()
+        {
+            var result = Validations.IsNameIdentifier("Parent");
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenIsNameIdentifier_ThenReturnsTrue()
+        {
+            var result = Validations.IsNameIdentifier("aname");
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenIsNotReservedNameAndReservedName_ThenReturnsFalse()
+        {
+            var result = Validations.IsNotReservedName("areservedname", new[] { "areservedname" });
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenIsNotReservedNameAndNotReservedName_ThenReturnsTrue()
+        {
+            var result = Validations.IsNotReservedName("aname", new[] { "areservedname" });
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
         public void WhenIsRuntimeFilePathAndIsNull_ThenReturnsFalse()
         {
             var result = Validations.IsRuntimeFilePath(null);

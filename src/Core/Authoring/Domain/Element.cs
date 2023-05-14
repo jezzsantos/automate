@@ -5,8 +5,6 @@ namespace Automate.Authoring.Domain
 {
     public class Element : PatternElement, IValidateable, IPersistable
     {
-        public static readonly string[] ReservedElementNames = Attribute.ReservedAttributeNames;
-
         public Element(string name,
             ElementCardinality cardinality = ElementCardinality.One, bool autoCreate = true,
             string displayName = null, string description = null) : base(name, displayName, description)
