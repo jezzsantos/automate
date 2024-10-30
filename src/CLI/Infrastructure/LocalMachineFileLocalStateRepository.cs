@@ -7,7 +7,7 @@ namespace Automate.CLI.Infrastructure
 {
     internal class LocalMachineFileLocalStateRepository : ILocalStateRepository
     {
-        private const string StateFilename = "LocalState.json";
+        internal const string StateFilename = "LocalState.json";
         private readonly IFileSystemReaderWriter fileSystem;
         private readonly string localStatePath;
         private readonly IPersistableFactory persistableFactory;
@@ -32,9 +32,7 @@ namespace Automate.CLI.Infrastructure
             var filename = CreateFilenameForState();
             if (!this.fileSystem.FileExists(filename))
             {
-                var state = new LocalState();
-                WriteState(filename, state);
-                return state;
+                return new LocalState();
             }
 
             return this.fileSystem.ReadAllText(filename)

@@ -1,4 +1,5 @@
-﻿using Automate.Authoring.Domain;
+﻿using System.IO;
+using Automate.Authoring.Domain;
 using Automate.CLI.Infrastructure;
 using Automate.Common;
 using Automate.Common.Domain;
@@ -10,16 +11,17 @@ using ExceptionMessages = Automate.CLI.ExceptionMessages;
 
 namespace CLI.IntegrationTests.Infrastructure
 {
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")] [Collection("CLI")]
     public class LocalMachineFileRepositorySpec
     {
         private readonly SystemIoFileSystemReaderWriter readerWriter;
         private readonly LocalMachineFileRepository repository;
+        private readonly string localPath;
 
         public LocalMachineFileRepositorySpec()
         {
             this.readerWriter = new SystemIoFileSystemReaderWriter();
-            var localPath = new CliRuntimeMetadata().LocalStateDataPath;
+            this.localPath = new CliRuntimeMetadata().LocalStateDataPath;
             this.repository =
                 new LocalMachineFileRepository(localPath, this.readerWriter, new AutomatePersistableFactory());
             this.repository.DestroyAll();
@@ -31,6 +33,9 @@ namespace CLI.IntegrationTests.Infrastructure
             var result = this.repository.ListPatterns();
 
             result.Count.Should().Be(0);
+            var stateFile =
+                Path.GetFullPath(Path.Combine(this.localPath, LocalMachineFileLocalStateRepository.StateFilename));
+            this.readerWriter.FileExists(stateFile).Should().BeFalse();
         }
 
         [Fact]
@@ -102,6 +107,9 @@ namespace CLI.IntegrationTests.Infrastructure
             var result = this.repository.ListToolkits();
 
             result.Count.Should().Be(0);
+            var stateFile =
+                Path.GetFullPath(Path.Combine(this.localPath, LocalMachineFileLocalStateRepository.StateFilename));
+            this.readerWriter.FileExists(stateFile).Should().BeFalse();
         }
 
         [Fact]
@@ -173,6 +181,9 @@ namespace CLI.IntegrationTests.Infrastructure
             var result = this.repository.ListDrafts();
 
             result.Count.Should().Be(0);
+            var stateFile =
+                Path.GetFullPath(Path.Combine(this.localPath, LocalMachineFileLocalStateRepository.StateFilename));
+            this.readerWriter.FileExists(stateFile).Should().BeFalse();
         }
 
         [Fact]
@@ -244,5 +255,6 @@ namespace CLI.IntegrationTests.Infrastructure
                 .Should().Throw<AutomateException>()
                 .WithMessage(ExceptionMessages.LocalMachineFileRepository_DraftNotFound.Substitute(draft2.Id));
         }
+        
     }
 }

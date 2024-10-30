@@ -13,12 +13,16 @@ namespace CLI.IntegrationTests.Infrastructure.Api
     [Trait("Category", "Integration")] [Collection("CLI")]
     public class GeneralSpec : IDisposable
     {
+        private readonly string localPath;
+        private readonly SystemIoFileSystemReaderWriter readerWriter;
         private readonly CliTestSetup setup;
 
         public GeneralSpec(CliTestSetup setup)
         {
             this.setup = setup;
             this.setup.ResetRepository();
+            this.readerWriter = new SystemIoFileSystemReaderWriter();
+            this.localPath = new CliRuntimeMetadata().LocalStateDataPath;
         }
 
         [Fact]
@@ -59,6 +63,87 @@ namespace CLI.IntegrationTests.Infrastructure.Api
             this.setup.Recordings.Measurements.Should().ContainSingle(measurement =>
                 measurement.EventName == "info" && measurement.MachineId.HasValue() &&
                 measurement.CorrelationId == "acorrelationid");
+        }
+
+        [Fact]
+        public void WhenListAllAndNone_ThenDisplaysNone()
+        {
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoEditablePatterns);
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoInstalledToolkits);
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_NoConfiguredDrafts);
+
+            var stateFile =
+                Path.GetFullPath(Path.Combine(this.localPath, LocalMachineFileLocalStateRepository.StateFilename));
+            this.readerWriter.FileExists(stateFile).Should().BeFalse();
+        }
+
+        [Fact]
+        public void WhenListAllAndSome_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
+                        $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\", \"IsCurrent\": \"true\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
+                        $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
+                        $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
+            var stateFile =
+                Path.GetFullPath(Path.Combine(this.localPath, LocalMachineFileLocalStateRepository.StateFilename));
+            this.readerWriter.FileExists(stateFile).Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenListAllAndToolkitUpgraded_ThenDisplaysLists()
+        {
+            this.setup.RunCommand($"{CommandLineApi.CreateCommandName} pattern APattern1");
+            this.setup.RunCommand($"{CommandLineApi.BuildCommandName} pattern --install");
+            this.setup.RunCommand($"{CommandLineApi.RunCommandName} toolkit APattern1");
+
+            this.setup.RunCommand($"{CommandLineApi.PublishCommandName} toolkit --install --asversion 2.0.0");
+
+            this.setup.RunCommand($"{CommandLineApi.ListCommandName} all");
+
+            var pattern = this.setup.Pattern;
+            var toolkit = this.setup.Toolkit;
+            var draft = this.setup.Draft;
+
+            this.setup.Should().DisplayNoError();
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_EditablePatternsListed.SubstituteTemplate(
+                        $"\"Name\": \"{pattern.Name}\", \"Version\": \"{pattern.ToolkitVersion.Current}\", \"ID\": \"{pattern.Id}\", \"IsCurrent\": \"true\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_InstalledToolkitsListed.SubstituteTemplate(
+                        $"\"Name\": \"{toolkit.PatternName}\", \"Version\": \"{toolkit.Version}\", \"ID\": \"{toolkit.Id}\""));
+            this.setup.Should()
+                .DisplayOutput(
+                    OutputMessages.CommandLine_Output_ConfiguredDraftsListed.SubstituteTemplate(
+                        $"\"Name\": \"{draft.Name}\", \"ToolkitVersion\": \"{draft.Toolkit.Version}\", \"CurrentToolkitVersion\": \"{toolkit.Version}\", \"ID\": \"{draft.Id}\", \"IsCurrent\": \"true\""));
         }
 
         public void Dispose()

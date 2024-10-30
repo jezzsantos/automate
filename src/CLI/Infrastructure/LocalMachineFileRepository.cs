@@ -218,18 +218,21 @@ namespace Automate.CLI.Infrastructure
                 this.fileSystem.GetSubDirectories(PatternsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
+                this.fileSystem.DirectoryDelete(this.fileSystem.GetDirectory(PatternsLocation));
             }
             if (this.fileSystem.DirectoryExists(ToolkitsLocation))
             {
                 this.fileSystem.GetSubDirectories(ToolkitsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
+                this.fileSystem.DirectoryDelete(this.fileSystem.GetDirectory(ToolkitsLocation));
             }
             if (this.fileSystem.DirectoryExists(DraftsLocation))
             {
                 this.fileSystem.GetSubDirectories(DraftsLocation)
                     .ToList()
                     .ForEach(directory => this.fileSystem.DirectoryDelete(directory));
+                this.fileSystem.DirectoryDelete(this.fileSystem.GetDirectory(DraftsLocation));
             }
 
             var exportedDirectory = GetExportedToolkitDirectory();
