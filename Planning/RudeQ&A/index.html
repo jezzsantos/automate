@@ -1,0 +1,981 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Templatize patterns from your own codebase, make them programmable, then share them with your team">
+      
+      
+      
+        <link rel="canonical" href="https://jezzsantos.github.io/automate/Planning/RudeQ%26A/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>Rude Q & A - automate</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rude-q-a" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="automate" class="md-header__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            automate
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Rude Q &amp; A
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="automate" class="md-nav__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../../logo.svg" alt="logo">
+
+    </a>
+    automate
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howitworks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluating/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluating automate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Your First Toolkit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Command Line (CLI)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Command Line (CLI)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runtime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../clioptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Additional Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Jetbrains Rider Plugin
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Jetbrains Rider Plugin
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation-rider-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Plugin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runtime-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Contributors/contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Privacy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-technology" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why this technology?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why now?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why you?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-did-it-fail-last-time-around" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why did it fail last time around?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-makes-you-think-it-will-succeed-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      What makes you think it will succeed now?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-makes-you-think-you-can-make-it-succeed-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      What makes you think you can make it succeed now?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-are-you-the-best-person-to-start-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why are you the best person to start this?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#who-would-use-this-capability-and-what-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      Who would use this capability and what for?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-it-all-about" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is it all about?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="rude-q-a">Rude Q &amp; A<a class="headerlink" href="#rude-q-a" title="Permanent link">#</a></h1>
+<h2 id="why-this-technology">Why this technology?<a class="headerlink" href="#why-this-technology" title="Permanent link">#</a></h2>
+<p>The value proposition is still immediately obvious to me, it is still relevant to tech today, the tech already exists (in a form).</p>
+<p>I started investigating the automation of code patterns back in the early 2000's at Microsoft as a channel to teach and disseminate architectural/technical guidance to developers as a technical consultant in the APAC/EMEA region. Adopting and learning .NET best practices and architectural patterns, and technical leadership, was a common demand from enterprise customers to Microsoft Consulting Services. My journey into developer tooling started out with attempting to teach enterprise developers how to use specific (recommended) libraries and frameworks as intended (eg. Enterprise Library and others). That led into the development of architectural frameworks (eg. Enterprise Framework) that implemented the best practice guidance coming out of the Microsoft patterns &amp; practices team in code assets that our enterprise customers adopted. Clearly, raising challenges around versioning and support once adopted.</p>
+<p>At the same time, the MS patterns &amp; practices team was looking at moving from delivering just written guidance to delivering "actionable guidance" and investigating open source, binary and tooling approaches for doing that. We saw the emergence of the first automation tooling from Microsoft in the "Guidance Automation Toolkit" that wrote the code configuration for various fixed architectural patterns. At the same time deep investments (in talent acquisition from industry and money) were being made into DSM and DSL tooling in the Visual Studio teams, and the MS Software Factories movement started from the new thought leadership around this kind of approach. After establishing the movement, the Visual Studio team were creating product plans for a new software factory tooling platform, and it was discovered that I had already created a working software factory independently in the field, and was already selling it to our enterprise customers. Everything was aligning in that space at
+Microsoft for a new set of DSM tools.</p>
+<p>Then serendipitously, a technical partnership was sought by Raytheon with MS to create an in-house program to adopt these kinds of DSM tools (software factories) to be adopted across their vast programs of work. A significant opportunity for MS to introduce its .NET platform into another US defence contractor. We established the program at Raytheon in Boston, and we worked side by side supporting Raytheon in developing the training facility. At the same time, informing the development of the new Visual Studio platform for this kind of tooling. Sadly, the Visual Studio team unexpectedly changed strategy (series of unfortunate events), and exited the DSM space. That required MS to step in (executive support to save the partnership) and build this tooling independently from the core Visual Studio team. I led a new product team based out of Buenos Aires staffed with our best partners in this space (Clarius Consulting), and we build what became the VSPAT technology - the first actual DSM
+tooling platform. Raytheon adopted the new technology in its programs. But as the partnership with Raytheon matured, at risk of this technology being exclusive to only Raytheon (and losing support in the wider community) I led the efforts to open source VSPAT, and it evolved into NuPattern on github.com.</p>
+<p>I've always had a desire to help engineers/developers work more effectively, no matter what technology, language, platform. I've discovered the hard way that there are patterns (coding and interaction) that work in each and every software/hardware context, that persist over time and evolve over time as the whole tech stack below changes. Mastering software over the course of my career has been about adapting and evolving these patterns, orthogonal to the specific domain or product being built. All long lived software has patterns in it, that are repeated over and over again, and keeping them consistent is paramount to keeping up the pace of working in a codebase as it becomes larger and more complex.</p>
+<p>This is difficult skill to master, and as such, many professionals take years to get there, meanwhile they are not reaping the benefits of having them. That is a deep shame, and I believe the causes are many, but primarily. Too little experience in most of the software teams out there, coupled with poor ways to communicate guidance to developers as they are writing code.</p>
+<h2 id="why-now">Why now?<a class="headerlink" href="#why-now" title="Permanent link">#</a></h2>
+<p>Reflecting on the fact that ~15 years has past (since the story above), and in the context of the work I do now (teaching product development to engineers) and in the work I was doing in my own start-up for the last 8 years - building APIs) I see opportunity for reaping the benefits of this capability again, in the contexts I work in.</p>
+<p>Perhaps, the industry had matured enough now, to seek out this capability as being more important than it was before?</p>
+<h2 id="why-you">Why you?<a class="headerlink" href="#why-you" title="Permanent link">#</a></h2>
+<p>It is a space that I (and others) understand deeply, and I see opportunity for,</p>
+<p>It's a general mission I care about deeply.</p>
+<p>I've (and others) have had the experience of bringing this capability to market before and failing at it.</p>
+<h2 id="why-did-it-fail-last-time-around">Why did it fail last time around?<a class="headerlink" href="#why-did-it-fail-last-time-around" title="Permanent link">#</a></h2>
+<p>(I'm not so certain about these conclusions about last time around.)</p>
+<p>We failed to get more traction in the wider industry because:</p>
+<ol>
+<li>Compelling working examples were hard (lacked good ideas) to create and demonstrate effectively to general audiences. The working examples that were demonstrated did not seem to resonate with general audiences. Specific working examples did resonate with specific audiences, but then the details seemed to distract audiences from the overarching value. The time required to ideate the general examples, and the time to implement the specific examples was very scarce.</li>
+<li>Due to some of the novelty of this tooling approach (not seen before), realising some of the potential power it, and what it could deliver was often not exposed. Only those who understood it deeply could "see" that power, and then see the potential of wielding it.</li>
+<li>We were coupled too tightly with Visual Studio (at the time) that was changing its automation interfaces too rapidly (once every 2 years). We had to support Vcurrent-3 implementations, to support existing users who migrated to newer version of Visual Studio slowly.</li>
+<li>Visual Studio performance was a major usability constraint (when enumerating and analysing medium/large solutions/projections/folders and files).</li>
+<li>There was only 1, sometimes 2 contributors maintaining this project.</li>
+<li>The niche target audience was never really identified. It was never meant to be general purpose for all programmers in all contexts. There was no obvious channel to market, or specific go to market strategy.</li>
+<li>I have found from many (audible/textual) interactions with technical people (tech consultants, program managers etc, even those in the developers tools space, and those who are highly experienced too) that when trying to explain the objectives and techniques of this approach often fails to hit the mark, and resonate with them. First, there seems to be a barrier in terms of language that makes it very hard to describe exactly how the benefits are experienced. Then there seems to be a deep scepticism that that seems more based upon lack of actual experience at the coalface programming, and empathy for real world developers. Whatever the reason, in conclusion, without demonstrating concrete examples that are meaningful to the present audience), the value proposition is very hard to communicate to any audience. This would explain why this kind of tech is hard to understand just from a simple conversation, and may only be realised by using this technique. This is a significant barrier.</li>
+</ol>
+<h2 id="what-makes-you-think-it-will-succeed-now">What makes you think it will succeed now?<a class="headerlink" href="#what-makes-you-think-it-will-succeed-now" title="Permanent link">#</a></h2>
+<p>I will need a lot more evidence that it is desirable first. Then I'll need to believe in a model that could be financially viable in the long run.</p>
+<p>Then we will have to find a way to overcome the various challenges above, for this to result in an outcome that is different than what we experienced prior.</p>
+<h2 id="what-makes-you-think-you-can-make-it-succeed-now">What makes you think you can make it succeed now?<a class="headerlink" href="#what-makes-you-think-you-can-make-it-succeed-now" title="Permanent link">#</a></h2>
+<p>That's not certain at all. I can't do it alone anymore. It will need more technical, financial and marketing investment.</p>
+<p>It's not a full time commitment at this point, and could not sustain a living yet. But it could be a worthy community project.</p>
+<p>Perhaps, one channel to market could be to ship and support toolkits for popular technologies, as a way to demonstrate its capabilities.</p>
+<h2 id="why-are-you-the-best-person-to-start-this">Why are you the best person to start this?<a class="headerlink" href="#why-are-you-the-best-person-to-start-this" title="Permanent link">#</a></h2>
+<p>I'I should be one of the Founders of this business because this capability has been part of my life for decades and I've explored it in more than one way or another more than almost any other person. I'm not the best person to front this business, I'm not a CEO, nor want to do what good CEO's do , but contributing to the product vision and strategy and execution is where I should bring my skills to bare.</p>
+<h2 id="who-would-use-this-capability-and-what-for">Who would use this capability and what for?<a class="headerlink" href="#who-would-use-this-capability-and-what-for" title="Permanent link">#</a></h2>
+<p>There is no doubt that this is NOT a general purpose tool for all programmers all of the time.</p>
+<p>There are many kinds of programming (as well as many platforms) and individual programmers perform many kinds different programming tasks even on the same software project/product. Even on the same codebase, using tooling like this, there are times when it is not the appropriate tool for the task. And conversely there are some tasks that benefit from it hugely.</p>
+<ul>
+<li>
+<p>Specifically, activities around the creation of new components, where there is much activity across many projects/folders/files setting things up to support the bespoke programming that must happen.</p>
+</li>
+<li>
+<p>Specifically, in codebases where there are well-defined technical patterns already agreed to, that should be followed to get things established.</p>
+</li>
+</ul>
+<h2 id="what-is-it-all-about">What is it all about?<a class="headerlink" href="#what-is-it-all-about" title="Permanent link">#</a></h2>
+<ul>
+<li>Reusing knowledge</li>
+<li>Applying custom Coding Patterns reliably and consistently</li>
+<li>Automating Recipes for quickly building code</li>
+<li>Configuring things with different options, to adapt to different use cases.</li>
+<li>Recording what you've learnt over the years</li>
+<li>Speeding up the dull and boring parts of working in a codebase</li>
+<li>Being and staying consistent.</li>
+<li>Evolving consistently</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

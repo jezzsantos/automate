@@ -1,0 +1,2455 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Templatize patterns from your own codebase, make them programmable, then share them with your team">
+      
+      
+      
+        <link rel="canonical" href="https://jezzsantos.github.io/automate/authoring/">
+      
+      
+        <link rel="prev" href="../runtime/">
+      
+      
+        <link rel="next" href="../clioptions/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>Making Toolkits - automate</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#making-toolkits" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="automate" class="md-header__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            automate
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Making Toolkits
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="automate" class="md-nav__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    automate
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howitworks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluating/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluating automate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Your First Toolkit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Command Line (CLI)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Command Line (CLI)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#capture-a-new-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Capture a new pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listing-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Listing patterns
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching patterns
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-the-current-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the current pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-pattern-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring pattern structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring pattern structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete collections
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-pattern-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring pattern automation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring pattern automation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-code-template-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing code template content
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-code-template-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing code template content
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-code-template-with-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code template with command
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add CLI commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update CLI commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-any-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete any commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add launch points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update launch points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete launch points
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing-and-deploying-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing and deploying toolkits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Publishing and deploying toolkits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-versioning-rules-for-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic versioning rules for toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-new-versions-of-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing new versions of toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publishing-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploying a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clioptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Additional Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Jetbrains Rider Plugin
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Jetbrains Rider Plugin
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation-rider-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Plugin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authoring-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Contributors/contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Privacy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#capture-a-new-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Capture a new pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listing-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Listing patterns
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching patterns
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-the-current-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the current pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-pattern-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring pattern structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring pattern structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete collections
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-pattern-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring pattern automation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring pattern automation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-code-template-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing code template content
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-code-template-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing code template content
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-code-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test code templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-code-template-with-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add code template with command
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-code-template-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test code template commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add CLI commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update CLI commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-any-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete any commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add launch points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update launch points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-launch-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete launch points
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing-and-deploying-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing and deploying toolkits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Publishing and deploying toolkits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-versioning-rules-for-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic versioning rules for toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-new-versions-of-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing new versions of toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publishing-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploying a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="making-toolkits">Making Toolkits<a class="headerlink" href="#making-toolkits" title="Permanent link">#</a></h1>
+<p><a href="../reference/#pattern">A Pattern</a> is a major top-level concept in automate, used to describe coding patterns. When published, it is packaged and distributed in <a href="../reference/#toolkit">A Toolkit</a> that is installed into a codebase.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>To make toolkits, you will need to have the <code>automate</code> CLI (or plugin) installed on your machine. (see <a href="../installation/">Installing automate</a>)</p>
+</div>
+<h2 id="capture-a-new-pattern">Capture a new pattern<a class="headerlink" href="#capture-a-new-pattern" title="Permanent link">#</a></h2>
+<p>In a terminal, navigate to the root of your source codebase.</p>
+<p>Create a new pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>automate create pattern <span class="s2">&quot;&lt;PATTERNNAME&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;PATTERNNAME&gt;</code> is the name of the new pattern. The name can only contain alphanumerical characters and the <code>.</code> character.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> is optional metadata that defines how the pattern might be displayed in a user interface.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> is optional metadata that defines how the pattern might be displayed in a user interface.</p>
+</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This will create a new pattern, with a root element of the same name, and will set it as the "current" pattern for subsequent editing.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>automate create pattern <span class="s2">&quot;APatternName&quot;</span> --displayedas <span class="s2">&quot;A Pattern Name&quot;</span> --describedas <span class="s2">&quot;an example pattern&quot;</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This pattern automatically becomes the 'active' pattern for subsequent commands.</p>
+</div>
+<h2 id="listing-patterns">Listing patterns<a class="headerlink" href="#listing-patterns" title="Permanent link">#</a></h2>
+<p>You can view all the patterns in your codebase:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>automate list patterns
+</code></pre></div></td></tr></table></div>
+or
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>automate list all
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Which will list all the patterns and their respective names and versions.</p>
+</div>
+<h2 id="switching-patterns">Switching patterns<a class="headerlink" href="#switching-patterns" title="Permanent link">#</a></h2>
+<p>If you have multiple patterns going, you can switch between them using their ID:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>automate edit switch <span class="s2">&quot;&lt;PATTERNID&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Which makes this pattern the 'active' pattern for subsequent commands.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>automate edit switch 12345678
+</code></pre></div></td></tr></table></div>
+</div>
+<h2 id="viewing-the-current-pattern">Viewing the current pattern<a class="headerlink" href="#viewing-the-current-pattern" title="Permanent link">#</a></h2>
+<p>You can view the current pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>automate view pattern
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Which will display the summarized configuration of the current pattern.</p>
+</div>
+<p>You can view the detailed configuration of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>automate view pattern --all
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Which will display detailed information about the pattern structure, configuration and its automation.</p>
+</div>
+<h2 id="configuring-pattern-structure">Configuring pattern structure<a class="headerlink" href="#configuring-pattern-structure" title="Permanent link">#</a></h2>
+<p>The structure of a pattern describes a (conceptual) model of your code and its coding patterns.</p>
+<ul>
+<li>
+<p>The simplest coding pattern, used for a single use-case, probably does not need much structure (hierarchy) or variance (attributes) to represent it. Since generating the code for it can all be hardcoded into one or more code templates (with no variance).</p>
+</li>
+<li>
+<p>If a pattern is to be used for multiple use-cases, some variance needs to be captured and configured by the person applying the actual use-case. This is where a hierarchy of elements, attributes, and automation comes to play to make a model of the software.</p>
+</li>
+<li>
+<p>Try to define the high-level concepts about your coding pattern (in a hierarchy of elements/collections), not necessarily representing detailed coding concepts like functions and variables, but more at the conceptual/component/module level. Then decorate your hierarchical elements/collections with attributes to describe what varies and to which concepts that variance would naturally be attributed.</p>
+</li>
+<li>
+<p>Construct elements (ZeroToOne) and collections (ZeroToMany) to help model your pattern and its instancing rules.</p>
+</li>
+<li>
+<p>Every pattern already has a single versioned root element, which initially has no attributes defined for it (except for a <code>DisplayName</code> and an empty <code>Description</code>).</p>
+</li>
+</ul>
+<h3 id="update-pattern">Update pattern<a class="headerlink" href="#update-pattern" title="Permanent link">#</a></h3>
+<p>To update the name and metadata for a pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>automate edit update-pattern
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>--name</code> is an optional parameter and must be alphanumeric and can contain the following additional characters:<code>._</code>.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> is an optional parameter that defines how the pattern might be displayed in a user interface.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> is an optional parameter that defines how the pattern might be displayed in a user interface.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>automate edit update-pattern --name <span class="s2">&quot;ANewName&quot;</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<h3 id="add-attributes">Add attributes<a class="headerlink" href="#add-attributes" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>An "Attribute" is a means to represent the variability of a pattern (or the variance within a set of use-cases). When applied, they are essentially a name-value pair.</p>
+</div>
+<p>To add a new attribute to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>automate edit add-attribute <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;NAME&gt;</code> must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing attribute or element/collection on the <code>--aschildof</code> element/collection. Cannot be one of the reserved names: <code>Id</code>, <code>DisplayName</code>, <code>Description</code>, <code>ConfigurePath</code>, <code>Schema</code> or <code>Items</code>.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the attribute to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern</p>
+</li>
+<li>
+<p>The <code>--isrequired</code> is an optional parameter that defines that the attribute must have a value when applied.</p>
+</li>
+<li>
+<p>The <code>--isoftype "string"</code> optional parameter defines the data type of the attribute. Valid values are: <code>string</code>, <code>bool</code>, <code>int</code>, <code>float</code>, <code>datetime</code>. The default is <code>string</code> when <code>--isoftype</code> is not defined.</p>
+</li>
+<li>
+<p>The <code>--defaultvalueis "&lt;AVALUE&gt;"</code> is optional. If defined, it must match the <code>--isoftype</code>, and must match <code>--isoneof</code> (if defined).</p>
+</li>
+<li>
+<p>The <code>--isoneof "&lt;VALUE1&gt;;&lt;VALUE2&gt;;&lt;VALUE3&gt;"</code> is optional, and is a <code>;</code> delimited list of specific values that represent the only values for this attribute, when applied.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>automate edit add-attribute <span class="s2">&quot;AnAttributeName&quot;</span> --isrequired --isoftype string --defaultvalueis <span class="s2">&quot;achoice3&quot;</span> --isoneof <span class="s2">&quot;achoice1;achoice2;achoice3&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>automate edit add-attribute <span class="s2">&quot;AnAttributeName&quot;</span> --isrequired --isoftype string --defaultvalueis <span class="s2">&quot;achoice3&quot;</span> --isoneof <span class="s2">&quot;achoice1;achoice2;achoice3&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-attributes">Update attributes<a class="headerlink" href="#update-attributes" title="Permanent link">#</a></h3>
+<p>To update an existing attribute on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>automate edit update-attribute <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating the attribute on the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern</p>
+</li>
+<li>
+<p>The <code>--isrequired</code> optionally defines whether the attribute must have a value or not.</p>
+</li>
+<li>
+<p>The <code>--isoftype "string"</code> optionally defines the new data type of the attribute. Valid values are: <code>string</code>, <code>bool</code>, <code>int</code>, <code>float</code>, <code>datetime</code>. The default is <code>string</code> when <code>--isoftype</code> is not defined.</p>
+</li>
+<li>
+<p>The <code>--defaultvalueis "&lt;AVALUE&gt;"</code> optionally defines the new default value. If defined, it must match the <code>--isoftype</code>, and must match <code>--isoneof</code> (if defined).</p>
+</li>
+<li>
+<p>The <code>--isoneof "&lt;VALUE1&gt;;&lt;VALUE2&gt;;&lt;VALUE3&gt;"</code> optionally defines new choices, and is a <code>;</code> delimited list of specific values that represent the only values for this attribute, when applied.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the attribute. It must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing element/collection or attribute on the <code>--aschildof</code> element/collection. Must also not be named <code>Id</code>, or <code>DisplayName</code> or <code>Description</code>.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a>automate edit update-attribute <span class="s2">&quot;AnAttributeName&quot;</span> --name <span class="s2">&quot;ANewAttributeName&quot;</span> --isrequired false
+</code></pre></div></td></tr></table></div>
+Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a>automate edit update-attribute <span class="s2">&quot;AnAttributeName&quot;</span> --name <span class="s2">&quot;ANewAttributeName&quot;</span> --isrequired false --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-attributes">Delete attributes<a class="headerlink" href="#delete-attributes" title="Permanent link">#</a></h3>
+<p>To delete an existing attribute:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a>automate edit delete-attribute <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting an attribute from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element in the pattern.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a>automate edit delete-attribute <span class="s2">&quot;AnAttributeName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a>automate edit delete-attribute <span class="s2">&quot;AnAttributeName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-elements">Add elements<a class="headerlink" href="#add-elements" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>An "Element" is a means to represent some relational hierarchy in a pattern, a means to relate one concept to another. Elements can be nested. An element can have a cardinality of <code>ZeroOrOne</code> or <code>One</code>, which determines whether it must exist when the pattern is applied.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Use a collection instead of an element, if you want to represent other kinds of relationships (<code>ZeroToMany</code> or <code>OneOrMany</code>).</p>
+</div>
+<p>To add a new element to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a>automate edit add-element <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;NAME&gt;</code> must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing element/collection or attribute on the <code>--aschildof</code> element/collection. Cannot be one of the reserved names: <code>Id</code>, <code>DisplayName</code>, <code>Description</code>, <code>ConfigurePath</code>, <code>Schema</code> or <code>Items</code>.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the element to the root element. <ANEXPRESSION>` is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> is an optional parameter that defines how the element might be displayed in a user interface.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> is an optional parameter that defines how the element might be described in a user interface.</p>
+</li>
+<li>
+<p>The <code>--isrequired</code> is an optional parameter that defines whether the element is required (<code>Cardinality=One</code>) or not required (<code>Cardinality=ZeroToOne</code>). By default, it is <code>true</code> (<code>Cardinality=One</code>).</p>
+</li>
+<li>
+<p>The <code>--autocreate</code> is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied. By default, it is <code>true</code> if <code>--isrequired</code> is <code>true</code>, and <code>false</code> if <code>--isrequired</code> is <code>false</code>.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-20-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1"></a>automate edit add-element <span class="s2">&quot;AnElementName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1"></a>automate edit add-element <span class="s2">&quot;AnElementName&quot;</span> --aschildof <span class="s2">&quot;{AnotherElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-elements">Update elements<a class="headerlink" href="#update-elements" title="Permanent link">#</a></h3>
+<p>To update an existing element on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-22-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1"></a>automate edit update-element <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating the element on the root element. <ANEXPRESSION>` is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> optionally defines a new display name.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> optionally defines a new description.</p>
+</li>
+<li>
+<p>The <code>--isrequired</code> optionally defines whether the element is required (<code>One</code>) or not required (<code>ZeroToOne</code>).</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the element. It must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing attribute or element/collection on the <code>--aschildof</code> element/collection. Cannot be one of the reserved names: <code>Id</code>, <code>DisplayName</code>, <code>Description</code>, <code>ConfigurePath</code>, <code>Schema</code> or <code>Items</code>.</p>
+</li>
+<li>
+<p>The <code>--autocreate</code> is an optional parameter that defines whether an instance of the element will be created automatically when the pattern is applied.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-23-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1"></a>automate edit update-element <span class="s2">&quot;AnElementName&quot;</span> --name <span class="s2">&quot;ANewName&quot;</span> --isrequired false --aschildof <span class="s2">&quot;{AnotherElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-elements">Delete elements<a class="headerlink" href="#delete-elements" title="Permanent link">#</a></h3>
+<p>To delete an existing element on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-24-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1"></a>automate edit delete-element <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the element from the root element. <ANEXPRESSION>` is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element/collection in the pattern.</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-25-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1"></a>automate edit delete-element <span class="s2">&quot;AnElementName&quot;</span> --aschildof <span class="s2">&quot;{AnotherElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-collections">Add collections<a class="headerlink" href="#add-collections" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Collection" is a special case of an "Element" that represents a collection of concepts. A collection is essentially an element with a choice of cardinality (<code>ZeroOrMany</code>, <code>OneOrMany</code>). When it is applied to a specific use-case, multiple instances of the element (described by the collection) are instantiated as (required <code>One</code>) elements.</p>
+</div>
+<p>To add a new collection to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-26-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1"></a>automate edit add-collection <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;NAME&gt;</code> must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing element/collection or attribute on the <code>--aschildof</code> element/collection. Cannot be one of the reserved names: <code>Id</code>, <code>DisplayName</code>, <code>Description</code>, <code>ConfigurePath</code>, <code>Schema</code> or <code>Items</code>.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the element to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> is an optional parameter that defines how the element might be displayed in a user interface.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> is an optional parameter that defines how the element might be described in a user interface.</p>
+</li>
+<li>
+<p>The <code>--isrequired</code> is an optional parameter that defines whether the collection must have at least one item within it (<code>Cardinality=OneToMany</code>) or not required (<code>Cardinality=ZeroToMany</code>). By default, it is <code>false</code> (<code>Cardinality=ZeroToMany</code>).</p>
+</li>
+<li>
+<p>The <code>--autocreate</code> is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied. By default, it is <code>true</code> if <code>--isrequired</code> is <code>true</code>, and <code>false</code> if <code>--isrequired</code> is <code>false</code>.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-27-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1"></a>automate edit add-collection <span class="s2">&quot;ACollectionName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-28-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a>automate edit add-collection <span class="s2">&quot;ACollectionName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-collections">Update collections<a class="headerlink" href="#update-collections" title="Permanent link">#</a></h3>
+<p>To update an existing collection on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-29-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1"></a>automate edit update-collection <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating the collection on the root element. <ANEXPRESSION>` is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--displayedas</code> optionally defines a new display name.</p>
+</li>
+<li>
+<p>The <code>--describedas</code> optionally defines a new description.</p>
+</li>
+<li>
+<p>The <code>--isrequired</code>optionally defines whether the collection must have at least one item within it (<code>OneToMany</code>) or not required (<code>ZeroToMany</code>).</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the collection. It must be alphanumeric and can contain the following additional characters:<code>._</code>. The name must not be the same as any existing attribute or element/collection on the <code>--aschildof</code> element/collection. Cannot be one of the reserved names: <code>Id</code>, <code>DisplayName</code>, <code>Description</code>, <code>ConfigurePath</code>, <code>Schema</code> or <code>Items</code>.</p>
+</li>
+<li>
+<p>The <code>--autocreate</code> is an optional parameter that defines whether an instance of the collection will be created automatically when the pattern is applied.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-30-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1"></a>automate edit update-collection <span class="s2">&quot;ACollectionName&quot;</span> --name <span class="s2">&quot;ANewName&quot;</span> --isrequired false --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-collections">Delete collections<a class="headerlink" href="#delete-collections" title="Permanent link">#</a></h3>
+<p>To delete an existing collection on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-31-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1"></a>automate edit delete-collection <span class="s2">&quot;&lt;NAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the collection from the root element. <ANEXPRESSION>` is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element/collection in the pattern.</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-32-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1"></a>automate edit delete-collection <span class="s2">&quot;ACollectionName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h2 id="configuring-pattern-automation">Configuring pattern automation<a class="headerlink" href="#configuring-pattern-automation" title="Permanent link">#</a></h2>
+<p>The structure of a pattern provides a convenient context for applying automation to it.</p>
+<p>Each element/collection can be configured with one or more automation features, that can be used to realize or manifest the pattern when applied.</p>
+<p>There are several concepts here. The first is "Commands" which can enact things on the pattern, make calculations, manipulations, etc. Then there are "Launch Points" which execute the commands in response to some trigger or stimulus. These launch points can be manually triggered by a human user or can be triggered in response to some event on the pattern, or some environmental event.</p>
+<h3 id="add-code-templates">Add code templates<a class="headerlink" href="#add-code-templates" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Code Template" is a way to capture any kind of code (or configuration viz: JSON, XML, etc) of a pattern so that when a use-case is realized, code artifacts can be injected/modified/augmented/inserted/generated into codebases in specific locations of the codebase. Once a piece of code has been captured by the pattern, it can be templatized by the author and marked up so that variance in a specific use-case can parameterize the actual code injected into a codebase.</p>
+</div>
+<p>To capture a piece of code:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-33-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1"></a>automate edit add-codetemplate <span class="s2">&quot;&lt;FILEPATH&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>FILEPATH</code> is a relative path to an existing code file locally.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the code template to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--name</code> is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-34-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1"></a>automate edit add-codetemplate <span class="s2">&quot;C:/projects/src/afilename.ext&quot;</span> --name <span class="s2">&quot;ATemplateName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-35-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1"></a>automate edit add-codetemplate <span class="s2">&quot;C:/projects/src/afilename.ext&quot;</span> --name <span class="s2">&quot;ATemplateName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="viewing-code-template-content">Viewing code template content<a class="headerlink" href="#viewing-code-template-content" title="Permanent link">#</a></h3>
+<p>To view the contents of an existing code template:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-36-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1"></a>automate view codetemplate <span class="s2">&quot;&lt;TEMPLATENAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>TEMPLATENAME</code> is the name of an existing code template on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the code template from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>On the pattern (On Windows):
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-37-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1"></a>automate view codetemplate <span class="s2">&quot;ATemplateName&quot;</span>
+</code></pre></div></td></tr></table></div>
+On an element (On Windows):
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-38-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1"></a>automate view codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="editing-code-template-content">Editing code template content<a class="headerlink" href="#editing-code-template-content" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>Once a code template has been added to a pattern it will then need to be annotated with <a href="../reference/#templating-expressions">Templating Expressions</a>. The code template exists inside the pattern (file structure), but the editing of it will need to be done in an external editor program (i.e. notepad.exe).</p>
+</div>
+<p>To edit the contents of an existing code template:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-39-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1"></a>automate edit codetemplate <span class="s2">&quot;&lt;TEMPLATENAME&gt;&quot;</span> --with <span class="s2">&quot;&lt;EDITORNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>TEMPLATENAME</code> is the name of an existing code template on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--with "&lt;EDITORNAME&gt;"</code> is either the name of an editor application (i.e. notepad.exe), or it is the absolute path to the editor application. The specified program is expected to take, as its first argument, the absolute path to the code template (on disk).</p>
+</li>
+<li>
+<p>The <code>--args</code> is an optional set of arguments to pass the application. These arguments will be added to the application before the absolute path to the code template (on disk).</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the code template from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern (On Windows):
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-40-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1"></a>automate edit codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --with <span class="s2">&quot;notepad&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element (On Windows): 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-41-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1"></a>automate edit codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --with <span class="s2">&quot;notepad&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element, with VS Code (On Windows): 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-42-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1"></a>automate edit codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --with <span class="s2">&quot;</span><span class="nv">%localappdata%</span><span class="s2">\Programs\Microsoft VS Code\code.exe&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-code-templates">Delete code templates<a class="headerlink" href="#delete-code-templates" title="Permanent link">#</a></h3>
+<p>To delete an existing code template:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-43-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1"></a>automate edit delete-codetemplate <span class="s2">&quot;&lt;TEMPLATENAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>TEMPLATENAME</code> is the name of an existing code template on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the code template from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-44-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1"></a>automate edit delete-codetemplate <span class="s2">&quot;ATemplateName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-45-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1"></a>automate edit delete-codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="test-code-templates">Test code templates<a class="headerlink" href="#test-code-templates" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>Code templates contain content that may contain <a href="../reference/#templating-expressions">Templating Expressions</a>. Once the template has been added to a pattern, the content can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the code template to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.</p>
+</div>
+<p>To can test the contents of an existing code template:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-46-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1"></a>automate test codetemplate <span class="s2">&quot;&lt;TEMPLATENAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>TEMPLATENAME</code> is the name of an existing code template on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are testing a code template on the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--export-data</code> optionally defines the relative path to a file that will be populated with the data that was used to test the template.</p>
+</li>
+<li>
+<p>The <code>--import-data</code> optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the <code>--export-data</code> option to get a starting point to work from.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-47-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1"></a>automate test codetemplate <span class="s2">&quot;ATemplateName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-48-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1"></a>automate test codetemplate <span class="s2">&quot;ATemplateName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-code-template-commands">Add code template commands<a class="headerlink" href="#add-code-template-commands" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Code Template Command" is simply a type of automation that executes a "Code Template". This automation must be wired up to a "Code Template", and a "Code Template" must have a "Code Template Command" wired to it, to be applied in any use-case. This kind of command is responsible for deciding how to render the "Code Template" into the target codebase (where in the codebase, and how its named).
+After a code template is rendered into a codebase, an "Artifact Link" is defined for the location of the rendered code. This link is then tracked and maintained on subsequent executions of this command. This is useful if rendered files are later renamed, or the <code>--targetpath</code> property of this command changes.</p>
+</div>
+<p>To add a new code template command to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-49-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1"></a>automate edit add-codetemplate-command <span class="s2">&quot;&lt;CODETEMPLATENAME&gt;&quot;</span> --targetpath <span class="s2">&quot;&lt;TARGETPATH&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;CODETEMPLATENAME&gt;</code> is the name of an existing code template that must exist on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the command to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> of an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--targetpath "&lt;TARGETPATH&gt;"</code> value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a <code>~</code> character to indicate that the path will be relative to the codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain <a href="../reference/#templating-expressions">Templating Expressions</a> (relative to the element/collection of the value of <code>--aschildof</code>), that will be resolved when the command is applied.</p>
+</li>
+<li>
+<p>The <code>--isoneoff</code> optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed. The default is <code>false</code>.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a name for the command. If none is given, a default name will be derived for the command.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-50-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1"></a>automate edit add-codetemplate-command <span class="s2">&quot;ATemplateName&quot;</span> --targetpath <span class="s2">&quot;~/apath/afilename.ext&quot;</span> --isoneoff
+</code></pre></div></td></tr></table></div>
+To an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-51-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1"></a>automate edit add-codetemplate-command <span class="s2">&quot;ATemplateName&quot;</span> --targetpath <span class="s2">&quot;~/apath/afilename.ext&quot;</span> --isoneoff --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-code-template-with-command">Add code template with command<a class="headerlink" href="#add-code-template-with-command" title="Permanent link">#</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This command makes it possible to add a code template and add a new code template command (to render it) in one command.</p>
+</div>
+<p>To capture a piece of code and wire it up to a code template command:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-52-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1"></a>automate edit add-codetemplate-with-command <span class="s2">&quot;&lt;FILEPATH&gt;&quot;</span> --targetpath <span class="s2">&quot;&lt;TARGETPATH&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>FILEPATH</code> is a relative path to an existing code file locally.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the code template to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--targetpath "&lt;TARGETPATH&gt;"</code> value describes the full path (including filename and file extension) of the code file when the command is applied. It can start with a <code>~</code> character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain <a href="../reference/#templating-expressions">Templating Expressions</a> (relative to the element/collection of the value of <code>--aschildof</code>), that will be resolved when the command is applied.</p>
+</li>
+<li>
+<p>The <code>--isoneoff</code> optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed. The default is <code>false</code>.</p>
+</li>
+<li>
+<p>The <code>--name</code> is an optional friendly name of the code template, which will be used to reference the code template when it is connected to automation later. If no name is specified, an automatic name is assigned to this code template.</p>
+</li>
+<li>
+<p>The <code>--commandname</code> optionally defines a new name for the command. If no name is specified, an automatic name is assigned to this command.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-53-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1"></a>automate edit add-codetemplate-with-command <span class="s2">&quot;C:/projects/src/afilename.ext&quot;</span> --name <span class="s2">&quot;ATemplateName&quot;</span> --commandname <span class="s2">&quot;ACommandName&quot;</span> --targetpath <span class="s2">&quot;~/apath/afilename.ext&quot;</span> --isoneoff
+</code></pre></div></td></tr></table></div>
+To an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-54-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1"></a>automate edit add-codetemplate-with-command <span class="s2">&quot;C:/projects/src/afilename.ext&quot;</span> --name <span class="s2">&quot;ATemplateName&quot;</span> --commandname <span class="s2">&quot;ACommandName&quot;</span> --targetpath <span class="s2">&quot;~/apath/afilename.ext&quot;</span> --isoneoff --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-code-template-commands">Update code template commands<a class="headerlink" href="#update-code-template-commands" title="Permanent link">#</a></h3>
+<p>To update an existing code template command on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-55-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1"></a>automate edit update-codetemplate-command <span class="s2">&quot;&lt;COMMANDNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;COMMANDNAME&gt;</code> is the name of an existing command on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating a command on the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--targetpath</code> optionally defines a new full path (including filename and file extension) of the code file when the command is applied. It can start with a <code>~</code> character to indicate that the path will be relative to codebase where the toolkit will be installed. It can also be an absolute file path on the target machine (harder to predict). This expression may also contain <a href="../reference/#templating-expressions">Templating Expressions</a> (relative to the element/collection of the value of <code>--aschildof</code>), that will be resolved when the command is applied.</p>
+</li>
+<li>
+<p>The <code>--isoneoff</code> optionally defines that the rendered code template will only be generated if it does not already exist on the local machine in the specified location with the specified name. Typically, this means that the code template is only rendered the first time the command is executed.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the command. If no name is specified, an automatic name is assigned to this command.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-56-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1"></a>automate edit update-codetemplate-command <span class="s2">&quot;ACommandName&quot;</span> --targetpath <span class="s2">&quot;~/anewpath/anewfilename.ext&quot;</span> --isoneoff false
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-57-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1"></a>automate edit update-codetemplate-command <span class="s2">&quot;ATemplateName&quot;</span> --targetpath <span class="s2">&quot;~/anewpath/anewfilename.ext&quot;</span> --isoneoff false --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="test-code-template-commands">Test code template commands<a class="headerlink" href="#test-code-template-commands" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>Code template commands contain a "target path" that may contain <a href="../reference/#templating-expressions">Templating Expressions</a>. Once the command has been added to a pattern, the target path can be tested with fake data to yield a test result. Fake data is arranged in the same structure of the pattern and values are populated in a sequential way. This data is then applied to the command to give a test output. You can export this dummy data after the test, alter it manually, and then import it back to be used in a subsequent test.</p>
+</div>
+<p>To can test the contents of an existing code template command:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-58-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1"></a>automate test codetemplate-command <span class="s2">&quot;&lt;COMMANDNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>COMMANDNAME</code> is the name of an existing command on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are testing a command on the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--export-data</code> optionally defines the relative path to a file that will be populated with the data (in JSON) that was used to test the template.</p>
+</li>
+<li>
+<p>The <code>--import-data</code> optionally defines the relative path to a file containing test data (in JSON) in the same structure as the pattern, relative to the current code template. Use the <code>--export-data</code> option to get a starting point to work from.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Testing with default data:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-59-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1"></a>automate test codetemplate-command <span class="s2">&quot;ACommandName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Testing with default data, and export that data: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-60-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1"></a>automate test codetemplate-command <span class="s2">&quot;ACommandName&quot;</span> --export-data <span class="s2">&quot;C:/projects/data/exportedtestdata.json&quot;</span>
+</code></pre></div></td></tr></table></div>
+Testing with imported data: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-61-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1"></a>automate test codetemplate-command <span class="s2">&quot;ACommandName&quot;</span> --import-data <span class="s2">&quot;C:/projects/data/exportedtestdata.json&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-cli-commands">Add CLI commands<a class="headerlink" href="#add-cli-commands" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "CLI Command" is simply a type of automation that executes another command-line program (with arguments).</p>
+</div>
+<p>To add a new CLI command to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-62-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1"></a>automate edit add-cli-command <span class="s2">&quot;&lt;APPLICATIONNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;APPLICATIONNAME&gt;</code> can be a name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the command to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--arguments &lt;ARGUMENTS&gt;</code> optionally defines the arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain <a href="../reference/#templating-expressions">Templating Expressions</a> (relative to the element/collection of the value of <code>--aschildof</code>), which will be resolved when the command is applied.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a name for the command. If no name is specified, an automatic name is assigned to this command.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-63-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1"></a>automate edit add-cli-command <span class="s2">&quot;C:/tools/atool.exe&quot;</span> --arguments <span class="s2">&quot;anargument1 anargument2&quot;</span> --name <span class="s2">&quot;ACommandName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-64-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1"></a>automate edit add-cli-command <span class="s2">&quot;C:/tools/atool.exe&quot;</span> --arguments <span class="s2">&quot;anargument1 anargument2&quot;</span> --name <span class="s2">&quot;ACommandName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-cli-commands">Update CLI commands<a class="headerlink" href="#update-cli-commands" title="Permanent link">#</a></h3>
+<p>To update an existing CLI command on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-65-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1"></a>automate edit update-cli-command <span class="s2">&quot;&lt;COMMANDNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;COMMANDNAME&gt;</code> is the name of an existing command on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating the command to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--app &lt;APPLICATIONNAME&gt;</code> optionally defines the new name of the program already in the PATH of the machine, or a fully qualified path to the program on the local machine.</p>
+</li>
+<li>
+<p>The <code>--arguments &lt;ARGUMENTS&gt;</code> optionally defines the new arguments to pass to the program. Double-quotes in the arguments must be escaped with double-quotes. The arguments may also contain <a href="../reference/#templating-expressions">Templating Expressions</a> (relative to the element/collection of the value of <code>--aschildof</code>), which will be resolved when the command is applied.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the command.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-66-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-66-1" name="__codelineno-66-1"></a>automate edit update-cli-command --app <span class="s2">&quot;C:/tools/anothertool.exe&quot;</span> --arguments <span class="s2">&quot;anewnargument1 anewargument2&quot;</span> --name <span class="s2">&quot;ANewCommandName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-67-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-67-1" name="__codelineno-67-1"></a>automate edit update-cli-command -app <span class="s2">&quot;C:/tools/anothertool.exe&quot;</span> --arguments <span class="s2">&quot;anewargument1 anewargument2&quot;</span> --name <span class="s2">&quot;ANewCommandName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-any-commands">Delete any commands<a class="headerlink" href="#delete-any-commands" title="Permanent link">#</a></h3>
+<p>To delete any existing command on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-68-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-68-1" name="__codelineno-68-1"></a>automate edit delete-command <span class="s2">&quot;&lt;COMMANDNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;COMMANDNAME&gt;</code> is the name of an existing command on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the command from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Deleting a command that is referenced by a launch point (anywhere in the pattern) will remove that command identifier from the launch point configuration.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-69-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-69-1" name="__codelineno-69-1"></a>automate edit delete-command <span class="s2">&quot;ACommandName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-70-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-70-1" name="__codelineno-70-1"></a>automate edit delete-command <span class="s2">&quot;ACommandName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="add-launch-points">Add launch points<a class="headerlink" href="#add-launch-points" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Launch Point" is the mechanism by which one or more command(s) are executed, and the pattern is applied to a codebase. Every command is contextualized to the element/collection upon which they are defined, but launch points can execute multiple commands from anywhere in the pattern (in an order).</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Launch points are triggered manually by the user of the toolkit, but in future, launch points can be triggered by user-based events and other environmental triggers.</p>
+</div>
+<p>To add a new launch point to any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-71-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-71-1" name="__codelineno-71-1"></a>automate edit add-command-launchpoint <span class="s2">&quot;&lt;COMMANDIDENTIFIERS&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;COMMANDIDENTIFIERS&gt;</code> is either a <code>;</code> delimited list of command identifiers (on the target element/collection) or it can be <code>*</code> to indicate that you want to add all the commands (on the <code>--from</code> element/collection). By using <code>*</code> you can update the list to add or remove any commands that have changed.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are adding the launch point to the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--from</code> optionally defines another element/collection in the pattern where the commands are located. If this is omitted, then it is assumed that the commands exist on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a friendly name for the launch point. If none is given, a default name will be derived for the launch point.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To the pattern, for all commands on the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-72-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-72-1" name="__codelineno-72-1"></a>automate edit add-command-launchpoint <span class="s2">&quot;*&quot;</span> --name <span class="s2">&quot;ALaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To the pattern, for specific commands on the pattern: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-73-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-73-1" name="__codelineno-73-1"></a>automate edit add-command-launchpoint <span class="s2">&quot;ACOMDID1;ACMDID2&quot;</span> --name <span class="s2">&quot;ALaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To the pattern, for all commands on another element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-74-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-74-1" name="__codelineno-74-1"></a>automate edit add-command-launchpoint <span class="s2">&quot;*&quot;</span> --from <span class="s2">&quot;{AnotherElementName}&quot;</span> --name <span class="s2">&quot;ALaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+To an element, for all commands on another element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-75-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-75-1" name="__codelineno-75-1"></a>automate edit add-command-launchpoint <span class="s2">&quot;*&quot;</span> --from <span class="s2">&quot;{AnotherElementName}&quot;</span> --name <span class="s2">&quot;ALaunchPointName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="update-launch-points">Update launch points<a class="headerlink" href="#update-launch-points" title="Permanent link">#</a></h3>
+<p>To update an existing launch point on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-76-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-76-1" name="__codelineno-76-1"></a>automate edit update-command-launchpoint <span class="s2">&quot;&lt;LAUNCHPOINTNAME&gt;&quot;</span> --add <span class="s2">&quot;&lt;COMMANDIDENTIFIERS&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;LAUNCHPOINTNAME&gt;</code> is the name of an existing launch point on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are updating a launch point on the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+<li>
+<p>The <code>--add &lt;COMMANDIDENTIFIERS&gt;</code> optionally defines the new <code>;</code> delimited list of command identifiers (on the target element/collection) to add, or it can be <code>*</code> to indicate that you want to add all the commands (on the <code>--from</code> element/collection). By using <code>*</code> you can update the list to add or remove any commands that have changed.</p>
+</li>
+<li>
+<p>The <code>--remove &lt;COMMANDIDENTIFIERS&gt;</code> optionally defines the new <code>;</code> delimited list of command identifiers (on the target element/collection) to remove, or it can be <code>*</code> to indicate that you want to remove all the commands (on the <code>--from</code> element/collection).</p>
+</li>
+<li>
+<p>The <code>--from</code> optionally defines another element/collection in the pattern where the commands are located. If this is omitted, then it is assumed that the commands exist on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--name</code> optionally defines a new name for the launch point.</p>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You cannot remove all the <code>&lt;COMMANDIDENTIFIERS&gt;</code> of a launch point, it must always have at least one. </p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern, to re-add all commands on the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-77-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-77-1" name="__codelineno-77-1"></a>automate edit update-command-launchpoint <span class="s2">&quot;ALaunchPointName&quot;</span> --add <span class="s2">&quot;*&quot;</span> --name <span class="s2">&quot;ANewLaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of the pattern, to clear, and add only specific commands on the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-78-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-78-1" name="__codelineno-78-1"></a>automate edit update-command-launchpoint <span class="s2">&quot;ALaunchPointName&quot;</span> --remove <span class="s2">&quot;*&quot;</span> --add <span class="s2">&quot;&lt;ACMDID&gt;&quot;</span> --name <span class="s2">&quot;ANewLaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element, to re-add all commands from another element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-79-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-79-1" name="__codelineno-79-1"></a>automate edit update-command-launchpoint <span class="s2">&quot;ALaunchPointName&quot;</span> --add <span class="s2">&quot;*&quot;</span> --name <span class="s2">&quot;ANewLaunchPointName&quot;</span> --from <span class="s2">&quot;{AnotherElementName}&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="delete-launch-points">Delete launch points<a class="headerlink" href="#delete-launch-points" title="Permanent link">#</a></h3>
+<p>To delete an existing launch point on any element/collection in the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-80-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-80-1" name="__codelineno-80-1"></a>automate edit delete-command-launchpoint <span class="s2">&quot;&lt;LAUNCHPOINTNAME&gt;&quot;</span> --aschildof <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>
+<p>The <code>&lt;LAUNCHPOINTNAME&gt;</code> is the name of an existing launch point on the <code>--aschildof</code> element/collection.</p>
+</li>
+<li>
+<p>The <code>--aschildof "{&lt;ANEXPRESSION&gt;}"</code> is only optional if you are deleting the launch point from the root element. <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#pattern-expressions">Expression</a> to an existing element/collection in the pattern.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-81-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-81-1" name="__codelineno-81-1"></a>automate edit delete-command-launchpoint <span class="s2">&quot;ALaunchPointName&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of an element: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-82-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-82-1" name="__codelineno-82-1"></a>automate edit delete-command-launchpoint <span class="s2">&quot;ALaunchPointName&quot;</span> --aschildof <span class="s2">&quot;{AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h2 id="publishing-and-deploying-toolkits">Publishing and deploying toolkits<a class="headerlink" href="#publishing-and-deploying-toolkits" title="Permanent link">#</a></h2>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Toolkit" is a portable package (single-file) that contains within it a versioned Pattern (with all its assets and its automation). A Toolkit is used to install a pattern into another codebase, and used to upgrade that pattern when changed later.</p>
+</div>
+<h3 id="automatic-versioning-rules-for-toolkits">Automatic versioning rules for toolkits<a class="headerlink" href="#automatic-versioning-rules-for-toolkits" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>Every toolkit is "Versioned" with the same version of the pattern. The Pattern is automatically versioned when changes are made to it when it is built into a toolkit. Any change to a pattern (after it has been built into a toolkit) is captured as either a "Breaking" change or a "Non-Breaking" change.</p>
+</div>
+<p>Patterns use a (2-dot) <a href="https://semver.org/">semantic versioning</a> scheme (i.e. <code>Major.Minor.Patch</code>), with no pre-release information.</p>
+<ul>
+<li>A <strong>Breaking</strong> change to a pattern forces the pattern to auto-increment its <strong>major</strong> version number. e.g. deleting an existing attribute, element, or collection.</li>
+<li>A <strong>Non-Breaking</strong> change force the pattern to auto-increment its <strong>minor</strong> number. e.g. adding a new attribute, element, or collection, or updating the contents of a code template (or when the runtime has had a major/breaking upgrade)</li>
+<li>The <strong>patch</strong> number is not used in the automatic versioning process. But it can be used manually.</li>
+</ul>
+<p>When a toolkit is built, the next version number can be automatically calculated for you (based on the previous edits to the pattern), or you can force a specific version number of your own (in cases where you want to have a specific release number).</p>
+<p>You will need to force a version number change if the given version violates the versioning rules above, or it is a past version number than the one that is auto-calculated.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Forcing a version number that violates these rules, may result in existing drafts being migrated into an invalid state.</p>
+</div>
+<h3 id="installing-new-versions-of-toolkits">Installing new versions of toolkits<a class="headerlink" href="#installing-new-versions-of-toolkits" title="Permanent link">#</a></h3>
+<p>When a newly versioned toolkit is installed into any codebase (where a previous version of that toolkit already exists), the previous version of the toolkit is automatically replaced/upgraded by the newer version.</p>
+<p>Given an upgraded version of the toolkit, it is assumed that there may exist other <a href="../runtime/#drafts">"Drafts"</a> that would have been created from the previous versions of the toolkit. <a href="../runtime/#drafts">"Drafts"</a> are bound to the version of the toolkit that created them, and a draft cannot be edited or used by future versions of a toolkit. The "Draft" will be required to be migrated to any future version of a toolkit.</p>
+<p>Drafts can be auto-migrated safely in most cases (see: <a href="../runtime/#upgrading-a-toolkit">Upgrading a Draft</a>), where there are standard Breaking and Non-Breaking changes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Forced versions of toolkits and/or forced migrations of drafts may leave the Draft in an invalid state that may require fixing manually, or recreating. Safety in these cases cannot be guaranteed.</p>
+</div>
+<h3 id="publishing-a-toolkit">Publishing a toolkit<a class="headerlink" href="#publishing-a-toolkit" title="Permanent link">#</a></h3>
+<p>To build and publish an existing pattern into a toolkit:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-83-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-83-1" name="__codelineno-83-1"></a>automate publish toolkit
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>--asversion</code> optionally defines a custom 2-dot <a href="https://semver.org/">semver</a> version number to use for this build of the toolkit. Or you can specify the value <code>auto</code> to have it automatically versioned, based on the latest changes made to the pattern. The default is <code>auto</code>.</li>
+<li>The <code>--force</code> optionally bypasses any detected violations when using a custom version number that is suspicious or that would break semantic versioning rules on the existing pattern. The default is <code>false</code></li>
+<li>The <code>--install</code> optionally defines whether to install the toolkit into the current directory after it has been built. This is only useful in cases where the creator wants to install the toolkit locally, to avoid the extra installation step.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will version and publish the toolkit to a file on the current user's desktop, for distribution.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To create a toolkit file that can be shared: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-84-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-84-1" name="__codelineno-84-1"></a>automate publish toolkit --asversion <span class="s2">&quot;2.0.0&quot;</span>
+</code></pre></div></td></tr></table></div>
+To create a toolkit file, for next appropriate version, that is installed into the same codebase: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-85-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-85-1" name="__codelineno-85-1"></a>automate publish toolkit --install
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="deploying-a-toolkit">Deploying a toolkit<a class="headerlink" href="#deploying-a-toolkit" title="Permanent link">#</a></h3>
+<p>When a toolkit is built, it is exported (as a single file) to the user's desktop e.g. <code>MyPattern1.0.1.0.toolkit</code></p>
+<p>From there it can be deployed via any file sharing mechanism e.g. in an email, Slack, Dropbox, etc.</p>
+<p>To install a toolkit, see <a href="../runtime/#installing-a-toolkit">installing toolkits</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

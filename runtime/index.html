@@ -1,0 +1,1705 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Templatize patterns from your own codebase, make them programmable, then share them with your team">
+      
+      
+      
+        <link rel="canonical" href="https://jezzsantos.github.io/automate/runtime/">
+      
+      
+        <link rel="prev" href="../installation/">
+      
+      
+        <link rel="next" href="../authoring/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>Using Toolkits - automate</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-toolkits" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="automate" class="md-header__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            automate
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using Toolkits
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="automate" class="md-nav__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    automate
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howitworks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluating/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluating automate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Your First Toolkit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Command Line (CLI)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Command Line (CLI)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toolkits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Toolkits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtaining a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-installed-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Listing installed toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading a toolkit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading a toolkit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading drafts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrades-failing-with-breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrades failing with breaking changes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drafts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Drafts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-draft-from-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a draft from a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching drafts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-current-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the current draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#view-the-current-configuration-of-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      View the current configuration of a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validating-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validating a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-an-attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring an attribute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-an-element-or-collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding an element or collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetting-an-element" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resetting an element
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clearing-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clearing collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-elements-collections-or-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deleting elements, collections or collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executing-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing automation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deleting drafts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clioptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Additional Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Jetbrains Rider Plugin
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Jetbrains Rider Plugin
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation-rider-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Plugin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authoring-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Contributors/contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Privacy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toolkits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Toolkits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtaining a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-installed-toolkits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Listing installed toolkits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading a toolkit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading a toolkit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading drafts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrades-failing-with-breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrades failing with breaking changes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drafts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Drafts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-draft-from-a-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a draft from a toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching drafts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-current-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the current draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#view-the-current-configuration-of-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      View the current configuration of a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validating-a-draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validating a draft
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-an-attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring an attribute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-an-element-or-collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding an element or collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetting-an-element" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resetting an element
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clearing-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clearing collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-elements-collections-or-collection-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deleting elements, collections or collection items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executing-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing automation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-drafts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deleting drafts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="using-toolkits">Using Toolkits<a class="headerlink" href="#using-toolkits" title="Permanent link">#</a></h1>
+<p><a href="../reference/#toolkit">A Toolkit</a> is a major top-level concept in automate, used to install coding patterns into a codebase. It contains a published and versioned <a href="../reference/#pattern">Pattern</a>, obtained from its creator.</p>
+<h2 id="toolkits">Toolkits<a class="headerlink" href="#toolkits" title="Permanent link">#</a></h2>
+<h3 id="obtaining-a-toolkit">Obtaining a toolkit<a class="headerlink" href="#obtaining-a-toolkit" title="Permanent link">#</a></h3>
+<p>Toolkits come in <code>*.toolkit</code> files, obtained from their creators who <a href="../authoring/">make and publish them</a>, like from a team's Tech Lead, or Tech Consultant.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Since they are single files they can be: emailed, dropped in Slack, downloaded from Dropbox, or shared in all the common ways that files can be transferred to you.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Toolkits can also be installed into a codebase (installed by other contributors or creators).</p>
+</div>
+<h3 id="installing-a-toolkit">Installing a toolkit<a class="headerlink" href="#installing-a-toolkit" title="Permanent link">#</a></h3>
+<p>To install a toolkit yourself:</p>
+<ol>
+<li>You will need to have <code>automate</code> CLI (or plugin) installed on your machine. (see <a href="../installation/">Installing automate</a>)</li>
+<li>Then, you will need to have downloaded a <code>*.toolkit</code> file to somewhere on your local machine. <ul>
+<li>For example: A toolkit file like <code>AToolkit_0.1.0.toolkit</code>, could be located on your desktop or downloads folder.</li>
+</ul>
+</li>
+<li>In a terminal, navigate to the root of your source codebase (where you want to use the toolkit). For example: <code>cd C:\myprojects\myproject\src</code></li>
+<li>Install the toolkit: <code>automate install toolkit C:\mydesktop\AToolkit_0.1.0.toolkit</code></li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The toolkit will be installed, and it will become the 'active' toolkit for subsequent use.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When you install a toolkit into a codebase, add its files to source control, and then be accessible to all contributors on a team. 
+No need for every contributor to install the same toolkit on each of their machines.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Even if the toolkit has been added to source control, to use it, every contributor will need to install <code>automate</code> to their machine.</p>
+</div>
+<h3 id="listing-installed-toolkits">Listing installed toolkits<a class="headerlink" href="#listing-installed-toolkits" title="Permanent link">#</a></h3>
+<p>You can view all the installed toolkits in your codebase: 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>automate list toolkits
+</code></pre></div></td></tr></table></div>
+or
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>automate list all
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will list all the installed toolkits and their respective names and versions.</p>
+</div>
+<h3 id="upgrading-a-toolkit">Upgrading a toolkit<a class="headerlink" href="#upgrading-a-toolkit" title="Permanent link">#</a></h3>
+<p>If a toolkit is changed and upgraded by its creator, and then it can be upgraded in your codebase.</p>
+<p>You first need to install the upgraded toolkit. This will automatically upgrade the older version of the toolkit</p>
+<p>To upgrade a toolkit to a new version:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>automate install toolkit <span class="p">&lt;</span>INSTALLLOCATION&gt;
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;INSTALLLOCATION&gt;</code> is the full path to the upgraded toolkit file. e.g. <code>C:\desktop\AToolkit_0.2.0.toolkit</code></li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>automate install toolkit <span class="s2">&quot;C:\desktop\AToolkit_0.2.0.toolkit&quot;</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<p>Next, you will need to upgrade any drafts that you may have created from the previous version of the toolkit</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you do not explicitly upgrade your draft to the latest toolkit version, then you will receive an error and instructions to upgrade it.</p>
+</div>
+<h4 id="upgrading-drafts">Upgrading drafts<a class="headerlink" href="#upgrading-drafts" title="Permanent link">#</a></h4>
+<p>To upgrade an existing draft to a newly upgraded toolkit:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>automate upgrade draft
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>--force</code> optionally bypasses any errors that prevent automatic upgrading due to breaking changes. The default is <code>false</code></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This upgrade will only upgrade the current draft, and not others you may have. You will have to <a href="#switching-drafts">switch</a> to the other drafts and re-run this command on them to upgrade them individually.</p>
+</div>
+<h4 id="upgrades-failing-with-breaking-changes">Upgrades failing with breaking changes<a class="headerlink" href="#upgrades-failing-with-breaking-changes" title="Permanent link">#</a></h4>
+<p>When you try to upgrade an existing draft with a toolkit that contained breaking changes in it (relative to the last version of the toolkit), the upgrade of the draft will fail with an error.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>A breaking change is determined from the new semantic version of the upgraded toolkit.</p>
+</div>
+<p>It is possible that the new toolkit may now have structure or automation that might not be compatible with the configuration of the existing draft. It is impossible to automatically tell with 100% certainty what is compatible between the last toolkit version and the current toolkit version. However, this is not all that common. Most upgrades should occur safely and automatically.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For example, the existing draft may have some configuration in it that is no longer used by the new toolkit, or the new toolkit may require new configuration in it that the draft does not have yet. Then the upgrade path is not straightforward. There are some cases where these incompatibilities can be automatically resolved correctly in the upgrade process, but there are equally some cases that may not be resolved automatically, and you would need to detect and resolve them yourself or accept the possibility of data loss or misconfiguration. Sometimes, in rare cases, re-creating the draft from scratch is the only reliable option.</p>
+</div>
+<p>It is however possible to "force" the automatic upgrade process (despite the breaking changes) using the <code>--force</code> option.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should consult the creator of the toolkit if this is safe before doing this, or take the risk, and mitigate it using source control tools manually.</p>
+</div>
+<h2 id="drafts">Drafts<a class="headerlink" href="#drafts" title="Permanent link">#</a></h2>
+<p><a href="../reference/#draft">A Draft</a> is a major top-level concept in automate, used to apply coding patterns to a codebase.</p>
+<p>A Draft can only be created when a toolkit containing a pattern is installed.</p>
+<h3 id="creating-a-draft-from-a-toolkit">Creating a draft from a toolkit<a class="headerlink" href="#creating-a-draft-from-a-toolkit" title="Permanent link">#</a></h3>
+<p>To create a draft from an installed toolkit:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>automate run toolkit <span class="s2">&quot;&lt;TOOLKITNAME&gt;&quot;</span> --name <span class="s2">&quot;&lt;DRAFTNAME&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>TOOLKITNAME</code> is the name of the toolkit you want to use</li>
+<li>The <code>--name &lt;DRAFTNAME&gt;</code> optionally defines a friendly name for this instance of the draft.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will create a new draft and make the 'active' draft.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Each Draft should be named for easy future reference. If you don't define a name (<code>--name</code>), one will be fabricated for you automatically. The name is useful for keeping track of which draft you are using right now, and which have been used in the past. Since they may have a long life in your codebase, and you may have several.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>automate run toolkit <span class="s2">&quot;AToolkitName&quot;</span> --name MyFirstUsage
+</code></pre></div></td></tr></table></div>
+</div>
+<h3 id="switching-drafts">Switching drafts<a class="headerlink" href="#switching-drafts" title="Permanent link">#</a></h3>
+<p>Since you can have multiple drafts on the go at the same time (even from different toolkits) you will need a way to track them and which one is in use right now.</p>
+<p>To list all the drafts you have right now:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>automate list drafts
+</code></pre></div></td></tr></table></div>
+or
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>automate list all
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will produce a list of drafts, and their names and IDs.</p>
+</div>
+<p>To switch to using a specific draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>automate run switch <span class="s2">&quot;&lt;DRAFTID&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;DRAFTID&gt;</code> is the ID of the draft you want to use.</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>automate run switch 12345678
+</code></pre></div></td></tr></table></div>
+</div>
+<h3 id="viewing-the-current-draft">Viewing the current draft<a class="headerlink" href="#viewing-the-current-draft" title="Permanent link">#</a></h3>
+<p>You can view the current draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>automate view draft
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will display the name of the draft and its current configuration.</p>
+</div>
+<h3 id="configuring-a-draft">Configuring a draft<a class="headerlink" href="#configuring-a-draft" title="Permanent link">#</a></h3>
+<p>The configuration of a specific draft is dependent on the structure and automation of the specific "Pattern" that is captured in the toolkit you are using.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>An existing draft (on a local machine) cannot be configured any further if its installed toolkit is either missing or has been upgraded (on the local machine).</p>
+</div>
+<p>All patterns have the same kind of meta-model behind them, that is, all patterns have these characteristics:</p>
+<ol>
+<li>They all have a single root <code>Element</code>, and it has a name.</li>
+<li>A root element can have one or more child `Element's (a hierarchy of elements)</li>
+<li>An element (root or child) can either be a single <code>Element</code> or a <code>Collection</code> of elements</li>
+<li>An element (root or child) can have one or more <code>Attribute</code>s</li>
+<li>An attribute has a name and a value</li>
+<li>Any element can have one or more <code>LaunchPoint</code>s attached to it.</li>
+</ol>
+<p>All patterns may have additional automation like code templates, and other commands that can be used to automate the toolkit.</p>
+<p>The specific combinations of these structural elements and automation are entirely dependent on how the pattern and toolkit were defined by its creator.</p>
+<p>Following is are the common kinds of things you can do with any specific draft.</p>
+<h3 id="view-the-current-configuration-of-a-draft">View the current configuration of a draft<a class="headerlink" href="#view-the-current-configuration-of-a-draft" title="Permanent link">#</a></h3>
+<p>To view the current configuration of your draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>automate view draft
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will only show you the data that you configured for the draft, and any defaulted values.</p>
+</div>
+<p>You can also ask the draft if it is currently in a "valid" state (i.e. if it requires further configuration), and look at the structure and any launchable automation (launch points) of the toolkit that you can use.</p>
+<p>To view any constraint violations (validations):
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>automate view draft --todo
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This command will show you the current configuration data, AND the meta-model of the pattern, AND the launchable automation (launch points), AND it will also show you any validation errors with the draft that need fixing right now.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The validation rule violations will guide you to what must be addressed to put the draft in a "valid" state. Which is required if you want to execute any launch points on it.</p>
+</div>
+<h3 id="validating-a-draft">Validating a draft<a class="headerlink" href="#validating-a-draft" title="Permanent link">#</a></h3>
+<p>To validate the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a>automate validate draft
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Any validation rule violations are reported. These will need to be addressed before any launch points can be executed on it.</p>
+</div>
+<p>To validate specific items in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a>automate validate draft --on <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>--on &lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing item in the draft.</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>On the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a>automate validate draft
+</code></pre></div></td></tr></table></div>
+On an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a>automate validate draft --on <span class="s2">&quot;{APatternName.AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+On a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a>automate validate draft --on <span class="s2">&quot;{APatternName.ACollectionName.12345678}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="configuring-an-attribute">Configuring an attribute<a class="headerlink" href="#configuring-an-attribute" title="Permanent link">#</a></h3>
+<p>To set an attribute on any element (or any collection item) in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a>automate configure on <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span> --and-set <span class="s2">&quot;&lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>on &lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing element (or collection item) in the draft</li>
+<li>The <code>--and-set &lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;</code> is the name-value pair of the attribute and the value you wish to set to it.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can have many <code>--and-set "NAME=VALUE"</code> expressions as you like (one after the other) for the same element or collection item</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>On an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-20-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1"></a>automate configure on <span class="s2">&quot;{APatternName.AnElementName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div>
+On a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1"></a>automate configure on <span class="s2">&quot;{APatternName.ACollectionName.12345678}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="adding-an-element-or-collection">Adding an element or collection<a class="headerlink" href="#adding-an-element-or-collection" title="Permanent link">#</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>By default, all child elements and collections will be automatically created at the same time as their parent elements are created, but only if the child element is defined as <code>AutoCreate=true</code> in the toolkit.</p>
+</div>
+<p>To add an element or collection to any other element (or to any collection item) in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-22-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1"></a>automate configure add <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span> --and-set <span class="s2">&quot;&lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to the non-existent element in the draft</li>
+<li>The <code>--and-set "&lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;"</code> is the name-value pair of the attribute and the value you wish to set to it.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can also add as many <code>--and-set "NAME=VALUE"</code> expressions as you like (one after the other) on the same element or collection item</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>An element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-23-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1"></a>automate configure add <span class="s2">&quot;{APatternName.AnElementName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div>
+A collection:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-24-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1"></a>automate configure add <span class="s2">&quot;{APatternName.ACollectionName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div>
+An element of a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-25-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1"></a>automate configure add <span class="s2">&quot;{APatternName.ACollectionName.12345678.AnElementName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="resetting-an-element">Resetting an element<a class="headerlink" href="#resetting-an-element" title="Permanent link">#</a></h3>
+<p>To reset all the attributes of any element (or any collection item) in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-26-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1"></a>automate configure reset <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing element (or collection item) in the draft</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>On an element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-27-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1"></a>automate configure reset <span class="s2">&quot;{APatternName.AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+On a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-28-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a>automate configure reset <span class="s2">&quot;{APatternName.ACollectionName.12345678}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="adding-collection-items">Adding collection items<a class="headerlink" href="#adding-collection-items" title="Permanent link">#</a></h3>
+<p>To add a new item of a collection to any collection in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-29-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1"></a>automate configure add-one-to <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span> --and-set <span class="s2">&quot;&lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing collection in the draft</li>
+<li>The <code>--and-set "&lt;ANATTRIBUTENAME&gt;=&lt;VALUE&gt;"</code> is the name-value pair of the attribute and the value you wish to set to it.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can also add as many <code>--and-set "NAME=VALUE"</code> expressions as you like to the collection item to make configuring its attributes easier</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When a collection item is added, if it has any child elements/collections, those child elements/collections are created by default if they are defined as <code>AutoCreate=true</code>. Otherwise, you need to add them separately.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To a collection:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-30-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1"></a>automate configure add-one-to <span class="s2">&quot;{APatternName.ACollectionName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div>
+To a collection of a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-31-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1"></a>automate configure add-one-to <span class="s2">&quot;{APatternName.ACollectionName.12345678.ACollectionName}&quot;</span> --and-set <span class="s2">&quot;APropertyName1=avalue1&quot;</span>  --and-set <span class="s2">&quot;APropertyName2=avalue2&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="clearing-collection-items">Clearing collection items<a class="headerlink" href="#clearing-collection-items" title="Permanent link">#</a></h3>
+<p>To clear all items of a collection in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-32-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1"></a>automate configure clear <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing collection in the draft</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Of a collection:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-33-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1"></a>automate configure clear <span class="s2">&quot;{APatternName.ACollectionName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+Of a collection of a collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-34-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1"></a>automate configure clear <span class="s2">&quot;{APatternName.ACollectionName.12345678.AnAlementName}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="deleting-elements-collections-or-collection-items">Deleting elements, collections or collection items<a class="headerlink" href="#deleting-elements-collections-or-collection-items" title="Permanent link">#</a></h3>
+<p>To delete an element, a collection, or an item of a collection in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-35-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1"></a>automate configure delete <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing element, collection or collection item in the draft</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>An element:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-36-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1"></a>automate configure delete <span class="s2">&quot;{APatternName.AnElementName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+A collection:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-37-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1"></a>automate configure delete <span class="s2">&quot;{APatternName.ACollectionName}&quot;</span>
+</code></pre></div></td></tr></table></div>
+A collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-38-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1"></a>automate configure delete <span class="s2">&quot;{APatternName.ACollectionName.12345678}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="executing-automation">Executing automation<a class="headerlink" href="#executing-automation" title="Permanent link">#</a></h3>
+<div class="admonition abstract">
+<p class="admonition-title">Concept</p>
+<p>A "Launch Point" is the mechanism that executes some kind of automation (or set of commands). Any element or collection item may have one or more launch points defined on it that can be executed at specific times.</p>
+</div>
+<p>To view all the launch points configured on the elements/collections within the toolkit:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-39-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1"></a>automate view toolkit --all
+</code></pre></div></td></tr></table></div></p>
+<p>To view all the launch points available on the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-40-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1"></a>automate view draft --todo
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>All launch points require that the entire draft is in a "valid" state before they are allowed to execute, no matter what element/collection the launch point is configured on.</p>
+</div>
+<p>To execute a launch point on any element (or collection) in the draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-41-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1"></a>automate execute command <span class="s2">&quot;&lt;LAUNCHPOINTNAME&gt;&quot;</span> --on <span class="s2">&quot;{&lt;ANEXPRESSION&gt;}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li>The <code>&lt;LAUNCHPOINTNAME&gt;</code> is the name of the launch point defined on the respective</li>
+<li>The  <code>--on &lt;ANEXPRESSION&gt;</code> is an <a href="../reference/#draft-expressions">Expression</a> to an existing parent element/collection in the draft.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can omit the <code>--on "{&lt;ANEXPRESSION&gt;}"</code> if the command is defined on the root element.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>On the pattern:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-42-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1"></a>automate execute command <span class="s2">&quot;ACommandName&quot;</span>
+</code></pre></div></td></tr></table></div>
+On a nested collection item:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-43-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1"></a>automate execute command <span class="s2">&quot;ACommandName&quot;</span> --on <span class="s2">&quot;{APatternName.ACollectionName.12345678}&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+</div>
+<h3 id="deleting-drafts">Deleting drafts<a class="headerlink" href="#deleting-drafts" title="Permanent link">#</a></h3>
+<p>To delete the current draft:
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-44-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1"></a>automate delete draft
+</code></pre></div></td></tr></table></div></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This command will permanently delete the current draft, and there will no longer be a current draft.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>After running this command, you will need to <a href="#switching-drafts">switch to another draft</a>, or <a href="#creating-a-draft-from-a-toolkit">create a new draft</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

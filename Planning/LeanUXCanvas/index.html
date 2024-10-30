@@ -1,0 +1,991 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Templatize patterns from your own codebase, make them programmable, then share them with your team">
+      
+      
+      
+        <link rel="canonical" href="https://jezzsantos.github.io/automate/Planning/LeanUXCanvas/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>Lean UX Canvas - autōmate - automate</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lean-ux-canvas-automate" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="automate" class="md-header__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            automate
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lean UX Canvas - autōmate
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="automate" class="md-nav__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../../logo.svg" alt="logo">
+
+    </a>
+    automate
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howitworks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluating/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluating automate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Your First Toolkit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Command Line (CLI)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Command Line (CLI)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runtime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../clioptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Additional Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Jetbrains Rider Plugin
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Jetbrains Rider Plugin
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation-rider-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Plugin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runtime-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Contributors/contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Privacy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#business-problem-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Business Problem (1)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#business-outcomes-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Business Outcomes (2)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#users-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Users (3)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-outcomes-benefits-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      User Outcomes &amp; Benefits (4)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solutions-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions (5)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hypotheses-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hypotheses (6)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-the-most-important-thing-we-need-to-learn-first-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      What’s the most important thing we need to learn first? (7)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-the-least-amount-of-work-we-need-to-do-to-learn-the-next-most-important-thing-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      What’s the least amount of work we need to do to learn the next most important thing? (8)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="lean-ux-canvas-automate">Lean UX Canvas - autōmate<a class="headerlink" href="#lean-ux-canvas-automate" title="Permanent link">#</a></h1>
+<h2 id="business-problem-1">Business Problem (1)<a class="headerlink" href="#business-problem-1" title="Permanent link">#</a></h2>
+<blockquote>
+<p>What problem does the business have that you are trying to solve?</p>
+<p>(Hint: Consider your current offerings and how they deliver value, changes in the market, delivery channels, competitive threats and customer behaviour.)</p>
+</blockquote>
+<p><a href="../LeanCanvas/#Business Problem">same as: Business Problem</a></p>
+<h2 id="business-outcomes-2">Business Outcomes (2)<a class="headerlink" href="#business-outcomes-2" title="Permanent link">#</a></h2>
+<blockquote>
+<p>How will you know you solved the business problem? What will you measure?</p>
+<p>(Hint: What will people/users be doing differently if your solutions work? Consider metrics that indicate customer success like average order value, time on site, and retention rate.)</p>
+</blockquote>
+<p>They will be creating <em>toolkits</em> from which coding patterns are configured and then change codebases. We will measure the number of unique toolkits being created, and the number of times each is used to <em>touch</em> a codebase. The first metric demonstrating adoption of this practice, and the second metric indicating the stickiness of their toolkits, as a proxy for the stickiness of this tech.</p>
+<h2 id="users-3">Users (3)<a class="headerlink" href="#users-3" title="Permanent link">#</a></h2>
+<blockquote>
+<p>What types (i.e., personas) of users and customers should you focus on first?</p>
+<p>(Hint: Who buys your product or service? Who uses it? Who configures it? Etc)</p>
+</blockquote>
+<p>There are essentially to sets of users:</p>
+<ol>
+<li>The Authors (thought to be Tech Leads/Tech Consultants) will define the toolkits/models and possibly also the initial coding patterns to go with them for a specific codebase. This group will be attributed for the toolkit, and will maintain the toolkit and coding patterns within it for the long term, sharing them with their employers, open source projects, personal projects, communities, etc. The toolkits will be a proxy for their technical prowess in their communities.</li>
+<li>The Developers (thought to be developers on a codebase) will apply the toolkits, configure them and generate the code from the models, using that code.</li>
+</ol>
+<p>It will be the Authors that will pay for the capability to create these toolkits. These Authors could be employees of a company assigned to one or more team, or could be independent tech consultants who work (temporarily) with a company on one or more teams, or who contribute to one or more open source projects, or who evangelise developer tooling.</p>
+<h2 id="user-outcomes-benefits-4">User Outcomes &amp; Benefits (4)<a class="headerlink" href="#user-outcomes-benefits-4" title="Permanent link">#</a></h2>
+<blockquote>
+<p>Why would your users seek out your product or service? What benefit would they gain from using it? What behaviour change can we observe that tells us they've achieved their goal?
+(Hint: Save money, get a promotion, spend more time with family)</p>
+</blockquote>
+<p>For Authors, they will have a single place (online repository) of toolkits/patterns that they have built up over the years representing the implementation of their "best/recommended practices" (for certain tech stacks). These can and will evolve for each company/project they work in (depending on IP constraints). We may see that they maintain variants of the same kinds of toolkits/patterns for different companies/projects (to manage IP constraints). They can choose to expose these toolkits/patterns to a limited private audience, or expose them out to the public, and advertise them across public communities. They would do this as way to advertise their prowess in these communities.</p>
+<p>Consumers would not necessarily seek out this capability. It is more likely mandated to them on a codebase by an Author, at which point they will benefit from the coding patterns in their daily work. At least initially, until some Consumers get used to using this capability, after which they may become Authors themselves (by extracting patterns from existing codebases they are working on, from that point forward).</p>
+<h2 id="solutions-5">Solutions (5)<a class="headerlink" href="#solutions-5" title="Permanent link">#</a></h2>
+<blockquote>
+<p>What can we make that will solve our business problem and meet the needs of our customers at the same time? List product, feature, or enhancement ideas here.</p>
+</blockquote>
+<p><a href="../LeanCanvas/#Solution">same as: Solution</a></p>
+<h2 id="hypotheses-6">Hypotheses (6)<a class="headerlink" href="#hypotheses-6" title="Permanent link">#</a></h2>
+<blockquote>
+<p>Combine the assumptions from 2, 3, 4 &amp; 5 into the following hypothesis statement:
+“We believe that [business outcome] will be achieved if [user] attains [benefit] with [feature].”
+(Hint: Each hypothesis should focus on one feature only.)</p>
+</blockquote>
+<ul>
+<li>We believe that Authors (Tech Leads/Lead Devs/Coding Architects/Tech Consultants etc) will invest some time into building tooling (to be used on their coding teams) that will be easy to use and that will reliably lay down coding patterns that they believe are important to keep consistent in a codebase.</li>
+<li>We believe that Consumers (Contributors on a codebase) will see value in these coding patterns, and will use the toolkits/patterns provided to them. They may however, need cues to remind them when and where to use them.</li>
+<li>We believe that Authors will want to show off and advertise their toolkits/patterns to certain technical communities as a way to communicate their expertise.</li>
+</ul>
+<h2 id="whats-the-most-important-thing-we-need-to-learn-first-7">What’s the most important thing we need to learn first? (7)<a class="headerlink" href="#whats-the-most-important-thing-we-need-to-learn-first-7" title="Permanent link">#</a></h2>
+<blockquote>
+<p>For each hypothesis from Box 6, identify its riskiest assumptions. Then determine the riskiest one right now. This is the assumption that will cause the entire idea to fail if it’s wrong.
+(Hint: In the early stages of a hypothesis focus on risks to value rather than feasibility.)</p>
+</blockquote>
+<p>Risky Assumptions:</p>
+<ul>
+<li><strong>Riskiest: Pre-defined coding patterns in a codebase are valuable to all those working on a codebase.</strong></li>
+<li>Coding patterns are just as applicable and important to both tech product development (new, rapidly evolving, experimental domains), and to Enterprise project development (predefined, business automation, existing business domains, components of a enterprise architecture).</li>
+<li>It is a Tech Lead/Lead Dev/Architect/Tech Consultant etc that sets the coding patterns for a codebase. That duty is not left to team members who only contribute to the codebase.</li>
+<li>Coding patterns are set at the start/early of a new software product/project, and they evolve as the team progresses on the project/product. The speed at which they evolve can vary.</li>
+<li>A Tech Lead/Lead Dev/Architect/Tech Consultant has (available to them, or can create) coding patterns to share with a team on a codebase.</li>
+<li>A Tech Lead/Lead Dev/Architect/Tech Consultant wants to ensure that the coding patterns are used by contributors on a codebase (where they are applicable)</li>
+<li>Tech Lead/Lead Dev/Architect/Tech Consultants understand that they are not applicable everywhere in a codebase, nor applicable at all times for all coding tasks. (They have their time and place).</li>
+<li>"Consistency" of code patterns, across a codebase, is important to the those working on a codebase.</li>
+<li>A Tech Lead/Lead Dev/Architect/Tech Consultant will go so far as to build custom tooling to promote coding patterns, for the long term.</li>
+<li>A Tech Lead/Lead Dev/Architect/Tech Consultant will maintain this tooling as the patterns (inevitably) change over time.</li>
+<li>Contributors on a codebase will use tooling provided to them by their Tech Lead/Lead Dev/Architect/Tech Consultant. (as long as they know about it).</li>
+<li>Tech Lead/Lead Dev/Architect/Tech Consultant AND Contributors on a codebase are motivated to improve the patterns as, and when, needed.</li>
+</ul>
+<h2 id="whats-the-least-amount-of-work-we-need-to-do-to-learn-the-next-most-important-thing-8">What’s the least amount of work we need to do to learn the next most important thing? (8)<a class="headerlink" href="#whats-the-least-amount-of-work-we-need-to-do-to-learn-the-next-most-important-thing-8" title="Permanent link">#</a></h2>
+<blockquote>
+<p>Design experiments to learn as fast as you can whether your riskiest assumption is true or false.</p>
+</blockquote>
+<p>This is a radical/disruptive innovation, that introduces a new practice that may not be known about today. i.e. provide tooling to help apply coding patterns. However, applying coding patterns is nothing new in software product/projects, and we assume has been going on for decades.</p>
+<p>Therefore:</p>
+<ul>
+<li>The first thing to do is prove is that coding patterns are indeed used in codebases, and learn about what kinds of codebases they are used in, and what kinds they are not used in.</li>
+<li>Then find out who created those coding patterns, and why.</li>
+<li>Then find out if those coding patterns had changed over time, and by whom. (we think know "why" they change: because tech moves forward, and developers learn new things as they get more into a product/project, and they have to account for and design in other things to the codebase as the software lives longer, or scales up).</li>
+</ul>
+<p>If we find that coding patterns are not that common in existing codebases, or that there are only specific kinds of codebases where they are commonly used, then we may choose that niche, or we may decide that the market is too small to invest in this technology. </p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

@@ -1,0 +1,1538 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Templatize patterns from your own codebase, make them programmable, then share them with your team">
+      
+      
+      
+        <link rel="canonical" href="https://jezzsantos.github.io/automate/reference/">
+      
+      
+        <link rel="prev" href="../authoring-plugin/">
+      
+      
+        <link rel="next" href="../Contributors/contributors/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>Reference - automate</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="automate" class="md-header__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            automate
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="yellow"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="automate" class="md-nav__button md-logo" aria-label="automate" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    automate
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jezzsantos/automate/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howitworks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluating/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluating automate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Your First Toolkit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Command Line (CLI)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Command Line (CLI)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clioptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Additional Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Jetbrains Rider Plugin
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Jetbrains Rider Plugin
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation-rider-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Plugin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authoring-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Making Toolkits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Draft
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pattern-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-pattern-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example pattern expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#templating-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templating Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Templating Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-templating-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example templating expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#templating-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templating Functions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#draft-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Draft Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Draft Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-draft-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example draft expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-cli-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      The CLI Interface
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jezzsantos/automate/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Contributors/contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Privacy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toolkit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#draft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Draft
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pattern-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-pattern-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example pattern expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#templating-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templating Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Templating Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-templating-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example templating expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#templating-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templating Functions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#draft-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Draft Expressions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Draft Expressions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-draft-expressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example draft expressions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-cli-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      The CLI Interface
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">#</a></h1>
+<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">#</a></h2>
+<p>Here are the key concepts in automate.</p>
+<h3 id="pattern">Pattern<a class="headerlink" href="#pattern" title="Permanent link">#</a></h3>
+<p>A "Pattern" is used to describe an existing piece of software in a codebase, in terms of its structure, its variance, and its usage.</p>
+<p>Think of a pattern as some higher-level model of some software, or software concept(s), that includes various lower-level components or abstractions.</p>
+<ol>
+<li><strong>Language</strong>: Most software concepts can be represented conceptually as just boxes and lines, with some notation for cardinality  (i.e. OneToOne, OneToMany). Every existing coding pattern (in a codebase) is physically manifested as either just code files (or a particular programming language) or in a combination of code and configuration files - depending on the programming languages and the runtimes being used.</li>
+<li><strong>Structure</strong>: Any "Pattern" can be modeled structurally as a hierarchy of "Element"(s), where each element can have one or more child "Elements" of its own - describing a directed graph of related elements.</li>
+<li><strong>Variance</strong>: The variance in a coding pattern can be described by "Attributes" on one or more of the "Element(s)" within the pattern.</li>
+<li><strong>Automation</strong>: Each "Element" in the pattern can be associated with its own custom "Automation" which can read the structure and variance of the pattern, and can then perform operations with the data in these attributes, to adapt/augment/generate/configure code and configuration assets in a real codebase to realize specific use-cases.</li>
+<li><strong>Constraints</strong>: "Validation" Rules and constraints can be defined anywhere in the pattern and its structure, and they are enforced so that the configuration of a pattern maintains its intended integrity when applied to real use-cases.</li>
+<li><strong>Draft</strong>: Once a pattern is defined by its structure, automation, and constraints, it can then be used as a "Template" to create one or more individual use-cases. An individual use-case is represented in a "Draft" of the pattern. Each "Draft" can then be configured with data from a specific use-case, which can then be "applied" to another codebase. Multiple drafts of the same pattern are then maintained.</li>
+</ol>
+<h3 id="toolkit">Toolkit<a class="headerlink" href="#toolkit" title="Permanent link">#</a></h3>
+<p>A "Toolkit" is a versioned, published, packaged Pattern with its assets and automation, that is portable and sharable, installable on any platform.</p>
+<p>It is in a form that can be easily installed and used by contributors on a codebase to get things done quicker by configuring them and having them execute automation.</p>
+<p>Once installed, it can be source controlled, versioned, and upgraded.</p>
+<p>It is specific to one kind of codebase, or specific to a group of contributors on a set of specific codebase types.</p>
+<h3 id="draft">Draft<a class="headerlink" href="#draft" title="Permanent link">#</a></h3>
+<p>A "Draft" is simply an instance of the toolkit being used, a like a use-case.</p>
+<p>You can have more than one instance of a draft at any time. A draft notionally represents one use of a toolkit.</p>
+<p>You configure a draft, and then instruct it to apply its patterns and templates to your code.</p>
+<p>So for example, if your toolkit automated the use of a pattern in your codebase for a "RESTAPI", then each instance of a "REST API" (for your codebase) would be contained in a draft of its own - ready for you to configure it. If you wanted more REST APIs in your codebase, then you create multiple drafts from the "RESTAPI" toolkit.</p>
+<h2 id="pattern-expressions">Pattern Expressions<a class="headerlink" href="#pattern-expressions" title="Permanent link">#</a></h2>
+<p>A pattern expression is a reference to a specific element/collection (node) in a configured pattern.</p>
+<ul>
+<li>The expression is always wrapped in curly braces. It starts with a <code>{</code> and ends with a <code>}</code></li>
+<li>It can begin with the name of the root element in the pattern, or this name can be omitted.</li>
+<li>Each part of the expression is separated by a period <code>.</code></li>
+<li>Each part references the name of the child element</li>
+</ul>
+<h3 id="example-pattern-expressions">Example pattern expressions<a class="headerlink" href="#example-pattern-expressions" title="Permanent link">#</a></h3>
+<p>Given this pattern (in a toolkit):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>- APatternName (root element)
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>    - AnAttributeName1 (attribute)
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    - AnElementName1 (element)
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>        - AnElementName2 (element)
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>    - ACollectionName1 (collection)
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>        - AnAttributeName2 (attribute)
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>        - AnElementName3 (element)
+</code></pre></div></td></tr></table></div>
+<p>Examples pattern references:</p>
+<ul>
+<li>the root element: <code>{APatternName}</code></li>
+<li>the first child element: <code>{APatternName.AnElementName1}</code> or <code>{AnElementName1}</code></li>
+<li>the first grand-child element: <code>{APatternName.AnElementName1.AnElementName2}</code> or <code>{AnElementName1.AnElementName2}</code></li>
+<li>the first child collection: <code>{APatternName.ACollectionName1}</code> or <code>{ACollectionName1}</code></li>
+<li>the first element of the first child collection: <code>{APatternName.ACollectionName1.AnElementName3}</code> or <code>{ACollectionName1.AnElementName3}</code></li>
+</ul>
+<h2 id="templating-expressions">Templating Expressions<a class="headerlink" href="#templating-expressions" title="Permanent link">#</a></h2>
+<ul>
+<li>A templating expression is a reference to a specific "item" (node) in a configured draft.</li>
+<li>The expression always references the value of an attribute in the draft. References to elements/collections don't have values.</li>
+<li>The expression is always wrapped in double curly braces. It starts with a <code>{{</code> and ends with a <code>}}</code></li>
+<li>The expression is always relative to the current "item" (node) on the configured draft.</li>
+<li>The expression can include the reference <code>.Parent</code> to access its' ancestry, starting from its' self.</li>
+<li>Each part of the expression is separated by a period <code>.</code></li>
+</ul>
+<h3 id="example-templating-expressions">Example templating expressions<a class="headerlink" href="#example-templating-expressions" title="Permanent link">#</a></h3>
+<p>Given a pattern (cmd: <code>automate view pattern</code>):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>- APatternName (root element)
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>    - AnAttributeName1 (attribute)
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>    - AnElementName1 (element)
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>        - AnAttributeName2 (attribute)
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>        - AnElementName2 (element)
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>            - AnAttributeName3 (attribute)
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>    - ACollectionName1 (collection)
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>        - AnAttributeName4 (attribute)
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>        - AnElementName3 (element)
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>            - AnAttributeName5 (attribute)
+</code></pre></div></td></tr></table></div>
+<p>And, given that we have configured all instances of all elements and all attributes with some value, AND we have added 3x items to <code>ACollectionName1</code>.</p>
+<p>If you can imagine that we were to ask for the configuration of a draft built with this toolkit (cmd: <code>automate view draft</code>), we would imagine having a draft configured something like this:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span>
+<span class="normal"><a href="#__codelineno-2-19">19</a></span>
+<span class="normal"><a href="#__codelineno-2-20">20</a></span>
+<span class="normal"><a href="#__codelineno-2-21">21</a></span>
+<span class="normal"><a href="#__codelineno-2-22">22</a></span>
+<span class="normal"><a href="#__codelineno-2-23">23</a></span>
+<span class="normal"><a href="#__codelineno-2-24">24</a></span>
+<span class="normal"><a href="#__codelineno-2-25">25</a></span>
+<span class="normal"><a href="#__codelineno-2-26">26</a></span>
+<span class="normal"><a href="#__codelineno-2-27">27</a></span>
+<span class="normal"><a href="#__codelineno-2-28">28</a></span>
+<span class="normal"><a href="#__codelineno-2-29">29</a></span>
+<span class="normal"><a href="#__codelineno-2-30">30</a></span>
+<span class="normal"><a href="#__codelineno-2-31">31</a></span>
+<span class="normal"><a href="#__codelineno-2-32">32</a></span>
+<span class="normal"><a href="#__codelineno-2-33">33</a></span>
+<span class="normal"><a href="#__codelineno-2-34">34</a></span>
+<span class="normal"><a href="#__codelineno-2-35">35</a></span>
+<span class="normal"><a href="#__codelineno-2-36">36</a></span>
+<span class="normal"><a href="#__codelineno-2-37">37</a></span>
+<span class="normal"><a href="#__codelineno-2-38">38</a></span>
+<span class="normal"><a href="#__codelineno-2-39">39</a></span>
+<span class="normal"><a href="#__codelineno-2-40">40</a></span>
+<span class="normal"><a href="#__codelineno-2-41">41</a></span>
+<span class="normal"><a href="#__codelineno-2-42">42</a></span>
+<span class="normal"><a href="#__codelineno-2-43">43</a></span>
+<span class="normal"><a href="#__codelineno-2-44">44</a></span>
+<span class="normal"><a href="#__codelineno-2-45">45</a></span>
+<span class="normal"><a href="#__codelineno-2-46">46</a></span>
+<span class="normal"><a href="#__codelineno-2-47">47</a></span>
+<span class="normal"><a href="#__codelineno-2-48">48</a></span>
+<span class="normal"><a href="#__codelineno-2-49">49</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>{
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>    &quot;Id&quot;: &quot;1&quot;,
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>    &quot;ConfigurePath&quot;: &quot;{APatternName}&quot;,
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>    &quot;AnAttributeName1&quot;: &quot;avalue1&quot;,
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>    &quot;AnElementName1&quot;: {
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>        &quot;Id&quot;: &quot;2&quot;,
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a>        &quot;ConfigurePath&quot;: &quot;{APatternName.AnElementName1}&quot;,
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>        &quot;AnAttributeName2&quot;: &quot;avalue2&quot;,
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>        &quot;AnElementName2&quot;: {
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a>            &quot;Id&quot;: &quot;3&quot;
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a>            &quot;ConfigurePath&quot;: &quot;{APatternName.AnElementName1.AnElementName2}&quot;,
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a>            &quot;AnAttributeName3&quot;: &quot;avalue3&quot;,
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a>        }
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a>    },
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a>    &quot;ACollectionName1&quot;: {
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a>        &quot;Id&quot;: &quot;4&quot;,
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a>        &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1}&quot;,
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a>        &quot;AnAttributeName4&quot;: null,
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a>        &quot;Items&quot;: [{
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a>                &quot;Id&quot;: &quot;5&quot;,
+<a id="__codelineno-2-21" name="__codelineno-2-21"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.5}&quot;,
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a>                &quot;AnAttributeName4&quot;: &quot;avalue4&quot;,
+<a id="__codelineno-2-23" name="__codelineno-2-23"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a>                    &quot;Id&quot;: &quot;6&quot;,
+<a id="__codelineno-2-25" name="__codelineno-2-25"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.5.AnElementName3}&quot;,
+<a id="__codelineno-2-26" name="__codelineno-2-26"></a>                    &quot;AnAttributeName5&quot;: &quot;avalue5&quot;,
+<a id="__codelineno-2-27" name="__codelineno-2-27"></a>                }
+<a id="__codelineno-2-28" name="__codelineno-2-28"></a>            }, {
+<a id="__codelineno-2-29" name="__codelineno-2-29"></a>                &quot;Id&quot;: &quot;7&quot;,
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.7}&quot;,
+<a id="__codelineno-2-31" name="__codelineno-2-31"></a>                &quot;AnAttributeName4&quot;: &quot;avalue4&quot;,
+<a id="__codelineno-2-32" name="__codelineno-2-32"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-2-33" name="__codelineno-2-33"></a>                    &quot;Id&quot;: &quot;8&quot;,
+<a id="__codelineno-2-34" name="__codelineno-2-34"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.7.AnElementName3}&quot;,
+<a id="__codelineno-2-35" name="__codelineno-2-35"></a>                    &quot;AnAttributeName5&quot;: &quot;avalue5&quot;,
+<a id="__codelineno-2-36" name="__codelineno-2-36"></a>                }
+<a id="__codelineno-2-37" name="__codelineno-2-37"></a>            }, {
+<a id="__codelineno-2-38" name="__codelineno-2-38"></a>                &quot;Id&quot;: &quot;9&quot;,
+<a id="__codelineno-2-39" name="__codelineno-2-39"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.9}&quot;,
+<a id="__codelineno-2-40" name="__codelineno-2-40"></a>                &quot;AnAttributeName4&quot;: &quot;avalue4&quot;,
+<a id="__codelineno-2-41" name="__codelineno-2-41"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-2-42" name="__codelineno-2-42"></a>                    &quot;Id&quot;: &quot;10&quot;,
+<a id="__codelineno-2-43" name="__codelineno-2-43"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.9.AnElementName3}&quot;,
+<a id="__codelineno-2-44" name="__codelineno-2-44"></a>                    &quot;AnAttributeName5&quot;: &quot;avalue5&quot;,
+<a id="__codelineno-2-45" name="__codelineno-2-45"></a>                }
+<a id="__codelineno-2-46" name="__codelineno-2-46"></a>            }
+<a id="__codelineno-2-47" name="__codelineno-2-47"></a>        ]
+<a id="__codelineno-2-48" name="__codelineno-2-48"></a>    }
+<a id="__codelineno-2-49" name="__codelineno-2-49"></a>}
+</code></pre></div></td></tr></table></div>
+<p>Examples of templating references:</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The casing of the names of properties, elements and collections are as defined in the pattern. However, the casing of the built-in properties: <code>Id</code>, and <code>Items</code> are always pascal-cased.</p>
+</div>
+<p>(ignoring the nominal values of the "Id" properties)</p>
+<p>Starting from the root element (<code>APatternName</code>):</p>
+<ul>
+<li>an attribute (on self): <code>{{AnAttributeName1}}</code> (equals <code>avalue1</code>)</li>
+<li>an attribute of the first child element (ID: 2): <code>{{AnElementName1.AnAttributeName2}}</code> (equals <code>avalue2</code>)</li>
+<li>an attribute of the first grand-child element (ID: 3): <code>{{AnElementName1.AnElementName2.AnAttributeName3}}</code> (equals <code>avalue3</code>)</li>
+<li>an attribute of the first child collection (ID: 4): <code>{{ACollectionName1.AnAttributeName4}}</code> (will always equal null, since this collection is ephemeral)</li>
+<li>an attribute of the first child collection item (ID: 5): <code>{{ACollectionName1.5.AnAttributeName4}}</code> (equals <code>avalue4</code>)</li>
+<li>an attribute of the first element of the first child collection item (ID: 6): <code>{{ACollectionName1.5.AnElementName3.AnAttributeName5}}</code> (equals <code>avalue5</code>)</li>
+<li>an attribute of the first element of the last child collection item (ID: 9): <code>{{ACollectionName1.9.AnElementName3.AnAttributeName5}}</code> (equals <code>avalue5</code>)</li>
+</ul>
+<p>Starting from the element <code>AnElementName2</code>:</p>
+<ul>
+<li>an attribute (on self): <code>{{AnAttributeName3}}</code> (equals <code>avalue3</code>)</li>
+<li>an attribute of the first child element (ID: 2): <code>{{Parent.AnAttributeName2}}</code> (equals <code>avalue2</code>)</li>
+<li>an attribute of the root element (ID: 1): <code>{{Parent.Parent.AnAttributeName1}}</code> (equals <code>avalue1</code>)</li>
+<li>an attribute of the first child collection (ID: 4): <code>{{Parent.Parent.ACollectionName1.AnAttributeName4}}</code> (will always equal null, since this collection is ephemeral)</li>
+<li>an attribute of the first child collection item (ID: 5): <code>{{Parent.Parent.ACollectionName1.5.AnAttributeName4}}</code> (equals <code>avalue4</code>)</li>
+<li>an attribute of the first element of the first child collection item (ID: 6): <code>{{Parent.Parent.ACollectionName1.5.AnElementName3.AnAttributeName5}}</code> (equals <code>avalue5</code>)</li>
+</ul>
+<p>Starting from the "collection item"  <code>AnElementName3</code>:</p>
+<ul>
+<li>an attribute (on self): <code>{{AnAttributeName5}}</code> (equals <code>avalue5</code>)</li>
+<li>an attribute of the first child element (ID: 2): <code>{{Parent.Parent.AnElementName1.AnAttributeName2}}</code> (equals <code>avalue2</code>)</li>
+<li>an attribute of the root element (ID: 1): <code>{{Parent.Parent.AnAttributeName1}}</code> (equals <code>avalue1</code>)</li>
+<li>an attribute of the first child collection (ID: 4): <code>{{Parent.Parent.ACollectionName1.AnAttributeName4}}</code> (will always equal null, since this collection is ephemeral)</li>
+<li>an attribute of the first child collection item (ID: 5): <code>{{Parent.Parent.ACollectionName1.5.AnAttributeName4}}</code> (equals <code>avalue4</code>)</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When navigating up from a "collection item", its parent is not the [ephemeral] collection itself, but the parent of that [ephemeral] collection.</p>
+</div>
+<h2 id="templating-functions">Templating Functions<a class="headerlink" href="#templating-functions" title="Permanent link">#</a></h2>
+<p>As part of any expression, you can also use any language feature of Scriban, found in <a href="https://github.com/scriban/scriban/blob/master/doc/language.md">this reference</a></p>
+<p>For example, conditional <code>if</code> statements, <code>for</code> statements, and other common operations and functions.</p>
+<p>Scriban also supports numerous <a href="https://github.com/scriban/scriban/blob/master/doc/builtins.md">built-in functions</a> for strings and other common data types.</p>
+<p>For example, to convert an expression to lowercase, you would write something like: <code>{{model.AnAttributeName | string.downcase}}</code></p>
+<p>automate adds the following additional custom functions:</p>
+<ul>
+<li>
+<p><strong>CamelCase</strong>: <code>{{model.AnAttributeName | string.camelcase}}</code> to convert any string value to a camel-cased string, where the first letter of each word in the string is lowercased, and all spaces are removed.</p>
+</li>
+<li>
+<p><strong>PascalCase</strong>: <code>{{model.AnAttributeName | string.pascalcase}}</code> to convert any string value to a pascal-cased string, where the first letter of each word in the string is upper-cased, and all spaces are removed.</p>
+</li>
+<li>
+<p><strong>Pluralize</strong>: <code>{{model.AnAttributeName | string.pluralize}}</code> to convert any string value to its pluralized form.  (e.g. duck -&gt; ducks)</p>
+</li>
+<li>
+<p><strong>Singularize</strong>: <code>{{model.AnAttributeName | string.singularize}}</code> to convert any string to its singular form. (e.g. ducks -&gt; duck)</p>
+</li>
+<li>
+<p><strong>CamelPlural</strong>: <code>{{model.AnAttributeName | string.camelplural}}</code> to convert any string value to its camel-cased and pluralized form.  (e.g. Duck -&gt; ducks)</p>
+</li>
+<li>
+<p><strong>PascalPlural</strong>: <code>{{model.AnAttributeName | string.pascalplural}}</code> to convert any string value to its pascal-cased pluralized form.  (e.g. duck -&gt; Ducks)</p>
+</li>
+<li>
+<p><strong>CamelSingular</strong>: <code>{{model.AnAttributeName | string.camelsingular}}</code> to convert any string to its camel-cased singularized form. (e.g. Ducks -&gt; duck)</p>
+</li>
+<li>
+<p><strong>PascalSingular</strong>: <code>{{model.AnAttributeName | string.pascalsingular}}</code> to convert any string to its pascal-cased singularized form. (e.g. ducks -&gt; Duck)</p>
+</li>
+</ul>
+<h2 id="draft-expressions">Draft Expressions<a class="headerlink" href="#draft-expressions" title="Permanent link">#</a></h2>
+<ul>
+<li>A draft expression is a reference to a specific "item" (node) in a configured draft.</li>
+<li>The expression is always wrapped in curly braces. It starts with a <code>{</code> and ends with a <code>}</code></li>
+<li>It always begins with the name of the root element in the draft. This is the name of the pattern (and the name of the toolkit)</li>
+<li>Each part of the expression is separated by a period <code>.</code></li>
+<li>Each part references the name of the child element, except where the child element is an instance of a collection, in which case its ID is used as its name</li>
+</ul>
+<h3 id="example-draft-expressions">Example draft expressions<a class="headerlink" href="#example-draft-expressions" title="Permanent link">#</a></h3>
+<p>Given this pattern (in a toolkit):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>- APatternName (root element)
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>    - AnAttributeName1 (attribute)
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>    - AnElementName1 (element)
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>        - AnElementName2 (element)
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>    - ACollectionName1 (collection)
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>        - AnAttributeName2 (attribute)
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>        - AnElementName3 (element)
+</code></pre></div></td></tr></table></div>
+<p>Given that we have configured all instances of all elements and all attributes, AND we have added 3x instances of the <code>ACollectionName1</code> collection item.</p>
+<p>If we were to ask for the configuration of this draft (<code>automate view draft</code>), we would have a draft configured with items looking something like this:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span>
+<span class="normal"><a href="#__codelineno-4-18">18</a></span>
+<span class="normal"><a href="#__codelineno-4-19">19</a></span>
+<span class="normal"><a href="#__codelineno-4-20">20</a></span>
+<span class="normal"><a href="#__codelineno-4-21">21</a></span>
+<span class="normal"><a href="#__codelineno-4-22">22</a></span>
+<span class="normal"><a href="#__codelineno-4-23">23</a></span>
+<span class="normal"><a href="#__codelineno-4-24">24</a></span>
+<span class="normal"><a href="#__codelineno-4-25">25</a></span>
+<span class="normal"><a href="#__codelineno-4-26">26</a></span>
+<span class="normal"><a href="#__codelineno-4-27">27</a></span>
+<span class="normal"><a href="#__codelineno-4-28">28</a></span>
+<span class="normal"><a href="#__codelineno-4-29">29</a></span>
+<span class="normal"><a href="#__codelineno-4-30">30</a></span>
+<span class="normal"><a href="#__codelineno-4-31">31</a></span>
+<span class="normal"><a href="#__codelineno-4-32">32</a></span>
+<span class="normal"><a href="#__codelineno-4-33">33</a></span>
+<span class="normal"><a href="#__codelineno-4-34">34</a></span>
+<span class="normal"><a href="#__codelineno-4-35">35</a></span>
+<span class="normal"><a href="#__codelineno-4-36">36</a></span>
+<span class="normal"><a href="#__codelineno-4-37">37</a></span>
+<span class="normal"><a href="#__codelineno-4-38">38</a></span>
+<span class="normal"><a href="#__codelineno-4-39">39</a></span>
+<span class="normal"><a href="#__codelineno-4-40">40</a></span>
+<span class="normal"><a href="#__codelineno-4-41">41</a></span>
+<span class="normal"><a href="#__codelineno-4-42">42</a></span>
+<span class="normal"><a href="#__codelineno-4-43">43</a></span>
+<span class="normal"><a href="#__codelineno-4-44">44</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>{
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>    &quot;Id&quot;: &quot;1&quot;,
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>    &quot;ConfigurePath&quot;: &quot;{APatternName}&quot;,
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>    &quot;AnAttributeName1&quot;: &quot;avalue1&quot;,
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a>    &quot;AnElementName1&quot;: {
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>        &quot;Id&quot;: &quot;2&quot;,
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>        &quot;ConfigurePath&quot;: &quot;{APatternName.AnElementName1}&quot;,
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a>        &quot;AnElementName2&quot;: {
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a>            &quot;Id&quot;: &quot;3&quot;
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a>            &quot;ConfigurePath&quot;: &quot;{APatternName.AnElementName1.AnElementName2}&quot;,
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a>        }
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a>    },
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a>    &quot;ACollectionName1&quot;: {
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a>        &quot;Id&quot;: &quot;4&quot;,
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a>        &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1}&quot;,
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a>        &quot;AnAttributeName2&quot;: null,
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a>        &quot;Items&quot;: [{
+<a id="__codelineno-4-18" name="__codelineno-4-18"></a>                &quot;Id&quot;: &quot;5&quot;,
+<a id="__codelineno-4-19" name="__codelineno-4-19"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.5}&quot;,
+<a id="__codelineno-4-20" name="__codelineno-4-20"></a>                &quot;AnAttributeName2&quot;: &quot;avalue2&quot;,
+<a id="__codelineno-4-21" name="__codelineno-4-21"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-4-22" name="__codelineno-4-22"></a>                    &quot;Id&quot;: &quot;6&quot;,
+<a id="__codelineno-4-23" name="__codelineno-4-23"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.5.AnElementName3}&quot;,
+<a id="__codelineno-4-24" name="__codelineno-4-24"></a>                }
+<a id="__codelineno-4-25" name="__codelineno-4-25"></a>            }, {
+<a id="__codelineno-4-26" name="__codelineno-4-26"></a>                &quot;Id&quot;: &quot;7&quot;,
+<a id="__codelineno-4-27" name="__codelineno-4-27"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.7}&quot;,
+<a id="__codelineno-4-28" name="__codelineno-4-28"></a>                &quot;AnAttributeName2&quot;: &quot;avalue2&quot;,
+<a id="__codelineno-4-29" name="__codelineno-4-29"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-4-30" name="__codelineno-4-30"></a>                    &quot;Id&quot;: &quot;8&quot;,
+<a id="__codelineno-4-31" name="__codelineno-4-31"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.7.AnElementName3}&quot;,
+<a id="__codelineno-4-32" name="__codelineno-4-32"></a>                }
+<a id="__codelineno-4-33" name="__codelineno-4-33"></a>            }, {
+<a id="__codelineno-4-34" name="__codelineno-4-34"></a>                &quot;Id&quot;: &quot;9&quot;,
+<a id="__codelineno-4-35" name="__codelineno-4-35"></a>                &quot;AnAttributeName2&quot;: &quot;avalue2&quot;,
+<a id="__codelineno-4-36" name="__codelineno-4-36"></a>                &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.9}&quot;,
+<a id="__codelineno-4-37" name="__codelineno-4-37"></a>                &quot;AnElementName3&quot;: {
+<a id="__codelineno-4-38" name="__codelineno-4-38"></a>                    &quot;Id&quot;: &quot;10&quot;,
+<a id="__codelineno-4-39" name="__codelineno-4-39"></a>                    &quot;ConfigurePath&quot;: &quot;{APatternName.ACollectionName1.9.AnElementName3}&quot;,
+<a id="__codelineno-4-40" name="__codelineno-4-40"></a>                }
+<a id="__codelineno-4-41" name="__codelineno-4-41"></a>            }
+<a id="__codelineno-4-42" name="__codelineno-4-42"></a>        ]
+<a id="__codelineno-4-43" name="__codelineno-4-43"></a>    }
+<a id="__codelineno-4-44" name="__codelineno-4-44"></a>}
+</code></pre></div></td></tr></table></div>
+<p>Examples draft references:</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The casing of the names of properties, elements and collections are as defined in the pattern. However, the casing of the built-in properties: <code>Id</code>, and <code>Items</code> are always pascal-cased.</p>
+</div>
+<p>(ignoring the nominal values of the "Id" properties)</p>
+<ul>
+<li>the root element (ID: 1): <code>{APatternName}</code></li>
+<li>the first child element (ID: 2): <code>{APatternName.AnElementName1}</code></li>
+<li>the first grand-child element (ID: 3): <code>{APatternName.AnElementName1.AnElementName2}</code></li>
+<li>the first child collection (ID: 4): <code>{APatternName.ACollectionName1}</code></li>
+<li>the first collection item (ID: 5): <code>{APatternName.ACollectionName1.5}</code></li>
+<li>the element of the first collection item (ID: 6): <code>{APatternName.ACollectionName1.5.AnElementName3}</code></li>
+<li>the element of the last collection item (ID: 10): <code>{APatternName.ACollectionName1.9.AnElementName3}</code></li>
+</ul>
+<h2 id="the-cli-interface">The CLI Interface<a class="headerlink" href="#the-cli-interface" title="Permanent link">#</a></h2>
+<p>These are the CLI commands currently available in the Command Line Interface.</p>
+<p><a class="glightbox" href="https://github.com/jezzsantos/automate/blob/main/docs/Images/CLI.jpg?raw=true" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="CLI commands" src="https://github.com/jezzsantos/automate/blob/main/docs/Images/CLI.jpg?raw=true" width="800" /></a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
