@@ -27,7 +27,7 @@ jobs:
       contents: write
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -49,7 +49,7 @@ jobs:
           dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime osx-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/osx-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.OSX-x64"
       - name: Upload Package (MacOS)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: OSX-64 Binary
           path: ${{env.OUTPUT_DIR}}/osx-x64/publish/
@@ -59,7 +59,7 @@ jobs:
           dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime linux-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/linux-x64/publish/${{env.OUTPUT_FILENAME}}" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Linux-x64"
       - name: Upload Package (LinuxOS)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Linux-64 Binary
           path: ${{env.OUTPUT_DIR}}/linux-x64/publish/
@@ -69,7 +69,7 @@ jobs:
           dotnet publish --configuration ${{env.BUILD_CONFIGURATION}} -p:PublishSingleFile=true -p:TreatWarningsAsErrors=true --self-contained true --runtime win-x64 "${{env.CLIPROJECT_PATH}}"
           copy "${{env.OUTPUT_DIR}}/win-x64/publish/${{env.OUTPUT_FILENAME}}.exe" "${{env.PUBLISH_DIR}}/${{env.OUTPUT_FILENAME}}.Win-x64.exe"
       - name: Upload Package (Windows)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Win-64 Binary
           path: ${{env.OUTPUT_DIR}}/win-x64/publish/
@@ -77,7 +77,7 @@ jobs:
       - name: Package NuGet
         run: dotnet pack --configuration ${{env.BUILD_CONFIGURATION}} "${{env.CLIPROJECT_PATH}}"
       - name: Upload NuGet
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Nuget Binary
           path: ${{env.NUGET_OUTPUT_DIR}}/
