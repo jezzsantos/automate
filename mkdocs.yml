@@ -55,12 +55,12 @@ nav:
   - 'Your First Toolkit': 'tutorial.md'
   - 'Developers Guide':
       - 'Command Line (CLI)':
-          - 'Installation': 'installation.md'
+          - 'Install CLI': 'installation.md'
           - 'Using Toolkits': 'runtime.md'
           - 'Making Toolkits': 'authoring.md'
           - 'Additional Options': 'clioptions.md'
-      - 'IDE Plugin':
-          - 'Installation': 'installation.md'
+      - 'Jetbrains Rider Plugin':
+          - 'Install Plugin': 'installation-rider-plugin.md'
           - 'Using Toolkits': 'runtime-plugin.md'
           - 'Making Toolkits': 'authoring-plugin.md'
       - 'Reference': 'reference.md'

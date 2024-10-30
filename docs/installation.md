@@ -55,23 +55,3 @@ If you don't have `dotnet.exe` installed on your machine, update the CLI manuall
 
 1. Download the executable to  your machine with a later one from the [Releases](https://github.com/jezzsantos/automate/releases) page
 2. Replace the previous version on your machine. Follow instructions above.
-
-## Jetbrains IDE Plugin
-
-<div id="plugin" style="float: right"></div>
-<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
-<script>
-  MarketplaceWidget.setupMarketplaceWidget('install', 19421, "#plugin");
-</script>
-
-Install the plugin within Rider itself, from: `File | Settings | Plugins | Marketplace` and search for `automate`
-
-!!! info
-    This plugin relies on the automate CLI to be installed to run. Furthermore, each version of the plugin will require a specific version of the automate CLI to be installed. 
-
-    Version (v1.0.4 and later) of the plugin will automatically install and upgrade the version of the automate CLI that is required by the plugin. Prior versions (less than v1.0.4) of the plugin will require you to manually install the automate CLI first.
-    
-    By default, the plugin is configured to point to the default install location of the automate CLI (as a dotnet tool). 
-
-!!! tip
-    You can view and configure the installation location in Rider, from the settings (`File | Settings | Tools | automate`)
